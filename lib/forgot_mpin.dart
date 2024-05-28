@@ -94,12 +94,12 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                     padding: const EdgeInsets.fromLTRB(0, 0, 220, 0),
                     child: Text('Forgot\n'
                         'M-Pin?',
-                        style: Theme.of(context).textTheme.headline4),
+                        style: Theme.of(context).textTheme.bodySmall),
                   ),
                   const SizedBox(height: 20,),
                   Text("Don't worry! it happens. Please enter the\n"
                       "Mobile number associated with your account",
-                    style: Theme.of(context).textTheme.bodyText2,),
+                    style: Theme.of(context).textTheme.bodySmall,),
                   Container(
                     child: Padding(
                       padding: const EdgeInsets.all(20.0),

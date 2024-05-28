@@ -738,7 +738,7 @@ class _PersonalEditState extends State<PersonalEdit> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 0, 240, 0),
                   child: Text('Contact',
-                    style: Theme.of(context).textTheme.headline5,),
+                    style: Theme.of(context).textTheme.bodySmall,),
                 ),
                 const SizedBox(height: 5,),
                 SizedBox(
@@ -839,7 +839,7 @@ class _PersonalEditState extends State<PersonalEdit> {
                       Padding(
                         padding: const EdgeInsets.fromLTRB(0, 0, 210, 0),
                         child: Text('Dependents',
-                          style: Theme.of(context).textTheme.headline5,),
+                          style: Theme.of(context).textTheme.bodySmall,),
                       ),
                       const SizedBox(height: 5,),
                       SizedBox(

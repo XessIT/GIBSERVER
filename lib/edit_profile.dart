@@ -699,7 +699,7 @@ class _PersonalEditoldState extends State<PersonalEditold> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 0, 240, 0),
                   child: Text('Contact',
-                    style: Theme.of(context).textTheme.headline5,),
+                    style: Theme.of(context).textTheme.bodySmall,),
                 ),
                 const SizedBox(height: 5,),
                 SizedBox(
@@ -801,7 +801,7 @@ class _PersonalEditoldState extends State<PersonalEditold> {
                       Padding(
                         padding: const EdgeInsets.fromLTRB(0, 0, 210, 0),
                         child: Text('Dependents',
-                          style: Theme.of(context).textTheme.headline5,),
+                          style: Theme.of(context).textTheme.bodySmall,),
                       ),
                       const SizedBox(height: 5,),
                       SizedBox(
@@ -907,7 +907,7 @@ class _PersonalEditoldState extends State<PersonalEditold> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 0, 210, 0),
                   child: Text('Education',
-                    style: Theme.of(context).textTheme.headline5,),
+                    style: Theme.of(context).textTheme.bodySmall,),
                 ),
                 SizedBox(
                   width: 300,
@@ -1124,7 +1124,7 @@ class _PersonalEditoldState extends State<PersonalEditold> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 0, 210, 0),
                   child: Text('Experience',
-                    style: Theme.of(context).textTheme.headline5,),
+                    style: Theme.of(context).textTheme.bodySmall,),
                 ),
                 SizedBox(
                   width: 300,
