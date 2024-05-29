@@ -30,7 +30,7 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
   void initState() {
     super.initState();
     getData(qrstr);
-    scanQr(); // Automatically trigger QR scan on page load
+   // scanQr();
   }
 
   Future<void> getData(String meetingId) async {
@@ -79,7 +79,15 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
                       Text('${meeting['meeting_name']} Meeting'),
                       Text('Date: ${meeting['meeting_date']}'),
                       Text('Location: ${meeting['chapter']} - ${meeting['district']}'),
-                      SizedBox(height: 10), // Add some space between meetings
+                      SizedBox(height: 10),
+                      const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('Present', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 14),),
+                          SizedBox(width: 10,),
+                          Icon(Icons.check_circle, color: Colors.green, size: 50,),
+                        ],
+                      ),
                     ],
                   );
                 }).toList(),
@@ -145,9 +153,9 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
           .then((value) {
         setState(() {
           qrstr = value;
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(qrstr),
-          ));
+          // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          //   content: Text(qrstr),
+          // ));
           getData(qrstr);
         });
       });
@@ -159,7 +167,7 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
   }
 
   final _formKey = GlobalKey<FormState>();
-  String qrstr = "before Scan";
+  String qrstr = "";
 
   @override
   Widget build(BuildContext context) {
@@ -304,7 +312,7 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
                       ),
                     ),
                   ),
-                  Text(qrstr, style: Theme.of(context).textTheme.bodySmall),
+                  //Text(qrstr, style: Theme.of(context).textTheme.bodySmall),
                 ],
               ),
             ),

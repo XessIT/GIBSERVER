@@ -504,17 +504,18 @@ String? memberType ="Executive";
           ).show();
           return false;
         },
-        child: isLoading ? const Center(child: CircularProgressIndicator(),)
-            : Form(
+        child:  Form(
           child: Stack(
             fit: StackFit.expand,
             clipBehavior: Clip.antiAliasWithSaveLayer,
             children: [
+              isLoading ? const Center(child: CircularProgressIndicator(),) :
               SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     data.isEmpty ? SizedBox.shrink() :
+                        const SizedBox(height: 170),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Card(
