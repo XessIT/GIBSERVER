@@ -24,11 +24,10 @@ class NewMpinChange extends StatefulWidget {
 
 class _NewMpinChangeState extends State<NewMpinChange> {
   bool _isObscure = true;
-  var Password=" ";
+  var Password = " ";
   final _formKey = GlobalKey<FormState>();
   TextEditingController newmpincontroller = TextEditingController();
   TextEditingController confirmnewmpin = TextEditingController();
-
 
   @override
   void dispose() {
@@ -36,16 +35,21 @@ class _NewMpinChangeState extends State<NewMpinChange> {
     super.dispose();
   }
 
-  changePassword() async{
-    try{
-      Navigator.pushReplacement(context, MaterialPageRoute(builder:  (context) => Login(),
-      ) );
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Your Password Has Been Changed...LogIn Again"),
-      ),);
-    } catch(error) {
-
-    }
+  changePassword() async {
+    try {
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Login(),
+          ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Your Password Has Been Changed...LogIn Again"),
+        ),
+      );
+    } catch (error) {}
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,9 +57,15 @@ class _NewMpinChangeState extends State<NewMpinChange> {
       appBar: AppBar(
         // Appbar title
         title: const Center(child: Text('New M-Pin')),
-        leading:IconButton(
+        leading: IconButton(
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) =>  Home(userType: '', userId: '',)));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Homepage(
+                            userType: '',
+                            userId: '',
+                          )));
             },
             icon: const Icon(Icons.arrow_back)),
       ),
@@ -68,9 +78,16 @@ class _NewMpinChangeState extends State<NewMpinChange> {
             key: _formKey,
             child: Column(
               children: [
-                const SizedBox(height: 30,),
-                Image.asset('assets/reset-password.jpg',width: 300,),
-                const SizedBox(height: 30,),
+                const SizedBox(
+                  height: 30,
+                ),
+                Image.asset(
+                  'assets/reset-password.jpg',
+                  width: 300,
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
                 // New password textfield starts
                 SizedBox(
                   width: 300,
@@ -79,17 +96,15 @@ class _NewMpinChangeState extends State<NewMpinChange> {
                     validator: (value) {
                       if (value!.isEmpty) {
                         return "* Enter Old M-Pin";
-                      }
-                      else if (value.length < 6) {
+                      } else if (value.length < 6) {
                         return "M-Pin should Be 6 Character";
-                      }
-                      else if (newmpincontroller.value == confirmnewmpin.value){
+                      } else if (newmpincontroller.value ==
+                          confirmnewmpin.value) {
                         return null;
-                      }
-                      else if (newmpincontroller.value != confirmnewmpin.value){
+                      } else if (newmpincontroller.value !=
+                          confirmnewmpin.value) {
                         return "M-Pin Doesn't match";
-                      }
-                      else {
+                      } else {
                         return null;
                       }
                     },
@@ -113,8 +128,11 @@ class _NewMpinChangeState extends State<NewMpinChange> {
                       FilteringTextInputFormatter.digitsOnly,
                       LengthLimitingTextInputFormatter(6)
                     ],
-                  ),),
-                const SizedBox(height: 30,),
+                  ),
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
 
                 SizedBox(
                   width: 300,
@@ -149,7 +167,8 @@ class _NewMpinChangeState extends State<NewMpinChange> {
                       FilteringTextInputFormatter.digitsOnly,
                       LengthLimitingTextInputFormatter(6)
                     ],
-                  ),),
+                  ),
+                ),
                 // New password textfield ends here
 
                 // Confirm password textfield starts here
@@ -192,13 +211,14 @@ class _NewMpinChangeState extends State<NewMpinChange> {
                   ),),*/
                 // Confirm password textfield ends here
 
-                const SizedBox(height: 50,),
+                const SizedBox(
+                  height: 50,
+                ),
                 // Submit button starts here
                 ElevatedButton(
-                    onPressed: (){
+                    onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         setState(() {
-
                           Password = confirmnewmpin.text;
                         });
                         changePassword();
@@ -209,7 +229,9 @@ class _NewMpinChangeState extends State<NewMpinChange> {
                       );*/
                     },
                     child: const Text('SUBMIT')),
-                const SizedBox(height: 20,),
+                const SizedBox(
+                  height: 20,
+                ),
               ],
             ),
           ),
@@ -219,4 +241,3 @@ class _NewMpinChangeState extends State<NewMpinChange> {
     );
   }
 }
-

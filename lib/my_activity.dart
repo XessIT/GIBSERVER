@@ -7,37 +7,38 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'home.dart';
 
-
 class Activity extends StatefulWidget {
   final String? userType;
   final String? userId;
-  const Activity({Key? key, required this.userId, required this.userType}) : super(key: key);
+  const Activity({Key? key, required this.userId, required this.userType})
+      : super(key: key);
 
   @override
   State<Activity> createState() => _ActivityState();
 }
 
 class _ActivityState extends State<Activity> {
-  String? fetchMobile ="";
-  List<Map<String,dynamic>>userdata=[];
+  String? fetchMobile = "";
+  List<Map<String, dynamic>> userdata = [];
   Future<void> fetchData() async {
     print("with user id ${widget.userId}");
     try {
       //http://mybudgetbook.in/GIBAPI/user.php?table=registration&id=$userId
-      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=${widget.userId}');
+      final url = Uri.parse(
+          'http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=${widget.userId}');
       final response = await http.get(url);
-        print("fetch url:$url");
+      print("fetch url:$url");
 
       if (response.statusCode == 200) {
-         print("fetch status code:${response.statusCode}");
-         print("fetch body:${response.body}");
+        print("fetch status code:${response.statusCode}");
+        print("fetch body:${response.body}");
         final responseData = json.decode(response.body);
         if (responseData is List<dynamic>) {
           setState(() {
             userdata = responseData.cast<Map<String, dynamic>>();
             if (userdata.isNotEmpty) {
               setState(() {
-                fetchMobile = userdata[0]["mobile"]??"";
+                fetchMobile = userdata[0]["mobile"] ?? "";
               });
               getData();
             }
@@ -55,11 +56,13 @@ class _ActivityState extends State<Activity> {
       print('Error: $error');
     }
   }
-  List<Map<String, dynamic>> data=[];
+
+  List<Map<String, dynamic>> data = [];
   Future<void> getData() async {
     print('Attempting to make HTTP request...');
     try {
-      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/registration.php?table=waiting&mobile=$fetchMobile');
+      final url = Uri.parse(
+          'http://mybudgetbook.in/GIBAPI/registration.php?table=waiting&mobile=$fetchMobile');
       print("gib members url =$url");
       final response = await http.get(url);
       print("gib members ResponseStatus: ${response.statusCode}");
@@ -79,11 +82,12 @@ class _ActivityState extends State<Activity> {
       print('Error making HTTP request: $e');
       throw e; // rethrow the error if needed
     }
-
   }
+
   Future<void> approved(int ID) async {
     try {
-      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/member_approval.php');
+      final url =
+          Uri.parse('http://mybudgetbook.in/GIBAPI/member_approval.php');
       final response = await http.put(
         url,
         body: jsonEncode({
@@ -93,105 +97,134 @@ class _ActivityState extends State<Activity> {
       );
       if (response.statusCode == 200) {
         fetchData();
-        Navigator.push(context, MaterialPageRoute(builder: (context) =>  Activity(userId: widget.userId,userType: widget.userType,)));
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Accepted Successfully")));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => Activity(
+                      userId: widget.userId,
+                      userType: widget.userType,
+                    )));
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Accepted Successfully")));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Failed to Accept")));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("Failed to Accept")));
       }
     } catch (e) {
       print("Error during signup: $e");
       // Handle error as needed
     }
   }
+
   Future<void> delete(String id) async {
     try {
-      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/registration.php?id=$id');
+      final url =
+          Uri.parse('http://mybudgetbook.in/GIBAPI/registration.php?id=$id');
       final response = await http.delete(url);
       print("Delete Url: $url");
       if (response.statusCode == 200) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) =>  Activity(userId: widget.userId,userType: widget.userType,)));
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Rejected Successfully")));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => Activity(
+                      userId: widget.userId,
+                      userType: widget.userType,
+                    )));
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Rejected Successfully")));
         print("Delete Response: ${response.body}");
 
         print('ID: $id');
         print('Offer Deleted successfully');
-      }
-      else {
+      } else {
         // Error handling, e.g., show an error message
         print('Error: ${response.statusCode}');
       }
-    }
-    catch (e) {
+    } catch (e) {
       // Handle network or server errors
       print('Error making HTTP request: $e');
     }
   }
+
   @override
   void initState() {
     super.initState();
     fetchData();
     print("uid: ${widget.userId}");
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: Text('Reference', style: Theme.of(context).textTheme.bodySmall)),
-        centerTitle: true,
-        iconTheme:  const IconThemeData(
-          color: Colors.white, // Set the color for the drawer icon
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Home(userType: widget.userType, userId: widget.userId,)));
-          },
-        )
-      ),
-      body: data.isNotEmpty ? ListView.builder(
-          itemCount: data.length,
-          itemBuilder: (context, i) {
-            String imageUrl = 'http://mybudgetbook.in/GIBAPI/${data[i]['profile_image']}';
-              return
-                Center(
+          title: Center(
+              child: Text('Reference',
+                  style: Theme.of(context).textTheme.bodySmall)),
+          centerTitle: true,
+          iconTheme: const IconThemeData(
+            color: Colors.white, // Set the color for the drawer icon
+          ),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Homepage(
+                            userType: widget.userType,
+                            userId: widget.userId,
+                          )));
+            },
+          )),
+      body: data.isNotEmpty
+          ? ListView.builder(
+              itemCount: data.length,
+              itemBuilder: (context, i) {
+                String imageUrl =
+                    'http://mybudgetbook.in/GIBAPI/${data[i]['profile_image']}';
+                return Center(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Card(
                       child: Padding(
                         padding: const EdgeInsets.all(15.0),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                CircleAvatar(
-                                  radius: 35, // adjust the radius as per your requirement
-                                  backgroundImage: NetworkImage(imageUrl),
+                        child: Column(children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              CircleAvatar(
+                                radius:
+                                    35, // adjust the radius as per your requirement
+                                backgroundImage: NetworkImage(imageUrl),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    Text('${data[i]['first_name']}'),
+                                    Text('${data[i]['company_name']}'),
+                                  ],
                                 ),
-                                Expanded(
-                                  child: Column(
-                                    children: [
-                                      Text('${data[i]['first_name']}'),
-                                      Text('${data[i]['company_name']}'),
-                                    ],
-                                  ),
-                                ),
-                                IconButton(
-                                    onPressed: () async {
-                                      final call = Uri.parse(
-                                          "tel://${data[i]['mobile']}");
-                                      if (await canLaunchUrl(call)) {
-                                        launchUrl(call);
-                                      } else {
-                                        throw 'Could not launch $call';
-                                      }
-                                    },
-                                    icon: Icon(
-                                      Icons.call, color: Colors.green[900],)),
-                              ],
-                            ),
-                            const SizedBox(height: 10,),
-                            Row(
+                              ),
+                              IconButton(
+                                  onPressed: () async {
+                                    final call =
+                                        Uri.parse("tel://${data[i]['mobile']}");
+                                    if (await canLaunchUrl(call)) {
+                                      launchUrl(call);
+                                    } else {
+                                      throw 'Could not launch $call';
+                                    }
+                                  },
+                                  icon: Icon(
+                                    Icons.call,
+                                    color: Colors.green[900],
+                                  )),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 ElevatedButton(
@@ -204,27 +237,36 @@ class _ActivityState extends State<Activity> {
                                       showCloseIcon: true,
                                       title: 'Reject',
                                       titleTextStyle: TextStyle(
-                                        color: Theme.of(context).brightness == Brightness.light
+                                        color: Theme.of(context).brightness ==
+                                                Brightness.light
                                             ? Colors.black // Light theme color
                                             : Colors.white, // Dark theme color
                                       ),
-                                      desc: 'Do you want to reject this request?',
+                                      desc:
+                                          'Do you want to reject this request?',
                                       btnOkText: 'Yes',
                                       btnCancelText: 'No',
                                       btnCancelOnPress: () {},
                                       btnOkOnPress: () {
                                         delete(data[i]['id']);
                                       },
-                                     // btnOkIcon: Icons.check_circle,
+                                      // btnOkIcon: Icons.check_circle,
                                       onDismissCallback: (type) {
-                                        debugPrint('Dialog Dismiss from callback $type');
+                                        debugPrint(
+                                            'Dialog Dismiss from callback $type');
                                       },
                                     ).show();
                                   },
                                   style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
-                                  ), child: Text('Reject',
-                                style: Theme.of(context).textTheme.bodySmall,),
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                            Colors.red),
+                                  ),
+                                  child: Text(
+                                    'Reject',
+                                    style:
+                                        Theme.of(context).textTheme.bodySmall,
+                                  ),
                                 ),
                                 ElevatedButton(
                                   onPressed: () async {
@@ -236,11 +278,13 @@ class _ActivityState extends State<Activity> {
                                       showCloseIcon: true,
                                       title: 'Accept',
                                       titleTextStyle: TextStyle(
-                                        color: Theme.of(context).brightness == Brightness.light
+                                        color: Theme.of(context).brightness ==
+                                                Brightness.light
                                             ? Colors.black // Light theme color
                                             : Colors.white, // Dark theme color
                                       ),
-                                      desc: 'Do you want to accept this request?',
+                                      desc:
+                                          'Do you want to accept this request?',
                                       btnOkText: 'Yes',
                                       btnCancelText: 'No',
                                       btnCancelOnPress: () {},
@@ -249,29 +293,30 @@ class _ActivityState extends State<Activity> {
                                       },
                                       // btnOkIcon: Icons.check_circle,
                                       onDismissCallback: (type) {
-                                        debugPrint('Dialog Dismiss from callback $type');
+                                        debugPrint(
+                                            'Dialog Dismiss from callback $type');
                                       },
                                     ).show();
                                   },
                                   style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all<Color>(Colors.green[900]!),
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                            Colors.green[900]!),
                                   ),
-                                  child: Text('Accept',
-                                  style: Theme.of(context).textTheme.bodySmall,),
+                                  child: Text(
+                                    'Accept',
+                                    style:
+                                        Theme.of(context).textTheme.bodySmall,
+                                  ),
                                 ),
-                              ]
-                            )
-                          ]
-                        ),
+                              ])
+                        ]),
                       ),
                     ),
                   ),
                 );
-
-          }
-      )
-      : const Center(child: Text('No data available')),
+              })
+          : const Center(child: Text('No data available')),
     );
   }
 }
-

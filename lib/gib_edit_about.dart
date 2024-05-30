@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:gipapp/home.dart';
 
-
 class AboutTabEdit extends StatelessWidget {
   final String userId = "";
   final String userType = "";
 
-  AboutTabEdit({Key? key, required userId, required userType}) : super(key: key);
+  AboutTabEdit({Key? key, required userId, required userType})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +47,6 @@ class _AboutGibViewtabState extends State<AboutGibViewtab> {
       final url = Uri.parse(
           'http://mybudgetbook.in/GIBAPI/about.php?table=about_vision');
 
-
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
@@ -64,6 +63,7 @@ class _AboutGibViewtabState extends State<AboutGibViewtab> {
       //  print('Error: $error');
     }
   }
+
   @override
   void initState() {
     aboutVision();
@@ -87,8 +87,8 @@ class _AboutGibViewtabState extends State<AboutGibViewtab> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>
-                      Home(userType: widget.userType, userId: widget.userId),
+                  builder: (context) => Homepage(
+                      userType: widget.userType, userId: widget.userId),
                 ),
               );
             },
@@ -124,16 +124,16 @@ class _AboutGibViewtabState extends State<AboutGibViewtab> {
                         Center(
                           child: Column(
                             children: [
+                              Image.asset(
+                                'assets/logo.png',
+                                width: 300,
+                              ),
+                              TextFormField(
+                                controller: visionContent_1,
+                                decoration: const InputDecoration(),
+                              )
 
-                              Image.asset('assets/logo.png', width: 300,),
-                             TextFormField(
-                               controller: visionContent_1,
-                               decoration: const InputDecoration(
-
-                               ),
-                             )
-
-                             /* Padding(
+                              /* Padding(
                                 padding: EdgeInsets.all(12.0),
                                 child:
                                  TextFormField(
@@ -175,8 +175,11 @@ class _AboutGibViewtabState extends State<AboutGibViewtab> {
                     child: Center(
                       child: Column(
                         children: [
-                          Image.asset('assets/logo.png', width: 300,),
-                         /* Padding(
+                          Image.asset(
+                            'assets/logo.png',
+                            width: 300,
+                          ),
+                          /* Padding(
                             padding: EdgeInsets.all(12.0),
                             child: Text(
                               aboutVisiondata.isNotEmpty
@@ -193,7 +196,10 @@ class _AboutGibViewtabState extends State<AboutGibViewtab> {
                     child: Center(
                       child: Column(
                         children: [
-                          Image.asset('assets/logo.png', width: 300,),
+                          Image.asset(
+                            'assets/logo.png',
+                            width: 300,
+                          ),
 /*
                           Padding(
                             padding: EdgeInsets.all(12.0),
@@ -205,7 +211,9 @@ class _AboutGibViewtabState extends State<AboutGibViewtab> {
                             ),
                           ),
 */
-                          const SizedBox(height: 10,),
+                          const SizedBox(
+                            height: 10,
+                          ),
                           /*Padding(
                             padding: EdgeInsets.all(12.0),
                             child: Text(
