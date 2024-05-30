@@ -109,7 +109,7 @@ class _AttendancePageState extends State<AttendancePage> {
                 //TABBAR STARTS
                 TabBar(
                   isScrollable: true,
-                  labelColor: Colors.green,
+                  labelColor: Colors.green.shade100,
                   unselectedLabelColor: Colors.black,
                   tabs: [
                     Tab(text: ('Network Meeting'),),
@@ -152,6 +152,9 @@ class _NetworkAttendanceState extends State<NetworkAttendance> {
   bool isPresentCardTapped = false;
   bool isAbsentCardTapped = false;
   bool isLeaveCardTapped = false;
+  List<dynamic> presentMeetings = [];
+  List<dynamic> absentMeetings = [];
+  List<dynamic> leaveMeetings = [];
 
   @override
   void initState() {
@@ -160,8 +163,27 @@ class _NetworkAttendanceState extends State<NetworkAttendance> {
     if (widget.userID != null) {
       fetchPresentAndAbsentCount(selectedYear, widget.userID!,  widget.userType);
     }
+    if (widget.userID != null) {
+      fetchMeetingDetails(selectedYear, widget.userID!,  widget.userType);
+    }
   }
-
+  Future<void> fetchMeetingDetails(int year, String userId, String userType) async {
+    try {
+      final response = await http.get(Uri.parse('http://mybudgetbook.in/GIBAPI/att_present_fetch.php?year=$year&user_id=$userId&member_type=$userType'));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        setState(() {
+          presentMeetings = data['presentMeetings'];
+          absentMeetings = data['absentMeetings'];
+          leaveMeetings = data['leaveMeetings'];
+        });
+      } else {
+        throw Exception('Failed to load meeting details');
+      }
+    } catch (e) {
+      print('Error fetching meeting details: $e');
+    }
+  }
   Future<void> fetchMeetCount(int year,String userType) async {
     try {
       final response = await http.get(Uri.parse('http://mybudgetbook.in/GIBAPI/insert_attendance.php?year=$year&member_type=$userType'));
@@ -234,6 +256,9 @@ class _NetworkAttendanceState extends State<NetworkAttendance> {
                       if (widget.userID != null) {
                         fetchPresentAndAbsentCount(newValue, widget.userID!, widget.userType);
                       }
+                      if (widget.userID != null) {
+                        fetchMeetingDetails(newValue, widget.userID!, widget.userType);
+                      }
                     }
                   },
                   items: List.generate(11, (index) {
@@ -269,7 +294,7 @@ class _NetworkAttendanceState extends State<NetworkAttendance> {
                         },
                         child: Card(
                           // Change the color based on the state variable
-                          color: isPresentCardTapped ? Colors.green : Colors.white,
+                          color: isPresentCardTapped ? Colors.green.shade100 : Colors.white,
                           child: ListTile(
                             title: Padding(
                               padding: const EdgeInsets.fromLTRB(14, 15, 0, 0),
@@ -299,7 +324,7 @@ class _NetworkAttendanceState extends State<NetworkAttendance> {
                         },
                         child: Card(
                           // Change the color based on the state variable
-                          color: isAbsentCardTapped ? Colors.green : Colors.white,
+                          color: isAbsentCardTapped ? Colors.green.shade100 : Colors.white,
                           child: ListTile(
                             title: Padding(
                               padding: const EdgeInsets.fromLTRB(14, 15, 0, 0),
@@ -329,7 +354,7 @@ class _NetworkAttendanceState extends State<NetworkAttendance> {
                         },
                         child: Card(
                           // Change the color based on the state variable
-                          color: isLeaveCardTapped ? Colors.green : Colors.white,
+                          color: isLeaveCardTapped ? Colors.green.shade100 : Colors.white,
                           child: ListTile(
                             title: Padding(
                               padding: const EdgeInsets.fromLTRB(14, 15, 0, 0),
@@ -346,6 +371,62 @@ class _NetworkAttendanceState extends State<NetworkAttendance> {
                   ),
                 ],
               ),
+              SingleChildScrollView(
+                child: Card(
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: isPresentCardTapped
+                        ? presentMeetings.length
+                        : isAbsentCardTapped
+                        ? absentMeetings.length
+                        : leaveMeetings.length,
+                    itemBuilder: (context, index) {
+                      final meeting = isPresentCardTapped
+                          ? presentMeetings[index]
+                          : isAbsentCardTapped
+                          ? absentMeetings[index]
+                          : leaveMeetings[index];
+                      return ListTile(
+                        title: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.meeting_room),
+                            Text('${meeting['meeting_type']}'),
+                          ],
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('${meeting['meeting_date']}'),
+                                Text('${meeting['meeting_name']} Meeting'),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('${meeting['district']}'),
+                                Text('${meeting['chapter']}'),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('${meeting['from_time']}'),
+                                const Text('-'),
+                                Text('${meeting['to_time']}'),
+                              ],
+                            ),
+
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              )
             ],
           ),
         ],
@@ -369,7 +450,12 @@ class _TeamMeetingPageState extends State<TeamMeetingPage> {
   int presentCount = 0;
   int absentCount = 0;
   int leaveCount = 0;
-
+  bool isPresentCardTapped = false;
+  bool isAbsentCardTapped = false;
+  bool isLeaveCardTapped = false;
+  List<dynamic> presentMeetings = [];
+  List<dynamic> absentMeetings = [];
+  List<dynamic> leaveMeetings = [];
 
   @override
   void initState() {
@@ -378,8 +464,27 @@ class _TeamMeetingPageState extends State<TeamMeetingPage> {
     if (widget.userID != null) {
       fetchPresentAndAbsentCount(selectedYear, widget.userID!,  widget.userType);
     }
+    if (widget.userID != null) {
+      fetchMeetingDetails(selectedYear, widget.userID!,  widget.userType);
+    }
   }
-
+  Future<void> fetchMeetingDetails(int year, String userId, String userType) async {
+    try {
+      final response = await http.get(Uri.parse('http://mybudgetbook.in/GIBAPI/team_meeting_att.php?year=$year&user_id=$userId&member_type=$userType'));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        setState(() {
+          presentMeetings = data['presentMeetings'];
+          absentMeetings = data['absentMeetings'];
+          leaveMeetings = data['leaveMeetings'];
+        });
+      } else {
+        throw Exception('Failed to load meeting details');
+      }
+    } catch (e) {
+      print('Error fetching meeting details: $e');
+    }
+  }
   Future<void> fetchMeetCount(int year,String userType) async {
     try {
       final response = await http.get(Uri.parse('http://mybudgetbook.in/GIBAPI/team_meeting_fetch.php?year=$year&member_type=$userType'));
@@ -452,6 +557,9 @@ class _TeamMeetingPageState extends State<TeamMeetingPage> {
                       if (widget.userID != null) {
                         fetchPresentAndAbsentCount(newValue, widget.userID!, widget.userType);
                       }
+                      if (widget.userID != null) {
+                        fetchMeetingDetails(newValue, widget.userID!, widget.userType);
+                      }
                     }
                   },
                   items: List.generate(11, (index) {
@@ -475,31 +583,58 @@ class _TeamMeetingPageState extends State<TeamMeetingPage> {
                     height: 120,
                     child: Padding(
                       padding: EdgeInsets.only(left: 5,right: 5,top: 5,bottom: 10),
-                      child: Card(
-                        child: ListTile(
-                          title: Padding(
-                            padding: const EdgeInsets.fromLTRB(14, 15, 0, 0),
-                            child: Text('$presentCount/$totalMeetCount', style: const TextStyle(fontSize: 25)),
-                          ),
-                          subtitle: const Padding(
-                            padding: EdgeInsets.fromLTRB(13, 0, 0, 0),
-                            child: Text('Present'),
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+// Reset tap state of other cards
+                            isAbsentCardTapped = false;
+                            isLeaveCardTapped = false;
+                            // Toggle the tap state of this card
+                            isPresentCardTapped = !isPresentCardTapped;
+                          });
+                        },
+                        child: Card(
+                          // Change the color based on the state variable
+                          color: isPresentCardTapped ? Colors.green.shade100 : Colors.white,
+                          child: ListTile(
+                            title: Padding(
+                              padding: const EdgeInsets.fromLTRB(14, 15, 0, 0),
+                              child: Text('$presentCount/$totalMeetCount', style: const TextStyle(fontSize: 25)),
+                            ),
+                            subtitle: const Padding(
+                              padding: EdgeInsets.fromLTRB(13, 0, 0, 0),
+                              child: Text('Present'),
+                            ),
                           ),
                         ),
                       ),
                     ),
+
                   ),
                   SizedBox(width: 130,height: 120,
-                    child: Padding(
+                    child:Padding(
                       padding: EdgeInsets.only(left: 5,right: 5,top: 5,bottom: 10),
-                      child: Card(
-                        child:ListTile(
-                          title:Padding(
-                            padding: EdgeInsets.fromLTRB(14, 15,0,0),
-                            child: Text ('$absentCount/$totalMeetCount',style: TextStyle(fontSize: 25,),),),
-                          subtitle: const Padding(
-                            padding: EdgeInsets.fromLTRB(13,0,0,0),
-                            child: Text('Absent'),
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isPresentCardTapped = false;
+                            isLeaveCardTapped = false;
+                            // Toggle the tap state of this card
+                            isAbsentCardTapped = !isAbsentCardTapped;
+                          });
+                        },
+                        child: Card(
+                          // Change the color based on the state variable
+                          color: isAbsentCardTapped ? Colors.green.shade100 : Colors.white,
+                          child: ListTile(
+                            title: Padding(
+                              padding: const EdgeInsets.fromLTRB(14, 15, 0, 0),
+                              child: Text('$absentCount/$totalMeetCount', style: const TextStyle(fontSize: 25)),
+                            ),
+                            subtitle: const Padding(
+                              padding: EdgeInsets.fromLTRB(13, 0, 0, 0),
+                              child: Text('Absent'),
+                            ),
                           ),
                         ),
                       ),
@@ -509,16 +644,27 @@ class _TeamMeetingPageState extends State<TeamMeetingPage> {
                   //THIRD CARD STARTS
                   SizedBox(width: 130,height: 120,
                     child: Padding(
-
                       padding: EdgeInsets.only(left: 5,right: 5,top: 5,bottom: 10),
-                      child: Card(
-                        child:ListTile(
-                          title:Padding(
-                            padding: EdgeInsets.fromLTRB(14, 15,0,0),
-                            child: Text ('$leaveCount/4',style: TextStyle(fontSize: 25,),),),
-                          subtitle: const Padding(
-                            padding: EdgeInsets.fromLTRB(13,0,0,0),
-                            child: Text('Leave'),
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isPresentCardTapped = false;
+                            isAbsentCardTapped = false;
+                            isLeaveCardTapped = !isLeaveCardTapped;
+                          });
+                        },
+                        child: Card(
+                          // Change the color based on the state variable
+                          color: isLeaveCardTapped ? Colors.green.shade100 : Colors.white,
+                          child: ListTile(
+                            title: Padding(
+                              padding: const EdgeInsets.fromLTRB(14, 15, 0, 0),
+                              child: Text('$leaveCount/$totalMeetCount', style: const TextStyle(fontSize: 25)),
+                            ),
+                            subtitle: const Padding(
+                              padding: EdgeInsets.fromLTRB(13, 0, 0, 0),
+                              child: Text('Leave'),
+                            ),
                           ),
                         ),
                       ),
@@ -526,6 +672,62 @@ class _TeamMeetingPageState extends State<TeamMeetingPage> {
                   ),
                 ],
               ),
+              SingleChildScrollView(
+                child: Card(
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: isPresentCardTapped
+                        ? presentMeetings.length
+                        : isAbsentCardTapped
+                        ? absentMeetings.length
+                        : leaveMeetings.length,
+                    itemBuilder: (context, index) {
+                      final meeting = isPresentCardTapped
+                          ? presentMeetings[index]
+                          : isAbsentCardTapped
+                          ? absentMeetings[index]
+                          : leaveMeetings[index];
+                      return ListTile(
+                        title: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.meeting_room),
+                            Text('${meeting['meeting_type']}'),
+                          ],
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('${meeting['meeting_date']}'),
+                                Text('${meeting['meeting_name']} Meeting'),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('${meeting['district']}'),
+                                Text('${meeting['chapter']}'),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('${meeting['from_time']}'),
+                                const Text('-'),
+                                Text('${meeting['to_time']}'),
+                              ],
+                            ),
+
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              )
             ],
           ),
         ],
@@ -550,7 +752,12 @@ class _TrainingProgramState extends State<TrainingProgram> {
   int presentCount = 0;
   int absentCount = 0;
   int leaveCount = 0;
-
+  bool isPresentCardTapped = false;
+  bool isAbsentCardTapped = false;
+  bool isLeaveCardTapped = false;
+  List<dynamic> presentMeetings = [];
+  List<dynamic> absentMeetings = [];
+  List<dynamic> leaveMeetings = [];
 
   @override
   void initState() {
@@ -559,8 +766,27 @@ class _TrainingProgramState extends State<TrainingProgram> {
     if (widget.userID != null) {
       fetchPresentAndAbsentCount(selectedYear, widget.userID!,  widget.userType);
     }
+    if (widget.userID != null) {
+      fetchMeetingDetails(selectedYear, widget.userID!,  widget.userType);
+    }
   }
-
+  Future<void> fetchMeetingDetails(int year, String userId, String userType) async {
+    try {
+      final response = await http.get(Uri.parse('http://mybudgetbook.in/GIBAPI/training_meeting_att.php?year=$year&user_id=$userId&member_type=$userType'));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        setState(() {
+          presentMeetings = data['presentMeetings'];
+          absentMeetings = data['absentMeetings'];
+          leaveMeetings = data['leaveMeetings'];
+        });
+      } else {
+        throw Exception('Failed to load meeting details');
+      }
+    } catch (e) {
+      print('Error fetching meeting details: $e');
+    }
+  }
   Future<void> fetchMeetCount(int year,String userType) async {
     try {
       final response = await http.get(Uri.parse('http://mybudgetbook.in/GIBAPI/training_meeting_fetch.php?year=$year&member_type=$userType'));
@@ -633,6 +859,9 @@ class _TrainingProgramState extends State<TrainingProgram> {
                       if (widget.userID != null) {
                         fetchPresentAndAbsentCount(newValue, widget.userID!, widget.userType);
                       }
+                      if (widget.userID != null) {
+                        fetchMeetingDetails(newValue, widget.userID!, widget.userType);
+                      }
                     }
                   },
                   items: List.generate(11, (index) {
@@ -656,31 +885,58 @@ class _TrainingProgramState extends State<TrainingProgram> {
                     height: 120,
                     child: Padding(
                       padding: EdgeInsets.only(left: 5,right: 5,top: 5,bottom: 10),
-                      child: Card(
-                        child: ListTile(
-                          title: Padding(
-                            padding: const EdgeInsets.fromLTRB(14, 15, 0, 0),
-                            child: Text('$presentCount/$totalMeetCount', style: const TextStyle(fontSize: 25)),
-                          ),
-                          subtitle: const Padding(
-                            padding: EdgeInsets.fromLTRB(13, 0, 0, 0),
-                            child: Text('Present'),
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+// Reset tap state of other cards
+                            isAbsentCardTapped = false;
+                            isLeaveCardTapped = false;
+                            // Toggle the tap state of this card
+                            isPresentCardTapped = !isPresentCardTapped;
+                          });
+                        },
+                        child: Card(
+                          // Change the color based on the state variable
+                          color: isPresentCardTapped ? Colors.green.shade100 : Colors.white,
+                          child: ListTile(
+                            title: Padding(
+                              padding: const EdgeInsets.fromLTRB(14, 15, 0, 0),
+                              child: Text('$presentCount/$totalMeetCount', style: const TextStyle(fontSize: 25)),
+                            ),
+                            subtitle: const Padding(
+                              padding: EdgeInsets.fromLTRB(13, 0, 0, 0),
+                              child: Text('Present'),
+                            ),
                           ),
                         ),
                       ),
                     ),
+
                   ),
                   SizedBox(width: 130,height: 120,
-                    child: Padding(
+                    child:Padding(
                       padding: EdgeInsets.only(left: 5,right: 5,top: 5,bottom: 10),
-                      child: Card(
-                        child:ListTile(
-                          title:Padding(
-                            padding: EdgeInsets.fromLTRB(14, 15,0,0),
-                            child: Text ('$absentCount/$totalMeetCount',style: TextStyle(fontSize: 25,),),),
-                          subtitle: const Padding(
-                            padding: EdgeInsets.fromLTRB(13,0,0,0),
-                            child: Text('Absent'),
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isPresentCardTapped = false;
+                            isLeaveCardTapped = false;
+                            // Toggle the tap state of this card
+                            isAbsentCardTapped = !isAbsentCardTapped;
+                          });
+                        },
+                        child: Card(
+                          // Change the color based on the state variable
+                          color: isAbsentCardTapped ? Colors.green.shade100 : Colors.white,
+                          child: ListTile(
+                            title: Padding(
+                              padding: const EdgeInsets.fromLTRB(14, 15, 0, 0),
+                              child: Text('$absentCount/$totalMeetCount', style: const TextStyle(fontSize: 25)),
+                            ),
+                            subtitle: const Padding(
+                              padding: EdgeInsets.fromLTRB(13, 0, 0, 0),
+                              child: Text('Absent'),
+                            ),
                           ),
                         ),
                       ),
@@ -690,16 +946,27 @@ class _TrainingProgramState extends State<TrainingProgram> {
                   //THIRD CARD STARTS
                   SizedBox(width: 130,height: 120,
                     child: Padding(
-
                       padding: EdgeInsets.only(left: 5,right: 5,top: 5,bottom: 10),
-                      child: Card(
-                        child:ListTile(
-                          title:Padding(
-                            padding: EdgeInsets.fromLTRB(14, 15,0,0),
-                            child: Text ('$leaveCount/4',style: TextStyle(fontSize: 25,),),),
-                          subtitle: const Padding(
-                            padding: EdgeInsets.fromLTRB(13,0,0,0),
-                            child: Text('Leave'),
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isPresentCardTapped = false;
+                            isAbsentCardTapped = false;
+                            isLeaveCardTapped = !isLeaveCardTapped;
+                          });
+                        },
+                        child: Card(
+                          // Change the color based on the state variable
+                          color: isLeaveCardTapped ? Colors.green.shade100 : Colors.white,
+                          child: ListTile(
+                            title: Padding(
+                              padding: const EdgeInsets.fromLTRB(14, 15, 0, 0),
+                              child: Text('$leaveCount/$totalMeetCount', style: const TextStyle(fontSize: 25)),
+                            ),
+                            subtitle: const Padding(
+                              padding: EdgeInsets.fromLTRB(13, 0, 0, 0),
+                              child: Text('Leave'),
+                            ),
                           ),
                         ),
                       ),
@@ -707,6 +974,62 @@ class _TrainingProgramState extends State<TrainingProgram> {
                   ),
                 ],
               ),
+              SingleChildScrollView(
+                child: Card(
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: isPresentCardTapped
+                        ? presentMeetings.length
+                        : isAbsentCardTapped
+                        ? absentMeetings.length
+                        : leaveMeetings.length,
+                    itemBuilder: (context, index) {
+                      final meeting = isPresentCardTapped
+                          ? presentMeetings[index]
+                          : isAbsentCardTapped
+                          ? absentMeetings[index]
+                          : leaveMeetings[index];
+                      return ListTile(
+                        title: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.meeting_room),
+                            Text('${meeting['meeting_type']}'),
+                          ],
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('${meeting['meeting_date']}'),
+                                Text('${meeting['meeting_name']} Meeting'),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('${meeting['district']}'),
+                                Text('${meeting['chapter']}'),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('${meeting['from_time']}'),
+                                const Text('-'),
+                                Text('${meeting['to_time']}'),
+                              ],
+                            ),
+
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              )
             ],
           ),
         ],
