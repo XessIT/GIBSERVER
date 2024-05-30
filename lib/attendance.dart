@@ -387,11 +387,16 @@ class _NetworkAttendanceState extends State<NetworkAttendance> {
                           ? absentMeetings[index]
                           : leaveMeetings[index];
                       return ListTile(
-                        title: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                        title: Column(
                           children: [
-                            const Icon(Icons.meeting_room),
-                            Text('${meeting['meeting_type']}'),
+                            Row(
+                             mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text('${index + 1}'),
+                                const Icon(Icons.meeting_room),
+                                Text('${meeting['meeting_type']}'),
+                              ],
+                            ),
                           ],
                         ),
                         subtitle: Column(
@@ -691,6 +696,7 @@ class _TeamMeetingPageState extends State<TeamMeetingPage> {
                         title: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
+                            Text('${index + 1}'),
                             const Icon(Icons.meeting_room),
                             Text('${meeting['meeting_type']}'),
                           ],
@@ -991,8 +997,9 @@ class _TrainingProgramState extends State<TrainingProgram> {
                           : leaveMeetings[index];
                       return ListTile(
                         title: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            Text('${index + 1}.'),
                             const Icon(Icons.meeting_room),
                             Text('${meeting['meeting_type']}'),
                           ],
