@@ -390,11 +390,15 @@ class _NetworkAttendanceState extends State<NetworkAttendance> {
                         title: Column(
                           children: [
                             Row(
-                             mainAxisAlignment: MainAxisAlignment.center,
+                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text('${index + 1}'),
-                                const Icon(Icons.meeting_room),
-                                Text('${meeting['meeting_type']}'),
+                                Row(
+                                  children: [
+                                    const Icon(Icons.calendar_month_rounded),
+                                    Text('${meeting['meeting_type']}'),
+                                  ],
+                                ),
                               ],
                             ),
                           ],
@@ -693,12 +697,16 @@ class _TeamMeetingPageState extends State<TeamMeetingPage> {
                           ? absentMeetings[index]
                           : leaveMeetings[index];
                       return ListTile(
-                        title: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                        title:  Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text('${index + 1}'),
-                            const Icon(Icons.meeting_room),
-                            Text('${meeting['meeting_type']}'),
+                            Row(
+                              children: [
+                                const Icon(Icons.calendar_month_rounded),
+                                Text('${meeting['meeting_type']}'),
+                              ],
+                            ),
                           ],
                         ),
                         subtitle: Column(
@@ -996,12 +1004,16 @@ class _TrainingProgramState extends State<TrainingProgram> {
                           ? absentMeetings[index]
                           : leaveMeetings[index];
                       return ListTile(
-                        title: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                        title:  Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('${index + 1}.'),
-                            const Icon(Icons.meeting_room),
-                            Text('${meeting['meeting_type']}'),
+                            Text('${index + 1}'),
+                            Row(
+                              children: [
+                                const Icon(Icons.calendar_month_rounded),
+                                Text('${meeting['meeting_type']}'),
+                              ],
+                            ),
                           ],
                         ),
                         subtitle: Column(
