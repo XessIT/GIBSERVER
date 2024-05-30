@@ -252,8 +252,6 @@ class _MeetingUpdateDatePageState extends State<MeetingUpdateDatePage> {
 }
 */
 
-
-
 /// its showed a current year details order wise. not a date complete  starte here ...
 /*
 import 'dart:convert';
@@ -445,25 +443,17 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class MeetingUpdateDate extends StatelessWidget {
-  const MeetingUpdateDate({Key? key}) : super(key: key);
+class MeetingUpdateDate extends StatefulWidget {
+  final String? userId;
+  final String? userType;
+  const MeetingUpdateDate(
+      {super.key, required this.userId, required this.userType});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: MeetingUpdateDatePage(),
-    );
-  }
+  State<MeetingUpdateDate> createState() => _MeetingUpdateDateState();
 }
 
-class MeetingUpdateDatePage extends StatefulWidget {
-  MeetingUpdateDatePage({Key? key}) : super(key: key);
-
-  @override
-  State<MeetingUpdateDatePage> createState() => _MeetingUpdateDatePageState();
-}
-
-class _MeetingUpdateDatePageState extends State<MeetingUpdateDatePage> {
+class _MeetingUpdateDateState extends State<MeetingUpdateDate> {
   List<Map<String, dynamic>> data = [];
 
   Future<void> getData() async {
@@ -568,7 +558,9 @@ class _MeetingUpdateDatePageState extends State<MeetingUpdateDatePage> {
                               Text(meeting["from_time"]),
                             ],
                           ),
-                          SizedBox(height: 10,),
+                          SizedBox(
+                            height: 10,
+                          ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
