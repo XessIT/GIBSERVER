@@ -98,7 +98,7 @@ class _GuestProfileState extends State<GuestProfile> {
               color: Colors.white, // Set the color for the drawer icon
             ),
             leading: IconButton(
-              icon: Icon(Icons.arrow_back),
+              icon: const Icon(Icons.navigate_before),
               onPressed: () {
                 Navigator.push(
                   context,

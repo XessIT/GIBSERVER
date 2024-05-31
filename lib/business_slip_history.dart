@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 
+import 'business_slip.dart';
 import 'duplicate.dart';
 
 
@@ -29,39 +30,44 @@ class _BusinessHistoryState extends State<BusinessHistory> {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Business History", style: Theme.of(context).textTheme.bodySmall,),
+          title: Text("Business History", style: Theme.of(context).textTheme.displayLarge,),
           centerTitle: true,
           iconTheme: const IconThemeData(color: Colors.white),
-          /*actions: [
-            IconButton(onPressed:(){
-              Navigator.push(context, MaterialPageRoute(
-                  builder: (context) => RadioListTileExample()));
-                  },
-                icon: const Icon(Icons.more_vert)),
-          ],*/
+          leading: IconButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) =>  ReferralPage(userType: widget.userType, userId: widget.userId,)));
+            },
+            icon: const Icon(Icons.navigate_before),
+          ),
         ),
 
-        body: Column(
-          children: [
-            const TabBar(
-                isScrollable: true,
-                labelColor: Colors.green,
-                unselectedLabelColor: Colors.black,
-                tabs: [
-                  Tab(text: 'Pending',),
-                  Tab(text: 'Successful',),
-                  Tab(text: 'UnSuccessful',)
-                ]),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  Pending(userType: widget.userType, userId: widget.userId),
-                  Completed(userType: widget.userType, userId: widget.userId),
-                  Unsuccessful(userType: widget.userType, userId: widget.userId),
-                ],
+        body: PopScope(
+          canPop: false,
+          onPopInvoked: (didPop)  {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ReferralPage(userType:widget.userType, userId:widget.userId,)));
+          },
+          child: Column(
+            children: [
+              const TabBar(
+                  isScrollable: true,
+                  labelColor: Colors.green,
+                  unselectedLabelColor: Colors.black,
+                  tabs: [
+                    Tab(text: 'Pending',),
+                    Tab(text: 'Successful',),
+                    Tab(text: 'UnSuccessful',)
+                  ]),
+              Expanded(
+                child: TabBarView(
+                  children: [
+                    Pending(userType: widget.userType, userId: widget.userId),
+                    Completed(userType: widget.userType, userId: widget.userId),
+                    Unsuccessful(userType: widget.userType, userId: widget.userId),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -174,10 +180,16 @@ class _CompletedState extends State<Completed> {
     }
   }
 
+  bool isLoading = true;
   @override
   void initState() {
     fetchData();
     super.initState();
+    Future.delayed(const Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
   }
 
   @override
@@ -185,102 +197,8 @@ class _CompletedState extends State<Completed> {
 
 
     return Scaffold(
-        body:
-
-        /*Center(
-          child: Column(
-            children: [
-              ExpansionTile(
-                leading:
-                    const Icon(Icons.call_made, color: Colors.red,),
-                title:
-                     Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                      child: Column(
-                        children: [
-                          SizedBox(height: 20,),
-                          Text('Nasreen'),
-                        ],
-                      ),
-                    ),
-
-                    IconButton(
-                        onPressed: () async {
-                          final call = Uri.parse("tel://""1234567890");
-                          if (await canLaunchUrl(call)) {
-                            launchUrl(call);
-                          } else {
-                            throw 'Could not launch $call';
-                          }
-                        },
-                        icon: const Icon(Icons.call,color: Colors.green,)),
-                  ],
-                ),
-
-                children: [
-
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
-                        child: Text("Referrer Name :"'"Baby"'),
-                      ),
-                      IconButton(
-                          onPressed: () async {
-                            final call = Uri.parse("tel://""1234567876543");
-                            if (await canLaunchUrl(call)) {
-                              launchUrl(call);
-                            } else {
-                              throw 'Could not launch $call';
-                            }
-                          },
-                          icon: const Icon(Icons.call,color: Colors.green,)),
-                    ],
-                  ),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
-                        child: Text("Purpose : " 'Purpose'),
-                      ),
-                    ],
-                  ),
-
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                        child:  Text('Date   :'"Date"),
-
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                        child: Text('Reason  : '"Hold Reason"),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
-        )*/
-        ListView.builder(
+        body: isLoading ? const Center(child: CircularProgressIndicator(),)
+            :  data.isNotEmpty ? ListView.builder(
             itemCount: data.length,
             itemBuilder: (context, i) {
               return Center(
@@ -450,7 +368,8 @@ class _CompletedState extends State<Completed> {
               );
               return Container();
             }
-        )    );
+        )
+    : Center(child: Text("No data found", style: Theme.of(context).textTheme.bodyLarge,)));
 
   }
 }
@@ -567,11 +486,16 @@ class _PendingState extends State<Pending> {
   }
 
 
-
+  bool isLoading = true;
   @override
   void initState() {
     fetchData();
     super.initState();
+    Future.delayed(const Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
   }
 
   @override
@@ -579,7 +503,8 @@ class _PendingState extends State<Pending> {
 
 
     return Scaffold(
-        body:ListView.builder(
+        body: isLoading ? const Center(child: CircularProgressIndicator(),)
+            : data.isNotEmpty ? ListView.builder(
             itemCount: data.length,
             itemBuilder: (context, i) {
               DateTime createdOn = DateTime.parse(data[i]["createdOn"]);
@@ -844,6 +769,7 @@ class _PendingState extends State<Pending> {
               return Container();
             }
         )
+            : Center(child: Text("No data found", style: Theme.of(context).textTheme.bodyLarge,),)
     );
 
   }
@@ -957,11 +883,16 @@ class _UnsuccessfulState extends State<Unsuccessful> {
       throw Exception('Failed to update business slip');
     }
   }
-
+  bool isLoading = true;
   @override
   void initState() {
     fetchData();
     super.initState();
+    Future.delayed(const Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
   }
 
   @override
@@ -969,102 +900,8 @@ class _UnsuccessfulState extends State<Unsuccessful> {
 
 
     return Scaffold(
-        body:
-
-        /*Center(
-          child: Column(
-            children: [
-              ExpansionTile(
-                leading:
-                    const Icon(Icons.call_made, color: Colors.red,),
-                title:
-                     Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                      child: Column(
-                        children: [
-                          SizedBox(height: 20,),
-                          Text('Nasreen'),
-                        ],
-                      ),
-                    ),
-
-                    IconButton(
-                        onPressed: () async {
-                          final call = Uri.parse("tel://""1234567890");
-                          if (await canLaunchUrl(call)) {
-                            launchUrl(call);
-                          } else {
-                            throw 'Could not launch $call';
-                          }
-                        },
-                        icon: const Icon(Icons.call,color: Colors.green,)),
-                  ],
-                ),
-
-                children: [
-
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
-                        child: Text("Referrer Name :"'"Baby"'),
-                      ),
-                      IconButton(
-                          onPressed: () async {
-                            final call = Uri.parse("tel://""1234567876543");
-                            if (await canLaunchUrl(call)) {
-                              launchUrl(call);
-                            } else {
-                              throw 'Could not launch $call';
-                            }
-                          },
-                          icon: const Icon(Icons.call,color: Colors.green,)),
-                    ],
-                  ),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
-                        child: Text("Purpose : " 'Purpose'),
-                      ),
-                    ],
-                  ),
-
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                        child:  Text('Date   :'"Date"),
-
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                        child: Text('Reason  : '"Hold Reason"),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
-        )*/
-        ListView.builder(
+        body: isLoading ? const Center(child: CircularProgressIndicator(),)
+            : data.isNotEmpty ? ListView.builder(
             itemCount: data.length,
             itemBuilder: (context, i) {
               return Center(
@@ -1234,7 +1071,8 @@ class _UnsuccessfulState extends State<Unsuccessful> {
               );
               return Container();
             }
-        )    );
+        )
+    : Center(child: Text("No data found", style: Theme.of(context).textTheme.bodyLarge,),));
 
   }
 }

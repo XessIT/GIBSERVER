@@ -827,7 +827,7 @@ class _RunningPageState extends State<RunningPage> {
 }
 class CompletedPage extends StatefulWidget {
   final String? userId;
-  const CompletedPage({Key? key, required this.userId}) : super(key: key);
+  const CompletedPage({super.key, required this.userId});
 
   @override
   State<CompletedPage> createState() => _CompletedPageState();

@@ -2087,7 +2087,7 @@ class _GuestState extends State<Guest> {
                             height: 50,
                             color: Colors.orangeAccent,
                             onPressed: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => Homepage(userType: widget.userType, userID: widget.userId,)));
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => Homepage(userType: widget.userType, userId: widget.userId,)));
                             },
                             child: const Text("Cancel", style: TextStyle(color: Colors.white),)),
                         // Login button ends
@@ -2102,7 +2102,7 @@ class _GuestState extends State<Guest> {
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
                                 uploadImage();
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=> Homepage(userType: widget.userType, userID: widget.userId)));
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=> Homepage(userType: widget.userType, userId: widget.userId)));
                               }
                               //signUp();
                             },

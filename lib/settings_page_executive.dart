@@ -140,7 +140,7 @@ class SettingsPageExecutive extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => MyGallery(userId: userId.toString(),)),
+                        MaterialPageRoute(builder: (context) => MyGallery(userId: userId.toString(), userType: userType.toString(),)),
                       );
                     },
                     icons: CupertinoIcons.calendar,

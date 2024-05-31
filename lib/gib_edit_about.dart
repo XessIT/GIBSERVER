@@ -88,7 +88,7 @@ class _AboutGibViewtabState extends State<AboutGibViewtab> {
                 context,
                 MaterialPageRoute(
                   builder: (context) =>
-                      Home(userType: widget.userType, userId: widget.userId),
+                      Homepage(userType: widget.userType, userId: widget.userId),
                 ),
               );
             },

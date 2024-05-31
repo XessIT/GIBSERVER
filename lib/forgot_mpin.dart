@@ -69,7 +69,7 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
     return Scaffold(
       appBar: AppBar(centerTitle: true,
         leading: IconButton(icon:Icon( Icons.arrow_back),onPressed: (){
-         Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginSubClass()));
+         Navigator.push(context, MaterialPageRoute(builder: (context)=>Login()));
 
         },),
         title: Text("Reset M-Pin",style: Theme.of(context).textTheme.bodySmall,),
@@ -77,7 +77,7 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
       ),
       body: WillPopScope(
         onWillPop: ()async{
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginSubClass()));
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>Login()));
           SystemNavigator.pop();
           return true;
         },

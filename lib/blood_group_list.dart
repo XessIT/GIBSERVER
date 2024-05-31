@@ -6,21 +6,12 @@ import 'package:url_launcher/url_launcher.dart';
 import 'blood_group.dart';
 import 'member_details.dart';
 
-class BloodGroupList extends StatelessWidget {
-  const BloodGroupList({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      // body: BloodList(),
-    );
-  }
-}
-
 class BloodList extends StatefulWidget {
+  final String? userId;
+  final String? userType;
   final String? bloods;
-  const BloodList({Key? key,
-    required this.bloods}) : super(key: key);
+  const BloodList({super.key,
+    required this.bloods, required this.userId, required this.userType});
 
   @override
   State<BloodList> createState() => _BloodListState();
@@ -35,35 +26,6 @@ class _BloodListState extends State<BloodList> {
     super.initState();
   }
   String blood ="";
-
-/*String? notneed;
-  ownblood(User CurrentUser)async {
-   notneed = (await FirebaseFirestore.instance.collection("Register").doc(CurrentUser.uid).get()) as String?;
-  }
-
- bool visible= true;
-
-  nvisible()async {
-    visible =  FirebaseFirestore.instance.collection("Register")
-        .doc(FirebaseAuth.instance.currentUser!.uid).snapshots()
-    as bool;
-
-  }
-  String iscurrentuser=" ";
-  Future<void> getRole() {
-    return FirebaseFirestore.instance
-        .collection('Register')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get()
-        .then((snapshot) {
-      if (snapshot.exists) {
-        iscurrentuser= snapshot.data()!['Uid'];
-      } else {
-        print('Document does not exist on the database');
-      }
-    });
-  }*/
-
   String? mobile = "";
   String documentid = "";
 
@@ -110,7 +72,7 @@ class _BloodListState extends State<BloodList> {
           leading: IconButton(
             icon: const Icon(Icons.navigate_before),
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context) => BloodGroup(userType: widget.userType, userId: widget.userId,)));
             },
           ),
           iconTheme:  const IconThemeData(
@@ -120,7 +82,7 @@ class _BloodListState extends State<BloodList> {
         body: PopScope(
             canPop: false,
             onPopInvoked: (didPop) {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => BloodGroup(userType: '', userId: '',)));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => BloodGroup(userType: widget.userType, userId: widget.userId,)));
             },
         child: data.isEmpty
             ? Center(child: Text("Data not found", style: TextStyle(color: Colors.black)))

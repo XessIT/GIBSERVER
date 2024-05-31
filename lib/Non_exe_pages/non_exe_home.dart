@@ -126,7 +126,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
         // print("Register Response Status: ${res.statusCode}");
         //print("Register Response Body: ${res.body}");
         var response = jsonDecode(res.body);
-        Navigator.push(context, MaterialPageRoute(builder: (context)=> Home(userType: widget.userID, userId: widget.userType)));
+        Navigator.push(context, MaterialPageRoute(builder: (context)=> Homepage(userType: widget.userID, userId: widget.userType)));
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Registration Successfully")));
       } else {
         print("Failed to upload image. Server returned status code: ${res.statusCode}");

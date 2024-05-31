@@ -144,7 +144,7 @@ class _ActivityState extends State<Activity> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Home(userType: widget.userType, userId: widget.userId,)));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => Homepage(userType: widget.userType, userId: widget.userId,)));
           },
         )
       ),

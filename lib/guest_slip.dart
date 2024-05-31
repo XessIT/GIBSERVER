@@ -151,7 +151,7 @@ class _VisitorsSlipPageState extends State<VisitorsSlipPage> {
       appBar: AppBar(
 
         centerTitle:true,
-        title: Text("Guest Slip",style: Theme.of(context).textTheme.bodySmall),
+        title: Text("Guest Slip",style: Theme.of(context).textTheme.displayLarge),
         iconTheme:  const IconThemeData(
           color: Colors.white, // Set the color for the drawer icon
         ),
@@ -570,7 +570,7 @@ class _VisitorsSlipPageState extends State<VisitorsSlipPage> {
                                             }
 
                                               if(int.parse(widget.guestCount.toString()) ==count)
-                                                Navigator.push(context, MaterialPageRoute(builder: (context)=>Home(userType: widget.userType, userId: widget.userId)));
+                                                Navigator.push(context, MaterialPageRoute(builder: (context)=>Homepage(userType: widget.userType, userId: widget.userId)));
 
 
                                             }

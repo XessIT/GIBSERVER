@@ -6,31 +6,17 @@ import 'package:gipapp/home.dart';
 import 'Non_exe_pages/non_exe_home.dart';
 import 'guest_home.dart';
 
-class AboutTab extends StatelessWidget {
+class AboutTab extends StatefulWidget {
   final String? userId;
   final String? userType;
 
   const AboutTab({super.key, required this.userId, required this.userType});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: AboutGibView(userId: userId.toString(), userType: userType.toString()),
-    );
-  }
+  State<AboutTab> createState() => _AboutTabState();
 }
 
-class AboutGibView extends StatefulWidget {
-  final String? userId;
-  final String? userType;
-
-  const AboutGibView({super.key, required this.userId, required this.userType});
-
-  @override
-  State<AboutGibView> createState() => _AboutGibViewState();
-}
-
-class _AboutGibViewState extends State<AboutGibView> {
+class _AboutTabState extends State<AboutTab> {
   List<Map<String, dynamic>> aboutVisiondata = [];
   List<Map<String, dynamic>> aboutGIBdata = [];
   List<Map<String, dynamic>> aboutMissiondata = [];
@@ -196,7 +182,7 @@ class _AboutGibViewState extends State<AboutGibView> {
                 );
               }
             },
-            icon: const Icon(Icons.arrow_back),
+            icon: const Icon(Icons.navigate_before),
           ),
         ),
         body: PopScope(

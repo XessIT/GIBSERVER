@@ -185,9 +185,17 @@ class _ReferralPageState extends State<ReferralPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('BUSINESS SLIP', style: Theme.of(context).textTheme.bodySmall),
+        title: Text('BUSINESS SLIP', style: Theme.of(context).textTheme.displayLarge),
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
+        leading: IconButton(
+          icon: const Icon(Icons.navigate_before),
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(
+                builder: (context) => BusinessPage(userType: widget.userType, userId: widget.userId)
+            ));
+          },
+        ),
         actions: [
           IconButton(onPressed:(){
             Navigator.push(context, MaterialPageRoute(
@@ -196,251 +204,134 @@ class _ReferralPageState extends State<ReferralPage> {
               icon: const Icon(Icons.history)),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                const SizedBox(height: 10,),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TypeAheadFormField(
-                    textFieldConfiguration: TextFieldConfiguration(
-                      controller: searchController,
-                      onChanged: (value) {
-                        filterSearchResults(value);
+      body: PopScope(
+        canPop: false,
+        onPopInvoked: (didPop)  {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => BusinessPage(userType:widget.userType, userId:widget.userId,)));
+        },
+        child: SingleChildScrollView(
+          child: Center(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  const SizedBox(height: 10,),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TypeAheadFormField(
+                      textFieldConfiguration: TextFieldConfiguration(
+                        controller: searchController,
+                        onChanged: (value) {
+                          filterSearchResults(value);
+                        },
+                        decoration: InputDecoration(
+                          hintText: 'Search...',
+                          prefixIcon: Icon(Icons.search),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
+                      ),
+                      suggestionsCallback: (pattern) {
+                        return Future.value(searchResults);
                       },
-                      decoration: InputDecoration(
-                        hintText: 'Search...',
-                        prefixIcon: Icon(Icons.search),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                      ),
+                      itemBuilder: (context, dynamic suggestion) {
+                        return ListTile(
+                          title: Text('${suggestion['first_name']} (${suggestion['member_id']})'),
+                          subtitle: Text(suggestion['last_name']),
+                          // You can add other fields as needed
+                        );
+                      },
+                      onSuggestionSelected: (dynamic suggestion) {
+                        // Handle when a suggestion is selected
+                        // Update text fields with suggestion data
+                        setState(() {
+                          to.text = suggestion['first_name'];
+                          tomobile.text = suggestion['mobile'];
+                          cname.text = suggestion['company_name'];
+                          // Update other text fields as needed
+                        });
+                      },
                     ),
-                    suggestionsCallback: (pattern) {
-                      return Future.value(searchResults);
-                    },
-                    itemBuilder: (context, dynamic suggestion) {
-                      return ListTile(
-                        title: Text('${suggestion['first_name']} (${suggestion['member_id']})'),
-                        subtitle: Text(suggestion['last_name']),
-                        // You can add other fields as needed
-                      );
-                    },
-                    onSuggestionSelected: (dynamic suggestion) {
-                      // Handle when a suggestion is selected
-                      // Update text fields with suggestion data
-                      setState(() {
-                        to.text = suggestion['first_name'];
-                        tomobile.text = suggestion['mobile'];
-                        cname.text = suggestion['company_name'];
-                        // Update other text fields as needed
-                      });
-                    },
-                  ),
-                ),/// search controller
-        
-                const SizedBox(height: 10,),
-        
-               Container(
-                  //elevation: 5,
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 20,),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Radio(
-                              // title: const Text("Male"),
-                              value: "Self",
-                              groupValue: typeofvisitor,
-                              onChanged: (value) {
-                                setState(() {
-                                  isVisible = false;
-                                  typeofvisitor = value.toString();
-                                });
-                              },
-                            ),
-                            const Text("Self"),
-                            const SizedBox(width: 30,),
-                            Radio(
-                              // title: const Text("Female"),
-                              value: "Referrer",
-                              groupValue: typeofvisitor,
-                              onChanged: (value) {
-                                setState(() {
-                                  isVisible = true;
-                                  typeofvisitor = value.toString();
-                                });
-                              },
-                            ),
-                            const Text("Referer"),
-                          ]
-                      ),  /// radio tile
-                      const SizedBox(height: 10,),
+                  ),/// search controller
+
+                  const SizedBox(height: 10,),
+
+                 Container(
+                    //elevation: 5,
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 20,),
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Radio(
+                                // title: const Text("Male"),
+                                value: "Self",
+                                groupValue: typeofvisitor,
+                                onChanged: (value) {
+                                  setState(() {
+                                    isVisible = false;
+                                    typeofvisitor = value.toString();
+                                  });
+                                },
+                              ),
+                              const Text("Self"),
+                              const SizedBox(width: 30,),
+                              Radio(
+                                // title: const Text("Female"),
+                                value: "Referrer",
+                                groupValue: typeofvisitor,
+                                onChanged: (value) {
+                                  setState(() {
+                                    isVisible = true;
+                                    typeofvisitor = value.toString();
+                                  });
+                                },
+                              ),
+                              const Text("Referer"),
+                            ]
+                        ),  /// radio tile
+                        const SizedBox(height: 10,),
 
 
-                      //To TextFormField starts
-                      SizedBox(
-                       width: 320,
-                        height: 50,
-                        child: TextFormField(
-                          controller: to,
-                          validator: (value) {
-                            if(value!.isEmpty){
-                              return "* Enter the Name";
-                            }else{
-                              return null;
-                            }
-                          },
-                          onChanged: (value) {
-                            String capitalizedValue = capitalizeFirstLetter(value);
-                            to.value = to.value.copyWith(
-                              text: capitalizedValue,
-                              selection: TextSelection.collapsed(offset: capitalizedValue.length),
-                            );
-                          },
-                          decoration:  InputDecoration(
-
-                              labelText: 'To',
-                              suffixIcon: Icon(Icons.account_circle,color: Colors.green,),
-                            // filled: true,
-                            // fillColor: Colors.white,
-                            contentPadding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 3.0),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20,),
-
-                      SizedBox(
-                        width: 320,
-                        height: 50,
-                        child: TextFormField(
-                          controller: tomobile,
-                          validator: (value){
-                            if(value!.isEmpty){
-                              return '* Enter the mobile Number';
-                            }else if(value.length<10){
-                              return'* Mobile number should be 10 digits';
-                            }
-                            else{
-                              return null;
-                            }
-                          },
-                          decoration: const InputDecoration(
-                            labelText: 'To Mobile number',
-
-                            suffixIcon: Icon(Icons.phone_android,color: Colors.green,),
-                            // filled: true,
-                            // fillColor: Colors.white,
-                            contentPadding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 3.0),
-                          ),keyboardType: TextInputType.number,
-                          inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter.digitsOnly,
-                            LengthLimitingTextInputFormatter(10)
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 20,),
-
-                      //Company name TextFormField starts
-                      SizedBox(
-                        width: 320,
-                        height: 50,
-                        child: TextFormField(
-                          controller: cname,
-                          validator: (value) {
-                            if(value!.isEmpty){
-                              return "* Enter the Company name";
-                            }else{
-                              return null;
-                            }
-                          },
-                          onChanged: (value) {
-                            String capitalizedValue = capitalizeFirstLetter(value);
-                            cname.value = cname.value.copyWith(
-                              text: capitalizedValue,
-                              selection: TextSelection.collapsed(offset: capitalizedValue.length),
-                            );
-                          },
-                          decoration: const InputDecoration(
-                            labelText: 'Company name',
-
-                              suffixIcon: Icon(Icons.business,color: Colors.green,),
-                            // filled: true,
-                            // fillColor: Colors.white,
-                            contentPadding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 3.0),
-                          ),
-                          inputFormatters: [
-                            LengthLimitingTextInputFormatter(30)
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 20,),
-                      //Referral Details Text Starts
-                      const Padding(
-                        padding: EdgeInsets.only(right: 180),
-                        child: Text('Business Details',
-                          style: TextStyle(
-                            fontSize: 18,),),
-                      ),
-                      Visibility(
-                          visible: isVisible,
-
-                          child: SizedBox(height: 20,)),
-                      //TextFormField Name starts
-                      Visibility(
-                        visible: isVisible,
-                        child: SizedBox(
-                          width: 320,
+                        //To TextFormField starts
+                        SizedBox(
+                         width: 320,
                           height: 50,
                           child: TextFormField(
-
-                            controller: referreename,
-                            validator: (value){
+                            controller: to,
+                            validator: (value) {
                               if(value!.isEmpty){
-                                return '* Enter the name';
-                              }
-                              else{
+                                return "* Enter the Name";
+                              }else{
                                 return null;
                               }
                             },
                             onChanged: (value) {
                               String capitalizedValue = capitalizeFirstLetter(value);
-                              referreename.value = referreename.value.copyWith(
+                              to.value = to.value.copyWith(
                                 text: capitalizedValue,
                                 selection: TextSelection.collapsed(offset: capitalizedValue.length),
                               );
                             },
-                            decoration: const InputDecoration(
-                              labelText: 'Referree Name',
-                                suffixIcon: Icon(Icons.account_circle_outlined,color: Colors.green,),
+                            decoration:  const InputDecoration(
+
+                                hintText: 'To',
+                                suffixIcon: Icon(Icons.account_circle,color: Colors.green,),
                               // filled: true,
                               // fillColor: Colors.white,
-                              contentPadding: EdgeInsets.symmetric(vertical: 25.0, horizontal: 3.0),
+                              contentPadding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 3.0),
                             ),
-                            inputFormatters: [
-                              AlphabetInputFormatter(),
-                              LengthLimitingTextInputFormatter(25)
-                            ],
                           ),
                         ),
-                      ),
-                       Visibility(
-                           visible: isVisible,
+                        const SizedBox(height: 20,),
 
-                           child: SizedBox(height: 20,)),
-
-                      //TextFormField MobileNo starts
-                      Visibility(
-                        visible: isVisible,
-                        child: SizedBox(
+                        SizedBox(
                           width: 320,
                           height: 50,
                           child: TextFormField(
-                            controller: referreemobile,
+                            controller: tomobile,
                             validator: (value){
                               if(value!.isEmpty){
                                 return '* Enter the mobile Number';
@@ -452,101 +343,225 @@ class _ReferralPageState extends State<ReferralPage> {
                               }
                             },
                             decoration: const InputDecoration(
-                              labelText: 'Mobile number',
-                                // filled: true,
-                                // fillColor: Colors.white,
-                                contentPadding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 3.0),
+                              hintText: 'To Mobile number',
 
-                                suffixIcon: Icon(Icons.phone_android,color: Colors.green,)                            ),keyboardType: TextInputType.number,
+                              suffixIcon: Icon(Icons.phone_android,color: Colors.green,),
+                              // filled: true,
+                              // fillColor: Colors.white,
+                              contentPadding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 3.0),
+                            ),keyboardType: TextInputType.number,
                             inputFormatters: <TextInputFormatter>[
                               FilteringTextInputFormatter.digitsOnly,
                               LengthLimitingTextInputFormatter(10)
                             ],
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 20,),
+                        const SizedBox(height: 20,),
 
-                      //TextFormField Location starts
-        
-                      SizedBox(
-                        width: 320,
-                        height: 50,
-                        child: TextFormField(
-                          controller: purpose,
-                          validator: (value){
-                            if(value!.isEmpty){
-                              return "* Enter the Purpose";
-                            }else{
-                              return null;
-                            }
-                          },
-                          decoration: const InputDecoration(
-                            labelText: "Purpose",
-                            suffixIcon: Icon(
-                              Icons.note,
-                              color: Colors.green,),
-                            // filled: true,
-                            // fillColor: Colors.white,
-                            contentPadding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 3.0),
+                        //Company name TextFormField starts
+                        SizedBox(
+                          width: 320,
+                          height: 50,
+                          child: TextFormField(
+                            controller: cname,
+                            validator: (value) {
+                              if(value!.isEmpty){
+                                return "* Enter the Company name";
+                              }else{
+                                return null;
+                              }
+                            },
+                            onChanged: (value) {
+                              String capitalizedValue = capitalizeFirstLetter(value);
+                              cname.value = cname.value.copyWith(
+                                text: capitalizedValue,
+                                selection: TextSelection.collapsed(offset: capitalizedValue.length),
+                              );
+                            },
+                            decoration: const InputDecoration(
+                              hintText: 'Company name',
+
+                                suffixIcon: Icon(Icons.business,color: Colors.green,),
+                              // filled: true,
+                              // fillColor: Colors.white,
+                              contentPadding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 3.0),
+                            ),
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(30)
+                            ],
                           ),
-                          inputFormatters: [
-                            AlphabetInputFormatter(),
-                            LengthLimitingTextInputFormatter(25)
-                          ],
                         ),
-                      ),
-        
-                      const SizedBox(height: 20,),
-               /*       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
+                        const SizedBox(height: 20,),
+                        //Referral Details Text Starts
+                        const Padding(
+                          padding: EdgeInsets.only(right: 180),
+                          child: Text('Business Details',
+                            style: TextStyle(
+                              fontSize: 18,),),
+                        ),
+                        Visibility(
+                            visible: isVisible,
 
-                          MaterialButton(
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)  ),
-                              //minWidth: 100,
-                              height: 50,
-                              color: Colors.green[800],
-                              onPressed: (){
-                                if (_formKey.currentState!.validate()) {
-                                  InsertBusinessSlip();
-                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>BusinessPage(userId: widget.userId, userType: widget.userType)));
-                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                      content: Text("Registered Successfully")));
+                            child: SizedBox(height: 20,)),
+                        //TextFormField Name starts
+                        Visibility(
+                          visible: isVisible,
+                          child: SizedBox(
+                            width: 320,
+                            height: 50,
+                            child: TextFormField(
+
+                              controller: referreename,
+                              validator: (value){
+                                if(value!.isEmpty){
+                                  return '* Enter the name';
+                                }
+                                else{
+                                  return null;
                                 }
                               },
-                              child: const Text('SUBMIT',
-                                style: TextStyle(color: Colors.white),)),
-                          // Submit button ends
-        
-        
-                        ],
-                      ),*/
+                              onChanged: (value) {
+                                String capitalizedValue = capitalizeFirstLetter(value);
+                                referreename.value = referreename.value.copyWith(
+                                  text: capitalizedValue,
+                                  selection: TextSelection.collapsed(offset: capitalizedValue.length),
+                                );
+                              },
+                              decoration: const InputDecoration(
+                                hintText: 'Referree Name',
+                                  suffixIcon: Icon(Icons.account_circle_outlined,color: Colors.green,),
+                                // filled: true,
+                                // fillColor: Colors.white,
+                                contentPadding: EdgeInsets.symmetric(vertical: 25.0, horizontal: 3.0),
+                              ),
+                              inputFormatters: [
+                                AlphabetInputFormatter(),
+                                LengthLimitingTextInputFormatter(25)
+                              ],
+                            ),
+                          ),
+                        ),
+                         Visibility(
+                             visible: isVisible,
+
+                             child: SizedBox(height: 20,)),
+
+                        //TextFormField MobileNo starts
+                        Visibility(
+                          visible: isVisible,
+                          child: SizedBox(
+                            width: 320,
+                            height: 50,
+                            child: TextFormField(
+                              controller: referreemobile,
+                              validator: (value){
+                                if(value!.isEmpty){
+                                  return '* Enter the mobile Number';
+                                }else if(value.length<10){
+                                  return'* Mobile number should be 10 digits';
+                                }
+                                else{
+                                  return null;
+                                }
+                              },
+                              decoration: const InputDecoration(
+                                hintText: 'Mobile number',
+                                  // filled: true,
+                                  // fillColor: Colors.white,
+                                  contentPadding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 3.0),
+
+                                  suffixIcon: Icon(Icons.phone_android,color: Colors.green,)                            ),keyboardType: TextInputType.number,
+                              inputFormatters: <TextInputFormatter>[
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(10)
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20,),
+
+                        //TextFormField Location starts
+
+                        SizedBox(
+                          width: 320,
+                          height: 50,
+                          child: TextFormField(
+                            controller: purpose,
+                            validator: (value){
+                              if(value!.isEmpty){
+                                return "* Enter the Purpose";
+                              }else{
+                                return null;
+                              }
+                            },
+                            decoration: const InputDecoration(
+                              hintText: "Purpose",
+                             // labelText: "Purpose",
+                              suffixIcon: Icon(
+                                Icons.note,
+                                color: Colors.green,),
+                              // filled: true,
+                              // fillColor: Colors.white,
+                              contentPadding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 3.0),
+                            ),
+                            inputFormatters: [
+                              AlphabetInputFormatter(),
+                              LengthLimitingTextInputFormatter(25)
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(height: 20,),
+                 /*       Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+
+                            MaterialButton(
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)  ),
+                                //minWidth: 100,
+                                height: 50,
+                                color: Colors.green[800],
+                                onPressed: (){
+                                  if (_formKey.currentState!.validate()) {
+                                    InsertBusinessSlip();
+                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>BusinessPage(userId: widget.userId, userType: widget.userType)));
+                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                        content: Text("Registered Successfully")));
+                                  }
+                                },
+                                child: const Text('SUBMIT',
+                                  style: TextStyle(color: Colors.white),)),
+                            // Submit button ends
 
 
-        
-                    ],
+                          ],
+                        ),*/
+
+
+
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(height: 30,),
-                MaterialButton(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)  ),
-                    minWidth: 320,
-                    height: 50,
-                    color: Colors.green[800],
-                    onPressed: (){
-                      if (_formKey.currentState!.validate()) {
-                        InsertBusinessSlip();
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>BusinessPage(userId: widget.userId, userType: widget.userType)));
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                            content: Text("Registered Successfully")));
-                      }
-                    },
-                    child: const Text('SUBMIT',
-                      style: TextStyle(color: Colors.white),)),
-                SizedBox(height: 20,),
+                  SizedBox(height: 30,),
+                  MaterialButton(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)  ),
+                      minWidth: 320,
+                      height: 50,
+                      color: Colors.green[800],
+                      onPressed: (){
+                        if (_formKey.currentState!.validate()) {
+                          InsertBusinessSlip();
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>BusinessPage(userId: widget.userId, userType: widget.userType)));
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                              content: Text("Registered Successfully")));
+                        }
+                      },
+                      child: const Text('SUBMIT',
+                        style: TextStyle(color: Colors.white),)),
+                  SizedBox(height: 20,),
 
-              ],
+                ],
+              ),
             ),
           ),
         ),
