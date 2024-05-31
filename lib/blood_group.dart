@@ -78,7 +78,6 @@ class _BloodState extends State<Blood> {
             },
             icon: const Icon(Icons.navigate_before),
           ),
-          centerTitle: true,
         ),
         body: PopScope(
           canPop: false,

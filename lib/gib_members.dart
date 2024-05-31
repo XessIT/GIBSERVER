@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:gipapp/view_members.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -415,7 +416,7 @@ class _MembersState extends State<Members> {
                         child: Center(
                           child: InkWell(
                             onTap: () {
-                             // Navigator.push(context, MaterialPageRoute(builder: (context) => Details(memberId: data[i]['id'])));
+                             Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileMembers(memberId: data[i]['id'], userType: widget.userType, userID: widget.userId,)));
                               // Add your onTap functionality here
                             },
                             child: Card(
