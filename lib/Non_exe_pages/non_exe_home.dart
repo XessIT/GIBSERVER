@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:core';
 import 'dart:typed_data';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
@@ -124,13 +125,8 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
         // print("Register Response Status: ${res.statusCode}");
         //print("Register Response Body: ${res.body}");
         var response = jsonDecode(res.body);
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => Homepage(
-                    userType: widget.userID, userId: widget.userType)));
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Registration Successfully")));
+        Navigator.push(context, MaterialPageRoute(builder: (context)=> Homepage(userType: widget.userID, userId: widget.userType)));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Registration Successfully")));
       } else {
         print(
             "Failed to upload image. Server returned status code: ${res.statusCode}");
@@ -153,7 +149,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
             userdata = responseData.cast<Map<String, dynamic>>();
             if (userdata.isNotEmpty) {
               profileImage =
-                  'http://mybudgetbook.in/GIBAPI/${userdata[0]["profile_image"]}';
+              'http://mybudgetbook.in/GIBAPI/${userdata[0]["profile_image"]}';
               _imageBytes = base64Decode(userdata[0]['profile_image']);
             }
           });
@@ -198,11 +194,11 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
 
           // Check if the registration opening date is before the current date
           bool isOpenForRegistration =
-              registrationOpeningDate.isBefore(DateTime.now());
+          registrationOpeningDate.isBefore(DateTime.now());
 
           // Check if the registration closing date is after the current date
           bool isRegistrationOpen =
-              registrationClosingDate.isAfter(DateTime.now());
+          registrationClosingDate.isAfter(DateTime.now());
 
           print('Is Open for Registration: $isOpenForRegistration');
           print('Is Registration Open: $isRegistrationOpen');
@@ -375,23 +371,23 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                   data.isEmpty
                       ? SizedBox.shrink()
                       :
-                      // SizedBox(height: 180),
-                      Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Card(
-                            elevation: 0,
-                            child: Container(
-                              child: Text(
-                                'Upcoming Meetings',
-                                style: GoogleFonts.aBeeZee(
-                                  fontSize: 20,
-                                  color: Colors.green,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
+                  // SizedBox(height: 180),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Card(
+                      elevation: 0,
+                      child: Container(
+                        child: Text(
+                          'Upcoming Meetings',
+                          style: GoogleFonts.aBeeZee(
+                            fontSize: 20,
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
+                      ),
+                    ),
+                  ),
                   Container(
                     child: CarouselSlider(
                       items: data.map((meeting) {
@@ -414,7 +410,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                     children: [
                                       Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                        MainAxisAlignment.center,
                                         children: [
                                           Text(
                                             '${meeting['meeting_type']}',
@@ -431,7 +427,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                         padding: const EdgeInsets.all(8.0),
                                         child: Row(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                          MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
                                               '${meeting['meeting_date']}',
@@ -452,7 +448,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                         padding: const EdgeInsets.all(8.0),
                                         child: Row(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                          MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
                                               '${_formatTimeString(meeting['from_time'])} to ${_formatTimeString(meeting['to_time'])}',
@@ -462,14 +458,14 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                             ),
                                             SizedBox(
                                                 width:
-                                                    10), // Space between icon and text
+                                                10), // Space between icon and text
                                             Icon(
                                               Icons.location_on,
                                               color: Colors.green,
                                             ), // Location icon
                                             SizedBox(
                                                 width:
-                                                    2), // Space between icon and text
+                                                2), // Space between icon and text
                                             Text(meeting['place'],
                                                 style: TextStyle(
                                                     color: Colors.black,
@@ -483,87 +479,87 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                                   showDialog(
                                                       context: context,
                                                       builder: (ctx) =>
-                                                          // Dialog box for register meeting and add guest
-                                                          AlertDialog(
-                                                            backgroundColor:
-                                                                Colors
-                                                                    .grey[800],
-                                                            title: const Text(
-                                                                'Meeting',
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .white)),
-                                                            content: const Text(
-                                                                "Do You Want to Register the Meeting?",
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .white)),
-                                                            actions: [
-                                                              TextButton(
-                                                                  onPressed:
-                                                                      () {
-                                                                    GlobalKey<
-                                                                            FormState>
-                                                                        tempKey =
-                                                                        GlobalKey<
-                                                                            FormState>();
+                                                      // Dialog box for register meeting and add guest
+                                                      AlertDialog(
+                                                        backgroundColor:
+                                                        Colors
+                                                            .grey[800],
+                                                        title: const Text(
+                                                            'Meeting',
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white)),
+                                                        content: const Text(
+                                                            "Do You Want to Register the Meeting?",
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white)),
+                                                        actions: [
+                                                          TextButton(
+                                                              onPressed:
+                                                                  () {
+                                                                GlobalKey<
+                                                                    FormState>
+                                                                tempKey =
+                                                                GlobalKey<
+                                                                    FormState>();
 
-                                                                    //store purpose..
-                                                                    registerDateStoreDatabase(
-                                                                        id,
-                                                                        meetingType,
-                                                                        meetingDate,
-                                                                        meetingPlace);
-                                                                    showDialog(
-                                                                        context:
-                                                                            context,
-                                                                        builder: (ctx) =>
-                                                                            Form(
-                                                                              key: tempKey,
-                                                                              child: AlertDialog(
-                                                                                backgroundColor: Colors.grey[800],
-                                                                                title: const Text('Do you wish to add Guest?', style: TextStyle(color: Colors.white)),
-                                                                                content: TextFormField(
-                                                                                  controller: guestcount,
-                                                                                  validator: (value) {
-                                                                                    if (value!.isEmpty) {
-                                                                                      return "* Enter a Guest Count";
-                                                                                    }
-                                                                                    return null;
-                                                                                  },
-                                                                                  decoration: const InputDecoration(
-                                                                                    labelText: "Guest Count",
-                                                                                    labelStyle: TextStyle(color: Colors.white),
-                                                                                    hintText: "Ex:5",
-                                                                                  ),
-                                                                                ),
-                                                                                actions: [
-                                                                                  TextButton(
-                                                                                      onPressed: () {
-                                                                                        if (tempKey.currentState!.validate()) {
-                                                                                          Navigator.push(context, MaterialPageRoute(builder: (context) => VisitorsSlip(userId: widget.userID, meetingId: id, guestcount: guestcount.text.trim(), userType: widget.userType, meeting_date: meetingDate, user_mobile: fetchMobile.toString())));
-                                                                                          print("UserID:-${widget.userID}${widget.userType}");
-                                                                                        }
-                                                                                      },
-                                                                                      child: const Text('Yes')),
-                                                                                  TextButton(onPressed: () {}, child: const Text('No'))
-                                                                                ],
+                                                                //store purpose..
+                                                                registerDateStoreDatabase(
+                                                                    id,
+                                                                    meetingType,
+                                                                    meetingDate,
+                                                                    meetingPlace);
+                                                                showDialog(
+                                                                    context:
+                                                                    context,
+                                                                    builder: (ctx) =>
+                                                                        Form(
+                                                                          key: tempKey,
+                                                                          child: AlertDialog(
+                                                                            backgroundColor: Colors.grey[800],
+                                                                            title: const Text('Do you wish to add Guest?', style: TextStyle(color: Colors.white)),
+                                                                            content: TextFormField(
+                                                                              controller: guestcount,
+                                                                              validator: (value) {
+                                                                                if (value!.isEmpty) {
+                                                                                  return "* Enter a Guest Count";
+                                                                                }
+                                                                                return null;
+                                                                              },
+                                                                              decoration: const InputDecoration(
+                                                                                labelText: "Guest Count",
+                                                                                labelStyle: TextStyle(color: Colors.white),
+                                                                                hintText: "Ex:5",
                                                                               ),
-                                                                            ));
-                                                                  },
-                                                                  child:
-                                                                      const Text(
-                                                                          'OK')),
-                                                              TextButton(
-                                                                  onPressed:
-                                                                      () {
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  },
-                                                                  child: const Text(
-                                                                      'Cancel'))
-                                                            ],
-                                                          ));
+                                                                            ),
+                                                                            actions: [
+                                                                              TextButton(
+                                                                                  onPressed: () {
+                                                                                    if (tempKey.currentState!.validate()) {
+                                                                                      Navigator.push(context, MaterialPageRoute(builder: (context) => VisitorsSlip(userId: widget.userID, meetingId: id, guestcount: guestcount.text.trim(), userType: widget.userType, meeting_date: meetingDate, user_mobile: fetchMobile.toString())));
+                                                                                      print("UserID:-${widget.userID}${widget.userType}");
+                                                                                    }
+                                                                                  },
+                                                                                  child: const Text('Yes')),
+                                                                              TextButton(onPressed: () {}, child: const Text('No'))
+                                                                            ],
+                                                                          ),
+                                                                        ));
+                                                              },
+                                                              child:
+                                                              const Text(
+                                                                  'OK')),
+                                                          TextButton(
+                                                              onPressed:
+                                                                  () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                              child: const Text(
+                                                                  'Cancel'))
+                                                        ],
+                                                      ));
                                                 },
                                                 icon: const Icon(
                                                   Icons
@@ -615,9 +611,9 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                               'http://mybudgetbook.in/GIBAPI/${data1[i]["offer_image"]}';
 
                           String dateString = data1[i][
-                              'validity']; // This will print the properly encoded URL
+                          'validity']; // This will print the properly encoded URL
                           DateTime dateTime =
-                              DateFormat('yyyy-MM-dd').parse(dateString);
+                          DateFormat('yyyy-MM-dd').parse(dateString);
                           return Center(
                             child: Card(
                               child: Padding(
@@ -629,17 +625,17 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                       children: [
                                         Row(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.start,
+                                          MainAxisAlignment.start,
                                           children: [
                                             // CIRCLEAVATAR STARTS
                                             Padding(
                                               padding:
-                                                  const EdgeInsets.all(8.0),
+                                              const EdgeInsets.all(8.0),
                                               child: CircleAvatar(
                                                 radius: 30.0,
                                                 backgroundColor: Colors.cyan,
                                                 backgroundImage:
-                                                    NetworkImage(imageUrl),
+                                                NetworkImage(imageUrl),
                                               ),
                                             ),
                                             SizedBox(width: 20),
@@ -689,43 +685,43 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                         data1[i]['discount'].toString().isEmpty
                                             ? Container()
                                             : Positioned(
-                                                top: 8,
-                                                right:
-                                                    8, // Adjust position if needed
-                                                child: Container(
-                                                  decoration: BoxDecoration(
+                                          top: 8,
+                                          right:
+                                          8, // Adjust position if needed
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color: Colors
+                                                  .red, // Change the color here
+                                              borderRadius:
+                                              BorderRadius.only(
+                                                topLeft:
+                                                Radius.circular(10.0),
+                                                bottomRight:
+                                                Radius.circular(10.0),
+                                              ),
+                                            ),
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 6.0,
+                                                vertical: 2.0),
+                                            child: Row(
+                                              children: [
+                                                Text(
+                                                  '${data1[i]['discount']}% off', // Text for your banner
+                                                  style: TextStyle(
                                                     color: Colors
-                                                        .red, // Change the color here
-                                                    borderRadius:
-                                                        BorderRadius.only(
-                                                      topLeft:
-                                                          Radius.circular(10.0),
-                                                      bottomRight:
-                                                          Radius.circular(10.0),
-                                                    ),
-                                                  ),
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 6.0,
-                                                      vertical: 2.0),
-                                                  child: Row(
-                                                    children: [
-                                                      Text(
-                                                        '${data1[i]['discount']}% off', // Text for your banner
-                                                        style: TextStyle(
-                                                          color: Colors
-                                                              .white, // Change the text color here
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontStyle: FontStyle
-                                                              .italic, // Add any additional styles here
-                                                          fontSize:
-                                                              12.0, // Adjust font size as needed
-                                                        ),
-                                                      ),
-                                                    ],
+                                                        .white, // Change the text color here
+                                                    fontWeight:
+                                                    FontWeight.bold,
+                                                    fontStyle: FontStyle
+                                                        .italic, // Add any additional styles here
+                                                    fontSize:
+                                                    12.0, // Adjust font size as needed
                                                   ),
                                                 ),
-                                              ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ],
@@ -794,13 +790,13 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                           child: CircleAvatar(
                             backgroundColor: Colors.cyan,
                             radius:
-                                30.0, // This will give you a 60.0 diameter circle
+                            30.0, // This will give you a 60.0 diameter circle
                             backgroundImage: profileImage.isNotEmpty
                                 ? NetworkImage(profileImage)
                                 : null,
                             child: profileImage.isEmpty
                                 ? const Icon(Icons.person,
-                                    size: 30.0, color: Colors.white)
+                                size: 30.0, color: Colors.white)
                                 : null,
                           )),
                       Padding(
@@ -927,7 +923,7 @@ class _NavigationBarNonState extends State<NavigationBarNon> {
           ),
         ],
         type:
-            BottomNavigationBarType.fixed, // Set type to fixed for text labels
+        BottomNavigationBarType.fixed, // Set type to fixed for text labels
         currentIndex: _currentIndex,
         // selectedItemColor: Theme.of(context).brightness == Brightness.light
         //     ? Colors.black45
@@ -946,7 +942,7 @@ class _NavigationBarNonState extends State<NavigationBarNon> {
         selectedLabelStyle: TextStyle(color: Colors.white),
         unselectedLabelStyle: TextStyle(color: Colors.white),
         selectedIconTheme:
-            IconThemeData(color: Colors.green), // Set selected icon color
+        IconThemeData(color: Colors.green), // Set selected icon color
       ),
     );
   }

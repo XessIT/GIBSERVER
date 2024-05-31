@@ -185,8 +185,7 @@ class _ReferralPageState extends State<ReferralPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('BUSINESS SLIP', style: Theme.of(context).textTheme.bodySmall),
-        centerTitle: true,
+        title: Text('BUSINESS SLIP', style: Theme.of(context).textTheme.displayLarge),
         iconTheme: const IconThemeData(color: Colors.white),
         actions: [
           IconButton(onPressed:(){
@@ -230,18 +229,59 @@ class _ReferralPageState extends State<ReferralPage> {
                       );
                     },
                     onSuggestionSelected: (dynamic suggestion) {
+                      setState(() {
+                        setState(() {
+                          searchController.text = suggestion['first_name'];
+                          to.text = suggestion['first_name'];
+                          tomobile.text = suggestion['mobile'];
+                          cname.text = suggestion['company_name'];
+                          // Update other text fields as needed
+                        });
+                      });
                       // Handle when a suggestion is selected
                       // Update text fields with suggestion data
-                      setState(() {
-                        to.text = suggestion['first_name'];
-                        tomobile.text = suggestion['mobile'];
-                        cname.text = suggestion['company_name'];
-                        // Update other text fields as needed
-                      });
+
                     },
                   ),
                 ),/// search controller
-        
+                // SizedBox(
+                //   width: 350,
+                //   // height: ,
+                //   child: TypeAheadFormField<String>(
+                //     textFieldConfiguration: TextFieldConfiguration(
+                //       controller: districtController,
+                //       decoration: const InputDecoration(
+                //           fillColor: Colors.white,
+                //           filled: true,
+                //           labelText: "District",
+                //           suffixIcon: Icon(Icons.local_convenience_store_outlined,color: Colors.green,)
+                //       ),
+                //     ),
+                //     suggestionsCallback: (pattern) async {
+                //       return suggesstiondata
+                //           .where((item) =>
+                //           (item['district']?.toString().toLowerCase() ?? '')
+                //               .startsWith(pattern.toLowerCase()))
+                //           .map((item) => item['district'].toString())
+                //           .toList();
+                //     },
+                //     itemBuilder: (context, suggestion) {
+                //       return ListTile(
+                //         title: Text(suggestion),
+                //       );
+                //     },
+                //     onSuggestionSelected: (suggestion) async {
+                //       setState(() {
+                //         districtController.text = suggestion;
+                //         setState(() {
+                //           getchapter(districtController.text.trim());
+                //
+                //         });
+                //       });
+                //       //   print('Selected Item Group: $suggestion');
+                //     },
+                //   ),
+                // ),
                 const SizedBox(height: 10,),
         
                Container(

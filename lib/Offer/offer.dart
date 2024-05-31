@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
@@ -108,14 +109,14 @@ class _OffersPageState extends State<OffersPage> {
           color: Colors.white, // Set the color for the drawer icon
         ),
         actions: [widget.userType != 'Non-Executive' && widget.userType != 'Guest' ?
-          IconButton(onPressed: (){
-            Navigator.push(context,
-              MaterialPageRoute(builder:
-                  (context)=> OfferList(userId: widget.userId)),
-            );
-          },
-              icon: const Icon(
-                Icons.add_circle_outline_sharp,size:30,)): Container(),
+        IconButton(onPressed: (){
+          Navigator.push(context,
+            MaterialPageRoute(builder:
+                (context)=> OfferList(userId: widget.userId)),
+          );
+        },
+            icon: const Icon(
+              Icons.add_circle_outline_sharp,size:30,)): Container(),
         ],
       ),
       body: PopScope(
@@ -156,7 +157,7 @@ class _OffersPageState extends State<OffersPage> {
           }
         },
         child:
-            data.isEmpty ? Center(child: Text('No Offers')) :
+        data.isEmpty ? Center(child: Text('No Offers')) :
         GridView.builder(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
@@ -218,7 +219,7 @@ class _OffersPageState extends State<OffersPage> {
                         ],
                       ),
                     ),
-                   // const SizedBox(height: 5,),
+                    // const SizedBox(height: 5,),
                     Text('${data[i]['company_name']}',
                       style: const TextStyle(
                           fontSize: 10,

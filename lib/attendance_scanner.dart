@@ -30,7 +30,7 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
   void initState() {
     super.initState();
     getData(qrstr);
-   // scanQr();
+    // scanQr();
   }
 
   Future<void> getData(String meetingId) async {

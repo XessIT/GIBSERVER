@@ -538,7 +538,7 @@ class _GtoGPageState extends State<GtoGPage> {
                                       setState(() {
                                         totime.text = formattedTime;
                                       });
-                                    },                                    style: const TextStyle(fontSize: 12,
+                                    },style: const TextStyle(fontSize: 12,
                                         fontWeight: FontWeight.bold),
                                     decoration: InputDecoration(
                                       hintText: 'To Time',

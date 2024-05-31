@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'Non_exe_pages/non_exe_home.dart';
 import 'business_slip.dart';
 import 'g2g_slip.dart';
+import 'guest_slip_history.dart';
 import 'home.dart';
 import 'honor_slip.dart';
 import 'package:http/http.dart' as http;
@@ -31,42 +33,85 @@ class _BusinessPageState extends State<BusinessPage> {
           title: (Text('My Business', style: Theme.of(context).textTheme.displayLarge,)
           ),
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () {
-              Navigator.pop(context);
+              if (widget.userType == "Non-Executive") {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => NavigationBarNon(
+                          userType: widget.userType.toString(),
+                          userId: widget.userId.toString(),
+                        )));
+              }
+              else {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => NavigationBarExe(
+                          userType: widget.userType.toString(),
+                          userId: widget.userId.toString(),
+                        )));
+              }
             },
+            icon: const Icon(Icons.navigate_before),
           ),
           iconTheme:  const IconThemeData(
             color: Colors.white,),
 
         ),
 
-        body: SafeArea(
-          child: Center(
-            child: Column(
-              children: [
-                //TABBAR STARTS
-                const TabBar(
-                  isScrollable: true,
-                  labelColor: Colors.green,
-                  unselectedLabelColor: Colors.black,
-                  tabs: [
-                    Tab(text: ('GiB Total Transaction'),),
-                    Tab(text: ('My Transaction')
-                  //  Tab(text:('My Total Transaction'),
-                    ),
-                  ],
-                ),
-                //TABBAR VIEW STARTS
-                Expanded(
-                  child: TabBarView(children: <Widget>[
-                    GibTransaction(userId: widget.userId, userType: widget.userType),
-                    MyTransaction(userId: widget.userId, userType: widget.userType),
-                   // MyTotalTransaction(userId: widget.userId, userType: widget.userType),
-                  ],
+        body: PopScope(
+          canPop: false,
+          onPopInvoked: (didPop) {
+            if (widget.userType == "Non-Executive") {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NavigationBarNon(
+                    userType: widget.userType.toString(),
+                    userId: widget.userId.toString(),
                   ),
-                )
-              ],
+                ),
+              );
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NavigationBarExe(
+                    userType: widget.userType.toString(),
+                    userId: widget.userId.toString(),
+                  ),
+                ),
+              );
+            }
+          },
+          child: SafeArea(
+            child: Center(
+              child: Column(
+                children: [
+                  //TABBAR STARTS
+                  const TabBar(
+                    isScrollable: true,
+                    labelColor: Colors.green,
+                    unselectedLabelColor: Colors.black,
+                    tabs: [
+                      Tab(text: ('GiB Total Transaction'),),
+                      Tab(text: ('My Transaction')
+                    //  Tab(text:('My Total Transaction'),
+                      ),
+                    ],
+                  ),
+                  //TABBAR VIEW STARTS
+                  Expanded(
+                    child: TabBarView(children: <Widget>[
+                      GibTransaction(userId: widget.userId, userType: widget.userType),
+                      MyTransaction(userId: widget.userId, userType: widget.userType),
+                     // MyTotalTransaction(userId: widget.userId, userType: widget.userType),
+                    ],
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         ),
@@ -1057,12 +1102,24 @@ class _MyTransactionState extends State<MyTransaction> {
                       // Text "Business"
                       Padding(
                         padding: EdgeInsets.all(10),
-                        child: Text(
-                          'Guest',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("     "),
+                            Text(
+                              'Guest',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            IconButton(onPressed: (){
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => GuestHistory(userId: widget.userId.toString(),)),
+                              );
+                            }, icon: Icon(Icons.navigate_next,color: Colors.black,),),
+                          ],
                         ),
                       ),
                     ],
