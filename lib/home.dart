@@ -37,10 +37,9 @@ import 'my_activity.dart';
 import 'my_gallery.dart';
 import 'notification.dart';
 import 'dart:io';
-import 'package:http/http.dart'as http;
+import 'package:http/http.dart' as http;
 import 'package:clay_containers/clay_containers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-
 
 class Homepage extends StatefulWidget {
   final String? userType;
@@ -48,22 +47,20 @@ class Homepage extends StatefulWidget {
 
   Homepage({
     Key? key,
-
-    required this. userType,
-    required this. userId,
+    required this.userType,
+    required this.userId,
   }) : super(key: key);
 
   @override
   State<Homepage> createState() => _HomepageState();
-
 }
 
 class _HomepageState extends State<Homepage> {
   TextEditingController wishing = TextEditingController();
   File? pickedimage;
   bool showLocalImage = false;
-  String? fetchMobile ="";
-  String? memberType ="Executive";
+  String? fetchMobile = "";
+  String? memberType = "Executive";
   bool isLoading = true;
   var _connectivityResult = ConnectivityResult.none;
   Future<void> _checkConnectivityAndGetData() async {
@@ -85,7 +82,6 @@ class _HomepageState extends State<Homepage> {
         // Handle successful response
         var data = json.decode(response.body);
         print(data);
-
       } else {
         // Handle other status codes
         print('Request failed with status: ${response.statusCode}');
@@ -140,10 +136,13 @@ class _HomepageState extends State<Homepage> {
       });
     });
   }
+
   final bdayDate = DateFormat("yyyy-MM-dd").format(DateTime.now());
-  TextEditingController guestcount =TextEditingController();
+
+  TextEditingController guestcount = TextEditingController();
+
   ///meeting data fetch
-  List<Map<String,dynamic>>dynamicdata=[];
+  List<Map<String, dynamic>> dynamicdata = [];
   Future<void> fetchMeetingData() async {
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php');
@@ -159,14 +158,11 @@ class _HomepageState extends State<Homepage> {
           setState(() {
             dynamicdata = responseData.cast<Map<String, dynamic>>();
             if (dynamicdata.isNotEmpty) {
-              setState(() {
-              });
+              setState(() {});
             }
           });
-        } else {
-        }
-      } else {
-      }
+        } else {}
+      } else {}
     } catch (error) {
       // Handle other errors
       //  print('Meeting Error: $error');
@@ -174,10 +170,11 @@ class _HomepageState extends State<Homepage> {
   }
 
   ///Wish data table code fetch
-  List<Map<String,dynamic>>wishdata=[];
+  List<Map<String, dynamic>> wishdata = [];
   Future<void> wishData(String? member_type) async {
     try {
-      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/registration.php?table=registration&member_type=$member_type');
+      final url = Uri.parse(
+          'http://mybudgetbook.in/GIBAPI/registration.php?table=registration&member_type=$member_type');
       final response = await http.get(url);
       //  print("Wish url:$url");
       if (response.statusCode == 200) {
@@ -200,13 +197,15 @@ class _HomepageState extends State<Homepage> {
       print('Error: $error');
     }
   }
+
   String imageUrl = "";
   Uint8List? _imageBytes;
 
-  List<Map<String,dynamic>>userdata=[];
+  List<Map<String, dynamic>> userdata = [];
   Future<void> fetchData(String? userId) async {
     try {
-      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=$userId');
+      final url = Uri.parse(
+          'http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=$userId');
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
@@ -215,7 +214,8 @@ class _HomepageState extends State<Homepage> {
           setState(() {
             userdata = responseData.cast<Map<String, dynamic>>();
             if (userdata.isNotEmpty) {
-              imageUrl = 'http://mybudgetbook.in/GIBAPI/${userdata[0]["profile_image"]}';
+              imageUrl =
+                  'http://mybudgetbook.in/GIBAPI/${userdata[0]["profile_image"]}';
               _imageBytes = base64Decode(userdata[0]['profile_image']);
             }
           });
@@ -234,7 +234,8 @@ class _HomepageState extends State<Homepage> {
   List<Map<String,dynamic>>offersdata=[];
   Future<void> offersfetchData() async {
     try {
-      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/offers.php?table=offers');
+      final url =
+          Uri.parse('http://mybudgetbook.in/GIBAPI/offers.php?table=offers');
       final response = await http.get(url);
       print(url);
 
@@ -263,10 +264,12 @@ class _HomepageState extends State<Homepage> {
   }
 
   ///register Meeting data store code
-  String? registerStatus="Register";
-  Future<void> registerDateStoreDatabase(String meetingId, String meetingType, String meetingDate, String meetingPlace) async {
+  String? registerStatus = "Register";
+  Future<void> registerDateStoreDatabase(String meetingId, String meetingType,
+      String meetingDate, String meetingPlace) async {
     try {
-      final uri = Uri.parse("http://mybudgetbook.in/GIBAPI/register_meeting.php");
+      final uri =
+          Uri.parse("http://mybudgetbook.in/GIBAPI/register_meeting.php");
       print("Register Meeting: $uri");
       final res = await http.post(uri,
           headers: {"Content-Type": "application/json"},
@@ -277,7 +280,8 @@ class _HomepageState extends State<Homepage> {
             "meeting_place": meetingPlace,
             "status": registerStatus,
             "user_id": widget.userId,
-            "user_type": widget.userType,
+            "member_type": widget.userType,
+            "guestcount": guestcount.text.trim()
           }));
 
       if (res.statusCode == 200) {
@@ -286,36 +290,45 @@ class _HomepageState extends State<Homepage> {
             var responseBody = jsonDecode(res.body);
             print('meeting: ${responseBody["success"]}');
             if (responseBody["success"]) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(responseBody["message"])));
-              Navigator.push(context, MaterialPageRoute(builder: (context) => Homepage(userType: widget.userType, userId: widget.userId)));
+              ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(responseBody["message"])));
             } else {
               if (responseBody["message"] == "Record already exists") {
-                _showGuestDialog(meetingId, meetingType, meetingDate, meetingPlace);
+                _showGuestDialog(
+                    meetingId, meetingType, meetingDate, meetingPlace);
               } else {
                 print('meeting: ${responseBody["success"]}');
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(responseBody["message"])));
+                ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(responseBody["message"])));
               }
             }
           } catch (e) {
             print("Error parsing JSON response: $e");
             print("Raw response: ${res.body}");
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error parsing server response.")));
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Error parsing server response.")));
           }
         } else {
           print("Empty response body from server.");
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Server returned an empty response.")));
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Server returned an empty response.")));
         }
       } else {
-        print("Failed to upload image. Server returned status code: ${res.statusCode}");
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Failed to register meeting. Server returned status code: ${res.statusCode}")));
+        print(
+            "Failed to upload image. Server returned status code: ${res.statusCode}");
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+                "Failed to register meeting. Server returned status code: ${res.statusCode}")));
       }
     } catch (e) {
       print("Error uploading image: $e");
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error uploading image: $e")));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Error uploading image: $e")));
     }
   }
 
-  void _showGuestDialog(String meetingId, String meetingType, String meetingDate, String meetingPlace) {
+  void _showGuestDialog(String meetingId, String meetingType,
+      String meetingDate, String meetingPlace) {
     showDialog(
       context: context,
       builder: (ctx) => Form(
@@ -373,7 +386,8 @@ class _HomepageState extends State<Homepage> {
   List<Map<String,dynamic>>registerFetchdata=[];
   Future<void> registerFetch(String meetingId) async {
     try {
-      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/register_meeting.php?user_id=${widget.userId}&meeting_id=$meetingId');
+      final url = Uri.parse(
+          'http://mybudgetbook.in/GIBAPI/register_meeting.php?user_id=${widget.userId}&meeting_id=$meetingId');
       final response = await http.get(url);
       // print("r url:$url");
 
@@ -388,7 +402,6 @@ class _HomepageState extends State<Homepage> {
             if (registerFetchdata.isNotEmpty) {
               setState(() {
                 registerStatus = registerFetchdata[0]["status"];
-
               });
             }
           });
@@ -406,17 +419,17 @@ class _HomepageState extends State<Homepage> {
     }
   }
 
-
   /// Done By gowtham
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> tempKey =GlobalKey<FormState>();
 
-  List<Map<String, dynamic>> data=[];
+  List<Map<String, dynamic>> data = [];
   String type = "Executive";
   Future<void> getData() async {
     print('Attempting to make HTTP request...');
     try {
-      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/non_exe_meeting.php?member_type=$type');
+      final url = Uri.parse(
+          'http://mybudgetbook.in/GIBAPI/non_exe_meeting.php?member_type=$type');
       print('URL: $url');
       final response = await http.get(url);
       if (response.statusCode == 200) {
@@ -426,8 +439,10 @@ class _HomepageState extends State<Homepage> {
           DateTime registrationOpeningDate;
           DateTime registrationClosingDate;
           try {
-            registrationOpeningDate = DateTime.parse(item['registration_opening_date']);
-            registrationClosingDate = DateTime.parse(item['registration_closing_date']);
+            registrationOpeningDate =
+                DateTime.parse(item['registration_opening_date']);
+            registrationClosingDate =
+                DateTime.parse(item['registration_closing_date']);
           } catch (e) {
             print('Error parsing registration dates: $e');
             return false;
@@ -437,10 +452,12 @@ class _HomepageState extends State<Homepage> {
           print('Current Date: ${DateTime.now()}');
 
           // Check if the registration opening date is before the current date
-          bool isOpenForRegistration = registrationOpeningDate.isBefore(DateTime.now());
+          bool isOpenForRegistration =
+              registrationOpeningDate.isBefore(DateTime.now());
 
           // Check if the registration closing date is after the current date
-          bool isRegistrationOpen = registrationClosingDate.isAfter(DateTime.now());
+          bool isRegistrationOpen =
+              registrationClosingDate.isAfter(DateTime.now());
 
           print('Is Open for Registration: $isOpenForRegistration');
           print('Is Registration Open: $isRegistrationOpen');
@@ -478,6 +495,7 @@ class _HomepageState extends State<Homepage> {
 
     return formattedTime;
   }
+
   String _twoDigits(int n) {
     if (n >= 10) {
       return "$n";
@@ -486,7 +504,7 @@ class _HomepageState extends State<Homepage> {
   }
 
   /// offers fetch
-  List<Map<String, dynamic>> data1=[];
+  List<Map<String, dynamic>> data1 = [];
   Future<void> getData1() async {
     print('Attempting to make HTTP request...');
     try {
@@ -511,6 +529,7 @@ class _HomepageState extends State<Homepage> {
       print('Error making HTTP request: $e');
     }
   }
+
   Future<Uint8List?> getImageBytes(String imageUrl) async {
     try {
       print("123456789087654323456789");
@@ -985,6 +1004,7 @@ class _HomepageState extends State<Homepage> {
                               ],
                             ),
                           ),
+
                         ],
                       ),
                     ),
@@ -996,11 +1016,8 @@ class _HomepageState extends State<Homepage> {
         ),
       ),
     );
-
   }
-
 }
-
 
 class NavigationBarExe extends StatefulWidget {
   final String? userId;
@@ -1015,6 +1032,7 @@ class NavigationBarExe extends StatefulWidget {
   @override
   _NavigationBarExeState createState() => _NavigationBarExeState();
 }
+
 class _NavigationBarExeState extends State<NavigationBarExe> {
   int _currentIndex = 0;
 
@@ -1062,7 +1080,7 @@ class _NavigationBarExeState extends State<NavigationBarExe> {
           ),
         ],
         type:
-        BottomNavigationBarType.fixed, // Set type to fixed for text labels
+            BottomNavigationBarType.fixed, // Set type to fixed for text labels
         currentIndex: _currentIndex,
         selectedItemColor: Colors.green,
         iconSize: 30,
@@ -1075,12 +1093,9 @@ class _NavigationBarExeState extends State<NavigationBarExe> {
         elevation: 5,
         selectedLabelStyle: const TextStyle(color: Colors.white),
         unselectedLabelStyle: const TextStyle(color: Colors.white),
-        selectedIconTheme: const IconThemeData(color: Colors.green), // Set selected icon color
+        selectedIconTheme:
+            const IconThemeData(color: Colors.green), // Set selected icon color
       ),
     );
   }
 }
-
-
-
-

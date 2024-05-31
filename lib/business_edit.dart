@@ -257,7 +257,7 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
                 children: [
                   const SizedBox(height: 10,),
                   Text('Business Information',
-                    style: Theme.of(context).textTheme.headline2,),
+                    style: Theme.of(context).textTheme.bodySmall,),
                   const SizedBox(width: 20,),
                   InkWell(
                     child: ClipOval(

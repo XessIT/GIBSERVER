@@ -13,9 +13,6 @@ import 'dart:typed_data';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 
-
-
-
 class MyGallery extends StatefulWidget {
   final String? userId;
   final String? userType;
@@ -34,9 +31,10 @@ class _MyGalleryState extends State<MyGallery> {
         appBar: AppBar(
           // Appbar title
           title: Text('My Gallery', style: Theme.of(context).textTheme.displayLarge),
+
           centerTitle: true,
           iconTheme: const IconThemeData(color: Colors.white),
-          leading:IconButton(
+          leading: IconButton(
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) =>  NavigationBarExe(userType: widget.userType, userId: widget.userId,)));
               },
@@ -60,6 +58,7 @@ class _MyGalleryState extends State<MyGallery> {
                     Video(userId: widget.userId),
                   ],
                 ),
+
               ),
             ],
           ),
@@ -68,8 +67,6 @@ class _MyGalleryState extends State<MyGallery> {
     );
   }
 }
-
-
 
 class Gallery extends StatefulWidget {
   final String? userId;
@@ -88,11 +85,11 @@ class _GalleryState extends State<Gallery> {
   List<bool> _isSelectedList = [];
 
   Future<void> _pickAndUploadImage(ImageSource source) async {
-    final pickedImages = await
-    _imagePicker.pickMultiImage
-      (imageQuality: 100,
+    final pickedImages = await _imagePicker.pickMultiImage(
+      imageQuality: 100,
       maxHeight: 1000,
-      maxWidth: 1000,);
+      maxWidth: 1000,
+    );
 
     if (pickedImages != null) {
       for (var pickedImage in pickedImages) {
@@ -111,7 +108,6 @@ class _GalleryState extends State<Gallery> {
 
     final response = await http.post(
       Uri.parse(url),
-
       body: {
         'image': base64Encode(imageBytes),
       },
@@ -139,8 +135,7 @@ class _GalleryState extends State<Gallery> {
       _imageDataList.clear();
 
       for (var data in imageData) {
-        final imageUrl =
-            'http://mybudgetbook.in/GIBAPI/${data['image_path']}';
+        final imageUrl = 'http://mybudgetbook.in/GIBAPI/${data['image_path']}';
         final imageResponse = await http.get(Uri.parse(imageUrl));
         if (imageResponse.statusCode == 200) {
           Uint8List imageBytes = imageResponse.bodyBytes;
@@ -222,40 +217,42 @@ class _GalleryState extends State<Gallery> {
         backgroundColor: Colors.green,
         onPressed: () async {
           if (_imageBytesList.length < 5) {
-            showModalBottomSheet(context: context, builder: (ctx) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ListTile(
-                    leading: const Icon(Icons.camera_alt),
-                    title: const Text("With Camera"),
-                    onTap: () async {
-                      final pickedImage = await _imagePicker.pickImage(
-                        source: ImageSource.camera,
-                      );
+            showModalBottomSheet(
+                context: context,
+                builder: (ctx) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ListTile(
+                        leading: const Icon(Icons.camera_alt),
+                        title: const Text("With Camera"),
+                        onTap: () async {
+                          final pickedImage = await _imagePicker.pickImage(
+                            source: ImageSource.camera,
+                          );
 
-                      if (pickedImage != null) {
-                        final bytes = await pickedImage.readAsBytes();
+                          if (pickedImage != null) {
+                            final bytes = await pickedImage.readAsBytes();
 
-                        setState(() {
-                          _imageBytes = bytes;
-                        });
+                            setState(() {
+                              _imageBytes = bytes;
+                            });
 
-                        await _uploadImage(_imageBytes!);
-                      }
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.photo_library),
-                    title: const Text("From Gallery"),
-                    onTap: () async {
-                      Navigator.pop(ctx);
-                      await _pickAndUploadImage(ImageSource.gallery);
-                    },
-                  ),
-                ],
-              );
-            });
+                            await _uploadImage(_imageBytes!);
+                          }
+                        },
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.photo_library),
+                        title: const Text("From Gallery"),
+                        onTap: () async {
+                          Navigator.pop(ctx);
+                          await _pickAndUploadImage(ImageSource.gallery);
+                        },
+                      ),
+                    ],
+                  );
+                });
           } else {
             showDialog(
               context: context,
@@ -310,9 +307,6 @@ class _GalleryState extends State<Gallery> {
   }
 }
 
-
-
-
 class Video extends StatefulWidget {
   final String? userId;
   const Video({super.key, required this.userId});
@@ -333,9 +327,8 @@ class _VideoState extends State<Video> {
   }
 
   Future<void> _pickAndUploadVideo() async {
-
-
-    final XFile? pickedVideo = await _picker.pickVideo(source: ImageSource.gallery);
+    final XFile? pickedVideo =
+        await _picker.pickVideo(source: ImageSource.gallery);
 
     if (pickedVideo != null) {
       final Uint8List videoBytes = await pickedVideo.readAsBytes();
@@ -346,7 +339,8 @@ class _VideoState extends State<Video> {
           builder: (BuildContext context) {
             return AlertDialog(
               title: Text('File Too Large'),
-              content: Text('The selected file exceeds the maximum size limit of 10MB.'),
+              content: Text(
+                  'The selected file exceeds the maximum size limit of 10MB.'),
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
@@ -362,11 +356,11 @@ class _VideoState extends State<Video> {
       }
 
       print('videoBytes: $videoBytes');
-      final url = 'http://mybudgetbook.in/GIBAPI/videos.php?userId=${widget.userId}';
+      final url =
+          'http://mybudgetbook.in/GIBAPI/videos.php?userId=${widget.userId}';
 
       print('url: $url');
       // Make HTTP request to upload video file to server
-
 
       var request = http.MultipartRequest(
         'POST',
@@ -376,8 +370,10 @@ class _VideoState extends State<Video> {
         http.MultipartFile.fromBytes(
           'video',
           videoBytes,
-          filename: 'video.mp4', // Provide a filename with the appropriate extension
-          contentType: MediaType('video', 'mp4'), // Adjust the content type as per your video format
+          filename:
+              'video.mp4', // Provide a filename with the appropriate extension
+          contentType: MediaType('video',
+              'mp4'), // Adjust the content type as per your video format
         ),
       );
 
@@ -401,7 +397,8 @@ class _VideoState extends State<Video> {
   }
 
   Future<void> _fetchVideos() async {
-    final url = 'http://mybudgetbook.in/GIBAPI/fetchvideos.php?userId=${widget.userId}';
+    final url =
+        'http://mybudgetbook.in/GIBAPI/fetchvideos.php?userId=${widget.userId}';
 
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
@@ -421,7 +418,8 @@ class _VideoState extends State<Video> {
 
   Future<void> _fetchThumbnail(int index) async {
     final videoPath = _videos[index]['video_path'];
-    final url = 'http://mybudgetbook.in/GIBAPI/videosmp4.php?video_path=' + videoPath;
+    final url =
+        'http://mybudgetbook.in/GIBAPI/videosmp4.php?video_path=' + videoPath;
 
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
@@ -434,10 +432,10 @@ class _VideoState extends State<Video> {
     }
   }
 
-
   Future<void> _deleteVideo(int videoIndex) async {
     int videoId = _videos[videoIndex]['id'];
-    final url = 'http://mybudgetbook.in/GIBAPI/deletevideos.php?video_id=$videoId';
+    final url =
+        'http://mybudgetbook.in/GIBAPI/deletevideos.php?video_id=$videoId';
 
     final response = await http.delete(Uri.parse(url));
 
@@ -450,7 +448,6 @@ class _VideoState extends State<Video> {
       print('Failed to delete video.');
     }
   }
-
 
   Future<void> _showDeleteConfirmationDialog(int videoIndex) async {
     return showDialog<void>(
@@ -486,10 +483,6 @@ class _VideoState extends State<Video> {
     );
   }
 
-
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -500,18 +493,20 @@ class _VideoState extends State<Video> {
           // Check if there is already a video stored
           if (_videos.isEmpty) {
             // Allow picking and uploading a video
-            showModalBottomSheet(context: context, builder: (ctx) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ListTile(
-                    leading: const Icon(Icons.storage),
-                    title: const Text("From Gallery"),
-                    onTap: _pickAndUploadVideo,
-                  )
-                ],
-              );
-            });
+            showModalBottomSheet(
+                context: context,
+                builder: (ctx) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ListTile(
+                        leading: const Icon(Icons.storage),
+                        title: const Text("From Gallery"),
+                        onTap: _pickAndUploadVideo,
+                      )
+                    ],
+                  );
+                });
           } else {
             // Show error message if a video is already stored
             showDialog(
@@ -550,15 +545,16 @@ class _VideoState extends State<Video> {
               child: thumbnail.isNotEmpty
                   ? Image.network(thumbnail)
                   : CircularProgressIndicator(), // Show a loading indicator if thumbnail is being fetched
-            ),              onTap: () {
-            // Navigate to VideoPlayerScreen when the name is clicked
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => VideoPlayerScreen(videoPath: videoPath),
-              ),
-            );
-          },
+            ),
+            onTap: () {
+              // Navigate to VideoPlayerScreen when the name is clicked
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => VideoPlayerScreen(videoPath: videoPath),
+                ),
+              );
+            },
             trailing: IconButton(
               icon: Icon(Icons.delete, color: Colors.red),
               onPressed: () {
@@ -572,12 +568,11 @@ class _VideoState extends State<Video> {
   }
 }
 
-
-
 class VideoPlayerScreen extends StatelessWidget {
   final String videoPath;
 
-  const VideoPlayerScreen({Key? key, required this.videoPath}) : super(key: key);
+  const VideoPlayerScreen({Key? key, required this.videoPath})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -587,7 +582,8 @@ class VideoPlayerScreen extends StatelessWidget {
       ),
       body: Center(
         child: AspectRatio(
-          aspectRatio: 16 / 9, // Adjust aspect ratio as per your video dimensions
+          aspectRatio:
+              16 / 9, // Adjust aspect ratio as per your video dimensions
           child: VideoPlayerWidget(videoUrl: videoPath),
         ),
       ),
@@ -655,6 +651,3 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     );
   }
 }
-
-
-

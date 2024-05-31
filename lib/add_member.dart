@@ -6,42 +6,36 @@ import 'package:flutter/services.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import'package:http/http.dart'as http;
+import 'package:http/http.dart' as http;
 
 import 'add_member_view.dart';
 import 'home.dart';
 
-
-
 class AddMember extends StatelessWidget {
-  String? userId ="";
-  String? userType ="";
-   AddMember({Key? key,
-    required this.userId,
-     required this.userType
-   }) : super(key: key);
+  String? userId = "";
+  String? userType = "";
+  AddMember({Key? key, required this.userId, required this.userType})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-      body: Guest(userId:userId,userType:userType),
+    return Scaffold(
+      body: Guest(userId: userId, userType: userType),
     );
   }
 }
 
 class Guest extends StatefulWidget {
-  String? userId ="";
-  String? userType ="";
-   Guest({Key? key,
-    required this.userId,
-    required this.userType}) : super(key: key);
+  String? userId = "";
+  String? userType = "";
+  Guest({Key? key, required this.userId, required this.userType})
+      : super(key: key);
 
   @override
   State<Guest> createState() => _GuestState();
 }
 
 class _GuestState extends State<Guest> {
-
   bool _isObscure = true;
   final _formKey = GlobalKey<FormState>();
   final RegExp _alphabetPattern = RegExp(r'^[a-zA-Z]+$');
@@ -94,9 +88,7 @@ class _GuestState extends State<Guest> {
   TextEditingController businesskeywordscontroller = TextEditingController();
   TextEditingController districtController = TextEditingController();
   TextEditingController chapterController = TextEditingController();
-  String referrerId ="";
-
-
+  String referrerId = "";
 
   ///timer code for otp
 
@@ -133,10 +125,6 @@ class _GuestState extends State<Guest> {
     super.dispose();
   }
 
-
-
-
-
   ///for otp check and store  not complete
   Future<void> saveInformationToDatabase1() async {
     try {
@@ -146,10 +134,10 @@ class _GuestState extends State<Guest> {
         Uri.parse("http://mybudgetbook.in/GIBAPI/OTP.php"),
         body: jsonEncode({
           "mobile": mobilecontroller.text.trim(),
-          "OTP Expire":"12345",
-          "Date":"234567",
-          "email":emailcontroller.text.trim(),
-          "OTP":generateOTP(),
+          "OTP Expire": "12345",
+          "Date": "234567",
+          "email": emailcontroller.text.trim(),
+          "OTP": generateOTP(),
         }),
       );
 
@@ -158,10 +146,9 @@ class _GuestState extends State<Guest> {
         //print("OTP response: ${response.statusCode} ${response.body}");
         //print("OTP successful");
         // Navigator.push(context, MaterialPageRoute(builder: (context)=>const Home()));
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("OTP store successful")));
-
-      }
-      else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("OTP store successful")));
+      } else {
         //  print("Error: ${response.statusCode}");
       }
     } catch (e) {
@@ -169,8 +156,6 @@ class _GuestState extends State<Guest> {
       // Handle error as needed
     }
   }
-
-
 
   /// random numbers generate code
   String? databaseOTP;
@@ -183,12 +168,12 @@ class _GuestState extends State<Guest> {
     return otp.toString();
   }
 
-
   ///capital letter starts code
   String capitalizeFirstLetter(String text) {
     if (text.isEmpty) return text;
     return text.substring(0, 1).toUpperCase() + text.substring(1);
   }
+
   XFile? pickedImage;
   bool showLocalImage = false;
   Uint8List? selectedImage;
@@ -207,72 +192,74 @@ class _GuestState extends State<Guest> {
     }
   }
 
-
   Future<void> uploadImage() async {
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/registration.php');
-    //  String uri = "http://mybudgetbook.in/GIBAPI/registration.php";
-      final res = await http.post(url, body: jsonEncode({
-        "imagedata": imagedata,
-        "imagename": imagename,
-        "mobile": mobilecontroller.text.trim(),
-        "password":"123456",
-        "member_type":membertype.toString(),
-        "first_name":firstnamecontroller.text.trim(),
-        "last_name":lastnamecontroller.text.trim(),
-        "company_name":companynamecontroller.text.trim(),
-        "email":emailcontroller.text.trim(),
-        "blood_group":blood.toString(),
-        "place":locationcontroller.text.trim(),
-        "pin":"123456",
-        "referrer_mobile":referrermobilecontroller.text.trim(),
-        "OTP":"",
-        "block_status":"Block",
-        "admin_rights":"Pending",
-        "type":type.toString(),
-        "district":districtController.text,
-        "chapter":chapterController.text,
-        "dob":_dobdate.text.trim(),
-        "koottam":koottam.toString(),
-        "marital_status":status.toString(),
-        "business_type":businesstype.toString(),
-        "company_address":companynamecontroller.text.trim(),
-        "business_keywords":businesskeywordscontroller.text.trim(),
-        "education":educationcontroller.text.trim(),
-        "native":spousenativecontroller.text.trim(),
-        "kovil":kovilcontroller.text.trim(),
-        "s_name":spousenamecontroller.text.trim(),
-        "WAD":_waddate.text.trim(),
-        "s_blood":spouseblood.toString(),
-        "s_father_koottam":spousekoottam.toString(),
-        "s_father_kovil":spousekovilcontroller.text.trim(),
-        "past_experience":pastexpcontroller.text.trim(),
-        "website":websitecontroller.text.trim(),
-        "b_year":yearcontroller.text.trim(),
-        "referrer_id":referrerId.toString(),
-      }));
+      //  String uri = "http://mybudgetbook.in/GIBAPI/registration.php";
+      final res = await http.post(url,
+          body: jsonEncode({
+            "imagedata": imagedata,
+            "imagename": imagename,
+            "mobile": mobilecontroller.text.trim(),
+            "password": "123456",
+            "member_type": membertype.toString(),
+            "first_name": firstnamecontroller.text.trim(),
+            "last_name": lastnamecontroller.text.trim(),
+            "company_name": companynamecontroller.text.trim(),
+            "email": emailcontroller.text.trim(),
+            "blood_group": blood.toString(),
+            "place": locationcontroller.text.trim(),
+            "pin": "123456",
+            "referrer_mobile": referrermobilecontroller.text.trim(),
+            "OTP": "",
+            "block_status": "Block",
+            "admin_rights": "Pending",
+            "type": type.toString(),
+            "district": districtController.text,
+            "chapter": chapterController.text,
+            "dob": _dobdate.text.trim(),
+            "koottam": koottam.toString(),
+            "marital_status": status.toString(),
+            "business_type": businesstype.toString(),
+            "company_address": companynamecontroller.text.trim(),
+            "business_keywords": businesskeywordscontroller.text.trim(),
+            "education": educationcontroller.text.trim(),
+            "native": spousenativecontroller.text.trim(),
+            "kovil": kovilcontroller.text.trim(),
+            "s_name": spousenamecontroller.text.trim(),
+            "WAD": _waddate.text.trim(),
+            "s_blood": spouseblood.toString(),
+            "s_father_koottam": spousekoottam.toString(),
+            "s_father_kovil": spousekovilcontroller.text.trim(),
+            "past_experience": pastexpcontroller.text.trim(),
+            "website": websitecontroller.text.trim(),
+            "b_year": yearcontroller.text.trim(),
+            "referrer_id": referrerId.toString(),
+          }));
 
       if (res.statusCode == 200) {
         var response = jsonDecode(res.body);
         if (response["success"] == "true") {
           // Navigator.push(context, MaterialPageRoute(builder: (context)=> Home(userType: widget.userType, userId: widget.userId
           // )));
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please wait for Admin Approval")));
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Please wait for Admin Approval")));
           print("Uploaded image successfully");
         } else {
           // Navigator.push(context, MaterialPageRoute(builder: (context)=> Home(userType: widget.userType, userId: widget.userId)));
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Registration is successfull\n"
-              "Please wait for Admin Approval")));
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text("Registration is successfull\n"
+                  "Please wait for Admin Approval")));
           print("Image upload failed. Server response: ${response["message"]}");
         }
       } else {
-        print("Failed to upload image. Server returned status code: ${res.statusCode}");
+        print(
+            "Failed to upload image. Server returned status code: ${res.statusCode}");
       }
     } catch (e) {
       print("Error uploading image: $e");
     }
   }
-
 
   ///get image from file code starts here
 
@@ -323,13 +310,13 @@ class _GuestState extends State<Guest> {
     }
   }
 
-
   /// chapter code
   List<String> chapters = [];
   List<Map<String, dynamic>> suggesstiondataitemName = [];
   Future<void> getitemname(String district) async {
     try {
-      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/chapter.php?district=$district'); // Fix URL
+      final url = Uri.parse(
+          'http://mybudgetbook.in/GIBAPI/chapter.php?district=$district'); // Fix URL
       final response = await http.get(url);
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
@@ -340,8 +327,7 @@ class _GuestState extends State<Guest> {
         print('Sorted chapter Names: $suggesstiondataitemName');
         setState(() {
           print('chapter: $chapters');
-          setState(() {
-          });
+          setState(() {});
           chapterController.clear();
         });
       } else {
@@ -352,15 +338,13 @@ class _GuestState extends State<Guest> {
     }
   }
 
-
-
   /// ends here
 
-
-  List dynamicdata=[];
+  List dynamicdata = [];
   Future<void> fetchData(String userId) async {
     try {
-      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/id_base_details_fetch.php?id=$userId');
+      final url = Uri.parse(
+          'http://mybudgetbook.in/GIBAPI/id_base_details_fetch.php?id=$userId');
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
@@ -370,11 +354,9 @@ class _GuestState extends State<Guest> {
             dynamicdata = responseData.cast<Map<String, dynamic>>();
             if (dynamicdata.isNotEmpty) {
               setState(() {
-
-                referrermobilecontroller.text=dynamicdata[0]["mobile"];
+                referrermobilecontroller.text = dynamicdata[0]["mobile"];
                 referrerId = dynamicdata[0]["member_id"];
-            //    print("referrer Details Fetch : ${referrermobilecontroller.text},${ referreridcotroller.text}");
-
+                //    print("referrer Details Fetch : ${referrermobilecontroller.text},${ referreridcotroller.text}");
               });
             }
           });
@@ -392,7 +374,6 @@ class _GuestState extends State<Guest> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     fetchData(widget.userId.toString());
@@ -401,14 +382,25 @@ class _GuestState extends State<Guest> {
       // Appbar starts
       appBar: AppBar(
         actions: [
-          IconButton(onPressed: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context)=>AddMemberView(userType: widget.userType.toString(), userID: widget.userId.toString())));
-          }, icon: Icon(Icons.checklist_rtl))
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => AddMemberView(
+                            userType: widget.userType.toString(),
+                            userID: widget.userId.toString())));
+              },
+              icon: Icon(Icons.checklist_rtl))
         ],
         // Appbar title
-        title:  Center(child: Text('ADD MEMBER',style: Theme.of(context).textTheme.bodySmall,)),
+        title: Center(
+            child: Text(
+          'ADD MEMBER',
+          style: Theme.of(context).textTheme.bodySmall,
+        )),
         centerTitle: true,
-        iconTheme:  IconThemeData(
+        iconTheme: IconThemeData(
           color: Colors.white,
         ),
       ),
@@ -420,7 +412,8 @@ class _GuestState extends State<Guest> {
         child: SingleChildScrollView(
           child: Container(
             decoration: BoxDecoration(
-              border: Border.symmetric(),borderRadius: BorderRadius.circular(2),
+              border: Border.symmetric(),
+              borderRadius: BorderRadius.circular(2),
               color: Colors.white,
             ),
             child: Center(
@@ -428,7 +421,9 @@ class _GuestState extends State<Guest> {
                 key: _formKey,
                 child: Column(
                   children: [
-                    const SizedBox(width: 20,),
+                    const SizedBox(
+                      width: 20,
+                    ),
                     /*InkWell(
                       child:  ClipOval(
                         child: selectedImage != null
@@ -457,7 +452,9 @@ class _GuestState extends State<Guest> {
                     ),*/
 
                     // First Name textfield starts
-                    const SizedBox(height: 9,),
+                    const SizedBox(
+                      height: 9,
+                    ),
                     SizedBox(
                       width: 300,
                       child: TextFormField(
@@ -471,17 +468,20 @@ class _GuestState extends State<Guest> {
                           return null;
                         },
                         onChanged: (value) {
-                          String capitalizedValue = capitalizeFirstLetter(value);
-                          firstnamecontroller.value = firstnamecontroller.value.copyWith(
+                          String capitalizedValue =
+                              capitalizeFirstLetter(value);
+                          firstnamecontroller.value =
+                              firstnamecontroller.value.copyWith(
                             text: capitalizedValue,
-                           // selection: TextSelection.collapsed(offset: capitalizedValue.length),
+                            // selection: TextSelection.collapsed(offset: capitalizedValue.length),
                           );
                         },
                         decoration: const InputDecoration(
                           labelText: "First Name",
                           suffixIcon: Icon(Icons.account_circle),
                         ),
-                        inputFormatters: [//AlphabetInputFormatter(),
+                        inputFormatters: [
+                          //AlphabetInputFormatter(),
                           LengthLimitingTextInputFormatter(20),
                         ],
                       ),
@@ -489,7 +489,9 @@ class _GuestState extends State<Guest> {
                     // First Name textfield ends
 
                     // Last Name textfield starts
-                    const SizedBox(height: 15,),
+                    const SizedBox(
+                      height: 15,
+                    ),
                     SizedBox(
                       width: 300,
                       child: TextFormField(
@@ -503,10 +505,13 @@ class _GuestState extends State<Guest> {
                           return null;
                         },
                         onChanged: (value) {
-                          String capitalizedValue = capitalizeFirstLetter(value);
-                          lastnamecontroller.value = lastnamecontroller.value.copyWith(
+                          String capitalizedValue =
+                              capitalizeFirstLetter(value);
+                          lastnamecontroller.value =
+                              lastnamecontroller.value.copyWith(
                             text: capitalizedValue,
-                            selection: TextSelection.collapsed(offset: capitalizedValue.length),
+                            selection: TextSelection.collapsed(
+                                offset: capitalizedValue.length),
                           );
                         },
                         decoration: const InputDecoration(
@@ -514,7 +519,8 @@ class _GuestState extends State<Guest> {
                           hintText: "Last Name",
                           suffixIcon: Icon(Icons.account_circle),
                         ),
-                        inputFormatters: [AlphabetInputFormatter(),
+                        inputFormatters: [
+                          AlphabetInputFormatter(),
                           LengthLimitingTextInputFormatter(20),
                         ],
                       ),
@@ -522,7 +528,9 @@ class _GuestState extends State<Guest> {
                     // Last Name textfield ends
 
                     // Company name textfield starts
-                    const SizedBox(height: 15,),
+                    const SizedBox(
+                      height: 15,
+                    ),
                     SizedBox(
                       width: 300,
                       child: TextFormField(
@@ -536,13 +544,15 @@ class _GuestState extends State<Guest> {
                           return null;
                         },
                         onChanged: (value) {
-                          String capitalizedValue = capitalizeFirstLetter(value);
-                          companynamecontroller.value = companynamecontroller.value.copyWith(
+                          String capitalizedValue =
+                              capitalizeFirstLetter(value);
+                          companynamecontroller.value =
+                              companynamecontroller.value.copyWith(
                             text: capitalizedValue,
-                            selection: TextSelection.collapsed(offset: capitalizedValue.length),
+                            selection: TextSelection.collapsed(
+                                offset: capitalizedValue.length),
                           );
                         },
-
                         decoration: const InputDecoration(
                           labelText: "Company Name/Occupation",
                           hintText: "Company Name/Occupation",
@@ -555,7 +565,7 @@ class _GuestState extends State<Guest> {
                     ),
                     // Company name textfield ends
 
-                   /* // Email textfield starts here
+                    /* // Email textfield starts here
                     const SizedBox(height: 15,),
                     SizedBox(
                       width: 300,
@@ -584,7 +594,9 @@ class _GuestState extends State<Guest> {
                     // Email textfield ends here
 
                     // Mobile number textfield starts here
-                    const SizedBox(height: 15,),
+                    const SizedBox(
+                      height: 15,
+                    ),
                     SizedBox(
                       width: 300,
                       child: TextFormField(
@@ -592,18 +604,17 @@ class _GuestState extends State<Guest> {
                         validator: (value) {
                           if (value!.isEmpty) {
                             return '* Enter your Mobile Number';
-                          }
-                          else if(value.length<10){
+                          } else if (value.length < 10) {
                             return "* Mobile should be 10 digits";
                           }
                           return null;
                         },
-
                         decoration: const InputDecoration(
                           labelText: "Mobile Number",
                           hintText: "Mobile Number",
                           prefixText: '+91 ',
-                          prefixStyle: TextStyle(color: Colors.blue), // Set the color here
+                          prefixStyle: TextStyle(
+                              color: Colors.blue), // Set the color here
                           suffixIcon: Icon(Icons.phone_android),
                         ),
                         keyboardType: TextInputType.number,
@@ -665,7 +676,9 @@ class _GuestState extends State<Guest> {
                     // Blood group dropdown button ends here
 
                     // Location textfield starts
-                    const SizedBox(height: 15,),
+                    const SizedBox(
+                      height: 15,
+                    ),
                     SizedBox(
                       width: 300,
                       child: TextFormField(
@@ -674,24 +687,27 @@ class _GuestState extends State<Guest> {
                           if (value!.isEmpty) {
                             return '* Enter your location';
                           } else if (!_alphabetPattern.hasMatch(value)) {
-                            return'* Enter Alphabets only';
+                            return '* Enter Alphabets only';
                           }
                           return null;
                         },
                         onChanged: (value) {
-                          String capitalizedValue = capitalizeFirstLetter(value);
-                          locationcontroller.value = locationcontroller.value.copyWith(
+                          String capitalizedValue =
+                              capitalizeFirstLetter(value);
+                          locationcontroller.value =
+                              locationcontroller.value.copyWith(
                             text: capitalizedValue,
-                            selection: TextSelection.collapsed(offset: capitalizedValue.length),
+                            selection: TextSelection.collapsed(
+                                offset: capitalizedValue.length),
                           );
                         },
-
                         decoration: const InputDecoration(
                           labelText: "Location",
                           hintText: "Location",
                           suffixIcon: Icon(Icons.location_on_rounded),
                         ),
-                        inputFormatters: [AlphabetInputFormatter(),
+                        inputFormatters: [
+                          AlphabetInputFormatter(),
                           LengthLimitingTextInputFormatter(25),
                         ],
                       ),
@@ -779,7 +795,9 @@ class _GuestState extends State<Guest> {
                     //   ),),
                     // // Confirm password textfield ends here
 
-                    const SizedBox(height: 15,),
+                    const SizedBox(
+                      height: 15,
+                    ),
                     Visibility(
                       visible: isVisible,
                       child: Column(
@@ -823,7 +841,7 @@ class _GuestState extends State<Guest> {
                           // Member type dropdown button ends here
 
                           // District drop down button starts
-                        //  const SizedBox(height: 15,),//DropDown For District
+                          //  const SizedBox(height: 15,),//DropDown For District
                           /*
                           SizedBox(
                             width: 300,
@@ -849,7 +867,7 @@ class _GuestState extends State<Guest> {
                           ),
                     */
 
-                         /* SizedBox(
+                          /* SizedBox(
                             width: 305,
                             height: 50,
                             child: TypeAheadFormField<String>(
@@ -967,7 +985,9 @@ class _GuestState extends State<Guest> {
                             ),
                           ),*/
 
-                          const SizedBox(height: 15,),
+                          const SizedBox(
+                            height: 15,
+                          ),
                           SizedBox(
                             width: 300,
                             child: DropdownButtonFormField<String>(
@@ -1120,29 +1140,28 @@ class _GuestState extends State<Guest> {
                                 "Vilosanan",
                                 "Viradhan",
                                 "Viraivulan"
-                              ]
-                                  .map<DropdownMenuItem<String>>((String value) {
+                              ].map<DropdownMenuItem<String>>((String value) {
                                 return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value));
-                              }
-                              ).toList(),
+                                    value: value, child: Text(value));
+                              }).toList(),
                               onChanged: (String? newValue) {
                                 setState(() {
                                   koottam = newValue!;
                                 });
                               },
                               validator: (value) {
-                                if (koottam == 'Koottam') return '* Select your Koottam';
+                                if (koottam == 'Koottam')
+                                  return '* Select your Koottam';
                                 return null;
                               },
                             ),
                           ),
                           // Koottam dropdown button ends here
 
-
                           // Kovil textfield starts here
-                          const SizedBox(height: 15,),
+                          const SizedBox(
+                            height: 15,
+                          ),
                           SizedBox(
                             width: 300,
                             child: TextFormField(
@@ -1156,10 +1175,13 @@ class _GuestState extends State<Guest> {
                                 return null;
                               },
                               onChanged: (value) {
-                                String capitalizedValue = capitalizeFirstLetter(value);
-                                kovilcontroller.value = kovilcontroller.value.copyWith(
+                                String capitalizedValue =
+                                    capitalizeFirstLetter(value);
+                                kovilcontroller.value =
+                                    kovilcontroller.value.copyWith(
                                   text: capitalizedValue,
-                                  selection: TextSelection.collapsed(offset: capitalizedValue.length),
+                                  selection: TextSelection.collapsed(
+                                      offset: capitalizedValue.length),
                                 );
                               },
                               decoration: const InputDecoration(
@@ -1603,7 +1625,7 @@ class _GuestState extends State<Guest> {
                             ),
                           ),*/
 
-                         /* Padding(
+                          /* Padding(
                             padding: const EdgeInsets.fromLTRB(0, 0, 170, 0),
                             child: Text('Business Details',
                               style: Theme
@@ -1756,7 +1778,7 @@ class _GuestState extends State<Guest> {
                                 }
                                 return null;
                               },
-                              *//*onTap: () async {
+                              */ /*onTap: () async {
                                 DateTime currentDate = DateTime.now();
                                 DateTime firstSelectableYear = DateTime(1900);
                                 DateTime lastSelectableYear = DateTime(currentDate.year, 12, 31);
@@ -1774,7 +1796,7 @@ class _GuestState extends State<Guest> {
                                   });
                                 }
 
-                              },*//*
+                              },*/ /*
 
                               decoration: const InputDecoration(
                                 labelText: "business established year",
@@ -1849,7 +1871,10 @@ class _GuestState extends State<Guest> {
                           ),
 */
                           // Executive GiB Member ID textfield starts here
-                          const SizedBox(height: 15,),
+                          const SizedBox(
+                            height: 15,
+                          ),
+
                           /// referrer Id auto fetched code starts here...
 
                           /*   SizedBox(
@@ -1879,8 +1904,8 @@ class _GuestState extends State<Guest> {
                           /// referrer Id auto fetched code ends here...
 
                           // Executive GiB Member ID textfield ends here
-/// referrer Mobile No auto fetched code starts here...
-                      /*    const SizedBox(height: 15,),
+                          /// referrer Mobile No auto fetched code starts here...
+                          /*    const SizedBox(height: 15,),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -2075,7 +2100,9 @@ class _GuestState extends State<Guest> {
                       ),
                     ),
 
-                    const SizedBox(height: 30,),
+                    const SizedBox(
+                      height: 30,
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -2089,7 +2116,10 @@ class _GuestState extends State<Guest> {
                             onPressed: () {
                               Navigator.push(context, MaterialPageRoute(builder: (context) => Homepage(userType: widget.userType, userId: widget.userId,)));
                             },
-                            child: const Text("Cancel", style: TextStyle(color: Colors.white),)),
+                            child: const Text(
+                              "Cancel",
+                              style: TextStyle(color: Colors.white),
+                            )),
                         // Login button ends
 
                         // Sign up button starts
@@ -2106,13 +2136,16 @@ class _GuestState extends State<Guest> {
                               }
                               //signUp();
                             },
-                            child: const Text('Register',
-                              style: TextStyle(color: Colors.white),)),
+                            child: const Text(
+                              'Register',
+                              style: TextStyle(color: Colors.white),
+                            )),
                         // Sign up button ends
                       ],
                     ),
-                    const SizedBox(height: 20,)
-
+                    const SizedBox(
+                      height: 20,
+                    )
                   ],
                 ),
               ),
@@ -2125,14 +2158,12 @@ class _GuestState extends State<Guest> {
   }
 }
 
-
-
 class AlphabetInputFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue,
-      TextEditingValue newValue,
-      ) {
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
     // Filter out non-alphabetic characters
     String filteredText = newValue.text.replaceAll(RegExp(r'[^a-zA-Z]'), '');
 

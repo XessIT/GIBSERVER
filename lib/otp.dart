@@ -45,11 +45,11 @@ class _OtpState extends State<Otp> {
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 0, 200, 0),
               child: Text('Enter OTP',
-              style: Theme.of(context).textTheme.headline4,),
+              style: Theme.of(context).textTheme.bodySmall),
             ),
               const SizedBox(height: 20,),
               Text('Enter 6 digit OTP Number',
-            style: Theme.of(context).textTheme.bodyText2,),
+            style: Theme.of(context).textTheme.bodySmall,),
             const SizedBox(height: 30,),
             // OTP number textfield starts here
             Padding(
