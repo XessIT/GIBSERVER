@@ -55,29 +55,6 @@ void main() {
               // Extract isLoggedIn, userType, and firstName from snapshot.data
               bool isLoggedIn = snapshot.data?['isLoggedIn'] ?? false;
               String? userType = snapshot.data?['userType'];
-              String? firstName = snapshot.data?['firstName'];
-              String? district = snapshot.data?['district'];
-              String? chapter = snapshot.data?['chapter'];
-              String? native = snapshot.data?['native'];
-              String? DOB = snapshot.data?['DOB'];
-              String? Koottam = snapshot.data?['Koottam'];
-              String? Kovil = snapshot.data?['Kovil'];
-              String? BloodGroup = snapshot.data?['BloodGroup'];
-              String? lastName = snapshot.data?['lastName'];
-              String? spouse_name = snapshot.data?['s_name'];
-              String? spouse_blood = snapshot.data?['s_blood'];
-              String? Wad = snapshot.data?['WAD'];
-              String? place = snapshot.data?['place'];
-              String? skoottam = snapshot.data?['s_father_koottam'];
-              String? skovil = snapshot.data?['s_father_kovil'];
-              String? pexe = snapshot.data?['past_experience'];
-              String? edu = snapshot.data?['education'];
-              String? email = snapshot.data?['email'];
-              String? rid = snapshot.data?['referrer_id'];
-              String? website = snapshot.data?['website'];
-              String? byear = snapshot.data?['b_year'];
-              String? mobile = snapshot.data?['mobile'];
-              String? image = snapshot.data?['profile_image'];
               String? id = snapshot.data?['id'];
 
               if (isLoggedIn) {

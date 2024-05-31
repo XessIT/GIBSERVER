@@ -17,7 +17,9 @@ import '../gib_gallery.dart';
 import '../gib_members.dart';
 import '../login.dart';
 import '../profile.dart';
+import 'about_view.dart';
 import 'business.dart';
+import 'change_mpin.dart';
 import 'home.dart';
 import 'meeting.dart';
 import 'my_gallery.dart';
@@ -336,34 +338,49 @@ class SettingsPageExecutive extends StatelessWidget {
                     titleMaxLine: 1,
                     subtitleMaxLine: 1,
                   ),
+                  SettingsItem(
+                    onTap: () => {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => AboutTab(userId: userId.toString(),userType: userType.toString(),)),
+                      )
+                    },
+                    icons: CupertinoIcons.photo_on_rectangle,
+                    iconStyle: IconStyle(
+                      iconsColor: Colors.white,
+                      withBackground: true,
+                      backgroundColor: Colors.green,
+                    ),
+                    title: 'About GIB',
+                    titleStyle: Theme.of(context).textTheme.bodyMedium,
+                    // subtitle:'Profile Image, Name, Income',
+                    titleMaxLine: 1,
+                    subtitleMaxLine: 1,
+                  ),
+                  SettingsItem(
+                    onTap: () => {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Change(
+                                userType: userType.toString(),
+                                userID: userId.toString())),
+                      )
+                    },
+                    icons: Icons.fingerprint,
+                    iconStyle: IconStyle(
+                      iconsColor: Colors.white,
+                      withBackground: true,
+                      backgroundColor: Colors.green,
+                    ),
+                    title: 'Change M-PIN',
+                    titleStyle: Theme.of(context).textTheme.bodyMedium,
+                    // subtitle:'Profile Image, Name, Income',
+                    titleMaxLine: 1,
+                    subtitleMaxLine: 1,
+                  ),
                 ],
               ),
-              /* SettingsGroup(
-                items: [
-                  SettingsItem(
-                    onTap: () {
-
-                    },
-                    icons: Icons.question_mark_outlined,
-                    iconStyle: IconStyle(
-                      backgroundColor: Colors.purple,
-                    ),
-                    title: 'FAQ',
-                    //subtitle: "Learn more about Ziar'App",
-                  ),
-                  SettingsItem(
-                    onTap: () {
-
-                    },
-                    icons: Icons.star_rate_rounded,
-                    iconStyle: IconStyle(
-                      backgroundColor: Colors.teal,
-                    ),
-                    title: 'Feedback',
-                    //  subtitle: "Learn more about Ziar'App",
-                  ),
-                ],
-              ),*/
               // You can add a settings title
               SettingsGroup(
                 // settingsGroupTitle: "Account",

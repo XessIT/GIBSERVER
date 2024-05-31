@@ -180,7 +180,7 @@ class _LoginState extends State<Login> {
                       ? CircularProgressIndicator()
                       : MaterialButton(
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
-                    minWidth: 130,
+                    minWidth: 300,
                     height: 50,
                     color: Colors.green[900],
                     onPressed: () async {

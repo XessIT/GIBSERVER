@@ -3,6 +3,7 @@ import 'dart:core';
 import 'dart:typed_data';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -53,16 +54,85 @@ class _NonExecutiveHomeNavState extends State<NonExecutiveHomeNav> {
         userID: widget.userId,
         userType: widget.userType,
       )
-
       // Add more pages as needed
     ];
     super.initState();
+    _checkConnectivityAndGetData();
+    Connectivity().onConnectivityChanged.listen((result) {
+      setState(() {
+        _connectivityResult = result;
+      });
+    });
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
+  }
+  bool isLoading = true;
+  ///refresh
+  List<String> items = List.generate(20, (index) => 'Item $index');
+  Future<void> _refresh() async {
+    await Future.delayed(const Duration(seconds: 1));
+    setState(() {
+      _pages = [
+        NonExecutiveHome(
+          userID: widget.userId,
+          userType: widget.userType,
+        )
+        // Add more pages as needed
+      ];
+    });
+  }
+  var _connectivityResult = ConnectivityResult.none;
+  Future<void> _checkConnectivityAndGetData() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectivityResult;
+    });
+    if (_connectivityResult != ConnectivityResult.none) {
+      _getInternet();
+    }
+  }
+  Future<void> _getInternet() async {
+    // Replace the URL with your PHP backend URL
+    var url = 'http://mybudgetbook.in/BUDGETAPI/internet.php';
+
+    try {
+      var response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        // Handle successful response
+        var data = json.decode(response.body);
+        print(data);
+        // Show online status message
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(
+        //     content: Text('Now online.'),
+        //   ),
+        // );
+      } else {
+        // Handle other status codes
+        print('Request failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle network errors
+      print('Error: $e');
+      // Show offline status message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please check your internet connection.'),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[_currentIndex],
+
+      body: RefreshIndicator(
+        onRefresh: _refresh,
+          child: _pages[_currentIndex]),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:core';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
@@ -24,6 +25,67 @@ class _OffersPageState extends State<OffersPage> {
   void initState() {
     getData();
     super.initState();
+    _checkConnectivityAndGetData();
+    Connectivity().onConnectivityChanged.listen((result) {
+      setState(() {
+        _connectivityResult = result;
+      });
+    });
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
+  }
+  var _connectivityResult = ConnectivityResult.none;
+  Future<void> _checkConnectivityAndGetData() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectivityResult;
+    });
+    if (_connectivityResult != ConnectivityResult.none) {
+      _getInternet();
+    }
+  }
+  Future<void> _getInternet() async {
+    // Replace the URL with your PHP backend URL
+    var url = 'http://mybudgetbook.in/BUDGETAPI/internet.php';
+
+    try {
+      var response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        // Handle successful response
+        var data = json.decode(response.body);
+        print(data);
+        // Show online status message
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(
+        //     content: Text('Now online.'),
+        //   ),
+        // );
+      } else {
+        // Handle other status codes
+        print('Request failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle network errors
+      print('Error: $e');
+      // Show offline status message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please check your internet connection.'),
+        ),
+      );
+    }
+  }
+  bool isLoading = true;
+  ///refresh
+  List<String> items = List.generate(20, (index) => 'Item $index');
+  Future<void> _refresh() async {
+    await Future.delayed(const Duration(seconds: 1));
+    setState(() {
+      initState();
+    });
   }
 
   List<Map<String, dynamic>> data=[];
@@ -112,7 +174,7 @@ class _OffersPageState extends State<OffersPage> {
           IconButton(onPressed: (){
             Navigator.push(context,
               MaterialPageRoute(builder:
-                  (context)=> OfferList(userId: widget.userId)),
+                  (context)=> OfferList(userId: widget.userId, userType: widget.userType,)),
             );
           },
               icon: const Icon(

@@ -32,7 +32,6 @@ class GuestSettings extends StatelessWidget {
           ? Colors.white
           : Colors.black,
       appBar: AppBar(
-        centerTitle: true,
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             color: Colors.green,
@@ -219,7 +218,7 @@ class GuestSettings extends StatelessWidget {
                       withBackground: true,
                       backgroundColor: Colors.green,
                     ),
-                    title: 'Change MPIN',
+                    title: 'Change M-PIN',
                     titleStyle: Theme.of(context).textTheme.bodyMedium,
                     // subtitle:'Profile Image, Name, Income',
                     titleMaxLine: 1,
