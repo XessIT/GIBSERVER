@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:gipapp/view_members.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -415,8 +416,8 @@ class _MembersState extends State<Members> {
                         child: Center(
                           child: InkWell(
                             onTap: () {
-                             // Navigator.push(context, MaterialPageRoute(builder: (context) => Details(memberId: data[i]['id'])));
-                              // Add your onTap functionality here
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileMembers(userID: widget.userId, userType: widget.userType,memberId:data[i]['id'],)));
+
                             },
                             child: Card(
                               child: ListTile(
@@ -425,7 +426,8 @@ class _MembersState extends State<Members> {
                                   backgroundImage: NetworkImage(imageUrl),
                                 ),
                                 title: Text('${data[i]['first_name']}'),
-                                subtitle: Text('${data[i]['company_name']}'),
+                                subtitle: Text('${data[i]['id']}'),
+
                                 trailing: IconButton(
                                   onPressed: () async {
                                     final call =
