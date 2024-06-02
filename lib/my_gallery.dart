@@ -370,7 +370,7 @@ class _VideoState extends State<Video> {
   }
   Future<void> _fetchVideos() async {
     final url =
-        'http://mybudgetbook.in/GIBAPI/fetchvideos.php?userId=${widget.userId}';
+        'https://mybudgetbook.in/GIBAPI/fetchvideos.php?userId=${widget.userId}';
 
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
@@ -380,7 +380,7 @@ class _VideoState extends State<Video> {
 
         // Fetch thumbnails for each video
         for (int i = 0; i < _videos.length; i++) {
-          _fetchThumbnail(i);
+         // _fetchThumbnail(i);
         }
       });
     } else {
@@ -389,7 +389,7 @@ class _VideoState extends State<Video> {
     }
   }
 
-  Future<void> _fetchThumbnail(int index) async {
+/*  Future<void> _fetchThumbnail(int index) async {
     final videoPath = _videos[index]['video_path'];
     final thumbnailUrl = 'http://mybudgetbook.in/GIBAPI/thumbnail_$videoPath.jpg';
 
@@ -402,7 +402,7 @@ class _VideoState extends State<Video> {
       // Handle error
       print('Failed to fetch thumbnail for video: $videoPath');
     }
-  }
+  }*/
 
 
   Future<void> _deleteVideo(int videoIndex) async {
@@ -587,11 +587,9 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
       await _controller.initialize();
 
-      if (mounted) {
-        setState(() {
-          _isPlaying = true;
-        });
-      }
+      setState(() {
+        _isPlaying = true;
+      });
     } catch (error) {
       setState(() {
         _errorMessage = 'Error initializing video player: $error';
@@ -621,3 +619,4 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     );
   }
 }
+
