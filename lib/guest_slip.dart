@@ -3,17 +3,23 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-
 import 'guest_slip_history.dart';
 import 'home.dart';
 
-class VisitorsSlip extends StatelessWidget {
-  String? guestcount = "";
-  String? userId = "";
-  String? meetingId = "";
-  String? userType = "";
-  String? meeting_date;
-  String? user_mobile = "";
+
+
+enum SelectedItem { male, female }
+
+
+class VisitorsSlip extends StatefulWidget {
+  final String? guestcount;
+  final String? userId;
+  final String? meetingId;
+  final String? userType;
+  final String? meeting_date;
+  final String? user_mobile;
+  final String? user_name;
+  final String? member_id;
 
   VisitorsSlip(
       {Key? key,
@@ -22,55 +28,24 @@ class VisitorsSlip extends StatelessWidget {
         required this.meetingId,
         required this.userType,
         required this.meeting_date,
-        required this.user_mobile})
+        required this.user_mobile,
+        required this.user_name,
+        required this.member_id,
+      }
+      )
       : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: VisitorsSlipPage(
-        guestCount: guestcount.toString(),
-        userId: userId.toString(),
-        meetingId: meetingId.toString(),
-        userType: userType.toString(),
-        usermobile: user_mobile.toString(),
-        meeting_date: meeting_date.toString(),
-      ),
-    );
-  }
+  State<VisitorsSlip> createState() => _VisitorsSlipState();
 }
 
-enum SelectedItem { male, female }
-
-class VisitorsSlipPage extends StatefulWidget {
-  String? guestCount = "";
-  String? userId = "";
-  String? meetingId = "";
-  String? userType = "";
-  String? usermobile = "";
-  String? meeting_date = "";
-
-  VisitorsSlipPage(
-      {Key? key,
-        required this.guestCount,
-        required this.userId,
-        required this.meetingId,
-        required this.userType,
-        required this.usermobile,
-        required this.meeting_date})
-      : super(key: key);
-
-  @override
-  State<VisitorsSlipPage> createState() => _VisitorsSlipPageState();
-}
-
-class _VisitorsSlipPageState extends State<VisitorsSlipPage> {
+class _VisitorsSlipState extends State<VisitorsSlip> {
   String? gender = "Male";
   final _formKey = GlobalKey<FormState>();
   TextEditingController guestName = TextEditingController();
   TextEditingController companyName = TextEditingController();
   TextEditingController location = TextEditingController();
-  TextEditingController koottam = TextEditingController();
+//  TextEditingController koottam = TextEditingController();
   TextEditingController kovil = TextEditingController();
   TextEditingController mobile = TextEditingController();
   TextEditingController date = TextEditingController();
@@ -79,6 +54,7 @@ class _VisitorsSlipPageState extends State<VisitorsSlipPage> {
   TextEditingController zoom = TextEditingController();
 
   String? getMeetingDate = "";
+  String koottam = "Koottam";
   int count = 0;
 
   ///capital letter starts code
@@ -95,28 +71,27 @@ class _VisitorsSlipPageState extends State<VisitorsSlipPage> {
     print("MDate:- $getMeetingDate");
 
     try {
-      String uri = "http://mybudgetbook.in/GIBAPI/visiters_slip.php";
-      var res = await http.post(Uri.parse(uri),
+      final uri = Uri.parse("http://mybudgetbook.in/GIBAPI/visiters_slip.php");
+      var res = await http.post(uri,
           body: jsonEncode({
             "guest_name": guestName.text,
             "company_name": companyName.text,
-            "location": location.text,
-            "koottam": koottam.text,
+            "location":location.text,
+            "koottam": koottam,
             "kovil": kovil.text,
-            "zoom_meet": zoom.text,
             "gender": gender.toString(),
             "mobile": mobile.text,
             "meeting_id": widget.meetingId.toString(),
-            "date": date.text,
-            "time": time.text,
             "user_id": widget.userId,
-            "user_mobile": widget.usermobile,
+            "member_mobile": widget.user_mobile,
             "meeting_date": getMeetingDate,
+            'member_name':widget.user_name,
+            'member_id':widget.member_id
           }));
       print("guestSlip -${widget.userId}");
 
       if (res.statusCode == 200) {
-        print("V uri$uri");
+        print("V uri $uri");
         print("V Response Status: ${res.statusCode}");
         print("V Response Body: ${res.body}");
         // Navigator.push(context, MaterialPageRoute(builder: (context)=> Home(userType: widget.userType, userId:widget.userId)));
@@ -138,6 +113,9 @@ class _VisitorsSlipPageState extends State<VisitorsSlipPage> {
 
   @override
   void initState() {
+    print("user mobile12 ${widget.user_mobile}");
+    // print("user mobile12 ${widget.member_id}");
+    // print("user mobile12 ${widget.user_name}");
     // TODO: implement initState
     setState(() {
       // recordsPerPage = int.tryParse(widget.guestCount.toString())!;
@@ -150,10 +128,15 @@ class _VisitorsSlipPageState extends State<VisitorsSlipPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-        title: Text("Guest Slip", style: Theme.of(context).textTheme.bodySmall),
+        title: Text("Guest Slip", style: Theme.of(context).textTheme.displayLarge),
         iconTheme: const IconThemeData(
           color: Colors.white, // Set the color for the drawer icon
+        ),
+        leading: IconButton(
+          icon: Icon(Icons.navigate_before),
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => NavigationBarExe(userId: widget.userId, userType: widget.userType,)));
+          },
         ),
         actions: [
           IconButton(
@@ -190,7 +173,6 @@ class _VisitorsSlipPageState extends State<VisitorsSlipPage> {
                             ),
                             Container(
                               width: 350,
-                              height: 850,
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
                                   border: Border.all(color: Colors.green)),
@@ -200,7 +182,7 @@ class _VisitorsSlipPageState extends State<VisitorsSlipPage> {
                                     height: 10,
                                   ),
                                   Text(
-                                    'Register as a Guest ${widget.meeting_date}${widget.guestCount}',
+                                    'Register as a Guest ${widget.meeting_date}${widget.guestcount}',
                                     style: Theme.of(context)
                                         .textTheme
                                         .displayMedium,
@@ -213,7 +195,7 @@ class _VisitorsSlipPageState extends State<VisitorsSlipPage> {
                                     child: Text(
                                       'Basic Information',
                                       style:
-                                      Theme.of(context).textTheme.bodyLarge,
+                                     TextStyle(fontSize: 18)
                                     ),
                                   ),
                                   //TextFormField Visitor name starts
@@ -223,7 +205,7 @@ class _VisitorsSlipPageState extends State<VisitorsSlipPage> {
                                       controller: guestName,
                                       validator: (value) {
                                         if (value!.isEmpty) {
-                                          return "*Enter the Guest Name";
+                                          return "* Enter the Guest Name";
                                         } else {
                                           return null;
                                         }
@@ -238,7 +220,7 @@ class _VisitorsSlipPageState extends State<VisitorsSlipPage> {
                                             );
                                       },
                                       decoration: const InputDecoration(
-                                          labelText: "Guest Name"),
+                                          hintText: "Guest Name"),
                                       // inputFormatters: [AlphabetInputFormatter(),
                                       // ],
                                     ),
@@ -250,7 +232,7 @@ class _VisitorsSlipPageState extends State<VisitorsSlipPage> {
                                       controller: companyName,
                                       validator: (value) {
                                         if (value!.isEmpty) {
-                                          return "*Enter the Company Name";
+                                          return "* Enter the Company Name";
                                         } else {
                                           return null;
                                         }
@@ -265,7 +247,7 @@ class _VisitorsSlipPageState extends State<VisitorsSlipPage> {
                                             );
                                       },
                                       decoration: const InputDecoration(
-                                          labelText: "Company Name"),
+                                          hintText: "Company Name"),
                                     ),
                                   ),
                                   //TextFormField Location starts
@@ -275,7 +257,7 @@ class _VisitorsSlipPageState extends State<VisitorsSlipPage> {
                                       controller: location,
                                       validator: (value) {
                                         if (value!.isEmpty) {
-                                          return "*Enter the Location";
+                                          return "* Enter the Location";
                                         } else {
                                           return null;
                                         }
@@ -290,7 +272,7 @@ class _VisitorsSlipPageState extends State<VisitorsSlipPage> {
                                             );
                                       },
                                       decoration: const InputDecoration(
-                                        labelText: "Location",
+                                        hintText: "Location",
                                         suffixIcon: Icon(
                                           Icons.location_on,
                                           color: Colors.green,
@@ -301,26 +283,170 @@ class _VisitorsSlipPageState extends State<VisitorsSlipPage> {
                                   //TextFormField koottam starts
                                   SizedBox(
                                     width: 300,
-                                    child: TextFormField(
-                                      controller: koottam,
+                                    child: DropdownButtonFormField<String>(
+                                      value: koottam,
+                                      hint: const Text("Koottam"),
+                                      icon: const Icon(Icons.arrow_drop_down),
+                                      isExpanded: true,
+                                      items: <String>[
+                                        "Koottam",
+                                        "Adhitreya Kumban",
+                                        "Aadai",
+                                        "Aadhirai",
+                                        "Aavan",
+                                        "Andai",
+                                        "Akini",
+                                        "Anangan",
+                                        "Andhuvan",
+                                        "Ariyan",
+                                        "Alagan",
+                                        "Bharatan",
+                                        "Bramman",
+                                        "Devendran",
+                                        "Dananjayan",
+                                        "Danavantan",
+                                        "Eenjan",
+                                        "ElumathurKadais",
+                                        "Ennai",
+                                        "Indran",
+                                        "Kaadan",
+                                        "Kaadai",
+                                        "Kaari",
+                                        "Kaavalar",
+                                        "Kadunthuvi",
+                                        "Kalinji",
+                                        "Kambakulathaan",
+                                        "Kanakkan",
+                                        "Kanavaalan",
+                                        "Kannan",
+                                        "Kannandhai",
+                                        "Karunkannan",
+                                        "Kauri",
+                                        "Kavalan",
+                                        "Kiliyan",
+                                        "Keeran",
+                                        "Kodarangi",
+                                        "Koorai",
+                                        "Kuruppan",
+                                        "Kotrandhai",
+                                        "Kottaarar",
+                                        "Kovar",
+                                        "Koventhar",
+                                        "Kumarandhai",
+                                        "Kundali",
+                                        "Kungili",
+                                        "Kuniyan",
+                                        "Kunnukkan",
+                                        "Kuyilan",
+                                        "Kuzhlaayan",
+                                        "Maadai",
+                                        "Maadhaman",
+                                        "Maathuli",
+                                        "Maavalar",
+                                        "Maniyan",
+                                        "MaruthuraiKadais",
+                                        "Mayilan",
+                                        "Mazhluazhlagar",
+                                        "Madhi",
+                                        "Meenavan",
+                                        "Moimban",
+                                        "Moolan",
+                                        "Mooriyan",
+                                        "Mukkannan",
+                                        "Munaiveeran",
+                                        "Muthan",
+                                        "Muzhlukkadhan",
+                                        "Naarai",
+                                        "Nandhan",
+                                        "Neelan",
+                                        "Neerunni",
+                                        "Neidhali",
+                                        "Neriyan",
+                                        "Odhaalar",
+                                        "Ozhukkar",
+                                        "Paaliyan",
+                                        "Paamban",
+                                        "Paanan",
+                                        "Paandian",
+                                        "Paadhuri",
+                                        "Paadhuman",
+                                        "Padukkunni",
+                                        "Paidhali",
+                                        "Panaiyan",
+                                        "Panangadan",
+                                        "Panjaman",
+                                        "Pannai",
+                                        "Pannan",
+                                        "Paamaran",
+                                        "Pavalan",
+                                        "Payiran",
+                                        "Periyan",
+                                        "Perunkudi",
+                                        "Pillan",
+                                        "Podiyan",
+                                        "Ponnan",
+                                        "Poochadhai",
+                                        "Poodhiyan",
+                                        "Poosan",
+                                        "Porulthantha or Mulukadhan",
+                                        "Punnai",
+                                        "Puthan",
+                                        "Saakadai or Kaadai",
+                                        "Sathandhai",
+                                        "Sathuvaraayan",
+                                        "Sanagan",
+                                        "Sedan",
+                                        "Sellan",
+                                        "Semponn",
+                                        "Sempoothan",
+                                        "Semvan",
+                                        "Sengannan",
+                                        "Sengunni",
+                                        "Seralan",
+                                        "Seran",
+                                        "Sevadi",
+                                        "Sevvayan",
+                                        "Silamban",
+                                        "Soman",
+                                        "Soolan",
+                                        "Sooriyan",
+                                        "Sothai",
+                                        "Sowriyan",
+                                        "Surapi",
+                                        "Thanakkavan",
+                                        "Thavalayan",
+                                        "Thazhinji",
+                                        "Theeman",
+                                        "Thodai(n)",
+                                        "Thooran",
+                                        "Thorakkan",
+                                        "Thunduman",
+                                        "Uvanan",
+                                        "Uzhavan",
+                                        "Vaanan or Vaani",
+                                        "Vannakkan",
+                                        "Veliyan",
+                                        "Vellamban",
+                                        "Vendhai",
+                                        "Viliyan",
+                                        "Velli",
+                                        "Vilosanan",
+                                        "Viradhan",
+                                        "Viraivulan"
+                                      ].map<DropdownMenuItem<String>>((String value) {
+                                        return DropdownMenuItem<String>(
+                                            value: value, child: Text(value));
+                                      }).toList(),
+                                      onChanged: (String? newValue) {
+                                        setState(() {
+                                          koottam = newValue!;
+                                        });
+                                      },
                                       validator: (value) {
-                                        if (value!.isEmpty) {
-                                          return "* Enter the Field";
-                                        } else {
-                                          return null;
-                                        }
+                                        if (koottam == 'Koottam')
+                                          return '* Select your Koottam';
+                                        return null;
                                       },
-                                      onChanged: (value) {
-                                        String capitalizedValue =
-                                        capitalizeFirstLetter(value);
-                                        koottam.value = koottam.value.copyWith(
-                                          text: capitalizedValue,
-                                          // selection: TextSelection.collapsed(offset: capitalizedValue.length),
-                                        );
-                                      },
-                                      decoration: const InputDecoration(
-                                        labelText: "Koottam",
-                                      ),
                                     ),
                                   ),
                                   //TextFormField Kovil starts
@@ -330,7 +456,7 @@ class _VisitorsSlipPageState extends State<VisitorsSlipPage> {
                                       controller: kovil,
                                       validator: (value) {
                                         if (value!.isEmpty) {
-                                          return "*Enter the Field";
+                                          return "* Enter the Kovil";
                                         } else {
                                           return null;
                                         }
@@ -344,7 +470,7 @@ class _VisitorsSlipPageState extends State<VisitorsSlipPage> {
                                         );
                                       },
                                       decoration: const InputDecoration(
-                                        labelText: "Kovil",
+                                        hintText: "Kovil",
                                       ),
                                     ),
                                   ),
@@ -361,7 +487,6 @@ class _VisitorsSlipPageState extends State<VisitorsSlipPage> {
                                       ),
                                     ),
                                   ),
-
                                   // Radio button starts here
                                   const SizedBox(
                                     height: 10,
@@ -418,15 +543,15 @@ class _VisitorsSlipPageState extends State<VisitorsSlipPage> {
                                       controller: mobile,
                                       validator: (value) {
                                         if (value!.isEmpty) {
-                                          return '*Enter the mobile Number';
+                                          return '* Enter the Mobile Number';
                                         } else if (value.length < 10) {
-                                          return 'Mobile number should be 10 digits';
+                                          return '* Mobile number should be 10 digits';
                                         } else {
                                           return null;
                                         }
                                       },
                                       decoration: const InputDecoration(
-                                        labelText: 'Mobile no',
+                                        hintText: 'Mobile No',
                                       ),
                                       keyboardType: TextInputType.number,
                                       inputFormatters: <TextInputFormatter>[
@@ -438,149 +563,6 @@ class _VisitorsSlipPageState extends State<VisitorsSlipPage> {
                                   //Text Visit Details starts
                                   const SizedBox(
                                     height: 10,
-                                  ),
-                                  const Padding(
-                                    padding: EdgeInsets.only(right: 200),
-                                    child: Text(
-                                      'Guest Details',
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      //calendar_month Icon starts
-                                      //  const Icon(Icons.calendar_month,color: Colors.green,),
-                                      //Date Text starts
-                                      SizedBox(
-                                        width: 100,
-                                        child: TextFormField(
-                                            readOnly: true,
-                                            controller: date,
-                                            validator: (value) {
-                                              if (value!.isEmpty) {
-                                                return "* Required Date";
-                                              } else {
-                                                return null;
-                                              }
-                                            },
-                                            //pickDate scheduledate
-                                            decoration: InputDecoration(
-                                              label: const Text("Date"),
-                                              suffixIcon: IconButton(
-                                                onPressed: () async {
-                                                  DateTime? pickDate =
-                                                  await showDatePicker(
-                                                      context: context,
-                                                      initialDate:
-                                                      DateTime.now(),
-                                                      firstDate:
-                                                      DateTime(1900),
-                                                      lastDate:
-                                                      DateTime(2100));
-                                                  if (pickDate == null) return;
-                                                  {
-                                                    setState(() {
-                                                      date.text = DateFormat(
-                                                          'yyyy-MM-dd')
-                                                          .format(pickDate);
-                                                    });
-                                                  }
-                                                },
-                                                icon: const Icon(Icons
-                                                    .calendar_today_outlined),
-                                                color: Colors.green,
-                                              ),
-                                            )),
-                                      ),
-                                      //access_time Icon starts
-                                      // const Icon(Icons.access_time,color: Colors.green,),
-                                      //Time Text starts
-                                      SizedBox(
-                                        width: 100,
-                                        child: TextFormField(
-                                          readOnly: true,
-                                          controller: time,
-                                          validator: (value) {
-                                            if (value!.isEmpty) {
-                                              return "* Required Time";
-                                            } else {
-                                              return null;
-                                            }
-                                          },
-                                          //pickDate From Date
-                                          decoration: InputDecoration(
-                                            label: const Text("Time"),
-                                            //  icon:Icon( Icons.timer),
-                                            suffixIcon: IconButton(
-                                              onPressed: () async {
-                                                TimeOfDay? schedulenewTime =
-                                                await showTimePicker(
-                                                    context: context,
-                                                    initialTime:
-                                                    TimeOfDay.now());
-                                                //if 'cancel =null'
-                                                if (schedulenewTime == null)
-                                                  return;
-                                                DateTime scheduleparsedTime =
-                                                DateTime(
-                                                  DateTime.now().year,
-                                                  DateTime.now().month,
-                                                  DateTime.now().day,
-                                                  schedulenewTime.hour,
-                                                  schedulenewTime.minute,
-                                                );
-                                                String scheduleformattedTime =
-                                                DateFormat('hh:mm a')
-                                                    .format(
-                                                    scheduleparsedTime);
-                                                setState(() {
-                                                  time.text =
-                                                      scheduleformattedTime;
-                                                });
-                                              },
-                                              icon: const Icon(
-                                                  Icons.watch_later_outlined),
-                                              color: Colors.green,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      //location_on Icon starts
-                                      SizedBox(
-                                        width: 50,
-                                        child: TextFormField(
-                                          controller: zoom,
-                                          validator: (value) {
-                                            if (value!.isEmpty) {
-                                              return "*Enter the Field";
-                                            } else {
-                                              return null;
-                                            }
-                                          },
-                                          onChanged: (value) {
-                                            String capitalizedValue =
-                                            capitalizeFirstLetter(value);
-                                            zoom.value = zoom.value.copyWith(
-                                              text: capitalizedValue,
-                                              // selection: TextSelection.collapsed(offset: capitalizedValue.length),
-                                            );
-                                          },
-                                          decoration: const InputDecoration(
-                                              labelText: "Zoom Meet",
-                                              prefix: Icon(
-                                                Icons.location_on_outlined,
-                                                color: Colors.green,
-                                              )),
-                                        ),
-                                      ),
-                                    ],
                                   ),
                                   const SizedBox(
                                     height: 20,
@@ -605,7 +587,7 @@ class _VisitorsSlipPageState extends State<VisitorsSlipPage> {
                                               print("count value -- $count");
 
                                               if (count <
-                                                  int.parse(widget.guestCount
+                                                  int.parse(widget.guestcount
                                                       .toString())) {
                                                 setState(() {
                                                   guestName.clear();
@@ -614,14 +596,13 @@ class _VisitorsSlipPageState extends State<VisitorsSlipPage> {
                                                   date.clear();
                                                   time.clear();
                                                   kovil.clear();
-                                                  koottam.clear();
                                                   mobile.clear();
                                                   zoom.clear();
                                                   gender = "Male";
                                                 });
                                               }
 
-                                              if (int.parse(widget.guestCount
+                                              if (int.parse(widget.guestcount
                                                   .toString()) ==
                                                   count) {
                                                 Navigator.push(
@@ -651,8 +632,11 @@ class _VisitorsSlipPageState extends State<VisitorsSlipPage> {
                                   const SizedBox(
                                     height: 10,
                                   ),
-                                  const Text(
-                                    'Note:Ask your Guest to bring min.50 visiting cards',
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: const Text(
+                                      'Note:Ask your Guest to bring min.50 visiting cards',
+                                    ),
                                   ),
                                 ],
                               ),

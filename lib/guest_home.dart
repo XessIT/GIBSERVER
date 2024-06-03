@@ -11,7 +11,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'Offer/offer.dart';
 import 'guest_settings.dart';
 
-
 class GuestHome extends StatefulWidget {
   final String? userType;
   final String? userId;
@@ -36,7 +35,6 @@ class _GuestHomeState extends State<GuestHome> {
       GuestHomePage(userId: widget.userId, userType: widget.userType),
       OffersPage(userId: widget.userId, userType: widget.userType),
       GuestSettings(userId: widget.userId, userType: widget.userType),
-      // Add more pages as needed
     ];
     super.initState();
   }
@@ -65,7 +63,6 @@ class _GuestHomeState extends State<GuestHome> {
             ),
             label: 'Offers',
           ),
-
           BottomNavigationBarItem(
             icon: Icon(
               Icons.settings,
@@ -76,8 +73,7 @@ class _GuestHomeState extends State<GuestHome> {
             label: 'Account',
           ),
         ],
-        type:
-            BottomNavigationBarType.fixed, // Set type to fixed for text labels
+        type: BottomNavigationBarType.fixed,
         currentIndex: _currentIndex,
         selectedItemColor: Colors.green,
         unselectedItemColor: Theme.of(context).brightness == Brightness.light
@@ -93,7 +89,7 @@ class _GuestHomeState extends State<GuestHome> {
         selectedLabelStyle: const TextStyle(color: Colors.white),
         unselectedLabelStyle: const TextStyle(color: Colors.white),
         selectedIconTheme:
-            const IconThemeData(color: Colors.green), // Set selected icon color
+        const IconThemeData(color: Colors.green),
       ),
     );
   }
@@ -118,81 +114,8 @@ class _GuestHomePageState extends State<GuestHomePage> {
   List<Map<String, dynamic>> userdata = [];
   String imageUrl = "";
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  Future<void> fetchData(String? userId) async {
-    try {
-      final url = Uri.parse(
-          'http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=$userId');
-      final response = await http.get(url);
-      if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        if (responseData is List<dynamic>) {
-          setState(() {
-            userdata = responseData.cast<Map<String, dynamic>>();
-            if (userdata.isNotEmpty) {
-              setState(() {
-                imageUrl = 'http://mybudgetbook.in/GIBAPI/${userdata[0]["profile_image"]}';
-                _imageBytes = base64Decode(userdata[0]['profile_image']);
-              });
-            }
-          });
-        } else {
-        }
-      } else {
-
-      }
-    } catch (error) {
-      // Handle other errors
-      print('Error: $error');
-    }
-  }
-
-  ///offers fetch
-  List<Map<String, dynamic>> data = [];
-  Future<void> getData() async {
-    try {
-      final url = Uri.parse(
-          'http://mybudgetbook.in/GIBAPI/offers.php?table=UnblockOffers');
-      final response = await http.get(url);
-      if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        final List<dynamic> itemGroups = responseData;
-        setState(() {});
-        List<dynamic> filteredData = itemGroups.where((item) {
-          DateTime validityDate;
-          try {
-            validityDate = DateTime.parse(item['validity']);
-          } catch (e) {
-            return false;
-          }
-          bool satisfiesFilter = validityDate.isAfter(DateTime.now());
-          return satisfiesFilter;
-        }).toList();
-        // Call setState() after updating data
-        setState(() {
-          // Cast the filtered data to the correct type
-          data = filteredData.cast<Map<String, dynamic>>();
-        });
-      } else {
-      }
-    } catch (e) {
-      rethrow; // rethrow the error if needed
-    }
-  }
-
-  Future<Uint8List?> getImageBytes(String imageUrl) async {
-    try {
-      final response = await http.get(Uri.parse(imageUrl));
-      if (response.statusCode == 200) {
-        return response.bodyBytes;
-      } else {
-
-        return null;
-      }
-    } catch (e) {
-      return null;
-    }
-  }
+  bool isLoading = true;
+  var _connectivityResult = ConnectivityResult.none;
 
   @override
   void initState() {
@@ -205,14 +128,70 @@ class _GuestHomePageState extends State<GuestHomePage> {
         _connectivityResult = result;
       });
     });
-    Future.delayed(Duration(seconds: 1), () {
-      setState(() {
-        isLoading = false; // Hide the loading indicator after 4 seconds
-      });
-    });
   }
 
-  var _connectivityResult = ConnectivityResult.none;
+  Future<void> fetchData(String? userId) async {
+    try {
+      final url = Uri.parse(
+          'http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=$userId');
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        if (responseData is List<dynamic>) {
+          setState(() {
+            userdata = responseData.cast<Map<String, dynamic>>();
+            if (userdata.isNotEmpty) {
+              imageUrl = 'http://mybudgetbook.in/GIBAPI/${userdata[0]["profile_image"]}';
+              _imageBytes = base64Decode(userdata[0]['profile_image']);
+            }
+          });
+        }
+      }
+    } catch (error) {
+      print('Error: $error');
+    }
+  }
+
+  List<Map<String, dynamic>> data = [];
+  Future<void> getData() async {
+    try {
+      final url = Uri.parse(
+          'http://mybudgetbook.in/GIBAPI/offers.php?table=UnblockOffers');
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        final List<dynamic> itemGroups = responseData;
+        List<dynamic> filteredData = itemGroups.where((item) {
+          DateTime validityDate;
+          try {
+            validityDate = DateTime.parse(item['validity']);
+          } catch (e) {
+            return false;
+          }
+          return validityDate.isAfter(DateTime.now());
+        }).toList();
+        setState(() {
+          data = filteredData.cast<Map<String, dynamic>>();
+        });
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Uint8List?> getImageBytes(String imageUrl) async {
+    try {
+      final response = await http.get(Uri.parse(imageUrl));
+      if (response.statusCode == 200) {
+        return response.bodyBytes;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
+    }
+  }
+
   Future<void> _checkConnectivityAndGetData() async {
     var connectivityResult = await Connectivity().checkConnectivity();
     setState(() {
@@ -222,24 +201,19 @@ class _GuestHomePageState extends State<GuestHomePage> {
       _getInternet();
     }
   }
-  Future<void> _getInternet() async {
-    // Replace the URL with your PHP backend URL
-    var url = 'http://mybudgetbook.in/GIBAPI/internet.php';
 
+  Future<void> _getInternet() async {
+    var url = 'http://mybudgetbook.in/GIBAPI/internet.php';
     try {
       var response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
-        // Handle successful response
         var data = json.decode(response.body);
         print(data);
       } else {
-        // Handle other status codes
         print('Request failed with status: ${response.statusCode}');
       }
     } catch (e) {
-      // Handle network errors
       print('Error: $e');
-      // Show offline status message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Please check your internet connection.'),
@@ -247,13 +221,12 @@ class _GuestHomePageState extends State<GuestHomePage> {
       );
     }
   }
-  bool isLoading = true;
-  ///refresh
-  List<String> items = List.generate(20, (index) => 'Item $index');
+
   Future<void> _refresh() async {
     await Future.delayed(const Duration(seconds: 1));
     setState(() {
-      initState();
+      fetchData(widget.userId);
+      getData();
     });
   }
 
@@ -286,7 +259,7 @@ class _GuestHomePageState extends State<GuestHomePage> {
               ),
               btnCancel: ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).pop(); // Close the dialog
+                  Navigator.of(context).pop();
                 },
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
@@ -297,7 +270,6 @@ class _GuestHomePageState extends State<GuestHomePage> {
                 ),
               ),
             ).show();
-            // Do not return any value
           },
           child: Center(
             child: Stack(
@@ -344,25 +316,20 @@ class _GuestHomePageState extends State<GuestHomePage> {
                         ),
                       ),
                       SizedBox(
-                        height: MediaQuery.of(context).size.height *
-                            0.6, // Adjust the height as needed
+                        height: MediaQuery.of(context).size.height * 0.6,
                         child: ListView.builder(
                             itemCount: data.length,
                             itemBuilder: (context, i) {
                               String imageUrl =
                                   'http://mybudgetbook.in/GIBAPI/${data[i]["offer_image"]}';
-
-                              String dateString = data[i][
-                              'validity']; // This will print the properly encoded URL
                               DateTime dateTime =
-                              DateFormat('yyyy-MM-dd').parse(dateString);
+                              DateFormat('yyyy-MM-dd').parse(data[i]['validity']);
                               return Center(
                                 child: Card(
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Column(
                                       children: [
-                                        // MAIN ROW STARTS
                                         Stack(
                                           children: [
                                             ListTile(
@@ -419,7 +386,7 @@ class _GuestHomePageState extends State<GuestHomePage> {
                                                     ? Container()
                                                     : Positioned(
                                                   top: 8,
-                                                  right: 8, // Adjust position if needed
+                                                  right: 8,
                                                   child: Container(
                                                     decoration: const BoxDecoration(
                                                       color: Colors.red,
@@ -434,7 +401,7 @@ class _GuestHomePageState extends State<GuestHomePage> {
                                                     child: Row(
                                                       children: [
                                                         Text(
-                                                          '${data[i]['discount']}% off', // Text for your banner
+                                                          '${data[i]['discount']}% off',
                                                           style: const TextStyle(
                                                             color: Colors.white,
                                                             fontWeight: FontWeight.bold,
@@ -473,8 +440,7 @@ class _GuestHomePageState extends State<GuestHomePage> {
                               padding: const EdgeInsets.all(8.0),
                               child: CircleAvatar(
                                 backgroundColor: Colors.cyan,
-                                radius:
-                                30.0, // This will give you a 60.0 diameter circle
+                                radius: 30.0,
                                 backgroundImage: imageUrl.isNotEmpty
                                     ? CachedNetworkImageProvider(imageUrl)
                                     : null,
@@ -490,9 +456,7 @@ class _GuestHomePageState extends State<GuestHomePage> {
                               children: [
                                 const SizedBox(height: 10),
                                 Text(
-                                  userdata.isNotEmpty
-                                      ? userdata[0]["first_name"]
-                                      : "",
+                                  userdata.isNotEmpty ? userdata[0]["first_name"] : "",
                                   style: GoogleFonts.aBeeZee(
                                     fontSize: 20,
                                     color: Colors.indigo,

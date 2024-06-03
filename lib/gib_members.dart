@@ -17,7 +17,7 @@ class GibMembers extends StatelessWidget {
   final String userType;
   final String? userId;
 
-   GibMembers({Key? key, required this.userType, required this.userId}) : super(key: key);
+  GibMembers({Key? key, required this.userType, required this.userId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +34,7 @@ class GibMembers extends StatelessWidget {
 class Members extends StatefulWidget {
   final String userType;
   final String? userId;
-   Members({Key? key, required this.userType, required this.userId}) : super(key: key);
+  Members({Key? key, required this.userType, required this.userId}) : super(key: key);
 
   @override
   State<Members> createState() => _MembersState();
@@ -171,7 +171,7 @@ class _MembersState extends State<Members> {
         setState(() {
           setState(() {
           });
-         // chapterController.clear();
+          // chapterController.clear();
         });
       } else {
         print('chapter Error: ${response.statusCode}');
@@ -198,99 +198,41 @@ class _MembersState extends State<Members> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-            if (widget.userType == "Non-Executive") {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => NavigationBarNon(
-                    userType: widget.userType.toString(),
-                    userId: widget.userId.toString(),
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {
+              if (widget.userType == "Non-Executive") {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => NavigationBarNon(
+                      userType: widget.userType.toString(),
+                      userId: widget.userId.toString(),
+                    ),
                   ),
-                ),
-              );
-            }
-            else{
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => NavigationBarExe(
-                    userType: widget.userType.toString(),
-                    userId: widget.userId.toString(),
+                );
+              }
+              else{
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => NavigationBarExe(
+                      userType: widget.userType.toString(),
+                      userId: widget.userId.toString(),
+                    ),
                   ),
-                ),
-              );
-            }
-          },
-          icon: const Icon(Icons.navigate_before),
-        ),
-        iconTheme:  const IconThemeData(
-          color: Colors.white,),
-        title: Column(
-          children: [
-            Center(
-              child: Visibility(
-                visible: titleVisible,
-                child: Text('GIB MEMBERS', style: Theme.of(context).textTheme.displayLarge,),
-              ),
-            ),
-          ],
-        ),
-        centerTitle: true,
-        actions: <Widget>[
-          Row(children: [
-            IconButton(
-              onPressed: () {
-                setState(() {
-                  _showFields = !_showFields;
-                });
-              },
-              icon: const Icon(Icons.filter_alt, color: Colors.white),
-            ),
-            const SizedBox(width: 5,),
-            IconButton(
-              icon: const Icon(Icons.search),
-              onPressed: () {
-                setState(() {
-                  isVisible = !isVisible;
-                  fieldText.clear();
-                  titleVisible = false;
-                });
-              },
-            ),
-          ],),
-        ],
-      ),
-
-        body: PopScope(
-          canPop: false,
-          onPopInvoked: (didPop) {
-            if (widget.userType == "Non-Executive") {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => NavigationBarNon(
-                    userType: widget.userType.toString(),
-                    userId: widget.userId.toString(),
-                  ),
-                ),
-              );
-            } else {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => NavigationBarExe(
-                    userType: widget.userType.toString(),
-                    userId: widget.userId.toString(),
-                  ),
-                ),
-              );
-            }
-          },
-          child: Column(
+                );
+              }
+            },
+            icon: const Icon(Icons.navigate_before),
+          ),
+          iconTheme:  const IconThemeData(
+            color: Colors.white,),
+          title: Column(
             children: [
+              Visibility(
+                  visible: titleVisible,
+                  child: Center(child: Text('GIB MEMBERS', style: Theme.of(context).textTheme.displayLarge,))),
               Visibility(
                 visible: isVisible,
                 child: Container(
@@ -319,7 +261,88 @@ class _MembersState extends State<Members> {
                   ),
                 ),
               ),
-              const SizedBox(height: 10,),
+            ],
+          ),
+          centerTitle: true,
+          actions: <Widget>[
+            Row(children: [
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    _showFields = !_showFields;
+                  });
+                },
+                icon: const Icon(Icons.filter_alt, color: Colors.white),
+              ),
+              const SizedBox(width: 5,),
+              IconButton(
+                icon: const Icon(Icons.search),
+                onPressed: () {
+                  setState(() {
+                    isVisible = true;
+                    titleVisible = false;
+                  });
+                },
+              ),
+            ],),
+          ],
+        ),
+        body: PopScope(
+          canPop: false,
+          onPopInvoked: (didPop) {
+            if (widget.userType == "Non-Executive") {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NavigationBarNon(
+                    userType: widget.userType.toString(),
+                    userId: widget.userId.toString(),
+                  ),
+                ),
+              );
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NavigationBarExe(
+                    userType: widget.userType.toString(),
+                    userId: widget.userId.toString(),
+                  ),
+                ),
+              );
+            }
+          },
+          child: Column(
+            children: [
+              /*Visibility(
+                visible: isVisible,
+                child: Container(
+                  width: double.infinity,
+                  height: 40,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(5)
+                  ),
+                  child: Center(
+                    child: TextField(
+                      onChanged: (val){
+                        setState(() {
+                          name = val ;
+                        });
+                      },
+                      controller: fieldText,
+                      decoration: InputDecoration(
+                          suffixIcon: IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: clearText,
+                          ),
+                          hintText: 'Search'
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10,),*/
               Visibility(
                 visible: _showFields,
                 child: Row(

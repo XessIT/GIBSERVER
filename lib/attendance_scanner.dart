@@ -93,7 +93,7 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
       });
     });
     getData(qrstr);
-   // scanQr();
+    // scanQr();
   }
 
   Future<void> getData(String meetingId) async {

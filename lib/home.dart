@@ -1,3 +1,4 @@
+
 import 'dart:convert';
 import 'dart:core';
 import 'dart:typed_data';
@@ -14,6 +15,7 @@ import 'package:gipapp/year_meeting_details.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'Non_exe_pages/non_exe_home.dart';
 import 'Non_exe_pages/settings_non_executive.dart';
 import 'Offer/offer.dart';
@@ -117,7 +119,14 @@ class _HomepageState extends State<Homepage> {
     });
     super.initState();
   }
-
+  String _formatDate(String dateStr) {
+    try {
+      DateTime date = DateFormat('yyyy-MM-dd').parse(dateStr);
+      return DateFormat('MMMM-dd,yyyy').format(date);
+    } catch (e) {
+      return dateStr; // Return the original string if parsing fails
+    }
+  }
   ///refresh
   List<String> items = List.generate(20, (index) => 'Item $index');
   Future<void> _refresh() async {
@@ -285,7 +294,6 @@ class _HomepageState extends State<Homepage> {
             "member_type": widget.userType,
             "guestcount": guestcount.text.trim()
           }));
-
       if (res.statusCode == 200) {
         if (res.body.isNotEmpty) {
           try {
@@ -362,13 +370,14 @@ class _HomepageState extends State<Homepage> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => VisitorsSlip(
-                        userId: widget.userId,
-                        meetingId: meetingId,
-                        guestcount: guestcount.text.trim(),
-                        userType: widget.userType,
-                        meeting_date: meetingDate,
-                        user_mobile:
-                        "fetchMobile.toString()", // Replace this with the actual mobile fetching logic if needed
+                          userId: widget.userId,
+                          meetingId: meetingId,
+                          guestcount: guestcount.text.trim(),
+                          userType: widget.userType,
+                          meeting_date: meetingDate,
+                          user_mobile: userdata[0]["mobile"],
+                          user_name: '${userdata[0]["first_name"] ?? ""} ${userdata[0]["last_name"] ?? ""}',
+                          member_id:userdata[0]["member_id"] // Replace this with the actual mobile fetching logic if needed
                       ),
                     ),
                   );
@@ -418,12 +427,10 @@ class _HomepageState extends State<Homepage> {
           print('Invalid response data format');
         }
       } else {
-        // Handle non-200 status code
-        //  print('Error: ${response.statusCode}');
+
       }
     } catch (error) {
-      // Handle other errors
-      // print('Error: $error');
+
     }
   }
 
@@ -622,7 +629,7 @@ class _HomepageState extends State<Homepage> {
                       data.isEmpty
                           ? SizedBox.shrink()
                           : const SizedBox(
-                        height: 170,
+                        height: 190,
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -712,6 +719,7 @@ class _HomepageState extends State<Homepage> {
                                                                       () {
                                                                     //store purpose..
                                                                     //registerDateStoreDatabase(id, meetingType, meetingDate, meetingPlace);
+                                                                    Navigator.pop(context);
                                                                     showDialog(
                                                                         context: context,
                                                                         builder: (ctx) => Form(
@@ -735,13 +743,23 @@ class _HomepageState extends State<Homepage> {
                                                                                 labelStyle: Theme.of(context).textTheme.displaySmall,
                                                                                 hintText: "Ex:5",
                                                                               ),
+                                                                              keyboardType: TextInputType.number,
+                                                                              inputFormatters: <TextInputFormatter>[
+                                                                                FilteringTextInputFormatter.digitsOnly,
+                                                                                LengthLimitingTextInputFormatter(3)
+                                                                              ],
                                                                             ),
                                                                             actions: [
                                                                               TextButton(
                                                                                   onPressed: () {
                                                                                     if (tempKey.currentState!.validate()) {
                                                                                       print("Guest Count: ${guestcount.text.trim()}");
-                                                                                      Navigator.push(context, MaterialPageRoute(builder: (context) => VisitorsSlip(userId: widget.userId, meetingId: id, guestcount: guestcount.text.trim(), userType: widget.userType, meeting_date: meetingDate, user_mobile: fetchMobile.toString())));
+                                                                                      Navigator.push(context, MaterialPageRoute(builder: (context) => VisitorsSlip(userId: widget.userId,
+                                                                                          meetingId: id, guestcount: guestcount.text.trim(), userType: widget.userType, meeting_date: meetingDate,
+                                                                                          user_mobile: userdata[0]["mobile"],
+                                                                                          user_name: '${userdata[0]["first_name"] ?? ""} ${userdata[0]["last_name"] ?? ""}',
+                                                                                          member_id:userdata[0]["member_id"]
+                                                                                      )));
                                                                                       print("UserID:-${widget.userId}${widget.userType}");
                                                                                       registerDateStoreDatabase(id, meetingType, meetingDate, meetingPlace);
                                                                                     }
@@ -784,7 +802,8 @@ class _HomepageState extends State<Homepage> {
                                                       Icons
                                                           .person_add_alt_1_rounded,
                                                       color: Colors.green,
-                                                    ))
+                                                    )
+                                                )
                                               ],
                                             ),
                                           ),
@@ -895,19 +914,11 @@ class _HomepageState extends State<Homepage> {
                       ),
 
                       /// offer
-                      Container(
-                        height: MediaQuery.of(context).size.height *
-                            0.6, // Adjust the height as needed
-                        child: ListView.builder(
-                            itemCount: data1.length,
-                            itemBuilder: (context, i) {
-                              String imageUrl =
-                                  'http://mybudgetbook.in/GIBAPI/${data1[i]["offer_image"]}';
-                              String dateString = data1[i][
-                              'validity']; // This will print the properly encoded URL
-                              DateTime dateTime = DateFormat('yyyy-MM-dd')
-                                  .parse(dateString);
-                              return Center(
+                      Container(// Adjust the height as needed
+                        child: Column(
+                          children: [
+                            for (int i = 0; i < data1.length; i++)
+                              Center(
                                 child: Card(
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
@@ -915,124 +926,90 @@ class _HomepageState extends State<Homepage> {
                                       children: [
                                         Stack(
                                           children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                              children: [
-                                                //CIRCLEAVATAR STARTS
-                                                CircleAvatar(
-                                                  radius: 30.0,
-                                                  backgroundColor:
-                                                  Colors.cyan,
-                                                  backgroundImage:
-                                                  CachedNetworkImageProvider(
-                                                      imageUrl),
-                                                  //IMAGE STARTS CIRCLEAVATAR
-                                                  //  Image.network('${data[i]['offer_image']}').image,
-                                                ),
-                                                //END CIRCLEAVATAR
-                                                const SizedBox(width: 20),
-                                                Column(
-                                                  crossAxisAlignment:
-                                                  CrossAxisAlignment
-                                                      .start, // Align texts to the start
-                                                  children: [
-                                                    // START TEXTS
-                                                    Text(
-                                                      '${data1[i]['company_name']}',
-                                                      // Text style starts
-                                                      style:
-                                                      const TextStyle(
-                                                        color:
-                                                        Colors.green,
-                                                        fontSize: 15,
-                                                      ),
-                                                    ),
-                                                    // start texts
-                                                    Text(
-                                                      '${data1[i]['offer_type']} - ${data1[i]['name']}',
-                                                      // Text style starts
-                                                      style:
-                                                      const TextStyle(
-                                                        fontSize: 11,
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .bold,
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                      "Mobile - ${data1[i]['mobile']}",
-                                                      // New date format
-                                                      style:
-                                                      const TextStyle(
-                                                        fontSize: 12,
-                                                      ),
-                                                    ),
-                                                    // Text starts
-                                                    Text(
-                                                      "Validity - ${DateFormat('d MMMM yyyy').format(dateTime)}",
-                                                      // New date format
-                                                      style:
-                                                      const TextStyle(
-                                                        fontSize: 12,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                            data1[i]['discount']
-                                                .toString()
-                                                .isEmpty
-                                                ? Container()
-                                                : Positioned(
-                                              top: 8,
-                                              right:
-                                              8, // Adjust position if needed
-                                              child: Container(
-                                                decoration:
-                                                const BoxDecoration(
-                                                  color: Colors
-                                                      .red, // Change the color here
-                                                  borderRadius:
-                                                  BorderRadius
-                                                      .only(
-                                                    topLeft: Radius
-                                                        .circular(
-                                                        10.0),
-                                                    bottomRight: Radius
-                                                        .circular(
-                                                        10.0),
-                                                  ),
-                                                ),
-                                                padding:
-                                                const EdgeInsets
-                                                    .symmetric(
-                                                    horizontal:
-                                                    6.0,
-                                                    vertical:
-                                                    2.0),
-                                                child: Row(
-                                                  children: [
-                                                    Text(
-                                                      '${data1[i]['discount']}% off', // Text for your banner
-                                                      style:
-                                                      const TextStyle(
-                                                        color: Colors
-                                                            .white, // Change the text color here
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .bold,
-                                                        fontStyle:
-                                                        FontStyle
-                                                            .italic, // Add any additional styles here
-                                                        fontSize:
-                                                        12.0, // Adjust font size as needed
-                                                      ),
-                                                    ),
-                                                  ],
+                                            ListTile(
+                                              leading: CircleAvatar(
+                                                radius: 30.0,
+                                                backgroundColor: Colors.cyan,
+                                                backgroundImage: CachedNetworkImageProvider(
+                                                    'http://mybudgetbook.in/GIBAPI/${data1[i]["offer_image"]}'
                                                 ),
                                               ),
+                                              title: Text(
+                                                '${data1[i]['company_name']}',
+                                                style: const TextStyle(
+                                                  color: Colors.green,
+                                                  fontSize: 15,
+                                                ),
+                                              ),
+                                              subtitle: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    '${data1[i]['offer_type']} - ${data1[i]['name']}',
+                                                    style: const TextStyle(
+                                                      fontSize: 12,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    "Mobile - ${data1[i]['mobile']}",
+                                                    style: const TextStyle(
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    "Validity - ${DateFormat('d MMMM yyyy').format(DateFormat('yyyy-MM-dd').parse(data1[i]['validity']))}",
+                                                    style: const TextStyle(
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              trailing: IconButton(
+                                                onPressed: () {
+                                                  launchUrl(Uri.parse("tel://${data1[i]['mobile']}"));
+                                                },
+                                                icon: Icon(
+                                                  Icons.call_outlined,
+                                                  color: Colors.green[900],
+                                                ),
+                                              ),
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.end,
+                                              children: [
+                                                data1[i]['discount'].toString().isEmpty
+                                                    ? Container()
+                                                    : Positioned(
+                                                  top: 8,
+                                                  right: 8, // Adjust position if needed
+                                                  child: Container(
+                                                    decoration: const BoxDecoration(
+                                                      color: Colors.red,
+                                                      borderRadius: BorderRadius.only(
+                                                        topLeft: Radius.circular(10.0),
+                                                        bottomRight: Radius.circular(10.0),
+                                                      ),
+                                                    ),
+                                                    padding: const EdgeInsets.symmetric(
+                                                        horizontal: 6.0,
+                                                        vertical: 2.0),
+                                                    child: Row(
+                                                      children: [
+                                                        Text(
+                                                          '${data1[i]['discount']}% off', // Text for your banner
+                                                          style: const TextStyle(
+                                                            color: Colors.white,
+                                                            fontWeight: FontWeight.bold,
+                                                            fontStyle: FontStyle.italic,
+                                                            fontSize: 12.0,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ],
                                         ),
@@ -1040,8 +1017,9 @@ class _HomepageState extends State<Homepage> {
                                     ),
                                   ),
                                 ),
-                              );
-                            }),
+                              ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -1080,16 +1058,14 @@ class _HomepageState extends State<Homepage> {
                   right: 1,
                   child: Card(
                     child: SizedBox(
-                      height: 80,
+                      //height: 80,
                       child: Row(
                         children: [
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: CircleAvatar(
-                              radius:
-                              28.0, // Adjust the radius to achieve the desired size
-                              backgroundImage:
-                              CachedNetworkImageProvider(imageUrl),
+                              radius: 28.0, // Adjust the radius to achieve the desired size
+                              backgroundImage: CachedNetworkImageProvider(imageUrl),
                             ),
                           ),
                           Padding(
@@ -1100,25 +1076,57 @@ class _HomepageState extends State<Homepage> {
                                 const SizedBox(height: 10),
                                 Text(
                                   userdata.isNotEmpty
-                                      ? userdata[0]["first_name"]
+                                      ? '${userdata[0]["first_name"] ?? ""} ${userdata[0]["last_name"] ?? ""}'
                                       : "",
                                   style: GoogleFonts.aBeeZee(
                                     fontSize: 20,
-                                    color: Colors.indigo,
+                                    color: Colors.green,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 Text(
-                                  'Executive Member',
+                                  userdata.isNotEmpty
+                                      ? 'GiB ID - ${userdata[0]["member_id"] ?? ""} '
+                                      : "",
                                   style: GoogleFonts.aBeeZee(
                                     fontSize: 10,
-                                    color: Colors.indigo,
+                                    color: Colors.black,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
+                                if (userdata.isNotEmpty && (userdata[0]["team_name"]?.isNotEmpty ?? false))
+                                  Text(
+                                    'Team - ${userdata[0]["team_name"] ?? ""}',
+                                    style: GoogleFonts.aBeeZee(
+                                      fontSize: 10,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                Text(
+                                  userdata.isNotEmpty
+                                      ? '${userdata[0]["member_type"] ?? ""} - ${userdata[0]["member_category"] ?? ""}'
+                                      : "",
+                                  style: GoogleFonts.aBeeZee(
+                                    fontSize: 10,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                if (userdata.isNotEmpty && (userdata[0]["due_date"]?.isNotEmpty ?? false))
+                                  Text(
+                                    'Due Date - ${_formatDate(userdata[0]["due_date"])}',
+                                    style: GoogleFonts.aBeeZee(
+                                      fontSize: 10,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                SizedBox(height: 10,)
                               ],
                             ),
                           ),
+
                         ],
                       ),
                     ),

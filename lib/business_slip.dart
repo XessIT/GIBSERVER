@@ -192,7 +192,6 @@ class _ReferralPageState extends State<ReferralPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('BUSINESS SLIP', style: Theme.of(context).textTheme.displayLarge),
-        centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
         leading: IconButton(
           icon: const Icon(Icons.navigate_before),
@@ -252,6 +251,7 @@ class _ReferralPageState extends State<ReferralPage> {
                         // Handle when a suggestion is selected
                         // Update text fields with suggestion data
                         setState(() {
+                          searchController.text = "${suggestion['first_name']} ${suggestion['last_name']}";
                           to.text = suggestion['first_name'];
                           tomobile.text = suggestion['mobile'];
                           cname.text = suggestion['company_name'];

@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -14,10 +13,12 @@ class GtoG extends StatefulWidget {
    GtoG({
      super.key, required this.userType, required this.userId
    });
-
   @override
   State<GtoG> createState() => _GtoGState();
 }
+
+
+
 class _GtoGState extends State<GtoG> {
   @override
   Widget build(BuildContext context) {
@@ -203,14 +204,6 @@ class _GtoGPageState extends State<GtoGPage> {
       searchResults = searchList;
     });
   }
-  void updateTextFields(int index) {
-    setState(() {
-      metwith.text = searchResults[index]['first_name'];
-      companymobile.text = searchResults[index]['mobile'];
-      companyname.text = searchResults[index]['company_name'];
-      // Update other text fields as needed
-    });
-  }
 
 
 
@@ -223,8 +216,6 @@ class _GtoGPageState extends State<GtoGPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-
         title: (Text('G2G',  style: Theme.of(context).textTheme.displayLarge,)
         ),
         actions: [
@@ -278,6 +269,7 @@ class _GtoGPageState extends State<GtoGPage> {
                           // Handle when a suggestion is selected
                           // Update text fields with suggestion data
                           setState(() {
+                            searchController.text="${suggestion['first_name']} ${suggestion['last_name']}";
                             metwith.text = suggestion['first_name'];
                             companymobile.text = suggestion['mobile'];
                             companyname.text = suggestion['company_name'];
@@ -530,7 +522,7 @@ class _GtoGPageState extends State<GtoGPage> {
                                       setState(() {
                                         totime.text = formattedTime;
                                       });
-                                    },                                    style: const TextStyle(fontSize: 12,
+                                    },style: const TextStyle(fontSize: 12,
                                         fontWeight: FontWeight.bold),
                                     decoration: InputDecoration(
                                       hintText: 'To Time',

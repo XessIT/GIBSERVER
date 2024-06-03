@@ -11,18 +11,16 @@ import 'login.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 
-sendData() {
+void sendData() {
   print("Hi Flutter");
 }
 
-final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 const task = 'firstTask';
 
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
     if (task == 'uniqueKey') {
-      // Fetch data and show local notification
       await fetchData();
     }
     return Future.value(true);
@@ -30,15 +28,12 @@ void callbackDispatcher() {
 }
 
 void initializeNotifications() async {
-  const AndroidInitializationSettings initializationSettingsAndroid =
-  AndroidInitializationSettings('@mipmap/ic_launcher');
+  const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
   const InitializationSettings initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid,
   );
 
-  await flutterLocalNotificationsPlugin.initialize(
-    initializationSettings,
-  );
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 }
 
 Future<void> fetchData() async {
@@ -46,15 +41,13 @@ Future<void> fetchData() async {
   String? id = prefs.getString('id');
   if (id != null) {
     try {
-      final url = Uri.parse(
-          'http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=$id');
+      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=$id');
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         if (responseData is List<dynamic>) {
-          List<Map<String, dynamic>> userdata =
-          responseData.cast<Map<String, dynamic>>();
+          List<Map<String, dynamic>> userdata = responseData.cast<Map<String, dynamic>>();
           if (userdata.isNotEmpty) {
             String fetchMobile = userdata[0]["mobile"] ?? "";
             await getData(fetchMobile);
@@ -73,18 +66,15 @@ Future<void> fetchData() async {
 
 Future<void> getData(String fetchMobile) async {
   try {
-    final url = Uri.parse(
-        'http://mybudgetbook.in/GIBAPI/registration.php?table=waiting&mobile=$fetchMobile');
+    final url = Uri.parse('http://mybudgetbook.in/GIBAPI/registration.php?table=waiting&mobile=$fetchMobile');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
       final responseData = json.decode(response.body);
       if (responseData is List<dynamic>) {
-        List<Map<String, dynamic>> data =
-        responseData.cast<Map<String, dynamic>>();
+        List<Map<String, dynamic>> data = responseData.cast<Map<String, dynamic>>();
         if (data.isNotEmpty) {
-          showLocalNotification('New Message',
-              'Your friend is waiting for your Approval!.Check for more Details');
+          showLocalNotification('New Message', 'Your friend is waiting for your Approval!. Check for more Details');
         }
       } else {
         print('Invalid response data format');
@@ -98,16 +88,14 @@ Future<void> getData(String fetchMobile) async {
 }
 
 void showLocalNotification(String title, String message) async {
-  const AndroidNotificationDetails androidPlatformChannelSpecifics =
-  AndroidNotificationDetails(
+  const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
     'default_channel_id',
     'Default Channel',
     channelDescription: 'Default Channel for notifications',
     importance: Importance.high,
     priority: Priority.high,
   );
-  const NotificationDetails platformChannelSpecifics =
-  NotificationDetails(android: androidPlatformChannelSpecifics);
+  const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
 
   await flutterLocalNotificationsPlugin.show(
     0,
@@ -136,42 +124,27 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        appBarTheme: const AppBarTheme(
-            backgroundColor: Colors.green
-        ),
-        /// app bar 18
-        /// inside body heding  16
-        /// inside text 14
-        /// body for black
-        /// label for white
-        /// headline for medium  green
-
+        appBarTheme: const AppBarTheme(backgroundColor: Colors.green),
         textTheme: GoogleFonts.aBeeZeeTextTheme().copyWith(
-          headlineSmall: const TextStyle(fontSize: 16.0,color: Colors.green),
-          headlineMedium: const TextStyle(fontSize: 16.0,color: Colors.green,fontWeight: FontWeight.bold),
-          headlineLarge:  const TextStyle(fontSize: 16.0,color: Colors.blue),
-
-
+          headlineSmall: const TextStyle(fontSize: 16.0, color: Colors.green),
+          headlineMedium: const TextStyle(fontSize: 16.0, color: Colors.green, fontWeight: FontWeight.bold),
+          headlineLarge: const TextStyle(fontSize: 16.0, color: Colors.blue),
           bodySmall: const TextStyle(fontSize: 14, color: Colors.black),
-          bodyMedium: const TextStyle(fontSize: 16, color: Colors.black,fontWeight: FontWeight.bold),
+          bodyMedium: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold),
           bodyLarge: const TextStyle(fontSize: 18.0, color: Colors.black),
-
-          displayLarge:const TextStyle(fontSize: 18, color: Colors.white),
-          displayMedium: const TextStyle(fontSize: 16, color: Colors.white,fontWeight: FontWeight.bold),
-          displaySmall: const TextStyle(fontSize: 14, color: Colors.white), // Assuming this is for labels
+          displayLarge: const TextStyle(fontSize: 18, color: Colors.white),
+          displayMedium: const TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
+          displaySmall: const TextStyle(fontSize: 14, color: Colors.white),
         ),
-
       ),
-
       home: FutureBuilder<Map<String, dynamic>>(
         future: isLoggedIn(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
+            return Center(child: Text('Error: ${snapshot.error}'));
           } else {
-            // Extract isLoggedIn, userType, and firstName from snapshot.data
             bool isLoggedIn = snapshot.data?['isLoggedIn'] ?? false;
             String? userType = snapshot.data?['userType'];
             String? id = snapshot.data?['id'];
@@ -179,22 +152,11 @@ class MyApp extends StatelessWidget {
             if (isLoggedIn) {
               switch (userType) {
                 case "Non-Executive":
-                  return NavigationBarNon(
-                    userType: userType,
-                    userId: id,
-                  ); // Pass firstName to Homepage
-              //   return NonExecutiveHome();
+                  return NavigationBarNon(userType: userType, userId: id);
                 case "Guest":
-                  return GuestHome(
-                    userType: userType,
-                    userId: id,
-                  );
+                  return GuestHome(userType: userType, userId: id);
                 default:
-                // Handle unexpected user types
-                  return NavigationBarExe(
-                    userType: userType,
-                    userId: id,
-                  );
+                  return NavigationBarExe(userType: userType, userId: id);
               }
             } else {
               return const Login();
@@ -202,23 +164,6 @@ class MyApp extends StatelessWidget {
           }
         },
       ),
-
-      ///
-      ///
-
-/*
-        home: FutureBuilder<bool>(
-        future: isLoggedIn(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return snapshot.data! ? Homepage() : Login();
-          } else {
-            return CircularProgressIndicator();
-          }
-        },
-
-      ),
-*/
     );
   }
 }
@@ -231,14 +176,6 @@ Future<Map<String, dynamic>> isLoggedIn() async {
   return {
     'isLoggedIn': isLoggedIn,
     'userType': userType,
-    "id": id
+    "id": id,
   };
 }
-
-/*
-Future<bool> isLoggedIn() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  return prefs.getBool('isLoggedIn') ?? false;
-
-}
-*/

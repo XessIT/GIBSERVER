@@ -12,7 +12,7 @@ import 'home.dart';
 class GIBmembersFilter extends StatefulWidget {
   String? userType = "";
   String? userId ="";
-   GIBmembersFilter({Key? key, required this. userType, required this.userId}) : super(key: key);
+  GIBmembersFilter({Key? key, required this. userType, required this.userId}) : super(key: key);
 
   @override
   State<GIBmembersFilter> createState() => _GIBmembersFilterState();
@@ -24,8 +24,8 @@ class _GIBmembersFilterState extends State<GIBmembersFilter> {
   void clearText() {
     fieldText.clear();
   }
-TextEditingController  chapterController = TextEditingController();
-TextEditingController  districtController = TextEditingController();
+  TextEditingController  chapterController = TextEditingController();
+  TextEditingController  districtController = TextEditingController();
   List<Map<String,dynamic>>userdata=[];
 /*
   Future<void> fetchData() async {
@@ -99,7 +99,7 @@ TextEditingController  districtController = TextEditingController();
         final List<dynamic> itemGroups = responseData;
         setState(() {
           suggesstiondistrictdata = itemGroups.cast<Map<String, dynamic>>();
-         // chapterController.clear();
+          // chapterController.clear();
 
         });
       } else {
@@ -125,8 +125,8 @@ TextEditingController  districtController = TextEditingController();
         setState(() {
           setState(() {
           });
-           chapterController.clear();
-           data.clear();
+          chapterController.clear();
+          data.clear();
         });
       } else {
         print('chapter Error: ${response.statusCode}');
@@ -136,17 +136,17 @@ TextEditingController  districtController = TextEditingController();
     }
   }
 
-bool isVisible = false;
-bool titleVisible = true;
+  bool isVisible = false;
+  bool titleVisible = true;
 
   @override
   void initState() {
     // TODO: implement initState
     getDistrict();
 
-      if (chapterController.text!.isNotEmpty&& districtController.text!.isNotEmpty)  {
-        getData(districtController.text ,chapterController.text);
-      }
+    if (chapterController.text!.isNotEmpty&& districtController.text!.isNotEmpty)  {
+      getData(districtController.text ,chapterController.text);
+    }
 
     super.initState();
   }
@@ -189,7 +189,7 @@ bool titleVisible = true;
                     ),
                   );
                 }
-                },
+              },
               icon: const Icon(Icons.arrow_back)),
           iconTheme:  const IconThemeData(
             color: Colors.white, // Set the color for the drawer icon
@@ -332,46 +332,46 @@ bool titleVisible = true;
             width: 500,
             child: Column(
               children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: 200,
-                height: 50,
-                child: TypeAheadFormField<String>(
-                  textFieldConfiguration: TextFieldConfiguration(
-                    controller: districtController,
-                    decoration: const InputDecoration(
-                        fillColor: Colors.white,
-                        filled: true,
-                        labelText: "District"
-                    ),
-                  ),
-                  suggestionsCallback: (pattern) async {
-                    return suggesstiondistrictdata
-                        .where((item) =>
-                        (item['district']?.toString().toLowerCase() ?? '')
-                            .startsWith(pattern.toLowerCase()))
-                        .map((item) => item['district'].toString())
-                        .toList();
-                  },
-                  itemBuilder: (context, suggestion) {
-                    return ListTile(
-                      title: Text(suggestion),
-                    );
-                  },
-                  onSuggestionSelected: (suggestion) async {
-                    setState(() {
-                      districtController.text = suggestion;
-                    });
-                    // Fetch chapters for the selected district
-                    getchapter(districtController.text.trim());
-                    // After updating the district and fetching chapters, fetch new member data if chapter is already selected
-                    if (chapterController.text.isNotEmpty) {
-                      getData(districtController.text, chapterController.text);
-                    }
-                  },
-                 /* onSuggestionSelected: (suggestion) async {
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 200,
+                      height: 50,
+                      child: TypeAheadFormField<String>(
+                        textFieldConfiguration: TextFieldConfiguration(
+                          controller: districtController,
+                          decoration: const InputDecoration(
+                              fillColor: Colors.white,
+                              filled: true,
+                              labelText: "District"
+                          ),
+                        ),
+                        suggestionsCallback: (pattern) async {
+                          return suggesstiondistrictdata
+                              .where((item) =>
+                              (item['district']?.toString().toLowerCase() ?? '')
+                                  .startsWith(pattern.toLowerCase()))
+                              .map((item) => item['district'].toString())
+                              .toList();
+                        },
+                        itemBuilder: (context, suggestion) {
+                          return ListTile(
+                            title: Text(suggestion),
+                          );
+                        },
+                        onSuggestionSelected: (suggestion) async {
+                          setState(() {
+                            districtController.text = suggestion;
+                          });
+                          // Fetch chapters for the selected district
+                          getchapter(districtController.text.trim());
+                          // After updating the district and fetching chapters, fetch new member data if chapter is already selected
+                          if (chapterController.text.isNotEmpty) {
+                            getData(districtController.text, chapterController.text);
+                          }
+                        },
+                        /* onSuggestionSelected: (suggestion) async {
                     setState(() {
                       districtController.text = suggestion;
                       setState(() {
@@ -381,48 +381,48 @@ bool titleVisible = true;
                     });
                     //   print('Selected Item Group: $suggestion');
                   },*/
-                ),
-              ),
-              // Chapter drop down button starts
-
-              // DOB textfield starts here
-              const SizedBox(height: 10,width: 20,),
-              SizedBox(
-                width: 200,
-                height: 50,
-                child: TypeAheadFormField<String>(
-                  textFieldConfiguration: TextFieldConfiguration(
-                    controller: chapterController,
-                    decoration: const InputDecoration(
-                        fillColor: Colors.white,
-                        filled: true,
-                        labelText: "Chapter"
+                      ),
                     ),
-                  ),
-                  suggestionsCallback: (pattern) async {
-                    return suggesstionchapterdata
-                        .where((item) =>
-                        (item['chapter']?.toString().toLowerCase() ?? '')
-                            .startsWith(pattern.toLowerCase()))
-                        .map((item) => item['chapter'].toString())
-                        .toList();
-                  },
-                  itemBuilder: (context, suggestion) {
-                    return ListTile(
-                      title: Text(suggestion),
-                    );
-                  },
-                  onSuggestionSelected: (suggestion) async {
-                    setState(() {
-                      chapterController.text = suggestion;
-                        getData(districtController.text.trim(), chapterController.text.trim());
+                    // Chapter drop down button starts
 
-                    });
-                  },
+                    // DOB textfield starts here
+                    const SizedBox(height: 10,width: 20,),
+                    SizedBox(
+                      width: 200,
+                      height: 50,
+                      child: TypeAheadFormField<String>(
+                        textFieldConfiguration: TextFieldConfiguration(
+                          controller: chapterController,
+                          decoration: const InputDecoration(
+                              fillColor: Colors.white,
+                              filled: true,
+                              labelText: "Chapter"
+                          ),
+                        ),
+                        suggestionsCallback: (pattern) async {
+                          return suggesstionchapterdata
+                              .where((item) =>
+                              (item['chapter']?.toString().toLowerCase() ?? '')
+                                  .startsWith(pattern.toLowerCase()))
+                              .map((item) => item['chapter'].toString())
+                              .toList();
+                        },
+                        itemBuilder: (context, suggestion) {
+                          return ListTile(
+                            title: Text(suggestion),
+                          );
+                        },
+                        onSuggestionSelected: (suggestion) async {
+                          setState(() {
+                            chapterController.text = suggestion;
+                            getData(districtController.text.trim(), chapterController.text.trim());
+
+                          });
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
                 data.isNotEmpty ?
                 Container(
                   height: 500,
@@ -493,7 +493,7 @@ bool titleVisible = true;
                     Text("No Members Found"),
                   ],
                 ))
-               
+
               ],
             ),
           ),
