@@ -162,7 +162,7 @@ class SettingsPageNon extends StatelessWidget {
                     onTap: () {
                          Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) =>   GibGallery( userType: userType.toString(), userID: userId.toString(),)),
+                            MaterialPageRoute(builder: (context) =>   ViewPhotosPage( userType: userType.toString(), userID: userId.toString(),)),
                           );
                     },
                     icons: CupertinoIcons.photo_on_rectangle,
