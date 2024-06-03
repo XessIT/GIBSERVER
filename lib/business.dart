@@ -28,7 +28,6 @@ class _BusinessPageState extends State<BusinessPage> {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          centerTitle: true,
           title: (Text('My Business', style: Theme.of(context).textTheme.displayLarge,)
           ),
           leading: IconButton(

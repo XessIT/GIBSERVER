@@ -681,6 +681,8 @@ class _PendingState extends State<Pending> {
                                                                 "mobile": data[i]["Tomobile"],
                                                                 "company": data[i]["Tocompanyname"],
                                                                 "amount": amountController.text.trim(),
+                                                                "district": data[i]["district"],
+                                                                "chapter": data[i]["chapter"],
                                                               }),
                                                             );
                                                             print(url);

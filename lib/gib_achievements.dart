@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:gipapp/settings_page_executive.dart';
 import 'Non_exe_pages/non_exe_home.dart';
 import 'guest_home.dart';
 import 'home.dart';
-import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
-import 'dart:typed_data';
 import 'package:video_player/video_player.dart';
-
-
-
 
 class Achievements extends StatefulWidget {
   final String userType;
@@ -43,22 +39,11 @@ class _AchievementsState extends State<Achievements> {
                 ),
               );
             }
-            else if (widget.userType == "Guest") {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => GuestHome(
-                    userType: widget.userType.toString(),
-                    userId: widget.userID.toString(),
-                  ),
-                ),
-              );
-            }
             else{
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => NavigationBarExe(
+                  builder: (context) => SettingsPageExecutive(
                     userType: widget.userType.toString(),
                     userId: widget.userID.toString(),
                   ),
@@ -70,7 +55,20 @@ class _AchievementsState extends State<Achievements> {
         ),
 
       ),
-      body: AchievementGibGallery(),
+      body: PopScope(
+          canPop: false,
+          onPopInvoked: (didPop)  {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SettingsPageExecutive(
+                  userType: widget.userType.toString(),
+                  userId: widget.userID.toString(),
+                ),
+              ),
+            );
+          },
+          child: AchievementGibGallery()),
     );
   }
 }

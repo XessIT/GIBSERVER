@@ -50,9 +50,6 @@ class _GtoGPageState extends State<GtoGPage> {
   }
 
   String uid = "";
-
-  String district = "";
-  String chapter="";
   TextEditingController metwith = TextEditingController();
   TextEditingController companyname = TextEditingController();
   TextEditingController location = TextEditingController();
@@ -65,6 +62,8 @@ class _GtoGPageState extends State<GtoGPage> {
     if (text.isEmpty) return text;
     return text.substring(0, 1).toUpperCase() + text.substring(1);
   }
+  String district = "";
+  String chapter = "";
   String? fname = "";
   String? lname = "";
   String mobile ="";
@@ -77,10 +76,6 @@ class _GtoGPageState extends State<GtoGPage> {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=$userId');
       final response = await http.get(url);
       if (response.statusCode == 200) {
-        print("response S: ${response.statusCode}");
-        print("response B: ${response.body}");
-        print('-----------------------------------');
-
         final responseData = json.decode(response.body);
         if (responseData is List<dynamic>) {
           setState(() {
@@ -91,15 +86,11 @@ class _GtoGPageState extends State<GtoGPage> {
                 lname= dynamicdata[0]['last_name'];
                 mobile=dynamicdata[0]["mobile"];
                 companyname=dynamicdata[0]["company_name"];
-
+                district=dynamicdata[0]["district"];
+                chapter=dynamicdata[0]["chapter"];
               });
             }
           });
-          print('-----------------------------------');
-          print('name $fname');
-          print('name $mobile');
-          print('name $mobile');
-          print('widget $companyname');
         } else {
           // Handle invalid response data (not a List)
           print('Invalid response data format');
@@ -130,8 +121,9 @@ class _GtoGPageState extends State<GtoGPage> {
       'location': location.text,
       "first_name": fname,
       "mobile": mobile,
-      "company_name": companyname.text, // Extract text from TextEditingController
-      // Add other fields here
+      "company_name": companyname.text,
+      "district": district,
+      "chapter": chapter
     }));
 
     if (response.statusCode == 200) {

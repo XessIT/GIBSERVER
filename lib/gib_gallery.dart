@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:gipapp/settings_page_executive.dart';
 import 'Non_exe_pages/non_exe_home.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
@@ -8,13 +9,18 @@ import 'package:video_player/video_player.dart';
 
 
 
-class GibGallery extends StatelessWidget {
+class GibGallery extends StatefulWidget {
   final String userType;
   final String? userID;
   const GibGallery({super.key,
     required this.userType,
     required this. userID,});
 
+  @override
+  State<GibGallery> createState() => _GibGalleryState();
+}
+
+class _GibGalleryState extends State<GibGallery> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -24,17 +30,16 @@ class GibGallery extends StatelessWidget {
           // Appbar title
           title:  Text('GIB Gallery',style: Theme.of(context).textTheme.displayLarge,
           ),
-          centerTitle: true,
           leading:IconButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) =>  NavigationBarNon(userType: '', userId: '',)));
+                Navigator.push(context, MaterialPageRoute(builder: (context) =>  SettingsPageExecutive(userType: widget.userType, userId: widget.userID,)));
               },
               icon: const Icon(Icons.arrow_back,color: Colors.white,)),
         ),
         body: PopScope(
           canPop: false,
           onPopInvoked: (didPop)  {
-            Navigator.push(context, MaterialPageRoute(builder: (context) =>  NavigationBarNon(userType: '', userId: '',)));
+            Navigator.push(context, MaterialPageRoute(builder: (context) =>  SettingsPageExecutive(userType: widget.userType, userId: widget.userID,)));
           },
           child: Column(
             children: [

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:gipapp/settings_page_executive.dart';
 import 'package:gipapp/video_player.dart';
 import 'package:http_parser/http_parser.dart';
 
@@ -36,11 +37,15 @@ class _MyGalleryState extends State<MyGallery> {
           iconTheme: const IconThemeData(color: Colors.white),
           leading: IconButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) =>  NavigationBarExe(userType: widget.userType, userId: widget.userId,)));
+                Navigator.push(context, MaterialPageRoute(builder: (context) =>  SettingsPageExecutive(userType: widget.userType, userId: widget.userId,)));
               },
               icon: const Icon(Icons.navigate_before)),
         ),
         body: PopScope(
+          canPop: false,
+          onPopInvoked: (didPop)  {
+            Navigator.push(context, MaterialPageRoute(builder: (context) =>  SettingsPageExecutive(userType: widget.userType, userId: widget.userId,)));
+          },
           child: Column(
             children:   [
               const TabBar(
@@ -398,7 +403,7 @@ class _VideoState extends State<Video> {
 
   Future<void> _fetchVideos() async {
     final url =
-        'http://mybudgetbook.in/GIBAPI/fetchvideos.php?userId=${widget.userId}';
+        'https://mybudgetbook.in/GIBAPI/fetchvideos.php?userId=${widget.userId}';
 
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
@@ -407,7 +412,7 @@ class _VideoState extends State<Video> {
         // Fetch thumbnails for each video
         _thumbnails = List<String>.filled(_videos.length, '');
         for (int i = 0; i < _videos.length; i++) {
-          _fetchThumbnail(i);
+        //  _fetchThumbnail(i);
         }
       });
     } else {
@@ -416,7 +421,7 @@ class _VideoState extends State<Video> {
     }
   }
 
-  Future<void> _fetchThumbnail(int index) async {
+ /* Future<void> _fetchThumbnail(int index) async {
     final videoPath = _videos[index]['video_path'];
     final url =
         'http://mybudgetbook.in/GIBAPI/videosmp4.php?video_path=' + videoPath;
@@ -430,7 +435,7 @@ class _VideoState extends State<Video> {
       // Handle error
       print('Failed to fetch thumbnail for video at index $index');
     }
-  }
+  }*/
 
   Future<void> _deleteVideo(int videoIndex) async {
     int videoId = _videos[videoIndex]['id'];

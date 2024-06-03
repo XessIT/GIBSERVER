@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:gipapp/personal_edit.dart';
+import 'package:gipapp/settings_page_executive.dart';
 import 'package:gipapp/view_gallery_image.dart';
 import 'package:video_player/video_player.dart';
 import 'business_edit.dart';
@@ -79,7 +80,7 @@ class _ViewState extends State<View> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => NavigationBarExe(
+                    builder: (context) => SettingsPageExecutive(
                       userType: widget.userType.toString(),
                       userId: widget.userID.toString(),
                     ),
@@ -108,7 +109,7 @@ class _ViewState extends State<View> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => NavigationBarExe(
+                    builder: (context) => SettingsPageExecutive(
                       userType: widget.userType.toString(),
                       userId: widget.userID.toString(),
                     ),

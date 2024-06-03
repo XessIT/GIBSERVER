@@ -9,14 +9,25 @@ import 'package:intl/intl.dart';
 import'package:http/http.dart'as http;
 import 'login.dart';
 
-class Registration extends StatefulWidget {
+class Registration extends StatelessWidget {
   const Registration({Key? key}) : super(key: key);
 
   @override
-  State<Registration> createState() => _RegistrationState();
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Guest(),
+    );
+  }
 }
 
-class _RegistrationState extends State<Registration> {
+class Guest extends StatefulWidget {
+  const Guest({Key? key}) : super(key: key);
+
+  @override
+  State<Guest> createState() => _GuestState();
+}
+
+class _GuestState extends State<Guest> {
 
   bool _isObscure = true;
   final _formKey = GlobalKey<FormState>();
@@ -126,7 +137,6 @@ class _RegistrationState extends State<Registration> {
             mobileBaseFetchIDdata = responseData.cast<Map<String, dynamic>>();
             if (mobileBaseFetchIDdata.isNotEmpty) {
               setState(() {
-
                 referreridcotroller.text = mobileBaseFetchIDdata[0]["member_id"];
                 print("referrer ID--${referreridcotroller.text}" );
 
@@ -135,11 +145,11 @@ class _RegistrationState extends State<Registration> {
           });
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+            const SnackBar(
               content: Text("This mobile number is not member. Enter the member mobile number."),
             ),
           );
-      //    referreridcotroller.clear();
+          //    referreridcotroller.clear();
           print('Invalid response data format');
         }
       } else {
@@ -211,60 +221,79 @@ class _RegistrationState extends State<Registration> {
   String blockStatus ="UnBlock";
   String adminRights ="Waiting";
   Future<void> uploadImage(Uint8List imageBytes) async {
-      if(membertype=="Member Type") {
-        setState(() {
-          membertype = "Guest";
-          print("type:$membertype");
-          blockStatus = "UnBlock";
-          adminRights = "Accepted";
+    if(membertype=="Member Type") {
+      setState(() {
+        membertype = "Guest";
+        print("type:$membertype");
+        blockStatus = "UnBlock";
+        adminRights = "Accepted";
 
-        });
-      }
+      });
+    }
     try {
-      final uri = Uri.parse("http://mybudgetbook.in/GIBAPI/registration.php");
+      String uri = "http://mybudgetbook.in/GIBAPI/registration.php";
       print("registration URL: $uri");
-     // String uri = "http://mybudgetbook.in/GIBAPI/save_image.php";
+      // String uri = "http://mybudgetbook.in/GIBAPI/save_image.php";
       print("ImageName: $imagename");
-      var res = await http.post(uri,
+      var res = await http.post(Uri.parse(uri),
           body: jsonEncode({
-        "image": base64Encode(imageBytes),
-        "mobile": mobilecontroller.text.trim(),
-        "password": confirmpasswordcontroller.text.trim(),
-        "member_type": membertype.toString(),
-        "gender": gender.toString(),
-        "first_name": firstnamecontroller.text.trim(),
-        "last_name": lastnamecontroller.text.trim(),
-        "company_name": companynamecontroller.text.trim(),
-        "email": emailcontroller.text.trim(),
-        "blood_group": blood.toString(),
-        "place": locationcontroller.text.trim(),
-        "pin": passwordcontroller.text.trim(),
-        "referrer_mobile": referrermobilecontroller.text.trim(),
-        "OTP": databaseOTP.toString(),
-        "block_status": blockStatus.toString(),
-        "admin_rights": adminRights.toString(),
-        "type": type.toString(),
-        "district": districtController.text,
-        "chapter": chapterController.text,
-        "dob": _dobdate.text.trim(),
-        "koottam": koottam.toString(),
-        "marital_status": status.toString(),
-        "business_type": businesstype.toString(),
-        "company_address": companyaddresscontroller.text.trim(),
-        "business_keywords": businesskeywordscontroller.text.trim(),
-        "education": educationcontroller.text.trim(),
-        "native": spousenativecontroller.text.trim(),
-        "kovil": kovilcontroller.text.trim(),
-        "s_name": spousenamecontroller.text.trim(),
-        "WAD": _waddate.text.trim(),
-        "s_blood": spouseblood.toString(),
-        "s_father_koottam": spousekoottam.toString(),
-        "s_father_kovil": spousekovilcontroller.text.trim(),
-        "past_experience": pastexpcontroller.text.trim(),
-        "website": websitecontroller.text.trim(),
-        "b_year": yearcontroller.text.trim(),
-        "referrer_id": referreridcotroller.text.trim(),
-      }));
+            "image": base64Encode(imageBytes),
+            "mobile": mobilecontroller.text.trim(),
+            "password": confirmpasswordcontroller.text.trim(),
+            "member_type": membertype.toString(),
+            "gender": gender.toString(),
+            "first_name": firstnamecontroller.text.trim(),
+            "last_name": lastnamecontroller.text.trim(),
+            "company_name": companynamecontroller.text.trim(),
+            "email": emailcontroller.text.trim(),
+            "blood_group": blood.toString(),
+            "place": locationcontroller.text.trim(),
+            "pin": passwordcontroller.text.trim(),
+            "referrer_mobile": referrermobilecontroller.text.trim(),
+            "OTP": databaseOTP.toString(),
+            "block_status": blockStatus.toString(),
+            "admin_rights": adminRights.toString(),
+            "type": type.toString(),
+            "district": districtController.text,
+            "chapter": chapterController.text,
+            "dob": _dobdate.text.trim(),
+            "koottam": koottam.toString(),
+            "marital_status": status.toString(),
+            "business_type": businesstype.toString(),
+            "company_address": companynamecontroller.text.trim(),
+            "business_keywords": businesskeywordscontroller.text.trim(),
+            "education": educationcontroller.text.trim(),
+            "native": spousenativecontroller.text.trim(),
+            "kovil": kovilcontroller.text.trim(),
+            "s_name": spousenamecontroller.text.trim(),
+            "WAD": _waddate.text.trim(),
+            "s_blood": spouseblood.toString(),
+            "s_father_koottam": spousekoottam.toString(),
+            "s_father_kovil": spousekovilcontroller.text.trim(),
+            "past_experience": pastexpcontroller.text.trim(),
+            "website": websitecontroller.text.trim(),
+            "b_year": yearcontroller.text.trim(),
+            "referrer_id": referreridcotroller.text.trim(),
+          }));
+
+      /*if (res.statusCode == 200) {
+        print(uri);
+        print("Response Status: ${res.statusCode}");
+        print("Response Body: ${res.body}");
+        var response = jsonDecode(res.body);
+        if (response["success"] == "true") {
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>const Login()));
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please wait for Admin Approval")));
+          print("Uploaded image successfully");
+        } else {
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>const Login()));
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Registration is successfull\n"
+              "Please wait for Admin Approval")));
+          print("Image upload failed. Server response: ${response["message"]}");
+        }
+      } else {
+        print("Failed to upload image. Server returned status code: ${res.statusCode}");
+      }*/
       if (res.statusCode == 200) {
         print(uri);
         print("Response Status: ${res.statusCode}");
@@ -300,7 +329,7 @@ class _RegistrationState extends State<Registration> {
   String? imagename;
   String? imagedata;
   bool showLocalImage = false;
- // XFile? pickedImage;
+  // XFile? pickedImage;
 
   pickImageFromGallery() async {
     final imagePicker = ImagePicker();
@@ -368,16 +397,7 @@ class _RegistrationState extends State<Registration> {
       print(' chapter Error: $error');
     }
   }
-
-
-
   /// ends here
-
-
-
-
-
-
   @override
   Widget build(BuildContext context) {
     getDistrict();
@@ -385,7 +405,8 @@ class _RegistrationState extends State<Registration> {
       // Appbar starts
       appBar: AppBar(
         // Appbar title
-        title:  Text('Registration',style: Theme.of(context).textTheme.displayLarge),
+        title:  Text('REGISTRATION',style: Theme.of(context).textTheme.displayLarge),
+        centerTitle: true,
         iconTheme:  const IconThemeData(
           color: Colors.white, // Set the color for the drawer icon
         ),
@@ -471,7 +492,7 @@ class _RegistrationState extends State<Registration> {
                                 title: const Text("From Gallery"),
                                 onTap: () {
                                   pickImageFromGallery();
-                                //  getImage();
+                                  //  getImage();
                                   Navigator.of(context).pop();
                                 },
                               )
@@ -480,9 +501,80 @@ class _RegistrationState extends State<Registration> {
                         });
                       },
                     ),
+                    Visibility(
+                        visible: isVisible,
+                        child: Column(
+                          children: [
+                            // Executive GiB Member ID textfield starts here
+                            SizedBox(
+                              width: 300,
+                              child: TextFormField(
+                                controller: referreridcotroller,
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return '* Enter Referrer Executive GiB Member ID';
+                                  } else if (nameRegExp.hasMatch(value)) {
+                                    return null;
+                                  }
+                                  return null;
+                                },
+                                onChanged: (value){
+                                  idBaseMobileNoFetched(referreridcotroller.text);
+                                  if( value.isEmpty){
+                                    referrermobilecontroller.clear();
+                                  }
 
+
+                                },
+                                decoration: const InputDecoration(
+                                  labelText: "Referrer Executive GiB Member ID",
+                                  hintText: "Referrer Executive GiB Member ID",
+                                  suffixIcon: Icon(Icons.confirmation_num),
+                                ),
+                              ),
+                            ),
+                            // Executive GiB Member ID textfield ends here
+
+                            const SizedBox(height: 15,),
+                            SizedBox(
+                              width: 300,
+                              child: TextFormField(
+                                controller: referrermobilecontroller,
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return '* Enter your Referrer Mobile Number';
+                                  } else if (value.length<10) {
+                                    "* Mobile Number should be 10 digits";
+                                    return null;
+                                  }
+                                  else if (nameRegExp.hasMatch(value)) {
+                                    return null;
+                                  }
+                                  return null;
+                                },
+                                decoration: const InputDecoration(
+                                  labelText: "Referrer Mobile Number",
+                                  prefixText: '+91 ',
+                                  prefixStyle: TextStyle(color: Colors.blue), // Set the color here
+                                  suffixIcon: Icon(Icons.phone_android),
+                                ),
+                                onChanged: (value){
+                                    if(value.length==10)
+                                      referreridcotroller.clear();
+                                    MobileBaseIdFetched(referrermobilecontroller.text);
+                                },
+                                keyboardType: TextInputType.number,
+                                inputFormatters: <TextInputFormatter>[
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(10)
+                                ],
+                              ),
+                            ),
+                          ],
+                        )
+                    ),
                     // First Name textfield starts
-                    const SizedBox(height: 30,),
+                    const SizedBox(height: 15,),
                     SizedBox(
                       width: 300,
                       child: TextFormField(
@@ -1876,82 +1968,6 @@ class _RegistrationState extends State<Registration> {
                             ),
                           ),
 
-                          // Executive GiB Member ID textfield starts here
-                          const SizedBox(height: 15,),
-                          SizedBox(
-                            width: 300,
-                            child: TextFormField(
-                              controller: referreridcotroller,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return '* Enter Referrer Executive GiB Member ID';
-                                } else if (nameRegExp.hasMatch(value)) {
-                                  return null;
-                                }
-                                return null;
-                              },
-                              onChanged: (value){
-                                idBaseMobileNoFetched(referreridcotroller.text);
-                               if( value.isEmpty){
-                                 referrermobilecontroller.clear();
-                               }
-
-
-                              },
-                              decoration: const InputDecoration(
-                                labelText: "Referrer Executive GiB Member ID",
-                                hintText: "Referrer Executive GiB Member ID",
-                                suffixIcon: Icon(Icons.phone_android),
-                              ),
-                            ),
-                          ),
-                          // Executive GiB Member ID textfield ends here
-
-                          const SizedBox(height: 15,),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                width: 300,
-                                child: TextFormField(
-                                  controller: referrermobilecontroller,
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
-                                      return '* Enter your Referrer Mobile Number';
-                                    } else if (value.length<10) {
-                                      "* Mobile Number should be 10 digits";
-                                      return null;
-                                    }
-                                    else if (nameRegExp.hasMatch(value)) {
-                                      return null;
-                                    }
-                                    return null;
-                                  },
-                                  decoration: const InputDecoration(
-                                    labelText: "Referrer Mobile Number",
-                                    prefixText: '+91 ',
-                                    prefixStyle: TextStyle(color: Colors.blue), // Set the color here
-                                    suffixIcon: Icon(Icons.phone_android),
-                                  ),
-                                  onChanged: (value){
-                                    setState(() {
-                                      if(value.length==10)
-                                        referreridcotroller.clear();
-                                      MobileBaseIdFetched(referrermobilecontroller.text);
-
-                                    });
-
-                                  },
-                                  keyboardType: TextInputType.number,
-                                  inputFormatters: <TextInputFormatter>[
-                                    FilteringTextInputFormatter.digitsOnly,
-                                    LengthLimitingTextInputFormatter(10)
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-
                           const SizedBox(height: 15,),
 /*
                           SizedBox(
@@ -2115,19 +2131,55 @@ class _RegistrationState extends State<Registration> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
+                        // Login button starts
+                        MaterialButton(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5.0)),
+                            minWidth: 130,
+                            height: 50,
+                            color: Colors.green[800],
+
+                            onPressed: () {
+
+                              /*      if (type == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text("Select the Type")));
+                              }
+                              *//*  else if (pickedimage == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text("Please Select Image")));
+                              }*//*
+                              else if (_formKey.currentState!.validate()) {
+                                if(type == guest){
+                                }
+                                else if (otpcodevisible) {
+                                }
+                                else {
+                                }
+
+                              }*/
+                            },
+                            child: otpcodevisible == true ? const Text('Save',
+                              style: TextStyle(color: Colors.white),)
+                                : const Text("Verify", style: TextStyle(color: Colors.white),)),
+                        // Login button ends
+
                         // Sign up button starts
                         MaterialButton(
-                            minWidth: 300,
+                            minWidth: 130,
                             height: 50,
-                            color: Colors.green,
+                            color: Colors.orangeAccent,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(5.0)),
                             onPressed: () {
+                              //signUp();
                               uploadImage(selectedImage!);
                               Navigator.push(context, MaterialPageRoute(builder: (context)=>const Login()));
-                             // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please wait for Admin Approval")));
+                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please wait for Admin Approval")));
                             },
-                            child: const Text('Register',
+                            child: const Text('Save',
                               style: TextStyle(color: Colors.white),)),
                         // Sign up button ends
                       ],

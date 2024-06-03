@@ -37,7 +37,7 @@ class _ThankNotesState extends State<ThankNotes> {
             key: _formKey,
             child: Column(
               children: [
-                TabBar(
+                const TabBar(
                   isScrollable: true,
                   labelColor: Colors.green,
                   unselectedLabelColor: Colors.black,
@@ -62,14 +62,9 @@ class _ThankNotesState extends State<ThankNotes> {
   }
 }
 class Online extends StatefulWidget {
-  // final String? currenthold;
-//  final String? currentsuccess;
-  // final String? currentunsuccess;
 
   const Online({Key? key,
-    //  required this.currenthold,
-    // required this.currentsuccess,
-    //  required this.currentunsuccess,
+
   }) : super(key: key);
 
   @override
@@ -444,6 +439,8 @@ class _DirectState extends State<Direct> {
   String? lname = "";
   String? mobile = "";
   String? companyname = "";
+  String? district = "";
+  String? chapter = "";
   List dynamicdata=[];
   Future<void> fetchData(String userId) async {
     try {
@@ -462,6 +459,8 @@ class _DirectState extends State<Direct> {
                 lname= dynamicdata[0]['last_name'];
                 mobile=dynamicdata[0]["mobile"];
                 companyname=dynamicdata[0]["company_name"];
+                district=dynamicdata[0]["district"];
+                chapter=dynamicdata[0]["chapter"];
               });
             }
           });
@@ -494,7 +493,9 @@ class _DirectState extends State<Direct> {
           "amount": amountcontroller.text.trim(),
           "name": fname,
           "mobile": mobile,
-          "company": companyname
+          "company": companyname,
+          "district": district,
+          "chapter": chapter
         }),
       );
       print(url);
