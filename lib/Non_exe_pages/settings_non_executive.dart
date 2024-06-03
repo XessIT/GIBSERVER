@@ -6,9 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Offer/offer.dart';
+import '../about_view.dart';
 import '../attendance.dart';
 import '../attendance_scanner.dart';
 import '../blood_group.dart';
+import '../change_mpin.dart';
 import '../gib_achievements.dart';
 import '../gib_doctors.dart';
 import '../gib_gallery.dart';
@@ -274,6 +276,47 @@ class SettingsPageNon extends StatelessWidget {
                       backgroundColor: Colors.red,
                     ),
                     title: 'Blood Group',
+                    titleStyle: Theme.of(context).textTheme.bodyMedium,
+                    // subtitle:'Profile Image, Name, Income',
+                    titleMaxLine: 1,
+                    subtitleMaxLine: 1,
+                  ),
+                  SettingsItem(
+                    onTap: () => {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => AboutTab(userId: userId.toString(),userType: userType.toString(),)),
+                      )
+                    },
+                    icons: CupertinoIcons.photo_on_rectangle,
+                    iconStyle: IconStyle(
+                      iconsColor: Colors.white,
+                      withBackground: true,
+                      backgroundColor: Colors.green,
+                    ),
+                    title: 'About GIB',
+                    titleStyle: Theme.of(context).textTheme.bodyMedium,
+                    // subtitle:'Profile Image, Name, Income',
+                    titleMaxLine: 1,
+                    subtitleMaxLine: 1,
+                  ),
+                  SettingsItem(
+                    onTap: () => {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Change(
+                                userType: userType.toString(),
+                                userID: userId.toString())),
+                      )
+                    },
+                    icons: Icons.fingerprint,
+                    iconStyle: IconStyle(
+                      iconsColor: Colors.white,
+                      withBackground: true,
+                      backgroundColor: Colors.green,
+                    ),
+                    title: 'Change M-PIN',
                     titleStyle: Theme.of(context).textTheme.bodyMedium,
                     // subtitle:'Profile Image, Name, Income',
                     titleMaxLine: 1,

@@ -1,3 +1,4 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -25,8 +26,8 @@ class _AttendancePageState extends State<AttendancePage> {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title:  Text('Attendance'),
-          centerTitle: true,
+          title:  Text('Attendance', style: Theme.of(context).textTheme.displayLarge,),
+          iconTheme: const IconThemeData(color: Colors.white), // Set the color for the drawer icon),
           leading:IconButton(
               onPressed: () {
                 if (widget.userType == "Non-Executive") {
@@ -34,17 +35,6 @@ class _AttendancePageState extends State<AttendancePage> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => NavigationBarNon(
-                        userType: widget.userType.toString(),
-                        userId: widget.userID.toString(),
-                      ),
-                    ),
-                  );
-                }
-                else if (widget.userType == "Guest") {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => GuestHome(
                         userType: widget.userType.toString(),
                         userId: widget.userID.toString(),
                       ),
@@ -62,63 +52,49 @@ class _AttendancePageState extends State<AttendancePage> {
                     ),
                   );
                 }
-                },
-              icon: const Icon(Icons.arrow_back)),
+              },
+              icon: const Icon(Icons.navigate_before)),
         ),
         body:PopScope(
           canPop: false,
-            onPopInvoked: (didPop)  {
-              if (widget.userType == "Non-Executive") {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => NavigationBarNon(
-                      userType: widget.userType.toString(),
-                      userId: widget.userID.toString(),
-                    ),
+          onPopInvoked: (didPop)  {
+            if (widget.userType == "Non-Executive") {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NavigationBarNon(
+                    userType: widget.userType.toString(),
+                    userId: widget.userID.toString(),
                   ),
-                );
-              }
-              else if (widget.userType == "Guest") {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => GuestHome(
-                      userType: widget.userType.toString(),
-                      userId: widget.userID.toString(),
-                    ),
+                ),
+              );
+            }
+            else{
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NavigationBarExe(
+                    userType: widget.userType.toString(),
+                    userId: widget.userID.toString(),
                   ),
-                );
-              }
-              else{
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => NavigationBarExe(
-                      userType: widget.userType.toString(),
-                      userId: widget.userID.toString(),
-                    ),
-                  ),
-                );
-              }
-            },
+                ),
+              );
+            }
+          },
 
           child:  Column(
               children: [
-
-                //TABBAR STARTS
                 TabBar(
                   isScrollable: true,
                   labelColor: Colors.green.shade100,
                   unselectedLabelColor: Colors.black,
-                  tabs: [
+                  tabs: const [
                     Tab(text: ('Network Meeting'),),
                     Tab(text: ('Team Meeting') ,),
                     Tab(text:('Training Program'),
                     ),
                   ],
-                )  ,
-                //TABBAR VIEW STARTS
+                ),
                 Expanded(
                   child: TabBarView(children: [
                     NetworkAttendance(userType: widget.userType, userID: widget.userID,),
@@ -156,9 +132,64 @@ class _NetworkAttendanceState extends State<NetworkAttendance> {
   List<dynamic> absentMeetings = [];
   List<dynamic> leaveMeetings = [];
 
+  var _connectivityResult = ConnectivityResult.none;
+  Future<void> _checkConnectivityAndGetData() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectivityResult;
+    });
+    if (_connectivityResult != ConnectivityResult.none) {
+      _getInternet();
+    }
+  }
+  Future<void> _getInternet() async {
+    // Replace the URL with your PHP backend URL
+    var url = 'http://mybudgetbook.in/GIBAPI/internet.php';
+
+    try {
+      var response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        // Handle successful response
+        var data = json.decode(response.body);
+        print(data);
+      } else {
+        // Handle other status codes
+        print('Request failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle network errors
+      print('Error: $e');
+      // Show offline status message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please check your internet connection.'),
+        ),
+      );
+    }
+  }
+  bool isLoading = true;
+  ///refresh
+  List<String> items = List.generate(20, (index) => 'Item $index');
+  Future<void> _refresh() async {
+    await Future.delayed(const Duration(seconds: 1));
+    setState(() {
+      initState();
+    });
+  }
   @override
   void initState() {
     super.initState();
+    _checkConnectivityAndGetData();
+    Connectivity().onConnectivityChanged.listen((result) {
+      setState(() {
+        _connectivityResult = result;
+      });
+    });
+    Future.delayed(const Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
     fetchMeetCount(selectedYear,widget.userType);
     if (widget.userID != null) {
       fetchPresentAndAbsentCount(selectedYear, widget.userID!,  widget.userType);
@@ -390,7 +421,7 @@ class _NetworkAttendanceState extends State<NetworkAttendance> {
                         title: Column(
                           children: [
                             Row(
-                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text('${index + 1}'),
                                 Row(

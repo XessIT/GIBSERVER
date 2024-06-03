@@ -9,25 +9,14 @@ import 'package:intl/intl.dart';
 import'package:http/http.dart'as http;
 import 'login.dart';
 
-class Registration extends StatelessWidget {
+class Registration extends StatefulWidget {
   const Registration({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Guest(),
-    );
-  }
+  State<Registration> createState() => _RegistrationState();
 }
 
-class Guest extends StatefulWidget {
-  const Guest({Key? key}) : super(key: key);
-
-  @override
-  State<Guest> createState() => _GuestState();
-}
-
-class _GuestState extends State<Guest> {
+class _RegistrationState extends State<Registration> {
 
   bool _isObscure = true;
   final _formKey = GlobalKey<FormState>();
@@ -232,11 +221,11 @@ class _GuestState extends State<Guest> {
         });
       }
     try {
-      String uri = "http://mybudgetbook.in/GIBAPI/registration.php";
+      final uri = Uri.parse("http://mybudgetbook.in/GIBAPI/registration.php");
       print("registration URL: $uri");
      // String uri = "http://mybudgetbook.in/GIBAPI/save_image.php";
       print("ImageName: $imagename");
-      var res = await http.post(Uri.parse(uri),
+      var res = await http.post(uri,
           body: jsonEncode({
         "image": base64Encode(imageBytes),
         "mobile": mobilecontroller.text.trim(),
@@ -261,7 +250,7 @@ class _GuestState extends State<Guest> {
         "koottam": koottam.toString(),
         "marital_status": status.toString(),
         "business_type": businesstype.toString(),
-        "company_address": companynamecontroller.text.trim(),
+        "company_address": companyaddresscontroller.text.trim(),
         "business_keywords": businesskeywordscontroller.text.trim(),
         "education": educationcontroller.text.trim(),
         "native": spousenativecontroller.text.trim(),
@@ -276,25 +265,6 @@ class _GuestState extends State<Guest> {
         "b_year": yearcontroller.text.trim(),
         "referrer_id": referreridcotroller.text.trim(),
       }));
-
-      /*if (res.statusCode == 200) {
-        print(uri);
-        print("Response Status: ${res.statusCode}");
-        print("Response Body: ${res.body}");
-        var response = jsonDecode(res.body);
-        if (response["success"] == "true") {
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>const Login()));
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please wait for Admin Approval")));
-          print("Uploaded image successfully");
-        } else {
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>const Login()));
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Registration is successfull\n"
-              "Please wait for Admin Approval")));
-          print("Image upload failed. Server response: ${response["message"]}");
-        }
-      } else {
-        print("Failed to upload image. Server returned status code: ${res.statusCode}");
-      }*/
       if (res.statusCode == 200) {
         print(uri);
         print("Response Status: ${res.statusCode}");
@@ -415,9 +385,8 @@ class _GuestState extends State<Guest> {
       // Appbar starts
       appBar: AppBar(
         // Appbar title
-        title:  Center(child: Text('Registration',style: Theme.of(context).textTheme.bodySmall)),
-        centerTitle: true,
-        iconTheme:  IconThemeData(
+        title:  Text('Registration',style: Theme.of(context).textTheme.displayLarge),
+        iconTheme:  const IconThemeData(
           color: Colors.white, // Set the color for the drawer icon
         ),
       ),
@@ -2146,55 +2115,19 @@ class _GuestState extends State<Guest> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        // Login button starts
-                        MaterialButton(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5.0)),
-                            minWidth: 130,
-                            height: 50,
-                            color: Colors.green[800],
-
-                            onPressed: () {
-
-                              /*      if (type == null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text("Select the Type")));
-                              }
-                              *//*  else if (pickedimage == null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text("Please Select Image")));
-                              }*//*
-                              else if (_formKey.currentState!.validate()) {
-                                if(type == guest){
-                                }
-                                else if (otpcodevisible) {
-                                }
-                                else {
-                                }
-
-                              }*/
-                            },
-                            child: otpcodevisible == true ? const Text('Save',
-                              style: TextStyle(color: Colors.white),)
-                                : const Text("Verify", style: TextStyle(color: Colors.white),)),
-                        // Login button ends
-
                         // Sign up button starts
                         MaterialButton(
-                            minWidth: 130,
+                            minWidth: 300,
                             height: 50,
-                            color: Colors.orangeAccent,
+                            color: Colors.green,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(5.0)),
                             onPressed: () {
-                              //signUp();
                               uploadImage(selectedImage!);
                               Navigator.push(context, MaterialPageRoute(builder: (context)=>const Login()));
-                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please wait for Admin Approval")));
+                             // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please wait for Admin Approval")));
                             },
-                            child: const Text('Save',
+                            child: const Text('Register',
                               style: TextStyle(color: Colors.white),)),
                         // Sign up button ends
                       ],

@@ -15,7 +15,8 @@ import 'package:chewie/chewie.dart';
 
 class MyGallery extends StatefulWidget {
   final String? userId;
-  const MyGallery({super.key, required this.userId});
+  final String? userType;
+  const MyGallery({super.key, required this.userId, required this.userType});
 
   @override
   State<MyGallery> createState() => _MyGalleryState();
@@ -29,47 +30,38 @@ class _MyGalleryState extends State<MyGallery> {
       child: Scaffold(
         appBar: AppBar(
           // Appbar title
-          title: Center(
-            child: Text('My Gallery',
-                style: Theme.of(context).textTheme.displayLarge),
-          ),
+          title: Text('My Gallery', style: Theme.of(context).textTheme.displayLarge),
+
           centerTitle: true,
           iconTheme: const IconThemeData(color: Colors.white),
           leading: IconButton(
               onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Homepage(
-                              userType: '',
-                              userId: widget.userId,
-                            )));
+                Navigator.push(context, MaterialPageRoute(builder: (context) =>  NavigationBarExe(userType: widget.userType, userId: widget.userId,)));
               },
               icon: const Icon(Icons.navigate_before)),
         ),
-        body: Column(
-          children: [
-            const TabBar(
-                isScrollable: true,
-                labelColor: Colors.green,
-                unselectedLabelColor: Colors.black,
-                tabs: [
-                  Tab(
-                    text: 'Image',
-                  ),
-                  Tab(
-                    text: 'Video',
-                  ),
-                ]),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  Gallery(userId: widget.userId),
-                  Video(userId: widget.userId),
-                ],
+        body: PopScope(
+          child: Column(
+            children:   [
+              const TabBar(
+                  isScrollable: true,
+                  labelColor: Colors.green,
+                  unselectedLabelColor: Colors.black,
+                  tabs: [
+                    Tab(text: 'Image',),
+                    Tab(text: 'Video',),
+                  ]),
+              Expanded(
+                child: TabBarView(
+                  children: [
+                    Gallery(userId: widget.userId),
+                    Video(userId: widget.userId),
+                  ],
+                ),
+
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

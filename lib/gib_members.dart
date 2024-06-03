@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:gipapp/view_members.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -8,6 +10,7 @@ import 'Non_exe_pages/settings_non_executive.dart';
 import 'gib_members_filter.dart';
 import 'guest_home.dart';
 import 'home.dart';
+import 'member_details.dart';
 
 
 class GibMembers extends StatelessWidget {
@@ -309,154 +312,148 @@ class _MembersState extends State<Members> {
               );
             }
           },
-          child: SingleChildScrollView(
-            child: SizedBox(
-              height: 2000,
-              width: 500,
-              child: Column(
-                children: [
-                  Visibility(
-                    visible: _showFields,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 150,
-                          height: 50,
-                          child: TypeAheadFormField<String>(
-                            textFieldConfiguration: TextFieldConfiguration(
-                              controller: districtController,
-                              decoration: const InputDecoration(
-                                fillColor: Colors.white,
-                                filled: true,
-                                hintText: "District",
-                              ),
-                            ),
-                            suggestionsCallback: (pattern) async {
-                              return suggesstiondistrictdata
-                                  .where((item) => (item['district']?.toString().toLowerCase() ?? '').startsWith(pattern.toLowerCase()))
-                                  .map((item) => item['district'].toString())
-                                  .toList();
-                            },
-                            itemBuilder: (context, suggestion) {
-                              return ListTile(
-                                title: Text(suggestion),
-                              );
-                            },
-                            onSuggestionSelected: (suggestion) async {
-                              setState(() {
-                                districtController.text = suggestion;
-                              });
-                              getchapter(districtController.text.trim());
-                              if (chapterController.text.isNotEmpty) {
-                                getData(districtController.text, chapterController.text);
-                              }
-                            },
+          child: Column(
+            children: [
+              Visibility(
+                visible: _showFields,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 150,
+                      height: 50,
+                      child: TypeAheadFormField<String>(
+                        textFieldConfiguration: TextFieldConfiguration(
+                          controller: districtController,
+                          decoration: const InputDecoration(
+                            fillColor: Colors.white,
+                            filled: true,
+                            hintText: "District",
                           ),
                         ),
-                        const SizedBox(height: 10, width: 20),
-                        SizedBox(
-                          width: 150,
-                          height: 50,
-                          child: TypeAheadFormField<String>(
-                            textFieldConfiguration: TextFieldConfiguration(
-                              controller: chapterController,
-                              decoration: const InputDecoration(
-                                fillColor: Colors.white,
-                                filled: true,
-                                hintText: "Chapter",
-                              ),
-                            ),
-                            suggestionsCallback: (pattern) async {
-                              return suggesstionchapterdata
-                                  .where((item) => (item['chapter']?.toString().toLowerCase() ?? '').startsWith(pattern.toLowerCase()))
-                                  .map((item) => item['chapter'].toString())
-                                  .toList();
-                            },
-                            itemBuilder: (context, suggestion) {
-                              return ListTile(
-                                title: Text(suggestion),
-                              );
-                            },
-                            onSuggestionSelected: (suggestion) async {
-                              setState(() {
-                                chapterController.text = suggestion;
-                                getData(districtController.text.trim(), chapterController.text.trim());
-                              });
-                            },
-                          ),
-                        ),
-                      ],
+                        suggestionsCallback: (pattern) async {
+                          return suggesstiondistrictdata
+                              .where((item) => (item['district']?.toString().toLowerCase() ?? '').startsWith(pattern.toLowerCase()))
+                              .map((item) => item['district'].toString())
+                              .toList();
+                        },
+                        itemBuilder: (context, suggestion) {
+                          return ListTile(
+                            title: Text(suggestion),
+                          );
+                        },
+                        onSuggestionSelected: (suggestion) async {
+                          setState(() {
+                            districtController.text = suggestion;
+                          });
+                          getchapter(districtController.text.trim());
+                          if (chapterController.text.isNotEmpty) {
+                            getData(districtController.text, chapterController.text);
+                          }
+                        },
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: data.length,
-                      itemBuilder: (context, i) {
-                        String imageUrl =
-                            'http://mybudgetbook.in/GIBAPI/${data[i]['profile_image']}';
-                        if ((data[i]['first_name']
+                    const SizedBox(height: 10, width: 20),
+                    SizedBox(
+                      width: 150,
+                      height: 50,
+                      child: TypeAheadFormField<String>(
+                        textFieldConfiguration: TextFieldConfiguration(
+                          controller: chapterController,
+                          decoration: const InputDecoration(
+                            fillColor: Colors.white,
+                            filled: true,
+                            hintText: "Chapter",
+                          ),
+                        ),
+                        suggestionsCallback: (pattern) async {
+                          return suggesstionchapterdata
+                              .where((item) => (item['chapter']?.toString().toLowerCase() ?? '').startsWith(pattern.toLowerCase()))
+                              .map((item) => item['chapter'].toString())
+                              .toList();
+                        },
+                        itemBuilder: (context, suggestion) {
+                          return ListTile(
+                            title: Text(suggestion),
+                          );
+                        },
+                        onSuggestionSelected: (suggestion) async {
+                          setState(() {
+                            chapterController.text = suggestion;
+                            getData(districtController.text.trim(), chapterController.text.trim());
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: data.length,
+                  itemBuilder: (context, i) {
+                    String imageUrl =
+                        'http://mybudgetbook.in/GIBAPI/${data[i]['profile_image']}';
+                    if ((data[i]['first_name']
+                        .toString()
+                        .toLowerCase()
+                        .startsWith(name.toLowerCase()) ||
+                        data[i]['company_name']
                             .toString()
                             .toLowerCase()
-                            .startsWith(name.toLowerCase()) ||
-                            data[i]['company_name']
+                            .startsWith(name.toLowerCase())) &&
+                        (districtController.text.isEmpty ||
+                            data[i]['district']
                                 .toString()
                                 .toLowerCase()
-                                .startsWith(name.toLowerCase())) &&
-                            (districtController.text.isEmpty ||
-                                data[i]['district']
-                                    .toString()
-                                    .toLowerCase()
-                                    .startsWith(districtController.text.toLowerCase())) &&
-                            (chapterController.text.isEmpty ||
-                                data[i]['chapter']
-                                    .toString()
-                                    .toLowerCase()
-                                    .startsWith(chapterController.text.toLowerCase()))) {
-                          return SingleChildScrollView(
-                            child: Center(
-                              child: InkWell(
-                                onTap: () {
-                                  // Add your onTap functionality here
-                                },
-                                child: Card(
-                                  child: ListTile(
-                                    leading: CircleAvatar(
-                                      radius: 40, // adjust the radius as per your requirement
-                                      backgroundImage: NetworkImage(imageUrl),
-                                    ),
-                                    title: Text('${data[i]['first_name']}'),
-                                    subtitle: Text('${data[i]['company_name']}'),
-                                    trailing: IconButton(
-                                      onPressed: () async {
-                                        final call =
-                                        Uri.parse("tel://${data[i]['mobile']}");
-                                        if (await canLaunchUrl(call)) {
-                                          launchUrl(call);
-                                        } else {
-                                          throw 'Could not launch $call';
-                                        }
-                                      },
-                                      icon: Icon(
-                                        Icons.call,
-                                        color: Colors.green[800],
-                                      ),
-                                    ),
+                                .startsWith(districtController.text.toLowerCase())) &&
+                        (chapterController.text.isEmpty ||
+                            data[i]['chapter']
+                                .toString()
+                                .toLowerCase()
+                                .startsWith(chapterController.text.toLowerCase()))) {
+                      return SingleChildScrollView(
+                        child: Center(
+                          child: InkWell(
+                            onTap: () {
+                             Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileMembers(memberId: data[i]['id'], userType: widget.userType, userID: widget.userId,)));
+                              // Add your onTap functionality here
+                            },
+                            child: Card(
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  radius: 40, // adjust the radius as per your requirement
+                                  backgroundImage: NetworkImage(imageUrl),
+                                ),
+                                title: Text('${data[i]['first_name']}'),
+                                subtitle: Text('${data[i]['company_name']}'),
+                                trailing: IconButton(
+                                  onPressed: () async {
+                                    final call =
+                                    Uri.parse("tel://${data[i]['mobile']}");
+                                    if (await canLaunchUrl(call)) {
+                                      launchUrl(call);
+                                    } else {
+                                      throw 'Could not launch $call';
+                                    }
+                                  },
+                                  icon: Icon(
+                                    Icons.call,
+                                    color: Colors.green[800],
                                   ),
                                 ),
                               ),
                             ),
-                          );
-                        }
-                        return Container();
-                      },
-                    ),
-                  ),
-
-
-                ],
+                          ),
+                        ),
+                      );
+                    }
+                    return Container();
+                  },
+                ),
               ),
-            ),
+
+            ],
           ),
         )
     );

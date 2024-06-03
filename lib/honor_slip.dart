@@ -514,7 +514,6 @@ class _DirectState extends State<Direct> {
     return  Scaffold(
       appBar: AppBar(
         title: Text("Honor Slip", style: Theme.of(context).textTheme.displayLarge),
-        centerTitle: true,
         actions: [
           IconButton(
               onPressed:(){
@@ -559,6 +558,7 @@ class _DirectState extends State<Direct> {
                     // Handle when a suggestion is selected
                     // Update text fields with suggestion data
                     setState(() {
+                      searchController.text =('${suggestion['first_name']} ${suggestion['last_name']}');
                       tocontroller.text = suggestion['first_name'];
                       tomobilenocontroller.text = suggestion['mobile'];
                       companynamecontroller.text = suggestion['company_name'];

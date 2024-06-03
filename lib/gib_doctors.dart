@@ -26,7 +26,7 @@ class _DoctorsState extends State<Doctors> {
   Future<void> getGibDoctors() async {
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/registration.php?table=registration&member_type=$doctor');
-      print("Doctor Url:$url");
+        print("Doctor Url:$url");
       final response = await http.get(url);
 
       print("Response:$response");
@@ -111,7 +111,7 @@ class _DoctorsState extends State<Doctors> {
             },
           ),
         ],*/
-        ),
+      ),
 
         body: PopScope(
           canPop: false,
@@ -262,37 +262,37 @@ class _DoctorsDetailsPageState extends State<DoctorsDetailsPage> {
           Navigator.push(context, MaterialPageRoute(builder: (context) => Doctors(userType:widget.userType, userId:widget.userId,)));
         },
         child: Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: const AssetImage("assets/img_3.png"),
-                colorFilter: ColorFilter.mode(Colors.white.withOpacity(0.2), BlendMode.dstATop),
-                fit: BoxFit.cover,
-              ),
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: const AssetImage("assets/img_3.png"),
+              colorFilter: ColorFilter.mode(Colors.white.withOpacity(0.2), BlendMode.dstATop),
+              fit: BoxFit.cover,
             ),
-            child: Center(
-              child: Column(
-                children: [
-                  const SizedBox(height: 30,),
-                  SizedBox(
-                      width: double.infinity,
-                      height: 250,
-                      child: Image.network(imageUrl,fit: BoxFit.cover,)),
-                  const SizedBox(height: 20,),
+          ),
+          child: Center(
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 30,),
+                        SizedBox(
+                            width: double.infinity,
+                            height: 250,
+                            child: Image.network(imageUrl,fit: BoxFit.cover,)),
+                        const SizedBox(height: 20,),
 
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: Text("Doctor Name : Dr."'${getDoctor[0]['first_name']}\n\n'
-                          "Specialization : "'${getDoctor[0]['specialist']}\n\n'
-                          "Hospital Name : " '${getDoctor[0]['hospital_name']}\n\n'
-                          "Hospital Address : "'${getDoctor[0]['hospital_address']}\n\n'
-                      ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Align(
+                            alignment: Alignment.topLeft,
+                            child: Text("Doctor Name : Dr."'${getDoctor[0]['first_name']}\n\n'
+                                "Specialization : "'${getDoctor[0]['specialist']}\n\n'
+                                "Hospital Name : " '${getDoctor[0]['hospital_name']}\n\n'
+                                "Hospital Address : "'${getDoctor[0]['hospital_address']}\n\n'
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
-            )
+                  )
         ),
       ),
     );

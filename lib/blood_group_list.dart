@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:connectivity/connectivity.dart';
 import 'package:http/http.dart' as http;
 import 'dart:core';
 import 'package:flutter/material.dart';
@@ -6,64 +7,88 @@ import 'package:url_launcher/url_launcher.dart';
 import 'blood_group.dart';
 import 'member_details.dart';
 
-class BloodGroupList extends StatelessWidget {
-  const BloodGroupList({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      // body: BloodList(),
-    );
-  }
-}
-
 class BloodList extends StatefulWidget {
+  final String? userId;
+  final String? userType;
   final String? bloods;
-  const BloodList({Key? key,
-    required this.bloods}) : super(key: key);
+  const BloodList({super.key,
+    required this.bloods, required this.userId, required this.userType});
 
   @override
   State<BloodList> createState() => _BloodListState();
 }
 class _BloodListState extends State<BloodList> {
 
+
+  var _connectivityResult = ConnectivityResult.none;
+  Future<void> _checkConnectivityAndGetData() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectivityResult;
+    });
+    if (_connectivityResult != ConnectivityResult.none) {
+      _getInternet();
+    }
+  }
+  Future<void> _getInternet() async {
+    // Replace the URL with your PHP backend URL
+    var url = 'http://mybudgetbook.in/GIBAPI/internet.php';
+
+    try {
+      var response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        // Handle successful response
+        var data = json.decode(response.body);
+        print(data);
+        // Show online status message
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(
+        //     content: Text('Now online.'),
+        //   ),
+        // );
+      } else {
+        // Handle other status codes
+        print('Request failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle network errors
+      print('Error: $e');
+      // Show offline status message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please check your internet connection.'),
+        ),
+      );
+    }
+  }
+  bool isLoading = true;
+  ///refresh
+  List<String> items = List.generate(20, (index) => 'Item $index');
+  Future<void> _refresh() async {
+    await Future.delayed(const Duration(seconds: 1));
+    setState(() {
+      initState();
+    });
+  }
   @override
   void initState() {
     blood = widget.bloods!;
     getData();
     // TODO: implement initState
     super.initState();
+    _checkConnectivityAndGetData();
+    Connectivity().onConnectivityChanged.listen((result) {
+      setState(() {
+        _connectivityResult = result;
+      });
+    });
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
   }
   String blood ="";
-
-/*String? notneed;
-  ownblood(User CurrentUser)async {
-   notneed = (await FirebaseFirestore.instance.collection("Register").doc(CurrentUser.uid).get()) as String?;
-  }
-
- bool visible= true;
-
-  nvisible()async {
-    visible =  FirebaseFirestore.instance.collection("Register")
-        .doc(FirebaseAuth.instance.currentUser!.uid).snapshots()
-    as bool;
-
-  }
-  String iscurrentuser=" ";
-  Future<void> getRole() {
-    return FirebaseFirestore.instance
-        .collection('Register')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get()
-        .then((snapshot) {
-      if (snapshot.exists) {
-        iscurrentuser= snapshot.data()!['Uid'];
-      } else {
-        print('Document does not exist on the database');
-      }
-    });
-  }*/
-
   String? mobile = "";
   String documentid = "";
 
@@ -110,7 +135,7 @@ class _BloodListState extends State<BloodList> {
           leading: IconButton(
             icon: const Icon(Icons.navigate_before),
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context) => BloodGroup(userType: widget.userType, userId: widget.userId,)));
             },
           ),
           iconTheme:  const IconThemeData(
@@ -120,10 +145,10 @@ class _BloodListState extends State<BloodList> {
         body: PopScope(
             canPop: false,
             onPopInvoked: (didPop) {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => BloodGroup(userType: '', userId: '',)));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => BloodGroup(userType: widget.userType, userId: widget.userId,)));
             },
         child: data.isEmpty
-            ? Center(child: Text("Data not found", style: TextStyle(color: Colors.black)))
+            ? const Center(child: Text("Data not found", style: TextStyle(color: Colors.black)))
          : ListView.builder(
             itemCount: data.length,
             itemBuilder: (context, i) {

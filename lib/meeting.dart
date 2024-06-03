@@ -192,44 +192,6 @@ class _UpComingNetworkMeetingState extends State<UpComingNetworkMeeting> {
   List<String>item=["a","b","c"];
 
   List<Map<String, dynamic>> data=[];
-/*
-  Future<void> getData() async {
-    print('Attempting to make HTTP request...');
-    try {
-      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type');
-      final response = await http.get(url);
-      if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        final List<dynamic> itemGroups = responseData;
-        setState(() {});
-        List<dynamic> filteredData = itemGroups.where((item) {
-          DateTime validityDate;
-          try {
-            validityDate = DateTime.parse(item['meeting_date']);
-          } catch (e) {
-            print('Error parsing validity date: $e');
-            return false;
-          }
-          print('Validity Date: $validityDate');
-          print('Current Date: ${DateTime.now()}');
-          bool satisfiesFilter =  validityDate.isAfter(DateTime.now());
-          print('Satisfies Filter: $satisfiesFilter');
-          return satisfiesFilter;
-        }).toList();
-        setState(() {
-          // Cast the filtered data to the correct type
-          data = filteredData.cast<Map<String, dynamic>>();
-        });
-      } else {
-        print('Error: ${response.statusCode}');
-      }
-      print('HTTP request completed. Status code: ${response.statusCode}');
-    } catch (e) {
-      print('Error making HTTP request: $e');
-      throw e; // rethrow the error if needed
-    }
-  }
-*/
 
   Future<void> getData() async {
     print('Attempting to make HTTP request...');
@@ -271,16 +233,26 @@ class _UpComingNetworkMeetingState extends State<UpComingNetworkMeeting> {
       throw e; // rethrow the error if needed
     }
   }
-
+  bool isLoading = true;
   @override
   void initState() {
     super.initState();
     getData();
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body:data.isNotEmpty
+        body: isLoading
+            ? const Center(
+          // Show CircularProgressIndicator while loading
+          child: CircularProgressIndicator(),
+        )
+            : data.isNotEmpty
             ? ListView.builder(
             itemCount: data.length,
             itemBuilder:(context, i){
@@ -399,16 +371,27 @@ class _CompletedNetworkMeetingState extends State<CompletedNetworkMeeting> {
       throw e; // rethrow the error if needed
     }
   }
+  bool isLoading = true;
   @override
   void initState() {
     super.initState();
     getData();
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
 
-        body:data.isNotEmpty
+        body: isLoading
+            ? const Center(
+          // Show CircularProgressIndicator while loading
+          child: CircularProgressIndicator(),
+        )
+            : data.isNotEmpty
             ? ListView.builder(
             itemCount: data.length,
             itemBuilder:(context, i){
@@ -521,44 +504,7 @@ class _UpcomingTeamMeetingState extends State<UpcomingTeamMeeting> {
   String type = "Team Meeting";
 
   List<Map<String, dynamic>> data=[];
-/*
-  Future<void> getData() async {
-    print('Attempting to make HTTP request...');
-    try {
-      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type');
-      final response = await http.get(url);
-      if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        final List<dynamic> itemGroups = responseData;
-        setState(() {});
-        List<dynamic> filteredData = itemGroups.where((item) {
-          DateTime validityDate;
-          try {
-            validityDate = DateTime.parse(item['meeting_date']);
-          } catch (e) {
-            print('Error parsing validity date: $e');
-            return false;
-          }
-          print('Validity Date: $validityDate');
-          print('Current Date: ${DateTime.now()}');
-          bool satisfiesFilter =  validityDate.isAfter(DateTime.now());
-          print('Satisfies Filter: $satisfiesFilter');
-          return satisfiesFilter;
-        }).toList();
-        setState(() {
-          // Cast the filtered data to the correct type
-          data = filteredData.cast<Map<String, dynamic>>();
-        });
-      } else {
-        print('Error: ${response.statusCode}');
-      }
-      print('HTTP request completed. Status code: ${response.statusCode}');
-    } catch (e) {
-      print('Error making HTTP request: $e');
-      throw e; // rethrow the error if needed
-    }
-  }
-*/
+
   Future<void> getData() async {
     print('Attempting to make HTTP request...');
     try {
@@ -600,21 +546,27 @@ class _UpcomingTeamMeetingState extends State<UpcomingTeamMeeting> {
     }
   }
 
+  bool isLoading = true;
   @override
   void initState() {
     super.initState();
     getData();
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: data.isNotEmpty
+        body:  isLoading
+            ? const Center(
+          // Show CircularProgressIndicator while loading
+          child: CircularProgressIndicator(),
+        )
+            : data.isNotEmpty
             ?ListView.builder(
-          /* gridDelegate:const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 5.0,
-                mainAxisSpacing: 5.0,
-              ),*/
             itemCount: data.length,
             itemBuilder:(context, i){
               const SizedBox(height: 20,);
@@ -741,15 +693,26 @@ class _CompletedTeamMeetingState extends State<CompletedTeamMeeting> {
       throw e; // rethrow the error if needed
     }
   }
+  bool isLoading = true;
   @override
   void initState() {
     super.initState();
     getData();
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body:data.isNotEmpty
+        body: isLoading
+            ? const Center(
+          // Show CircularProgressIndicator while loading
+          child: CircularProgressIndicator(),
+        )
+            : data.isNotEmpty
         ? ListView.builder(
             itemCount: data.length,
             itemBuilder:(context, i){
@@ -836,9 +799,6 @@ class TrainingProgram extends StatelessWidget {
 
               //TABBAR STARTS
               child: const TabBar(
-                /*indicator: BoxDecoration(
-                  color: Colors.green,
-                ),*/
                 labelColor: Colors.green,
                 //TABS STARTS
                 unselectedLabelColor: Colors.black,
@@ -873,46 +833,6 @@ class UpComingTrainingProgram extends StatefulWidget {
 class _UpComingTrainingProgramState extends State<UpComingTrainingProgram> {
   String type ="Training Program";
   List<Map<String, dynamic>> data=[];
-
-
-/*
-  Future<void> getData() async {
-    print('Attempting to make HTTP request...');
-    try {
-      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type');
-      final response = await http.get(url);
-      if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        final List<dynamic> itemGroups = responseData;
-        setState(() {});
-        List<dynamic> filteredData = itemGroups.where((item) {
-          DateTime validityDate;
-          try {
-            validityDate = DateTime.parse(item['meeting_date']);
-          } catch (e) {
-            print('Error parsing validity date: $e');
-            return false;
-          }
-          print('Validity Date: $validityDate');
-          print('Current Date: ${DateTime.now()}');
-          bool satisfiesFilter =  validityDate.isAfter(DateTime.now());
-          print('Satisfies Filter: $satisfiesFilter');
-          return satisfiesFilter;
-        }).toList();
-        setState(() {
-          // Cast the filtered data to the correct type
-          data = filteredData.cast<Map<String, dynamic>>();
-        });
-      } else {
-        print('Error: ${response.statusCode}');
-      }
-      print('HTTP request completed. Status code: ${response.statusCode}');
-    } catch (e) {
-      print('Error making HTTP request: $e');
-      throw e; // rethrow the error if needed
-    }
-  }
-*/
 
   Future<void> getData() async {
     print('Attempting to make HTTP request...');
@@ -955,15 +875,26 @@ class _UpComingTrainingProgramState extends State<UpComingTrainingProgram> {
     }
   }
 
+  bool isLoading = true;
   @override
   void initState() {
     super.initState();
     getData();
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: data.isNotEmpty
+        body:  isLoading
+            ? const Center(
+          // Show CircularProgressIndicator while loading
+          child: CircularProgressIndicator(),
+        )
+            : data.isNotEmpty
         ? ListView.builder(
             itemCount: data.length,
             itemBuilder:(context, i){
@@ -1075,15 +1006,26 @@ class _CompletedTrainingProgramState extends State<CompletedTrainingProgram> {
       throw e; // rethrow the error if needed
     }
   }
+  bool isLoading = true;
   @override
   void initState() {
     super.initState();
     getData();
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:data.isNotEmpty
+      body: isLoading
+          ? const Center(
+        // Show CircularProgressIndicator while loading
+        child: CircularProgressIndicator(),
+      )
+          : data.isNotEmpty
           ? ListView.builder(
           itemCount: data.length,
           itemBuilder:(context, i){
@@ -1171,9 +1113,7 @@ class GIBMeeting extends StatelessWidget {
 
               //TABBAR STARTS
               child: const TabBar(
-                indicator: BoxDecoration(
-                  color: Colors.green,
-                ),
+                labelColor: Colors.green,
                 //TABS STARTS
                 unselectedLabelColor: Colors.black,
                 tabs: [
@@ -1247,53 +1187,26 @@ class _UpComingGIBMeetingState extends State<UpComingGIBMeeting> {
     }
   }
 
-/*
-  Future<void> getData() async {
-    print('Attempting to make HTTP request...');
-    try {
-      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type');
-      final response = await http.get(url);
-      if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        final List<dynamic> itemGroups = responseData;
-        setState(() {});
-        List<dynamic> filteredData = itemGroups.where((item) {
-          DateTime validityDate;
-          try {
-            validityDate = DateTime.parse(item['meeting_date']);
-          } catch (e) {
-            print('Error parsing validity date: $e');
-            return false;
-          }
-          print('Validity Date: $validityDate');
-          print('Current Date: ${DateTime.now()}');
-          bool satisfiesFilter =  validityDate.isAfter(DateTime.now());
-          print('Satisfies Filter: $satisfiesFilter');
-          return satisfiesFilter;
-        }).toList();
-        setState(() {
-          // Cast the filtered data to the correct type
-          data = filteredData.cast<Map<String, dynamic>>();
-        });
-      } else {
-        print('Error: ${response.statusCode}');
-      }
-      print('HTTP request completed. Status code: ${response.statusCode}');
-    } catch (e) {
-      print('Error making HTTP request: $e');
-      throw e; // rethrow the error if needed
-    }
-  }
-*/
+  bool isLoading = true;
   @override
   void initState() {
     super.initState();
     getData();
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body:data.isNotEmpty
+        body: isLoading
+            ? const Center(
+          // Show CircularProgressIndicator while loading
+          child: CircularProgressIndicator(),
+        )
+            : data.isNotEmpty
         ? ListView.builder(
             itemCount: data.length,
             itemBuilder:(context, i){
@@ -1348,7 +1261,7 @@ class _UpComingGIBMeetingState extends State<UpComingGIBMeeting> {
                 ),
               );
             })
-        :Center(child: const Text("There is No Meeting")),
+        :const Center(child: Text("There is No Meeting")),
 
     );
   }
@@ -1403,15 +1316,26 @@ class _CompletedGIBMeetingState extends State<CompletedGIBMeeting> {
       throw e; // rethrow the error if needed
     }
   }
+  bool isLoading = true;
   @override
   void initState() {
     super.initState();
     getData();
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body:data.isNotEmpty
+        body: isLoading
+            ? const Center(
+          // Show CircularProgressIndicator while loading
+          child: CircularProgressIndicator(),
+        )
+            : data.isNotEmpty
         ? ListView.builder(
             itemCount: data.length,
             itemBuilder:(context, i){
@@ -1470,131 +1394,5 @@ class _CompletedGIBMeetingState extends State<CompletedGIBMeeting> {
     );
   }
 }
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  Future<bool> callOnFcmApiSendPushNotifications(
-      {required String title, required String body}) async {
-    const postUrl = 'https://fcm.googleapis.com/fcm/send';
-    final data = {
-      "to": "/topics/myTopic",
-      "notification": {
-        "title": title,
-        "body": body,
-      },
-      "data": {
-        "type": '0rder',
-        "id": '28',
-        "click_action": 'FLUTTER_NOTIFICATION_CLICK',
-      }
-    };
-
-    final headers = {
-      'content-type': 'application/json',
-      'Authorization':
-      'AAAArh_P2i0:APA91bHPacqKa68WRxK9kyeMSWivbmmKlU3TzoSgjGvieHKMPLZtwrIaMPkgvO5HT6PebReUfzSTFJb2DiJ24fLosR31X-Z5-ZTKIEnF3s0oWK2_PPLT1a3B13t-BtpsLLyvyPsxcNim'
-    };
-
-    final response = await http.post(Uri.parse(postUrl),
-        body: json.encode(data),
-        encoding: Encoding.getByName('utf-8'),
-        headers: headers);
-
-    if (response.statusCode == 200) {
-      // on success do sth
-      print('test ok push CFM');
-      return true;
-    } else {
-      print(' CFM error');
-      // on failure do sth
-      return false;
-    }
-  }
-
-  void _incrementCounter() {
-    setState(() {
-      callOnFcmApiSendPushNotifications(title: 'fcm by api2', body: 'its working fine2');
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
-  }
-}
-
-
 
 

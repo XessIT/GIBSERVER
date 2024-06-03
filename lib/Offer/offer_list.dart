@@ -1,6 +1,7 @@
 import 'dart:convert'; // for base64Encode
 //import 'dart:typed_data'; // Import this for Uint8List
 //import 'dart:html' as html;
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -10,27 +11,16 @@ import 'package:http/http.dart' as http;
 
 import 'offer.dart';
 
-class OfferList extends StatelessWidget {
+class OfferList extends StatefulWidget {
   final String? userId;
-  const OfferList({super.key, required this.userId});
+  final String? userType;
+  const OfferList({super.key, required this.userId, required  this.userType});
 
   @override
-  Widget build(BuildContext context) {
-    return  Scaffold(
-      body: OfferListPage(userId: userId),
-
-    );
-  }
-}
-class OfferListPage extends StatefulWidget {
-  final String? userId;
-  const OfferListPage({super.key, required this.userId});
-
-  @override
-  State<OfferListPage> createState() => _OfferListPageState();
+  State<OfferList> createState() => _OfferListState();
 }
 
-class _OfferListPageState extends State<OfferListPage> {
+class _OfferListState extends State<OfferList> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -51,7 +41,7 @@ class _OfferListPageState extends State<OfferListPage> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => OffersPage(
-                    userType: "",
+                    userType: widget.userType.toString(),
                     userId: widget.userId.toString(),
                   ),
                 ),
@@ -67,7 +57,7 @@ class _OfferListPageState extends State<OfferListPage> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => OffersPage(
-                        userType: "",
+                        userType: widget.userType.toString(),
                         userId: widget.userId.toString(),
                       ),
                     ),
@@ -93,10 +83,10 @@ class _OfferListPageState extends State<OfferListPage> {
                 const SizedBox(height: 10,),
                 Expanded(
                   child: TabBarView(children: [
-                    AddOfferPage(userId: widget.userId,),
-                    RunningPage(userId: widget.userId),
-                    CompletedPage(userId: widget.userId),
-                    BlockPage(userId: widget.userId),
+                    AddOfferPage(userId: widget.userId, userType: widget.userType),
+                    RunningPage(userId: widget.userId, userType: widget.userType),
+                    CompletedPage(userId: widget.userId, userType: widget.userType),
+                    BlockPage(userId: widget.userId, userType: widget.userType),
                   ]),
                 ),
                 //END TABBAR VIEW
@@ -111,7 +101,8 @@ class _OfferListPageState extends State<OfferListPage> {
 
 class AddOfferPage extends StatefulWidget {
   final String? userId;
-  const AddOfferPage({Key? key, required this.userId}) : super(key: key);
+  final String? userType;
+  const AddOfferPage({Key? key, required this.userId, required  this.userType}) : super(key: key);
 
 
   @override
@@ -132,15 +123,72 @@ class _AddOfferPageState extends State<AddOfferPage> {
 
   @override
   void initState() {
-/*
-    offers();
-*/
    getData();
     // print("USER ID---${widget.userId}");
     // TODO: implement initState
     super.initState();
+   _checkConnectivityAndGetData();
+   Connectivity().onConnectivityChanged.listen((result) {
+     setState(() {
+       _connectivityResult = result;
+     });
+   });
+   Future.delayed(Duration(seconds: 1), () {
+     setState(() {
+       isLoading = false; // Hide the loading indicator after 4 seconds
+     });
+   });
   }
+  var _connectivityResult = ConnectivityResult.none;
+  Future<void> _checkConnectivityAndGetData() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectivityResult;
+    });
+    if (_connectivityResult != ConnectivityResult.none) {
+      _getInternet();
+    }
+  }
+  Future<void> _getInternet() async {
+    // Replace the URL with your PHP backend URL
+    var url = 'http://mybudgetbook.in/BUDGETAPI/internet.php';
 
+    try {
+      var response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        // Handle successful response
+        var data = json.decode(response.body);
+        print(data);
+        // Show online status message
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(
+        //     content: Text('Now online.'),
+        //   ),
+        // );
+      } else {
+        // Handle other status codes
+        print('Request failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle network errors
+      print('Error: $e');
+      // Show offline status message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please check your internet connection.'),
+        ),
+      );
+    }
+  }
+  bool isLoading = true;
+  ///refresh
+  List<String> items = List.generate(20, (index) => 'Item $index');
+  Future<void> _refresh() async {
+    await Future.delayed(const Duration(seconds: 1));
+    setState(() {
+      initState();
+    });
+  }
   //get image from file code starts here
 
   String message = "";
@@ -301,198 +349,201 @@ class _AddOfferPageState extends State<AddOfferPage> {
     return Scaffold(
       body:
       data.isEmpty ? Center(child: Text('No data found')) :
-      SingleChildScrollView(
-        child: Center(
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children:  [
-                const SizedBox(height: 20,),
-                InkWell(
-                 child: Container(
-                   child: ClipOval(
-                      child: selectedImage != null
-                          ? Image.memory(
-                        selectedImage!,
-                      )
-                          : Image.asset("assets/add_offer.png"),
-                    ),
-                 ),
-                  onTap: () {
-                    showModalBottomSheet(context: context, builder: (ctx){
-                      return Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ListTile(
-                            leading: const Icon(Icons.camera_alt),
-                            title: const Text("With Camera"),
-                            onTap: () async {
-                              pickImageFromCamera();
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                          ListTile(
-                            leading: const Icon(Icons.storage),
-                            title: const Text("From Gallery"),
-                            onTap: () {
-                              pickImageFromGallery();
-                              // getImage();
-                              Navigator.of(context).pop();
-                            },
-                          )
-                        ],
-                      );
-                    });
-                  },
-                ),
-                const SizedBox(height: 10,),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Radio(
-                      // title: const Text("Male"),
-                      value: "Product",
-                      groupValue: type,
-                      onChanged: (value){
-                        setState(() {
-                          type = value.toString();
-                        });
-                      },
-                    ),
-                    const Text("Product"),
-                    const SizedBox(width: 30,),
-                    Radio(
-                      // title: const Text("Female"),
-                      value: "Service",
-                      groupValue: type,
-                      onChanged: (value){
-                        setState(() {
-                          type = value.toString();
-                        });
-                      },
-                    ),
-                    const Text("Service"),
-                  ],
-                ),
-                const SizedBox(height: 20,width: 10,),
-                SizedBox(
-                  width: 300,
-                  child: TextFormField(
-                    controller: namecontroller,
-                    validator: (value) {
-                      if(value!.isEmpty){
-                        return "*Enter the Name";
-                      }else{
-                        return null;
-                      }
+      RefreshIndicator(
+        onRefresh: _refresh,
+        child: SingleChildScrollView(
+          child: Center(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children:  [
+                  const SizedBox(height: 20,),
+                  InkWell(
+                   child: Container(
+                     child: ClipOval(
+                        child: selectedImage != null
+                            ? Image.memory(
+                          selectedImage!,
+                        )
+                            : Image.asset("assets/add_offer.png"),
+                      ),
+                   ),
+                    onTap: () {
+                      showModalBottomSheet(context: context, builder: (ctx){
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ListTile(
+                              leading: const Icon(Icons.camera_alt),
+                              title: const Text("With Camera"),
+                              onTap: () async {
+                                pickImageFromCamera();
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                            ListTile(
+                              leading: const Icon(Icons.storage),
+                              title: const Text("From Gallery"),
+                              onTap: () {
+                                pickImageFromGallery();
+                                // getImage();
+                                Navigator.of(context).pop();
+                              },
+                            )
+                          ],
+                        );
+                      });
                     },
-                    decoration: const InputDecoration(
-                      labelText: 'Name:',
-                    ),
                   ),
-                ),
-                SizedBox(
-                  width: 300,
-                  child: TextFormField(
-                      controller: discountcontroller,
+                  const SizedBox(height: 10,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Radio(
+                        // title: const Text("Male"),
+                        value: "Product",
+                        groupValue: type,
+                        onChanged: (value){
+                          setState(() {
+                            type = value.toString();
+                          });
+                        },
+                      ),
+                      const Text("Product"),
+                      const SizedBox(width: 30,),
+                      Radio(
+                        // title: const Text("Female"),
+                        value: "Service",
+                        groupValue: type,
+                        onChanged: (value){
+                          setState(() {
+                            type = value.toString();
+                          });
+                        },
+                      ),
+                      const Text("Service"),
+                    ],
+                  ),
+                  const SizedBox(height: 20,width: 10,),
+                  SizedBox(
+                    width: 300,
+                    child: TextFormField(
+                      controller: namecontroller,
                       validator: (value) {
                         if(value!.isEmpty){
-                          return "*Enter the Discount";
+                          return "*Enter the Name";
                         }else{
                           return null;
                         }
                       },
                       decoration: const InputDecoration(
-                        labelText: 'Discount %',
+                        labelText: 'Name:',
                       ),
-                      keyboardType: TextInputType.number,
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.digitsOnly,
-                        LengthLimitingTextInputFormatter(2),
-                      ]
+                    ),
                   ),
-                ),
-                SizedBox(
-                  width:300,
-                  child: TextFormField(
-                      controller: _date,
-                      validator: (value) {
-                        if(value!.isEmpty){
-                          return "*Enter the Validity";
-                        }else{
-                          return null;
-                        }
-                      },
-                      decoration: InputDecoration(
-                        labelText: 'Validity',
-                        suffixIcon: IconButton(onPressed: ()async{
-                          DateTime? pickDate = await showDatePicker(
-                              context: context,
-                              initialDate: date,
-                              firstDate: date,
-                              lastDate: DateTime(2100));
-                          print("Picked date: $pickDate");
-                          if(pickDate != null) {
-                            setState(() {
-                              _date.text = DateFormat('dd/MM/yyyy').format(pickDate);
-                              print("_date.text updated: ${_date.text}");
-                            });
-                          }
-                        }, icon: const Icon(
-                            Icons.calendar_today_outlined),
-                          color: Colors.green,),
-                      ),
-                      keyboardType: TextInputType.number,
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.digitsOnly,
-                      ]
-                  ),
-                ),
-
-                const SizedBox(height: 30,),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    MaterialButton(
-                        minWidth: 130,
-                        height: 50,
-                        color: Colors.orangeAccent,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)  ),
-                        onPressed: (){
-                          Navigator.pop(context);
-                        },
-                        child: const Text('Cancel',
-                          style: TextStyle(color: Colors.white),)),
-                    MaterialButton(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)  ),
-                        minWidth: 130,
-                        height: 50,
-                        color: Colors.green[800],
-                        onPressed: (){
-                          if(type == null){
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                content: Text("Please Select the Type")));
-                          }
-                          else if(selectedImage == null){
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                content: Text("Please Select the Image")));
-                          }
-                          else if (_formKey.currentState!.validate()) {
-                            print("_date.text before sending request: ${_date.text}");
-                            offers(_date.text);
-                            Navigator.push(context,
-                              MaterialPageRoute(builder: (context)=> OfferList(userId: widget.userId,)),);
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                content: Text("Successfully Add a Offer")));
+                  SizedBox(
+                    width: 300,
+                    child: TextFormField(
+                        controller: discountcontroller,
+                        validator: (value) {
+                          if(value!.isEmpty){
+                            return "*Enter the Discount";
+                          }else{
+                            return null;
                           }
                         },
-                        child: const Text('Register',
-                          style: TextStyle(color: Colors.white),)),
-                  ],
+                        decoration: const InputDecoration(
+                          labelText: 'Discount %',
+                        ),
+                        keyboardType: TextInputType.number,
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(2),
+                        ]
+                    ),
+                  ),
+                  SizedBox(
+                    width:300,
+                    child: TextFormField(
+                        controller: _date,
+                        validator: (value) {
+                          if(value!.isEmpty){
+                            return "*Enter the Validity";
+                          }else{
+                            return null;
+                          }
+                        },
+                        decoration: InputDecoration(
+                          labelText: 'Validity',
+                          suffixIcon: IconButton(onPressed: ()async{
+                            DateTime? pickDate = await showDatePicker(
+                                context: context,
+                                initialDate: date,
+                                firstDate: date,
+                                lastDate: DateTime(2100));
+                            print("Picked date: $pickDate");
+                            if(pickDate != null) {
+                              setState(() {
+                                _date.text = DateFormat('dd/MM/yyyy').format(pickDate);
+                                print("_date.text updated: ${_date.text}");
+                              });
+                            }
+                          }, icon: const Icon(
+                              Icons.calendar_today_outlined),
+                            color: Colors.green,),
+                        ),
+                        keyboardType: TextInputType.number,
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly,
+                        ]
+                    ),
+                  ),
 
-                ),
-               const SizedBox(height: 20,),
-              ],
+                  const SizedBox(height: 30,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      MaterialButton(
+                          minWidth: 130,
+                          height: 50,
+                          color: Colors.orangeAccent,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)  ),
+                          onPressed: (){
+                            Navigator.pop(context);
+                          },
+                          child: const Text('Cancel',
+                            style: TextStyle(color: Colors.white),)),
+                      MaterialButton(
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)  ),
+                          minWidth: 130,
+                          height: 50,
+                          color: Colors.green[800],
+                          onPressed: (){
+                            if(type == null){
+                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                  content: Text("Please Select the Type")));
+                            }
+                            else if(selectedImage == null){
+                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                  content: Text("Please Select the Image")));
+                            }
+                            else if (_formKey.currentState!.validate()) {
+                              print("_date.text before sending request: ${_date.text}");
+                              offers(_date.text);
+                              Navigator.push(context,
+                                MaterialPageRoute(builder: (context)=> OfferList(userId: widget.userId, userType: widget.userType,)),);
+                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                  content: Text("Successfully Add a Offer")));
+                            }
+                          },
+                          child: const Text('Register',
+                            style: TextStyle(color: Colors.white),)),
+                    ],
+
+                  ),
+                 const SizedBox(height: 20,),
+                ],
+              ),
             ),
           ),
         ),
@@ -503,7 +554,8 @@ class _AddOfferPageState extends State<AddOfferPage> {
 
 class RunningPage extends StatefulWidget {
   final String? userId;
-  const RunningPage({Key? key, required this.userId}) : super(key: key);
+  final String? userType;
+  const RunningPage({Key? key, required this.userId, required this.userType}) : super(key: key);
 
   @override
   State<RunningPage> createState() => _RunningPageState();
@@ -520,6 +572,67 @@ class _RunningPageState extends State<RunningPage> {
     print('----------------------------');
     // TODO: implement initState
     super.initState();
+    _checkConnectivityAndGetData();
+    Connectivity().onConnectivityChanged.listen((result) {
+      setState(() {
+        _connectivityResult = result;
+      });
+    });
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
+  }
+  var _connectivityResult = ConnectivityResult.none;
+  Future<void> _checkConnectivityAndGetData() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectivityResult;
+    });
+    if (_connectivityResult != ConnectivityResult.none) {
+      _getInternet();
+    }
+  }
+  Future<void> _getInternet() async {
+    // Replace the URL with your PHP backend URL
+    var url = 'http://mybudgetbook.in/BUDGETAPI/internet.php';
+
+    try {
+      var response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        // Handle successful response
+        var data = json.decode(response.body);
+        print(data);
+        // Show online status message
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(
+        //     content: Text('Now online.'),
+        //   ),
+        // );
+      } else {
+        // Handle other status codes
+        print('Request failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle network errors
+      print('Error: $e');
+      // Show offline status message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please check your internet connection.'),
+        ),
+      );
+    }
+  }
+  bool isLoading = true;
+  ///refresh
+  List<String> items = List.generate(20, (index) => 'Item $index');
+  Future<void> _refresh() async {
+    await Future.delayed(const Duration(seconds: 1));
+    setState(() {
+      initState();
+    });
   }
   List<Map<String, dynamic>> data=[];
   Future<void> getData() async {
@@ -712,7 +825,7 @@ class _RunningPageState extends State<RunningPage> {
                                                           onPressed: (){
                                                             blocked(int.parse(data[i]["ID"]));
                                                             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Your Offer Blocked Successfully")));
-                                                            Navigator.push(context, MaterialPageRoute(builder: (context)=> OfferList(userId: widget.userId)));
+                                                            Navigator.push(context, MaterialPageRoute(builder: (context)=> OfferList(userId: widget.userId, userType: widget.userType,)));
                                                           }, ),
                                                         TextButton(
                                                             onPressed: (){
@@ -734,6 +847,7 @@ class _RunningPageState extends State<RunningPage> {
                                               currentDiscount: data[i]['discount'],
                                               currentvalidity: data[i]['validity'],
                                               user_id: data[i]['user_id'],
+                                              userType: widget.userType.toString(),
                                             ))
                                             );
                                           },
@@ -761,7 +875,7 @@ class _RunningPageState extends State<RunningPage> {
                                                                 // _delete(thisitem['id'], thisitem['Image']);
                                                                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                                                                     content: Text("You have Successfully Deleted a Offer Item")));
-                                                                Navigator.push(context, MaterialPageRoute(builder: (context)=> OfferList(userId: widget.userId)));
+                                                                Navigator.push(context, MaterialPageRoute(builder: (context)=> OfferList(userId: widget.userId, userType: widget.userType,)));
                                                               },
                                                             ),
                                                             TextButton(
@@ -827,7 +941,8 @@ class _RunningPageState extends State<RunningPage> {
 }
 class CompletedPage extends StatefulWidget {
   final String? userId;
-  const CompletedPage({Key? key, required this.userId}) : super(key: key);
+  final String? userType;
+  const CompletedPage({super.key, required this.userId, required this.userType});
 
   @override
   State<CompletedPage> createState() => _CompletedPageState();
@@ -971,7 +1086,8 @@ class _CompletedPageState extends State<CompletedPage> {
 
 class BlockPage extends StatefulWidget {
   final String? userId;
-  const BlockPage({Key? key, required this.userId}) : super(key: key);
+  final String? userType;
+  const BlockPage({Key? key, required this.userId, required this.userType}) : super(key: key);
 
   @override
   State<BlockPage> createState() => _BlockPageState();
@@ -1171,7 +1287,7 @@ class _BlockPageState extends State<BlockPage> {
                                                 ))
                                                 );*/
                                                 // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Your offer Unblocked Successfully")));
-                                                 Navigator.push(context, MaterialPageRoute(builder: (context)=> OfferList(userId: widget.userId,)));
+                                                 Navigator.push(context, MaterialPageRoute(builder: (context)=> OfferList(userId: widget.userId, userType: widget.userType,)));
                                               }, ),
                                             TextButton(
                                                 onPressed: (){
@@ -1203,7 +1319,7 @@ class _BlockPageState extends State<BlockPage> {
                                                   child: const Text("Yes"),
                                                   onPressed: (){
                                                     delete(data[i]['ID']);
-                                                    Navigator.push(context, MaterialPageRoute(builder: (context)=> OfferList(userId: widget.userId,)));
+                                                    Navigator.push(context, MaterialPageRoute(builder: (context)=> OfferList(userId: widget.userId, userType: widget.userType,)));
                                                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                                                         content: Text("You have Successfully Deleted a Offer Item")));
                                                     Navigator.pop(context);

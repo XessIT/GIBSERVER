@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -25,10 +26,71 @@ class AttendanceScannerPage extends StatefulWidget {
 
 class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
   List<Map<String, dynamic>> meetings = [];
+  var _connectivityResult = ConnectivityResult.none;
+  Future<void> _checkConnectivityAndGetData() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectivityResult;
+    });
+    if (_connectivityResult != ConnectivityResult.none) {
+      _getInternet();
+    }
+  }
+  Future<void> _getInternet() async {
+    // Replace the URL with your PHP backend URL
+    var url = 'http://mybudgetbook.in/GIBAPI/internet.php';
+
+    try {
+      var response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        // Handle successful response
+        var data = json.decode(response.body);
+        print(data);
+        // Show online status message
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(
+        //     content: Text('Now online.'),
+        //   ),
+        // );
+      } else {
+        // Handle other status codes
+        print('Request failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle network errors
+      print('Error: $e');
+      // Show offline status message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please check your internet connection.'),
+        ),
+      );
+    }
+  }
+  bool isLoading = true;
+  ///refresh
+  List<String> items = List.generate(20, (index) => 'Item $index');
+  Future<void> _refresh() async {
+    await Future.delayed(const Duration(seconds: 1));
+    setState(() {
+      initState();
+    });
+  }
 
   @override
   void initState() {
     super.initState();
+    _checkConnectivityAndGetData();
+    Connectivity().onConnectivityChanged.listen((result) {
+      setState(() {
+        _connectivityResult = result;
+      });
+    });
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
     getData(qrstr);
     // scanQr();
   }
@@ -212,108 +274,111 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
           icon: const Icon(Icons.arrow_back),
         ),
       ),
-      body: PopScope(
-        canPop: false,
-        onPopInvoked: (didPop)  {
-          if (widget.userType == "Non-Executive") {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => NavigationBarNon(
-                  userType: widget.userType.toString(),
-                  userId: widget.userID.toString(),
+      body: RefreshIndicator(
+        onRefresh: _refresh,
+        child: PopScope(
+          canPop: false,
+          onPopInvoked: (didPop)  {
+            if (widget.userType == "Non-Executive") {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NavigationBarNon(
+                    userType: widget.userType.toString(),
+                    userId: widget.userID.toString(),
+                  ),
                 ),
-              ),
-            );
-          }
-          else{
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => NavigationBarExe(
-                  userType: widget.userType.toString(),
-                  userId: widget.userID.toString(),
+              );
+            }
+            else{
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NavigationBarExe(
+                    userType: widget.userType.toString(),
+                    userId: widget.userID.toString(),
+                  ),
                 ),
+              );
+            }
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: const AssetImage('assets/hand.webp'),
+                colorFilter: ColorFilter.mode(
+                    Colors.white.withOpacity(0.4), BlendMode.dstATop),
+                fit: BoxFit.fill,
               ),
-            );
-          }
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: const AssetImage('assets/hand.webp'),
-              colorFilter: ColorFilter.mode(
-                  Colors.white.withOpacity(0.4), BlendMode.dstATop),
-              fit: BoxFit.fill,
             ),
-          ),
-          child: Form(
-            key: _formKey,
-            child: Center(
-              child: Column(
-                children: [
-                  const SizedBox(height: 50),
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: SizedBox(
-                      width: 350,
-                      child: Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24),
-                        ),
-                        color: Colors.white,
-                        child: Column(
-                          children: [
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            const Text(
-                              'How Many Members Come With You?',
-                              style:
-                              TextStyle(fontSize: 12, color: Colors.lightBlue),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(30.0),
-                              child: TextFormField(
-                                inputFormatters: <TextInputFormatter>[
-                                  FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                                  FilteringTextInputFormatter.digitsOnly,
-                                  LengthLimitingTextInputFormatter(10),
-                                ],
-                                decoration: const InputDecoration.collapsed(
-                                  hintText: 'ex.0 or 1,2,3,etc...',
+            child: Form(
+              key: _formKey,
+              child: Center(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 50),
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: SizedBox(
+                        width: 350,
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24),
+                          ),
+                          color: Colors.white,
+                          child: Column(
+                            children: [
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              const Text(
+                                'How Many Members Come With You?',
+                                style:
+                                TextStyle(fontSize: 12, color: Colors.lightBlue),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(30.0),
+                                child: TextFormField(
+                                  inputFormatters: <TextInputFormatter>[
+                                    FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                                    FilteringTextInputFormatter.digitsOnly,
+                                    LengthLimitingTextInputFormatter(10),
+                                  ],
+                                  decoration: const InputDecoration.collapsed(
+                                    hintText: 'ex.0 or 1,2,3,etc...',
+                                  ),
+                                  validator: (value) {
+                                    if (value!.isEmpty) {
+                                      return '* Please fill out this field';
+                                    } else {
+                                      return null;
+                                    }
+                                  },
                                 ),
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return '* Please fill out this field';
-                                  } else {
-                                    return null;
+                              ),
+                              const Divider(color: Colors.red),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              OutlinedButton(
+                                onPressed: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    scanQr();
                                   }
                                 },
+                                child: const Text('Scan'),
                               ),
-                            ),
-                            const Divider(color: Colors.red),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            OutlinedButton(
-                              onPressed: () {
-                                if (_formKey.currentState!.validate()) {
-                                  scanQr();
-                                }
-                              },
-                              child: const Text('Scan'),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                          ],
+                              const SizedBox(
+                                height: 10,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  //Text(qrstr, style: Theme.of(context).textTheme.bodySmall),
-                ],
+                    //Text(qrstr, style: Theme.of(context).textTheme.bodySmall),
+                  ],
+                ),
               ),
             ),
           ),

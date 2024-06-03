@@ -32,36 +32,36 @@
       echo json_encode($register_meeting); // Always encode the array
   }
 
- else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-   $data = json_decode(file_get_contents("php://input"));
+else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $data = json_decode(file_get_contents("php://input"));
 
-   $guest_name = mysqli_real_escape_string($conn, $data->guest_name);
-   $company_name = mysqli_real_escape_string($conn, $data->company_name);
-   $location = mysqli_real_escape_string($conn, $data->location);
-   $koottam = mysqli_real_escape_string($conn, $data->koottam);
-   $kovil = mysqli_real_escape_string($conn, $data->kovil);
-   $gender = mysqli_real_escape_string($conn, $data->gender);
-   $mobile = mysqli_real_escape_string($conn, $data->mobile);
-   $meeting_id = mysqli_real_escape_string($conn, $data->meeting_id);
-   $date = mysqli_real_escape_string($conn, $data->date);
-   $time = mysqli_real_escape_string($conn, $data->time);
-   $user_id = mysqli_real_escape_string($conn, $data->user_id);
-   $meeting_date = mysqli_real_escape_string($conn,$data->meeting_date);
-   $zoom_meet = mysqli_real_escape_string($conn,$data->zoom_meet);
+    $guest_name = mysqli_real_escape_string($conn, $data->guest_name);
+    $company_name = mysqli_real_escape_string($conn, $data->company_name);
+    $location = mysqli_real_escape_string($conn, $data->location);
+    $koottam = mysqli_real_escape_string($conn, $data->koottam);
+    $kovil = mysqli_real_escape_string($conn, $data->kovil);
+    $gender = mysqli_real_escape_string($conn, $data->gender);
+    $mobile = mysqli_real_escape_string($conn, $data->mobile);
+    $meeting_id = mysqli_real_escape_string($conn, $data->meeting_id);
+    $user_id = mysqli_real_escape_string($conn, $data->user_id);
+    $member_name = mysqli_real_escape_string($conn, $data->member_name);
+    $member_mobile = mysqli_real_escape_string($conn, $data->member_mobile);
+    $member_id = mysqli_real_escape_string($conn, $data->member_id);
+     $meeting_date = mysqli_real_escape_string($conn, $data->meeting_date);
 
+    $insertUserQuery = "INSERT INTO `visitors_slip`(`guest_name`, `company_name`, `location`, `koottam`, `kovil`, `gender`, `mobile`, `meeting_id`, `member_name`, `member_mobile`, `member_id`, `user_id`, `meeting_date`)
+    VALUES ('$guest_name','$company_name','$location','$koottam','$kovil','$gender','$mobile','$meeting_id','$member_name','$member_mobile','$member_id','$user_id','$meeting_date')";
 
-                  $insertUserQuery = "INSERT INTO `visitors_slip`(`guest_name`, `company_name`, `location`, `koottam`, `kovil`, `gender`, `mobile`, `meeting_id`, `date`, `time`, `user_id`,`meeting_date`,`zoom_meet`)
-                  VALUES ('$guest_name','$company_name','$location','$koottam','$kovil','$gender','$mobile','$meeting_id','$date','$time','$user_id','$meeting_date','$zoom_meet')";
-                  $insertUserResult = mysqli_query($conn, $insertUserQuery);
+    $insertUserResult = mysqli_query($conn, $insertUserQuery);
 
-
-      if ($insertUserResult) {
-          echo json_encode(["success" => true, "message" => "RegisterMeeting stored successfully"]);
-      } else {
-          echo json_encode(["success" => false, "message" => "Error: " . mysqli_error($conn)]);
-      }
-
+    if ($insertUserResult) {
+        echo json_encode(["success" => true, "message" => "RegisterMeeting stored successfully"]);
+    } else {
+        echo json_encode(["success" => false, "message" => "Error: " . mysqli_error($conn)]);
+    }
 }
+
+
 
 
 mysqli_close($conn);

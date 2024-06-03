@@ -157,32 +157,24 @@ class _ActivityState extends State<Activity> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Center(
-              child: Text('Reference',
-                  style: Theme.of(context).textTheme.bodySmall)),
-          centerTitle: true,
-          iconTheme: const IconThemeData(
-            color: Colors.white, // Set the color for the drawer icon
-          ),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => Homepage(
-                            userType: widget.userType,
-                            userId: widget.userId,
-                          )));
-            },
-          )),
-      body: data.isNotEmpty
-          ? ListView.builder(
-              itemCount: data.length,
-              itemBuilder: (context, i) {
-                String imageUrl =
-                    'http://mybudgetbook.in/GIBAPI/${data[i]['profile_image']}';
-                return Center(
+        title: Center(child: Text('Reference', style: Theme.of(context).textTheme.bodySmall)),
+        centerTitle: true,
+        iconTheme:  const IconThemeData(
+          color: Colors.white, // Set the color for the drawer icon
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => Homepage(userType: widget.userType, userId: widget.userId,)));
+          },
+        )
+      ),
+      body: data.isNotEmpty ? ListView.builder(
+          itemCount: data.length,
+          itemBuilder: (context, i) {
+            String imageUrl = 'http://mybudgetbook.in/GIBAPI/${data[i]['profile_image']}';
+              return
+                Center(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Card(
