@@ -3,29 +3,16 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-class GuestHistory extends StatelessWidget {
+class GuestHistory extends StatefulWidget {
   final String userId;
 
   const GuestHistory({Key? key, required this.userId}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SlipHistory(userId: userId),
-    );
-  }
+  State<GuestHistory> createState() => _GuestHistoryState();
 }
 
-class SlipHistory extends StatefulWidget {
-  final String userId;
-
-  const SlipHistory({Key? key, required this.userId}) : super(key: key);
-
-  @override
-  State<SlipHistory> createState() => _SlipHistoryState();
-}
-
-class _SlipHistoryState extends State<SlipHistory> {
+class _GuestHistoryState extends State<GuestHistory> {
   List<Map<String, dynamic>> visitorsFetchdata = [];
 
   @override
@@ -76,7 +63,7 @@ class _SlipHistoryState extends State<SlipHistory> {
           style: Theme
               .of(context)
               .textTheme
-              .bodySmall,
+              .displayLarge,
         ),
         iconTheme: IconThemeData(color: Colors.white),
       ),

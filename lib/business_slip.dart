@@ -34,6 +34,8 @@ class _ReferralPageState extends State<ReferralPage> {
   String? lname = "";
   String? mobile = "";
   String? companyname = "";
+  String? district = "";
+  String? chapter = "";
   List dynamicdata=[];
   Future<void> fetchData(String userId) async {
     try {
@@ -54,6 +56,8 @@ class _ReferralPageState extends State<ReferralPage> {
                 lname= dynamicdata[0]['last_name'];
                 mobile=dynamicdata[0]["mobile"];
                 companyname=dynamicdata[0]["company_name"];
+                district=dynamicdata[0]["district"];
+                chapter=dynamicdata[0]["chapter"];
               });
             }
           });
@@ -87,7 +91,9 @@ class _ReferralPageState extends State<ReferralPage> {
             "referrer_mobile": mobile,
             "referrer_company": companyname,
             "status": status,
-            "user_id": widget.userId
+            "user_id": widget.userId,
+            "district": district,
+            "chapter": chapter
           }),
         );
         print(url);
@@ -186,7 +192,6 @@ class _ReferralPageState extends State<ReferralPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('BUSINESS SLIP', style: Theme.of(context).textTheme.displayLarge),
-        centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
         leading: IconButton(
           icon: const Icon(Icons.navigate_before),
@@ -246,6 +251,7 @@ class _ReferralPageState extends State<ReferralPage> {
                         // Handle when a suggestion is selected
                         // Update text fields with suggestion data
                         setState(() {
+                          searchController.text = "${suggestion['first_name']} ${suggestion['last_name']}";
                           to.text = suggestion['first_name'];
                           tomobile.text = suggestion['mobile'];
                           cname.text = suggestion['company_name'];

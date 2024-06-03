@@ -4,6 +4,7 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:gipapp/settings_page_executive.dart';
 import 'package:http/http.dart'as http;
 
 import 'Non_exe_pages/non_exe_home.dart';
@@ -92,7 +93,7 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
       });
     });
     getData(qrstr);
-   // scanQr();
+    // scanQr();
   }
 
   Future<void> getData(String meetingId) async {
@@ -235,8 +236,7 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-        title: const Text('Attendance Scanner'),
+        title: Text('Attendance Scanner', style: Theme.of(context).textTheme.displayLarge,),
         leading: IconButton(
           onPressed: () {
             if (widget.userType == "Non-Executive") {
@@ -249,21 +249,11 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
                   ),
                 ),
               );
-            } else if (widget.userType == "Guest") {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => GuestHome(
-                    userType: widget.userType.toString(),
-                    userId: widget.userID.toString(),
-                  ),
-                ),
-              );
             } else {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => NavigationBarExe(
+                  builder: (context) => SettingsPageExecutive(
                     userType: widget.userType.toString(),
                     userId: widget.userID.toString(),
                   ),
@@ -294,7 +284,7 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => NavigationBarExe(
+                  builder: (context) => SettingsPageExecutive(
                     userType: widget.userType.toString(),
                     userId: widget.userID.toString(),
                   ),

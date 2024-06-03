@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:gipapp/settings_page_executive.dart';
 import 'Non_exe_pages/non_exe_home.dart';
 import 'guest_home.dart';
 import 'home.dart';
-import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
-import 'dart:typed_data';
 import 'package:video_player/video_player.dart';
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 32d1aee13e69d1c8acb3c02f42c70f800fe9b212
 class Achievements extends StatefulWidget {
   final String userType;
   final String? userID;
@@ -43,22 +45,11 @@ class _AchievementsState extends State<Achievements> {
                 ),
               );
             }
-            else if (widget.userType == "Guest") {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => GuestHome(
-                    userType: widget.userType.toString(),
-                    userId: widget.userID.toString(),
-                  ),
-                ),
-              );
-            }
             else{
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => NavigationBarExe(
+                  builder: (context) => SettingsPageExecutive(
                     userType: widget.userType.toString(),
                     userId: widget.userID.toString(),
                   ),
@@ -70,7 +61,24 @@ class _AchievementsState extends State<Achievements> {
         ),
 
       ),
+<<<<<<< HEAD
       body: AchievementViewPhotosPage(),
+=======
+      body: PopScope(
+          canPop: false,
+          onPopInvoked: (didPop)  {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SettingsPageExecutive(
+                  userType: widget.userType.toString(),
+                  userId: widget.userID.toString(),
+                ),
+              ),
+            );
+          },
+          child: AchievementGibGallery()),
+>>>>>>> 32d1aee13e69d1c8acb3c02f42c70f800fe9b212
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'Non_exe_pages/non_exe_home.dart';
 import 'blood_group_list.dart';
 import 'guest_home.dart';
+import 'guest_settings.dart';
 import 'home.dart';
 
 class BloodGroup extends StatelessWidget {
@@ -61,7 +62,7 @@ class _BloodState extends State<Blood> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => GuestHome(
+                        builder: (context) => GuestSettings(
                               userType: widget.userType.toString(),
                               userId: widget.userId.toString(),
                             )));
@@ -96,7 +97,7 @@ class _BloodState extends State<Blood> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => GuestHome(
+                  builder: (context) => GuestSettings(
                     userType: widget.userType.toString(),
                     userId: widget.userId.toString(),
                   ),

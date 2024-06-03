@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'Non_exe_pages/non_exe_home.dart';
 import 'business_slip.dart';
 import 'g2g_slip.dart';
+import 'guest_slip_history.dart';
 import 'home.dart';
 import 'honor_slip.dart';
 import 'package:http/http.dart' as http;
@@ -28,7 +29,6 @@ class _BusinessPageState extends State<BusinessPage> {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          centerTitle: true,
           title: (Text('My Business', style: Theme.of(context).textTheme.displayLarge,)
           ),
           leading: IconButton(
@@ -867,7 +867,6 @@ class _MyTransactionState extends State<MyTransaction> {
                             ],
                           ),
                         ),
-
                       ),
                       // Text "Business"
                       Padding(
@@ -1098,12 +1097,24 @@ class _MyTransactionState extends State<MyTransaction> {
                       // Text "Business"
                       Padding(
                         padding: EdgeInsets.all(10),
-                        child: Text(
-                          'Guest',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("     "),
+                            Text(
+                              'Guest',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            IconButton(onPressed: (){
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => GuestHistory(userId: widget.userId.toString(),)),
+                              );
+                            }, icon: Icon(Icons.navigate_next,color: Colors.black,),),
+                          ],
                         ),
                       ),
                     ],

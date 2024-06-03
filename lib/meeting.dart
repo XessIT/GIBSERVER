@@ -85,7 +85,7 @@ class _MeetingUpcomingPageState extends State<MeetingUpcomingPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => NavigationBarExe(
+                  builder: (context) => SettingsPageExecutive(
                     userType: widget.userType.toString(),
                     userId: widget.userId.toString(),
                   ),

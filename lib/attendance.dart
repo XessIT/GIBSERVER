@@ -1,5 +1,6 @@
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
+import 'package:gipapp/settings_page_executive.dart';
 import 'package:intl/intl.dart';
 
 import 'Non_exe_pages/non_exe_home.dart';
@@ -45,7 +46,7 @@ class _AttendancePageState extends State<AttendancePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => NavigationBarExe(
+                      builder: (context) => SettingsPageExecutive(
                         userType: widget.userType.toString(),
                         userId: widget.userID.toString(),
                       ),
@@ -73,7 +74,7 @@ class _AttendancePageState extends State<AttendancePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => NavigationBarExe(
+                  builder: (context) => SettingsPageExecutive(
                     userType: widget.userType.toString(),
                     userId: widget.userID.toString(),
                   ),

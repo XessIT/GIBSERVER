@@ -1,3 +1,4 @@
+
 import 'dart:convert';
 import 'dart:core';
 import 'dart:typed_data';
@@ -14,6 +15,7 @@ import 'package:gipapp/year_meeting_details.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'Non_exe_pages/non_exe_home.dart';
 import 'Non_exe_pages/settings_non_executive.dart';
 import 'Offer/offer.dart';
@@ -72,6 +74,7 @@ class _HomepageState extends State<Homepage> {
       _getInternet();
     }
   }
+
   Future<void> _getInternet() async {
     // Replace the URL with your PHP backend URL
     var url = 'http://mybudgetbook.in/BUDGETAPI/internet.php';
@@ -97,6 +100,7 @@ class _HomepageState extends State<Homepage> {
       );
     }
   }
+
   @override
   void initState() {
     fetchData(widget.userId);
@@ -114,6 +118,14 @@ class _HomepageState extends State<Homepage> {
       });
     });
     super.initState();
+  }
+  String _formatDate(String dateStr) {
+    try {
+      DateTime date = DateFormat('yyyy-MM-dd').parse(dateStr);
+      return DateFormat('MMMM-dd,yyyy').format(date);
+    } catch (e) {
+      return dateStr; // Return the original string if parsing fails
+    }
   }
   ///refresh
   List<String> items = List.generate(20, (index) => 'Item $index');
@@ -138,7 +150,6 @@ class _HomepageState extends State<Homepage> {
   }
 
   final bdayDate = DateFormat("yyyy-MM-dd").format(DateTime.now());
-
   TextEditingController guestcount = TextEditingController();
 
   ///meeting data fetch
@@ -215,7 +226,7 @@ class _HomepageState extends State<Homepage> {
             userdata = responseData.cast<Map<String, dynamic>>();
             if (userdata.isNotEmpty) {
               imageUrl =
-                  'http://mybudgetbook.in/GIBAPI/${userdata[0]["profile_image"]}';
+              'http://mybudgetbook.in/GIBAPI/${userdata[0]["profile_image"]}';
               _imageBytes = base64Decode(userdata[0]['profile_image']);
             }
           });
@@ -231,11 +242,11 @@ class _HomepageState extends State<Homepage> {
   }
 
   ///offers fetch
-  List<Map<String,dynamic>>offersdata=[];
+  List<Map<String, dynamic>> offersdata = [];
   Future<void> offersfetchData() async {
     try {
       final url =
-          Uri.parse('http://mybudgetbook.in/GIBAPI/offers.php?table=offers');
+      Uri.parse('http://mybudgetbook.in/GIBAPI/offers.php?table=offers');
       final response = await http.get(url);
       print(url);
 
@@ -269,7 +280,7 @@ class _HomepageState extends State<Homepage> {
       String meetingDate, String meetingPlace) async {
     try {
       final uri =
-          Uri.parse("http://mybudgetbook.in/GIBAPI/register_meeting.php");
+      Uri.parse("http://mybudgetbook.in/GIBAPI/register_meeting.php");
       print("Register Meeting: $uri");
       final res = await http.post(uri,
           headers: {"Content-Type": "application/json"},
@@ -283,7 +294,6 @@ class _HomepageState extends State<Homepage> {
             "member_type": widget.userType,
             "guestcount": guestcount.text.trim()
           }));
-
       if (res.statusCode == 200) {
         if (res.body.isNotEmpty) {
           try {
@@ -315,15 +325,15 @@ class _HomepageState extends State<Homepage> {
         }
       } else {
         print(
-            "Failed to upload image. Server returned status code: ${res.statusCode}");
+            "Failed to register meeting. Server returned status code: ${res.statusCode}");
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(
                 "Failed to register meeting. Server returned status code: ${res.statusCode}")));
       }
     } catch (e) {
-      print("Error uploading image: $e");
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Error uploading image: $e")));
+      print("Error uploading meeting data: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error uploading meeting data: $e")));
     }
   }
 
@@ -335,7 +345,9 @@ class _HomepageState extends State<Homepage> {
         key: tempKey,
         child: AlertDialog(
           backgroundColor: Colors.grey[800],
-          title: Text('You already registered the meeting. If you want to add guest?', style: Theme.of(context).textTheme.displaySmall),
+          title: Text(
+              'You already registered the meeting. If you want to add guest?',
+              style: Theme.of(context).textTheme.displaySmall),
           content: TextFormField(
             controller: guestcount,
             validator: (value) {
@@ -358,32 +370,37 @@ class _HomepageState extends State<Homepage> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => VisitorsSlip(
-                        userId: widget.userId,
-                        meetingId: meetingId,
-                        guestcount: guestcount.text.trim(),
-                        userType: widget.userType,
-                        meeting_date: meetingDate,
-                        user_mobile: "fetchMobile.toString()",  // Replace this with the actual mobile fetching logic if needed
+                          userId: widget.userId,
+                          meetingId: meetingId,
+                          guestcount: guestcount.text.trim(),
+                          userType: widget.userType,
+                          meeting_date: meetingDate,
+                          user_mobile: userdata[0]["mobile"],
+                          user_name: '${userdata[0]["first_name"] ?? ""} ${userdata[0]["last_name"] ?? ""}',
+                          member_id:userdata[0]["member_id"] // Replace this with the actual mobile fetching logic if needed
                       ),
                     ),
                   );
                   print("UserID:-${widget.userId}${widget.userType}");
                 }
               },
-              child: Text('Yes', style: Theme.of(context).textTheme.displaySmall),
+              child:
+              Text('Yes', style: Theme.of(context).textTheme.displaySmall),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('No', style: Theme.of(context).textTheme.displaySmall),
+              child:
+              Text('No', style: Theme.of(context).textTheme.displaySmall),
             ),
           ],
         ),
       ),
     );
   }
-  List<Map<String,dynamic>>registerFetchdata=[];
+
+  List<Map<String, dynamic>> registerFetchdata = [];
   Future<void> registerFetch(String meetingId) async {
     try {
       final url = Uri.parse(
@@ -410,18 +427,16 @@ class _HomepageState extends State<Homepage> {
           print('Invalid response data format');
         }
       } else {
-        // Handle non-200 status code
-        //  print('Error: ${response.statusCode}');
+
       }
     } catch (error) {
-      // Handle other errors
-      // print('Error: $error');
+
     }
   }
 
   /// Done By gowtham
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final GlobalKey<FormState> tempKey =GlobalKey<FormState>();
+  final GlobalKey<FormState> tempKey = GlobalKey<FormState>();
 
   List<Map<String, dynamic>> data = [];
   String type = "Executive";
@@ -453,11 +468,11 @@ class _HomepageState extends State<Homepage> {
 
           // Check if the registration opening date is before the current date
           bool isOpenForRegistration =
-              registrationOpeningDate.isBefore(DateTime.now());
+          registrationOpeningDate.isBefore(DateTime.now());
 
           // Check if the registration closing date is after the current date
           bool isRegistrationOpen =
-              registrationClosingDate.isAfter(DateTime.now());
+          registrationClosingDate.isAfter(DateTime.now());
 
           print('Is Open for Registration: $isOpenForRegistration');
           print('Is Registration Open: $isRegistrationOpen');
@@ -508,7 +523,8 @@ class _HomepageState extends State<Homepage> {
   Future<void> getData1() async {
     print('Attempting to make HTTP request...');
     try {
-      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/offers.php?table=UnblockOffers');
+      final url = Uri.parse(
+          'http://mybudgetbook.in/GIBAPI/offers.php?table=UnblockOffers');
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
@@ -603,21 +619,28 @@ class _HomepageState extends State<Homepage> {
               clipBehavior: Clip.antiAliasWithSaveLayer,
               children: [
                 SingleChildScrollView(
-                  child: isLoading ? const Center(child: CircularProgressIndicator(),)
+                  child: isLoading
+                      ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
                       : Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      data.isEmpty ? SizedBox.shrink() :
-                      const SizedBox(height: 170,),
+                      data.isEmpty
+                          ? SizedBox.shrink()
+                          : const SizedBox(
+                        height: 190,
+                      ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Card(
                           elevation: 0,
                           child: Container(
-
                             child: Text(
                               'Upcoming Meetings',
-                              style:Theme.of(context).textTheme.headlineMedium,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headlineMedium,
                             ),
                           ),
                         ),
@@ -629,11 +652,15 @@ class _HomepageState extends State<Homepage> {
                             String meetingPlace = meeting['place'];
                             String meetingType = meeting['meeting_type'];
                             String id = meeting['id'];
+
                             ///DateTime dateTime = DateFormat('yyyy-MM-dd').parse(dateString);
                             return Builder(
                               builder: (BuildContext context) {
-                                return Container( // Wrap Card with Container
-                                  width: MediaQuery.of(context).size.width, // Set width to full width of the screen
+                                return Container(
+                                  // Wrap Card with Container
+                                  width: MediaQuery.of(context)
+                                      .size
+                                      .width, // Set width to full width of the screen
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: ClayContainer(
@@ -641,139 +668,184 @@ class _HomepageState extends State<Homepage> {
                                       width: 100,
                                       curveType: CurveType.concave,
                                       child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.start,
                                         children: [
                                           Padding(
-                                            padding: const EdgeInsets.all(8.0),
+                                            padding:
+                                            const EdgeInsets.all(8.0),
                                             child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              mainAxisAlignment:
+                                              MainAxisAlignment
+                                                  .center,
                                               children: [
-                                                Text('${meeting['meeting_type']}',
-                                                  style:Theme.of(context).textTheme.headlineSmall,
+                                                Text(
+                                                  '${meeting['meeting_type']}',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .headlineSmall,
                                                 ),
-                                                SizedBox(width: 20,),
+                                                SizedBox(
+                                                  width: 20,
+                                                ),
                                                 IconButton(
                                                     onPressed: () {
                                                       showDialog(
-                                                          context: context,
+                                                          context:
+                                                          context,
                                                           builder: (ctx) =>
                                                           // Dialog box for register meeting and add guest
                                                           AlertDialog(
-                                                            backgroundColor: Colors.grey[800],
-                                                            title:  Text('Meeting',
-                                                              style:Theme.of(context).textTheme.displaySmall,),
-                                                            content:  Text("Do You Want to Register the Meeting?",
-                                                              style:Theme.of(context).textTheme.displaySmall,),
+                                                            backgroundColor:
+                                                            Colors
+                                                                .grey[800],
+                                                            title:
+                                                            Text(
+                                                              'Meeting',
+                                                              style: Theme.of(context)
+                                                                  .textTheme
+                                                                  .displaySmall,
+                                                            ),
+                                                            content:
+                                                            Text(
+                                                              "Do You Want to Register the Meeting?",
+                                                              style: Theme.of(context)
+                                                                  .textTheme
+                                                                  .displaySmall,
+                                                            ),
                                                             actions: [
                                                               TextButton(
-                                                                  onPressed: () {
+                                                                  onPressed:
+                                                                      () {
                                                                     //store purpose..
-                                                                    registerDateStoreDatabase(id, meetingType, meetingDate, meetingPlace);
+                                                                    //registerDateStoreDatabase(id, meetingType, meetingDate, meetingPlace);
+                                                                    Navigator.pop(context);
                                                                     showDialog(
                                                                         context: context,
-                                                                        builder: (ctx) =>
-                                                                            Form(
-                                                                              key:tempKey,
-                                                                              child: AlertDialog(
-                                                                                backgroundColor: Colors.grey[800],
-                                                                                title:  Text('Do you wish to add Guest?',
-                                                                                  style:Theme.of(context).textTheme.displaySmall,),
-                                                                                content: TextFormField(
-                                                                                  controller: guestcount,
-                                                                                  validator: (value){
-                                                                                    if(value!.isEmpty){
-                                                                                      return "* Enter a Guest Count";
-                                                                                    }
-                                                                                    return null;
-                                                                                  },
-                                                                                  decoration:  InputDecoration(
-                                                                                    labelText: "Guest Count",
-                                                                                    labelStyle:Theme.of(context).textTheme.displaySmall,
-                                                                                  ),
-                                                                                  keyboardType: TextInputType.number,
-                                                                                  inputFormatters: [
-                                                                                    FilteringTextInputFormatter.digitsOnly,
-                                                                                    LengthLimitingTextInputFormatter(6),
-                                                                                  ],
-                                                                                ),
-                                                                                actions: [
-                                                                                  TextButton(
-                                                                                      onPressed: () {
-                                                                                        if(tempKey.currentState!.validate()) {
-                                                                                          Navigator.push(
-                                                                                              context,
-                                                                                              MaterialPageRoute(
-                                                                                                  builder: (
-                                                                                                      context) =>
-                                                                                                      VisitorsSlip(
-                                                                                                          userId:widget.userId,
-                                                                                                          meetingId:id,
-                                                                                                          guestcount: guestcount.text.trim(),
-                                                                                                          userType:widget.userType,
-                                                                                                          meeting_date:meetingDate,
-                                                                                                          user_mobile:fetchMobile.toString()
-                                                                                                      )));
-                                                                                          print("UserID:-${widget.userId}${widget.userType}");
-                                                                                        } },
-                                                                                      child:  Text('Yes',style:Theme.of(context).textTheme.displaySmall,)
-                                                                                  ),
-                                                                                  TextButton(
-                                                                                      onPressed: () {
-                                                                                        Navigator.pop(context);
-                                                                                      },
-                                                                                      child:  Text('No', style:Theme.of(context).textTheme.displaySmall,
-                                                                                      ))
-                                                                                ],
+                                                                        builder: (ctx) => Form(
+                                                                          key: tempKey,
+                                                                          child: AlertDialog(
+                                                                            backgroundColor: Colors.grey[800],
+                                                                            title: Text(
+                                                                              'Do you wish to add Guest?',
+                                                                              style: Theme.of(context).textTheme.displaySmall,
+                                                                            ),
+                                                                            content: TextFormField(
+                                                                              controller: guestcount,
+                                                                              validator: (value) {
+                                                                                if (value!.isEmpty) {
+                                                                                  return "* Enter a Guest Count";
+                                                                                }
+                                                                                return null;
+                                                                              },
+                                                                              decoration: InputDecoration(
+                                                                                labelText: "Guest Count",
+                                                                                labelStyle: Theme.of(context).textTheme.displaySmall,
+                                                                                hintText: "Ex:5",
                                                                               ),
-                                                                            )
-                                                                    );
+                                                                              keyboardType: TextInputType.number,
+                                                                              inputFormatters: <TextInputFormatter>[
+                                                                                FilteringTextInputFormatter.digitsOnly,
+                                                                                LengthLimitingTextInputFormatter(3)
+                                                                              ],
+                                                                            ),
+                                                                            actions: [
+                                                                              TextButton(
+                                                                                  onPressed: () {
+                                                                                    if (tempKey.currentState!.validate()) {
+                                                                                      print("Guest Count: ${guestcount.text.trim()}");
+                                                                                      Navigator.push(context, MaterialPageRoute(builder: (context) => VisitorsSlip(userId: widget.userId,
+                                                                                          meetingId: id, guestcount: guestcount.text.trim(), userType: widget.userType, meeting_date: meetingDate,
+                                                                                          user_mobile: userdata[0]["mobile"],
+                                                                                          user_name: '${userdata[0]["first_name"] ?? ""} ${userdata[0]["last_name"] ?? ""}',
+                                                                                          member_id:userdata[0]["member_id"]
+                                                                                      )));
+                                                                                      print("UserID:-${widget.userId}${widget.userType}");
+                                                                                      registerDateStoreDatabase(id, meetingType, meetingDate, meetingPlace);
+                                                                                    }
+                                                                                  },
+                                                                                  child: Text(
+                                                                                    'Yes',
+                                                                                    style: Theme.of(context).textTheme.displaySmall,
+                                                                                  )),
+                                                                              TextButton(
+                                                                                  onPressed: () {
+                                                                                    Navigator.pop(context);
+                                                                                  },
+                                                                                  child: Text(
+                                                                                    'No',
+                                                                                    style: Theme.of(context).textTheme.displaySmall,
+                                                                                  ))
+                                                                            ],
+                                                                          ),
+                                                                        ));
                                                                   },
-                                                                  child:  Text('Yes',    style:Theme.of(context).textTheme.displaySmall,
+                                                                  child:
+                                                                  Text(
+                                                                    'OK',
+                                                                    style: Theme.of(context).textTheme.displaySmall,
                                                                   )),
                                                               TextButton(
-                                                                  onPressed: () {
+                                                                  onPressed:
+                                                                      () {
                                                                     Navigator.pop(context);
                                                                   },
-                                                                  child:  Text('No', style:Theme.of(context).textTheme.displaySmall,))
+                                                                  child:
+                                                                  Text(
+                                                                    'Cancel',
+                                                                    style: Theme.of(context).textTheme.displaySmall,
+                                                                  ))
                                                             ],
-                                                          )
-                                                      );
+                                                          ));
                                                     },
                                                     icon: const Icon(
-                                                      Icons.person_add_alt_1_rounded,
+                                                      Icons
+                                                          .person_add_alt_1_rounded,
                                                       color: Colors.green,
-
-                                                    ))
+                                                    )
+                                                )
                                               ],
                                             ),
                                           ),
-                                          SizedBox(height:5,),
-
+                                          SizedBox(
+                                            height: 5,
+                                          ),
                                           Padding(
-                                            padding: const EdgeInsets.all(8.0),
+                                            padding:
+                                            const EdgeInsets.all(8.0),
                                             child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
+                                              mainAxisAlignment:
+                                              MainAxisAlignment
+                                                  .spaceBetween,
                                               children: [
-                                                Text('${meeting['meeting_date']}',
-                                                  style:Theme.of(context).textTheme.bodySmall,
+                                                Text(
+                                                  '${meeting['meeting_date']}',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodySmall,
                                                 ),
-                                                Text('${meeting['meeting_name']}',
-                                                  style:Theme.of(context).textTheme.bodySmall,
+                                                Text(
+                                                  '${meeting['meeting_name']}',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodySmall,
                                                 ),
                                               ],
                                             ),
                                           ),
-
                                           Padding(
-                                            padding: const EdgeInsets.all(8.0),
+                                            padding:
+                                            const EdgeInsets.all(8.0),
                                             child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              mainAxisAlignment:
+                                              MainAxisAlignment
+                                                  .spaceBetween,
                                               children: [
                                                 Text(
                                                   '${_formatTimeString(meeting['from_time'])} to ${_formatTimeString(meeting['to_time'])}',
-                                                  style:Theme.of(context).textTheme.bodySmall,
-
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodySmall,
                                                 ),
                                                 // Space between icon and text
                                                 RichText(
@@ -781,23 +853,31 @@ class _HomepageState extends State<Homepage> {
                                                     children: [
                                                       const WidgetSpan(
                                                         child: Padding(
-                                                          padding: EdgeInsets.only(right: 5.0), // Adjust the spacing as needed
-                                                          child: Icon(Icons.location_on, color: Colors.green),
+                                                          padding: EdgeInsets
+                                                              .only(
+                                                              right:
+                                                              5.0), // Adjust the spacing as needed
+                                                          child: Icon(
+                                                              Icons
+                                                                  .location_on,
+                                                              color: Colors
+                                                                  .green),
                                                         ),
                                                       ),
                                                       TextSpan(
-                                                        text: meeting['place'],
-                                                        style: Theme.of(context).textTheme.bodySmall,
+                                                        text: meeting[
+                                                        'place'],
+                                                        style: Theme.of(
+                                                            context)
+                                                            .textTheme
+                                                            .bodySmall,
                                                       ),
                                                     ],
                                                   ),
                                                 ),
-
-
                                               ],
                                             ),
                                           ),
-
                                         ],
                                       ),
                                     ),
@@ -813,7 +893,8 @@ class _HomepageState extends State<Homepage> {
                             aspectRatio: 16 / 9,
                             autoPlayCurve: Curves.fastOutSlowIn,
                             enableInfiniteScroll: false,
-                            autoPlayAnimationDuration: const Duration(milliseconds: 800),
+                            autoPlayAnimationDuration:
+                            const Duration(milliseconds: 800),
                             viewportFraction: 1,
                           ),
                         ),
@@ -830,16 +911,14 @@ class _HomepageState extends State<Homepage> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ),/// offer
-                      Container(
-                        height: MediaQuery.of(context).size.height * 0.6, // Adjust the height as needed
-                        child: ListView.builder(
-                            itemCount: data1.length,
-                            itemBuilder: (context, i) {
-                              String imageUrl = 'http://mybudgetbook.in/GIBAPI/${data1[i]["offer_image"]}';
-                              String dateString = data1[i]['validity']; // This will print the properly encoded URL
-                              DateTime dateTime = DateFormat('yyyy-MM-dd').parse(dateString);
-                              return Center(
+                      ),
+
+                      /// offer
+                      Container(// Adjust the height as needed
+                        child: Column(
+                          children: [
+                            for (int i = 0; i < data1.length; i++)
+                              Center(
                                 child: Card(
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
@@ -847,84 +926,90 @@ class _HomepageState extends State<Homepage> {
                                       children: [
                                         Stack(
                                           children: [
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              children:  [
-                                                //CIRCLEAVATAR STARTS
-                                                CircleAvatar(
-                                                  radius: 30.0,
-                                                  backgroundColor: Colors.cyan,
-                                                  backgroundImage: CachedNetworkImageProvider(imageUrl),
-                                                  //IMAGE STARTS CIRCLEAVATAR
-                                                  //  Image.network('${data[i]['offer_image']}').image,
-                                                ),
-                                                //END CIRCLEAVATAR
-                                                const SizedBox(width: 20),
-                                                Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start, // Align texts to the start
-                                                  children: [
-                                                    // START TEXTS
-                                                    Text(
-                                                      '${data1[i]['company_name']}',
-                                                      // Text style starts
-                                                      style: const TextStyle(
-                                                        color: Colors.green,
-                                                        fontSize: 15,
-                                                      ),
-                                                    ),
-                                                    // start texts
-                                                    Text(
-                                                      '${data1[i]['offer_type']} - ${data1[i]['name']}',
-                                                      // Text style starts
-                                                      style: const TextStyle(
-                                                        fontSize: 11,
-                                                        fontWeight: FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                    Text("Mobile - ${data1[i]['mobile']}",
-                                                      // New date format
-                                                      style: const TextStyle(
-                                                        fontSize: 12,
-                                                      ),
-                                                    ),
-                                                    // Text starts
-                                                    Text("Validity - ${DateFormat('d MMMM yyyy').format(dateTime)}",
-                                                      // New date format
-                                                      style: const TextStyle(
-                                                        fontSize: 12,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                            data1[i]['discount'].toString().isEmpty ? Container() :
-                                            Positioned(
-                                              top: 8,
-                                              right: 8, // Adjust position if needed
-                                              child: Container(
-                                                decoration: const BoxDecoration(
-                                                  color: Colors.red, // Change the color here
-                                                  borderRadius: BorderRadius.only(
-                                                    topLeft: Radius.circular(10.0),
-                                                    bottomRight: Radius.circular(10.0),
-                                                  ),
-                                                ),
-                                                padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
-                                                child: Row(
-                                                  children: [
-                                                    Text(
-                                                      '${data1[i]['discount']}% off', // Text for your banner
-                                                      style: const TextStyle(
-                                                        color: Colors.white, // Change the text color here
-                                                        fontWeight: FontWeight.bold,
-                                                        fontStyle: FontStyle.italic, // Add any additional styles here
-                                                        fontSize: 12.0, // Adjust font size as needed
-                                                      ),
-                                                    ),
-                                                  ],
+                                            ListTile(
+                                              leading: CircleAvatar(
+                                                radius: 30.0,
+                                                backgroundColor: Colors.cyan,
+                                                backgroundImage: CachedNetworkImageProvider(
+                                                    'http://mybudgetbook.in/GIBAPI/${data1[i]["offer_image"]}'
                                                 ),
                                               ),
+                                              title: Text(
+                                                '${data1[i]['company_name']}',
+                                                style: const TextStyle(
+                                                  color: Colors.green,
+                                                  fontSize: 15,
+                                                ),
+                                              ),
+                                              subtitle: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    '${data1[i]['offer_type']} - ${data1[i]['name']}',
+                                                    style: const TextStyle(
+                                                      fontSize: 12,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    "Mobile - ${data1[i]['mobile']}",
+                                                    style: const TextStyle(
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    "Validity - ${DateFormat('d MMMM yyyy').format(DateFormat('yyyy-MM-dd').parse(data1[i]['validity']))}",
+                                                    style: const TextStyle(
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              trailing: IconButton(
+                                                onPressed: () {
+                                                  launchUrl(Uri.parse("tel://${data1[i]['mobile']}"));
+                                                },
+                                                icon: Icon(
+                                                  Icons.call_outlined,
+                                                  color: Colors.green[900],
+                                                ),
+                                              ),
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.end,
+                                              children: [
+                                                data1[i]['discount'].toString().isEmpty
+                                                    ? Container()
+                                                    : Positioned(
+                                                  top: 8,
+                                                  right: 8, // Adjust position if needed
+                                                  child: Container(
+                                                    decoration: const BoxDecoration(
+                                                      color: Colors.red,
+                                                      borderRadius: BorderRadius.only(
+                                                        topLeft: Radius.circular(10.0),
+                                                        bottomRight: Radius.circular(10.0),
+                                                      ),
+                                                    ),
+                                                    padding: const EdgeInsets.symmetric(
+                                                        horizontal: 6.0,
+                                                        vertical: 2.0),
+                                                    child: Row(
+                                                      children: [
+                                                        Text(
+                                                          '${data1[i]['discount']}% off', // Text for your banner
+                                                          style: const TextStyle(
+                                                            color: Colors.white,
+                                                            fontWeight: FontWeight.bold,
+                                                            fontStyle: FontStyle.italic,
+                                                            fontSize: 12.0,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ],
                                         ),
@@ -932,8 +1017,8 @@ class _HomepageState extends State<Homepage> {
                                     ),
                                   ),
                                 ),
-                              );
-                            }
+                              ),
+                          ],
                         ),
                       ),
                     ],
@@ -942,8 +1027,8 @@ class _HomepageState extends State<Homepage> {
                 Positioned(
                   top: 0,
                   left: 0,
-                  right:0,
-                  child:ClipPath(
+                  right: 0,
+                  child: ClipPath(
                     clipper: CurveClipper(),
                     child: Container(
                       height: 100,
@@ -956,20 +1041,24 @@ class _HomepageState extends State<Homepage> {
                             padding: EdgeInsets.only(left: 20),
                             child: Text(
                               'GIB',
-                              style: TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold),
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ), ),
+                  ),
+                ),
                 Positioned(
                   top: 80,
                   left: 1,
                   right: 1,
                   child: Card(
                     child: SizedBox(
-                      height: 80,
+                      //height: 80,
                       child: Row(
                         children: [
                           Padding(
@@ -986,21 +1075,54 @@ class _HomepageState extends State<Homepage> {
                               children: [
                                 const SizedBox(height: 10),
                                 Text(
-                                  userdata.isNotEmpty ? userdata[0]["first_name"] : "",
+                                  userdata.isNotEmpty
+                                      ? '${userdata[0]["first_name"] ?? ""} ${userdata[0]["last_name"] ?? ""}'
+                                      : "",
                                   style: GoogleFonts.aBeeZee(
                                     fontSize: 20,
-                                    color: Colors.indigo,
+                                    color: Colors.green,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 Text(
-                                  'Executive Member',
+                                  userdata.isNotEmpty
+                                      ? 'GiB ID - ${userdata[0]["member_id"] ?? ""} '
+                                      : "",
                                   style: GoogleFonts.aBeeZee(
                                     fontSize: 10,
-                                    color: Colors.indigo,
+                                    color: Colors.black,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
+                                if (userdata.isNotEmpty && (userdata[0]["team_name"]?.isNotEmpty ?? false))
+                                  Text(
+                                    'Team - ${userdata[0]["team_name"] ?? ""}',
+                                    style: GoogleFonts.aBeeZee(
+                                      fontSize: 10,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                Text(
+                                  userdata.isNotEmpty
+                                      ? '${userdata[0]["member_type"] ?? ""} - ${userdata[0]["member_category"] ?? ""}'
+                                      : "",
+                                  style: GoogleFonts.aBeeZee(
+                                    fontSize: 10,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                if (userdata.isNotEmpty && (userdata[0]["due_date"]?.isNotEmpty ?? false))
+                                  Text(
+                                    'Due Date - ${_formatDate(userdata[0]["due_date"])}',
+                                    style: GoogleFonts.aBeeZee(
+                                      fontSize: 10,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                SizedBox(height: 10,)
                               ],
                             ),
                           ),
@@ -1055,21 +1177,29 @@ class _NavigationBarExeState extends State<NavigationBarExe> {
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         // backgroundColor: Colors.white,
-        items:  const <BottomNavigationBarItem>[
+        items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home,),
+            icon: Icon(
+              Icons.home,
+            ),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.business,),
+            icon: Icon(
+              Icons.business,
+            ),
             label: 'Business',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_month_rounded,),
+            icon: Icon(
+              Icons.calendar_month_rounded,
+            ),
             label: 'Meeting',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.supervisor_account,),
+            icon: Icon(
+              Icons.supervisor_account,
+            ),
             label: 'Members',
           ),
           BottomNavigationBarItem(
@@ -1080,7 +1210,7 @@ class _NavigationBarExeState extends State<NavigationBarExe> {
           ),
         ],
         type:
-            BottomNavigationBarType.fixed, // Set type to fixed for text labels
+        BottomNavigationBarType.fixed, // Set type to fixed for text labels
         currentIndex: _currentIndex,
         selectedItemColor: Colors.green,
         iconSize: 30,
@@ -1094,7 +1224,7 @@ class _NavigationBarExeState extends State<NavigationBarExe> {
         selectedLabelStyle: const TextStyle(color: Colors.white),
         unselectedLabelStyle: const TextStyle(color: Colors.white),
         selectedIconTheme:
-            const IconThemeData(color: Colors.green), // Set selected icon color
+        const IconThemeData(color: Colors.green), // Set selected icon color
       ),
     );
   }

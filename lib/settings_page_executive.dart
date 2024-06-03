@@ -22,6 +22,7 @@ import 'business.dart';
 import 'change_mpin.dart';
 import 'home.dart';
 import 'meeting.dart';
+import 'my_activity.dart';
 import 'my_gallery.dart';
 
 
@@ -38,25 +39,14 @@ class SettingsPageExecutive extends StatelessWidget {
           ? Colors.white
           : Colors.black,
       appBar: AppBar(
-        centerTitle: true,
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             color: Colors.green,
-/*
-              gradient: LinearGradient(
-                begin: Alignment.topRight,
-                end: Alignment.bottomLeft,
-                colors: [
-                  Colors.green,
-                  Color(0xFF8155BA),
-                ],
-              )
-*/
           ),
         ),
         title:
         Text(
-          "Settings",
+          "Account",
           style: Theme.of(context).textTheme.displayLarge,
         ),
         leading: IconButton(
@@ -79,18 +69,13 @@ class SettingsPageExecutive extends StatelessWidget {
           padding: const EdgeInsets.all(10),
           child: ListView(
             children: [
-              // user card
-              // SimpleUserCard(
-              //   userName: "Nom de l'utilisateur",
-              //   userProfilePic: AssetImage("assets/profilpic.png"),
-              // ),
               SettingsGroup(
                 items: [
                   SettingsItem(
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) =>   Profile( userType: userType.toString(), userID: userId.toString(),
+                        MaterialPageRoute(builder: (context) => Profile( userType: userType.toString(), userID: userId.toString(),
                         )),
                       );
                     },
@@ -106,16 +91,16 @@ class SettingsPageExecutive extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => BusinessPage(userType: userType.toString(), userId: userId.toString(),)),
+                        MaterialPageRoute(builder: (context) => Activity(userType: userType.toString(), userId: userId.toString(),)),
                       );
                     },
-                    icons: CupertinoIcons.calendar,
+                    icons: CupertinoIcons.person_2,
                     iconStyle: IconStyle(
                       iconsColor: Colors.white,
                       withBackground: true,
                       backgroundColor: Colors.pink[400],
                     ),
-                    title: 'Business',
+                    title: 'Reference',
                     titleStyle: Theme.of(context).textTheme.bodyMedium,
                     // subtitle:'Profile Image, Name, Income',
                     titleMaxLine: 1,
@@ -192,25 +177,6 @@ class SettingsPageExecutive extends StatelessWidget {
                     titleStyle: Theme.of(context).textTheme.bodyMedium,
                     //subtitle: "Lock Ziar'App to improve your privacy",
                   ),
-/*
-                  SettingsItem(
-                    onTap: () {},
-                    icons: Icons.dark_mode_rounded,
-                    iconStyle: IconStyle(
-                      iconsColor: Colors.white,
-                      withBackground: true,
-                      backgroundColor: Colors.red,
-                    ),
-                    title: 'Dark mode',
-                    //subtitle: "Automatic",
-                    trailing: Switch.adaptive(
-                      value: Theme.of(context).brightness == Brightness.dark,
-                      onChanged: (value) {
-
-                      },
-                    ),
-                  ),
-*/
                 ],
               ),
               SettingsGroup(

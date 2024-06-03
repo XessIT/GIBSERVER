@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:gipapp/settings_page_executive.dart';
 import 'package:gipapp/video_player.dart';
 import 'package:http_parser/http_parser.dart';
 
@@ -39,11 +40,15 @@ class _MyGalleryState extends State<MyGallery> {
           iconTheme: const IconThemeData(color: Colors.white),
           leading: IconButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) =>  NavigationBarExe(userType: widget.userType, userId: widget.userId,)));
+                Navigator.push(context, MaterialPageRoute(builder: (context) =>  SettingsPageExecutive(userType: widget.userType, userId: widget.userId,)));
               },
               icon: const Icon(Icons.navigate_before)),
         ),
         body: PopScope(
+          canPop: false,
+          onPopInvoked: (didPop)  {
+            Navigator.push(context, MaterialPageRoute(builder: (context) =>  SettingsPageExecutive(userType: widget.userType, userId: widget.userId,)));
+          },
           child: Column(
             children:   [
               const TabBar(
@@ -396,7 +401,7 @@ class _VideoState extends State<Video> {
 
         // Fetch thumbnails for each video
         for (int i = 0; i < _videos.length; i++) {
-         // _fetchThumbnail(i);
+        //  _fetchThumbnail(i);
         }
       });
     } else {
@@ -419,7 +424,6 @@ class _VideoState extends State<Video> {
       print('Failed to fetch thumbnail for video: $videoPath');
     }
   }*/
-
 
   Future<void> _deleteVideo(int videoIndex) async {
     int videoId = _videos[videoIndex]['id'];
