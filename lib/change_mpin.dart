@@ -162,7 +162,7 @@ class _ChangeState extends State<Change> {
       appBar: AppBar(
         // Appbar title
         title: Text('Change M-Pin', style: Theme.of(context).textTheme.displayLarge),
-        centerTitle: true,
+
         leading: IconButton(
             onPressed: () {
               Navigator.push(
@@ -402,7 +402,7 @@ class _ChangeState extends State<Change> {
                         }
                       },
                       child: const Text(
-                        'Submit',
+                        'Update',
                         style: TextStyle(color: Colors.white),
                       )),
                   const SizedBox(

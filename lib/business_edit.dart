@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gipapp/profile.dart';
@@ -244,10 +245,11 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
     return Scaffold(
       appBar: AppBar(
         title:  Text('Business Edit Profile',style: Theme.of(context).textTheme.displayLarge,),
-        centerTitle: true,
+        //centerTitle: true,
         iconTheme:  const IconThemeData(
           color: Colors.white, // Set the color for the drawer icon
         ),
+
       ),
       body: SingleChildScrollView(
         child: Center(
@@ -258,13 +260,17 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
                   const SizedBox(height: 10,),
                   Text('Business Information',
                     style: Theme.of(context).textTheme.bodySmall,),
-                  const SizedBox(width: 20,),
+                  const SizedBox(height: 20,),
                   InkWell(
                     child: ClipOval(
-                      child: Container(
-                        width: 150,
-                        height: 150,
-                        child: selectedImage == null ? Image.network(image) : Image.memory(selectedImage!),
+                      child: CachedNetworkImage(
+                        imageUrl: image, // Your network image URL
+                        placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                        errorWidget: (context, url, error) => Icon(Icons.error),
+                        cacheKey: image + DateTime.now().toString(), // Unique cache key
+                        fadeOutDuration: Duration(milliseconds: 200), // Smooth fade-out
+                        fadeInDuration: Duration(milliseconds: 200), // Smooth fade-in
+                        filterQuality: FilterQuality.high, // Maintain image quality
                       ),
                     ),
                     onTap: () {
@@ -288,7 +294,6 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
                       );
                     },
                   ),
-
                   const SizedBox(height: 10,),
                   Container(
                     width: 320,
@@ -509,7 +514,7 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
                       // Save button starts
                       MaterialButton(
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)  ),
-                          minWidth: 130,
+                          minWidth: 250,
                           height: 50,
                           color: Colors.green[800],
                           onPressed: () async {
