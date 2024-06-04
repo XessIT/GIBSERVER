@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
+import 'package:gipapp/Non_exe_pages/settings_non_executive.dart';
+import 'package:gipapp/settings_page_executive.dart';
 import 'Non_exe_pages/non_exe_home.dart';
 import 'blood_group_list.dart';
 import 'guest_home.dart';
+import 'guest_settings.dart';
 import 'home.dart';
-import 'home1.dart';
 
 class BloodGroup extends StatelessWidget {
   final String? userType;
   final String? userId;
-  const BloodGroup({Key? key, required this.userType, required this.userId})
-      : super(key: key);
+  const BloodGroup({super.key, required this.userType, required this.userId});
 
   @override
   Widget build(BuildContext context) {
@@ -25,17 +24,18 @@ class BloodGroup extends StatelessWidget {
 class Blood extends StatefulWidget {
   final String userType;
   final String? userId;
-  const Blood({Key? key, required this.userType, required this.userId})
-      : super(key: key);
+  const Blood({super.key, required this.userType, required this.userId});
 
   @override
   State<Blood> createState() => _BloodState();
 }
 
+
+
+
 class _BloodState extends State<Blood> {
   @override
   Widget build(BuildContext context) {
-    var w = MediaQuery.of(context).size.height;
 
     return Scaffold(
 
@@ -55,7 +55,7 @@ class _BloodState extends State<Blood> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => NavigationBarNon(
+                        builder: (context) => SettingsPageNon(
                               userType: widget.userType.toString(),
                               userId: widget.userId.toString(),
                             )));
@@ -64,7 +64,7 @@ class _BloodState extends State<Blood> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => GuestHome(
+                        builder: (context) => GuestSettings(
                               userType: widget.userType.toString(),
                               userId: widget.userId.toString(),
                             )));
@@ -73,22 +73,15 @@ class _BloodState extends State<Blood> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => NavigationBarExe(
+                        builder: (context) => SettingsPageExecutive(
                               userType: widget.userType.toString(),
                               userId: widget.userId.toString(),
                             )));
               }
             },
-            icon: const Icon(Icons.arrow_back),
+            icon: const Icon(Icons.navigate_before),
           ),
-          centerTitle: true,
         ),
-        // Appbar ends
-
-        // Main content starts here
-        // Appbar ends
-
-        // Main content starts here
         body: PopScope(
           canPop: false,
           onPopInvoked: (didPop) {
@@ -96,7 +89,7 @@ class _BloodState extends State<Blood> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => NavigationBarNon(
+                  builder: (context) => SettingsPageNon(
                     userType: widget.userType.toString(),
                     userId: widget.userId.toString(),
                   ),
@@ -106,7 +99,7 @@ class _BloodState extends State<Blood> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => GuestHome(
+                  builder: (context) => GuestSettings(
                     userType: widget.userType.toString(),
                     userId: widget.userId.toString(),
                   ),
@@ -116,7 +109,7 @@ class _BloodState extends State<Blood> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => NavigationBarExe(
+                  builder: (context) => SettingsPageExecutive(
                     userType: widget.userType.toString(),
                     userId: widget.userId.toString(),
                   ),
@@ -159,8 +152,10 @@ class _BloodState extends State<Blood> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  const BloodList(
+                                                   BloodList(
                                                     bloods: 'A+',
+                                                    userType: widget.userType,
+                                                    userId: widget.userId,
                                                   )),
                                         );
                                       },
@@ -185,12 +180,14 @@ class _BloodState extends State<Blood> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const BloodList(
+                                                 BloodList(
                                                   bloods: 'A-',
+                                                  userType: widget.userType,
+                                                  userId: widget.userId,
                                                 )),
                                       );
                                     },
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.water_drop_rounded,
                                       color: Colors.red,
                                       size: 50,
@@ -211,12 +208,14 @@ class _BloodState extends State<Blood> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const BloodList(
+                                                 BloodList(
                                                   bloods: 'A1+',
+                                                  userType: widget.userType,
+                                                  userId: widget.userId,
                                                 )),
                                       );
                                     },
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.water_drop_rounded,
                                       color: Colors.red,
                                       size: 50,
@@ -229,38 +228,9 @@ class _BloodState extends State<Blood> {
                                   )
                                 ],
                               ),
-                              // Chip(
-                              //   elevation: 20,
-                              //   padding: EdgeInsets.all(8),
-                              //   backgroundColor: Colors.greenAccent[100],
-                              //   shadowColor: Colors.black,
-                              //   avatar: CircleAvatar(
-                              //     child: IconButton(
-                              //       onPressed: () {
-                              //         Navigator.push(
-                              //           context,
-                              //           MaterialPageRoute(
-                              //               builder: (context) => const BloodList(
-                              //                     bloods: 'A1+',
-                              //                   )),
-                              //         );
-                              //       },
-                              //       icon: Icon(
-                              //         Icons.water_drop_rounded,
-                              //         color: Colors.red,
-                              //         size: 50,
-                              //       ),
-                              //     ),
-                              //     //NetworkImage
-                              //   ), //CircleAvatar
-                              //   label: Text(
-                              //     'A',
-                              //     style: Theme.of(context).textTheme.bodyMedium,
-                              //   ), //Text
-                              // ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           Row(
@@ -274,12 +244,14 @@ class _BloodState extends State<Blood> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const BloodList(
+                                                 BloodList(
                                                   bloods: 'A-',
+                                                  userType: widget.userType,
+                                                  userId: widget.userId,
                                                 )),
                                       );
                                     },
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.water_drop_rounded,
                                       color: Colors.red,
                                       size: 50,
@@ -300,12 +272,14 @@ class _BloodState extends State<Blood> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const BloodList(
+                                                 BloodList(
                                                   bloods: 'A2+',
+                                                  userType: widget.userType,
+                                                  userId: widget.userId,
                                                 )),
                                       );
                                     },
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.water_drop_rounded,
                                       color: Colors.red,
                                       size: 50,
@@ -326,12 +300,14 @@ class _BloodState extends State<Blood> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const BloodList(
+                                                 BloodList(
                                                   bloods: 'A2-',
+                                                  userType: widget.userType,
+                                                  userId: widget.userId,
                                                 )),
                                       );
                                     },
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.water_drop_rounded,
                                       color: Colors.red,
                                       size: 50,
@@ -346,7 +322,7 @@ class _BloodState extends State<Blood> {
                               ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           Row(
@@ -360,12 +336,14 @@ class _BloodState extends State<Blood> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const BloodList(
+                                                 BloodList(
                                                   bloods: 'A1B+',
+                                                  userType: widget.userType,
+                                                  userId: widget.userId,
                                                 )),
                                       );
                                     },
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.water_drop_rounded,
                                       color: Colors.red,
                                       size: 50,
@@ -386,12 +364,14 @@ class _BloodState extends State<Blood> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const BloodList(
+                                                 BloodList(
                                                   bloods: 'A1B-',
+                                                  userType: widget.userType,
+                                                  userId: widget.userId,
                                                 )),
                                       );
                                     },
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.water_drop_rounded,
                                       color: Colors.red,
                                       size: 50,
@@ -412,12 +392,14 @@ class _BloodState extends State<Blood> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const BloodList(
+                                                 BloodList(
                                                   bloods: 'A2B+',
+                                                  userType: widget.userType,
+                                                  userId: widget.userId,
                                                 )),
                                       );
                                     },
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.water_drop_rounded,
                                       color: Colors.red,
                                       size: 50,
@@ -432,7 +414,7 @@ class _BloodState extends State<Blood> {
                               ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           Row(
@@ -446,12 +428,14 @@ class _BloodState extends State<Blood> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const BloodList(
+                                                 BloodList(
                                                   bloods: 'A2B-',
+                                                  userType: widget.userType,
+                                                  userId: widget.userId,
                                                 )),
                                       );
                                     },
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.water_drop_rounded,
                                       color: Colors.red,
                                       size: 50,
@@ -472,12 +456,14 @@ class _BloodState extends State<Blood> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const BloodList(
+                                                 BloodList(
                                                   bloods: 'AB+',
+                                                  userType: widget.userType,
+                                                  userId: widget.userId,
                                                 )),
                                       );
                                     },
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.water_drop_rounded,
                                       color: Colors.red,
                                       size: 50,
@@ -497,12 +483,14 @@ class _BloodState extends State<Blood> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const BloodList(
+                                                 BloodList(
                                                   bloods: 'AB-',
+                                                  userType: widget.userType,
+                                                  userId: widget.userId,
                                                 )),
                                       );
                                     },
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.water_drop_rounded,
                                       color: Colors.red,
                                       size: 50,
@@ -517,7 +505,7 @@ class _BloodState extends State<Blood> {
                               ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           Row(
@@ -531,12 +519,14 @@ class _BloodState extends State<Blood> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const BloodList(
+                                                 BloodList(
                                                   bloods: 'B+',
+                                                  userType: widget.userType,
+                                                  userId: widget.userId,
                                                 )),
                                       );
                                     },
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.water_drop_rounded,
                                       color: Colors.red,
                                       size: 50,
@@ -557,12 +547,14 @@ class _BloodState extends State<Blood> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const BloodList(
+                                                 BloodList(
                                                   bloods: 'B-',
+                                                  userType: widget.userType,
+                                                  userId: widget.userId,
                                                 )),
                                       );
                                     },
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.water_drop_rounded,
                                       color: Colors.red,
                                       size: 50,
@@ -583,12 +575,14 @@ class _BloodState extends State<Blood> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const BloodList(
+                                                 BloodList(
                                                   bloods: 'O+',
+                                                  userType: widget.userType,
+                                                  userId: widget.userId,
                                                 )),
                                       );
                                     },
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.water_drop_rounded,
                                       color: Colors.red,
                                       size: 50,
@@ -603,7 +597,7 @@ class _BloodState extends State<Blood> {
                               ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           Row(
@@ -617,12 +611,14 @@ class _BloodState extends State<Blood> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const BloodList(
+                                                 BloodList(
                                                   bloods: 'O-',
+                                                  userType: widget.userType,
+                                                  userId: widget.userId,
                                                 )),
                                       );
                                     },
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.water_drop_rounded,
                                       color: Colors.red,
                                       size: 50,
@@ -643,10 +639,12 @@ class _BloodState extends State<Blood> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const BloodList(bloods: 'BBG')),
+                                                 BloodList(bloods: 'BBG',
+                                                  userType: widget.userType,
+                                                  userId: widget.userId,)),
                                       );
                                     },
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.water_drop_rounded,
                                       color: Colors.red,
                                       size: 50,
@@ -667,11 +665,13 @@ class _BloodState extends State<Blood> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const BloodList(
-                                                    bloods: 'INRA')),
+                                                 BloodList(
+                                                    bloods: 'INRA',
+                                                  userType: widget.userType,
+                                                  userId: widget.userId,)),
                                       );
                                     },
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.water_drop_rounded,
                                       color: Colors.red,
                                       size: 50,

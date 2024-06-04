@@ -3,29 +3,16 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-class GuestHistory extends StatelessWidget {
+class GuestHistory extends StatefulWidget {
   final String userId;
 
   const GuestHistory({Key? key, required this.userId}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SlipHistory(userId: userId),
-    );
-  }
+  State<GuestHistory> createState() => _GuestHistoryState();
 }
 
-class SlipHistory extends StatefulWidget {
-  final String userId;
-
-  const SlipHistory({Key? key, required this.userId}) : super(key: key);
-
-  @override
-  State<SlipHistory> createState() => _SlipHistoryState();
-}
-
-class _SlipHistoryState extends State<SlipHistory> {
+class _GuestHistoryState extends State<GuestHistory> {
   List<Map<String, dynamic>> visitorsFetchdata = [];
 
   @override
@@ -70,13 +57,13 @@ class _SlipHistoryState extends State<SlipHistory> {
 
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
+
         title: Text(
           'Guest History',
           style: Theme
               .of(context)
               .textTheme
-              .bodySmall,
+              .displayLarge,
         ),
         iconTheme: IconThemeData(color: Colors.white),
       ),
@@ -112,9 +99,16 @@ class _SlipHistoryState extends State<SlipHistory> {
                       height: 83,
                     //  padding: const EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
-                          border: Border.all(
-                              color: Colors.green, width: 1),
-                          borderRadius: BorderRadius.circular(10.0)
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 3,
+                            blurRadius: 7,
+                            offset: Offset(0, 3), // changes position of shadow
+                          ),
+                        ],
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -130,7 +124,7 @@ class _SlipHistoryState extends State<SlipHistory> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text("Location: ${visitor["location"]}"),
-                                Text("Time: ${visitor["time"]}"),
+                                Text("Meeting Date: ${visitor["meeting_date"]}"),
                               ],
                             ),
 

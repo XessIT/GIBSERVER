@@ -14,6 +14,7 @@ import 'package:gipapp/year_meeting_details.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'Non_exe_pages/non_exe_home.dart';
 import 'Non_exe_pages/settings_non_executive.dart';
 import 'Offer/offer.dart';
@@ -116,6 +117,15 @@ class _HomepageState extends State<Homepage> {
       });
     });
     super.initState();
+  }
+
+  String _formatDate(String dateStr) {
+    try {
+      DateTime date = DateFormat('yyyy-MM-dd').parse(dateStr);
+      return DateFormat('MMMM-dd,yyyy').format(date);
+    } catch (e) {
+      return dateStr; // Return the original string if parsing fails
+    }
   }
 
   ///refresh
@@ -285,7 +295,6 @@ class _HomepageState extends State<Homepage> {
             "member_type": widget.userType,
             "guestcount": guestcount.text.trim()
           }));
-
       if (res.statusCode == 200) {
         if (res.body.isNotEmpty) {
           try {
@@ -362,14 +371,17 @@ class _HomepageState extends State<Homepage> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => VisitorsSlip(
-                        userId: widget.userId,
-                        meetingId: meetingId,
-                        guestcount: guestcount.text.trim(),
-                        userType: widget.userType,
-                        meeting_date: meetingDate,
-                        user_mobile:
-                            "fetchMobile.toString()", // Replace this with the actual mobile fetching logic if needed
-                      ),
+                          userId: widget.userId,
+                          meetingId: meetingId,
+                          guestcount: guestcount.text.trim(),
+                          userType: widget.userType,
+                          meeting_date: meetingDate,
+                          user_mobile: userdata[0]["mobile"],
+                          user_name:
+                              '${userdata[0]["first_name"] ?? ""} ${userdata[0]["last_name"] ?? ""}',
+                          member_id: userdata[0][
+                              "member_id"] // Replace this with the actual mobile fetching logic if needed
+                          ),
                     ),
                   );
                   print("UserID:-${widget.userId}${widget.userType}");
@@ -417,14 +429,8 @@ class _HomepageState extends State<Homepage> {
           // Handle invalid response data (not a List)
           print('Invalid response data format');
         }
-      } else {
-        // Handle non-200 status code
-        //  print('Error: ${response.statusCode}');
-      }
-    } catch (error) {
-      // Handle other errors
-      // print('Error: $error');
-    }
+      } else {}
+    } catch (error) {}
   }
 
   /// Done By gowtham
@@ -622,7 +628,7 @@ class _HomepageState extends State<Homepage> {
                             data.isEmpty
                                 ? SizedBox.shrink()
                                 : const SizedBox(
-                                    height: 170,
+                                    height: 190,
                                   ),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -712,6 +718,7 @@ class _HomepageState extends State<Homepage> {
                                                                                 () {
                                                                               //store purpose..
                                                                               //registerDateStoreDatabase(id, meetingType, meetingDate, meetingPlace);
+                                                                              Navigator.pop(context);
                                                                               showDialog(
                                                                                   context: context,
                                                                                   builder: (ctx) => Form(
@@ -735,13 +742,18 @@ class _HomepageState extends State<Homepage> {
                                                                                               labelStyle: Theme.of(context).textTheme.displaySmall,
                                                                                               hintText: "Ex:5",
                                                                                             ),
+                                                                                            keyboardType: TextInputType.number,
+                                                                                            inputFormatters: <TextInputFormatter>[
+                                                                                              FilteringTextInputFormatter.digitsOnly,
+                                                                                              LengthLimitingTextInputFormatter(3)
+                                                                                            ],
                                                                                           ),
                                                                                           actions: [
                                                                                             TextButton(
                                                                                                 onPressed: () {
                                                                                                   if (tempKey.currentState!.validate()) {
                                                                                                     print("Guest Count: ${guestcount.text.trim()}");
-                                                                                                    Navigator.push(context, MaterialPageRoute(builder: (context) => VisitorsSlip(userId: widget.userId, meetingId: id, guestcount: guestcount.text.trim(), userType: widget.userType, meeting_date: meetingDate, user_mobile: fetchMobile.toString())));
+                                                                                                    Navigator.push(context, MaterialPageRoute(builder: (context) => VisitorsSlip(userId: widget.userId, meetingId: id, guestcount: guestcount.text.trim(), userType: widget.userType, meeting_date: meetingDate, user_mobile: userdata[0]["mobile"], user_name: '${userdata[0]["first_name"] ?? ""} ${userdata[0]["last_name"] ?? ""}', member_id: userdata[0]["member_id"])));
                                                                                                     print("UserID:-${widget.userId}${widget.userType}");
                                                                                                     registerDateStoreDatabase(id, meetingType, meetingDate, meetingPlace);
                                                                                                   }
@@ -893,8 +905,6 @@ class _HomepageState extends State<Homepage> {
                                 ),
                               ),
                             ),
-
-                            /// offer
                             Container(
                               height: MediaQuery.of(context).size.height *
                                   0.6, // Adjust the height as needed
@@ -903,6 +913,7 @@ class _HomepageState extends State<Homepage> {
                                   itemBuilder: (context, i) {
                                     String imageUrl =
                                         'http://mybudgetbook.in/GIBAPI/${data1[i]["offer_image"]}';
+
                                     String dateString = data1[i][
                                         'validity']; // This will print the properly encoded URL
                                     DateTime dateTime = DateFormat('yyyy-MM-dd')
@@ -913,25 +924,29 @@ class _HomepageState extends State<Homepage> {
                                           padding: const EdgeInsets.all(8.0),
                                           child: Column(
                                             children: [
+                                              // MAIN ROW STARTS
                                               Stack(
                                                 children: [
                                                   Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment.start,
                                                     children: [
-                                                      //CIRCLEAVATAR STARTS
-                                                      CircleAvatar(
-                                                        radius: 30.0,
-                                                        backgroundColor:
-                                                            Colors.cyan,
-                                                        backgroundImage:
-                                                            CachedNetworkImageProvider(
-                                                                imageUrl),
-                                                        //IMAGE STARTS CIRCLEAVATAR
-                                                        //  Image.network('${data[i]['offer_image']}').image,
+                                                      // CIRCLEAVATAR STARTS
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: CircleAvatar(
+                                                          radius: 30.0,
+                                                          backgroundColor:
+                                                              Colors.cyan,
+                                                          backgroundImage:
+                                                              NetworkImage(
+                                                                  imageUrl),
+                                                        ),
                                                       ),
-                                                      //END CIRCLEAVATAR
-                                                      const SizedBox(width: 20),
+                                                      SizedBox(width: 20),
+                                                      // END CIRCLEAVATAR
                                                       Column(
                                                         crossAxisAlignment:
                                                             CrossAxisAlignment
@@ -981,6 +996,7 @@ class _HomepageState extends State<Homepage> {
                                                       ),
                                                     ],
                                                   ),
+                                                  // Banner in the top right side
                                                   data1[i]['discount']
                                                           .toString()
                                                           .isEmpty
@@ -991,7 +1007,7 @@ class _HomepageState extends State<Homepage> {
                                                               8, // Adjust position if needed
                                                           child: Container(
                                                             decoration:
-                                                                const BoxDecoration(
+                                                                BoxDecoration(
                                                               color: Colors
                                                                   .red, // Change the color here
                                                               borderRadius:
@@ -1005,9 +1021,8 @@ class _HomepageState extends State<Homepage> {
                                                                         10.0),
                                                               ),
                                                             ),
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
                                                                     horizontal:
                                                                         6.0,
                                                                     vertical:
@@ -1017,7 +1032,7 @@ class _HomepageState extends State<Homepage> {
                                                                 Text(
                                                                   '${data1[i]['discount']}% off', // Text for your banner
                                                                   style:
-                                                                      const TextStyle(
+                                                                      TextStyle(
                                                                     color: Colors
                                                                         .white, // Change the text color here
                                                                     fontWeight:
@@ -1080,7 +1095,7 @@ class _HomepageState extends State<Homepage> {
                   right: 1,
                   child: Card(
                     child: SizedBox(
-                      height: 80,
+                      //height: 80,
                       child: Row(
                         children: [
                           Padding(
@@ -1100,22 +1115,59 @@ class _HomepageState extends State<Homepage> {
                                 const SizedBox(height: 10),
                                 Text(
                                   userdata.isNotEmpty
-                                      ? userdata[0]["first_name"]
+                                      ? '${userdata[0]["first_name"] ?? ""} ${userdata[0]["last_name"] ?? ""}'
                                       : "",
                                   style: GoogleFonts.aBeeZee(
                                     fontSize: 20,
-                                    color: Colors.indigo,
+                                    color: Colors.green,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 Text(
-                                  'Executive Member',
+                                  userdata.isNotEmpty
+                                      ? 'GiB ID - ${userdata[0]["member_id"] ?? ""} '
+                                      : "",
                                   style: GoogleFonts.aBeeZee(
                                     fontSize: 10,
-                                    color: Colors.indigo,
+                                    color: Colors.black,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
+                                if (userdata.isNotEmpty &&
+                                    (userdata[0]["team_name"]?.isNotEmpty ??
+                                        false))
+                                  Text(
+                                    'Team - ${userdata[0]["team_name"] ?? ""}',
+                                    style: GoogleFonts.aBeeZee(
+                                      fontSize: 10,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                Text(
+                                  userdata.isNotEmpty
+                                      ? '${userdata[0]["member_type"] ?? ""} - ${userdata[0]["member_category"] ?? ""}'
+                                      : "",
+                                  style: GoogleFonts.aBeeZee(
+                                    fontSize: 10,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                if (userdata.isNotEmpty &&
+                                    (userdata[0]["due_date"]?.isNotEmpty ??
+                                        false))
+                                  Text(
+                                    'Due Date - ${_formatDate(userdata[0]["due_date"])}',
+                                    style: GoogleFonts.aBeeZee(
+                                      fontSize: 10,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                SizedBox(
+                                  height: 10,
+                                )
                               ],
                             ),
                           ),

@@ -1,7 +1,10 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
+import 'package:gipapp/settings_page_executive.dart';
 import 'package:intl/intl.dart';
 
 import 'Non_exe_pages/non_exe_home.dart';
+import 'Non_exe_pages/settings_non_executive.dart';
 import 'guest_home.dart';
 import 'home.dart';
 import 'home1.dart';
@@ -25,26 +28,15 @@ class _AttendancePageState extends State<AttendancePage> {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title:  Text('Attendance'),
-          centerTitle: true,
+          title:  Text('Attendance', style: Theme.of(context).textTheme.displayLarge,),
+          iconTheme: const IconThemeData(color: Colors.white), // Set the color for the drawer icon),
           leading:IconButton(
               onPressed: () {
                 if (widget.userType == "Non-Executive") {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => NavigationBarNon(
-                        userType: widget.userType.toString(),
-                        userId: widget.userID.toString(),
-                      ),
-                    ),
-                  );
-                }
-                else if (widget.userType == "Guest") {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => GuestHome(
+                      builder: (context) => SettingsPageNon(
                         userType: widget.userType.toString(),
                         userId: widget.userID.toString(),
                       ),
@@ -55,70 +47,56 @@ class _AttendancePageState extends State<AttendancePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => NavigationBarExe(
+                      builder: (context) => SettingsPageExecutive(
                         userType: widget.userType.toString(),
                         userId: widget.userID.toString(),
                       ),
                     ),
                   );
                 }
-                },
-              icon: const Icon(Icons.arrow_back)),
+              },
+              icon: const Icon(Icons.navigate_before)),
         ),
         body:PopScope(
           canPop: false,
-            onPopInvoked: (didPop)  {
-              if (widget.userType == "Non-Executive") {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => NavigationBarNon(
-                      userType: widget.userType.toString(),
-                      userId: widget.userID.toString(),
-                    ),
+          onPopInvoked: (didPop)  {
+            if (widget.userType == "Non-Executive") {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SettingsPageNon(
+                    userType: widget.userType.toString(),
+                    userId: widget.userID.toString(),
                   ),
-                );
-              }
-              else if (widget.userType == "Guest") {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => GuestHome(
-                      userType: widget.userType.toString(),
-                      userId: widget.userID.toString(),
-                    ),
+                ),
+              );
+            }
+            else{
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SettingsPageExecutive(
+                    userType: widget.userType.toString(),
+                    userId: widget.userID.toString(),
                   ),
-                );
-              }
-              else{
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => NavigationBarExe(
-                      userType: widget.userType.toString(),
-                      userId: widget.userID.toString(),
-                    ),
-                  ),
-                );
-              }
-            },
+                ),
+              );
+            }
+          },
 
           child:  Column(
               children: [
-
-                //TABBAR STARTS
                 TabBar(
                   isScrollable: true,
                   labelColor: Colors.green.shade100,
                   unselectedLabelColor: Colors.black,
-                  tabs: [
+                  tabs: const [
                     Tab(text: ('Network Meeting'),),
                     Tab(text: ('Team Meeting') ,),
                     Tab(text:('Training Program'),
                     ),
                   ],
-                )  ,
-                //TABBAR VIEW STARTS
+                ),
                 Expanded(
                   child: TabBarView(children: [
                     NetworkAttendance(userType: widget.userType, userID: widget.userID,),
@@ -156,9 +134,64 @@ class _NetworkAttendanceState extends State<NetworkAttendance> {
   List<dynamic> absentMeetings = [];
   List<dynamic> leaveMeetings = [];
 
+  var _connectivityResult = ConnectivityResult.none;
+  Future<void> _checkConnectivityAndGetData() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectivityResult;
+    });
+    if (_connectivityResult != ConnectivityResult.none) {
+      _getInternet();
+    }
+  }
+  Future<void> _getInternet() async {
+    // Replace the URL with your PHP backend URL
+    var url = 'http://mybudgetbook.in/GIBAPI/internet.php';
+
+    try {
+      var response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        // Handle successful response
+        var data = json.decode(response.body);
+        print(data);
+      } else {
+        // Handle other status codes
+        print('Request failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle network errors
+      print('Error: $e');
+      // Show offline status message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please check your internet connection.'),
+        ),
+      );
+    }
+  }
+  bool isLoading = true;
+  ///refresh
+  List<String> items = List.generate(20, (index) => 'Item $index');
+  Future<void> _refresh() async {
+    await Future.delayed(const Duration(seconds: 1));
+    setState(() {
+      initState();
+    });
+  }
   @override
   void initState() {
     super.initState();
+    _checkConnectivityAndGetData();
+    Connectivity().onConnectivityChanged.listen((result) {
+      setState(() {
+        _connectivityResult = result;
+      });
+    });
+    Future.delayed(const Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
     fetchMeetCount(selectedYear,widget.userType);
     if (widget.userID != null) {
       fetchPresentAndAbsentCount(selectedYear, widget.userID!,  widget.userType);
@@ -387,11 +420,20 @@ class _NetworkAttendanceState extends State<NetworkAttendance> {
                           ? absentMeetings[index]
                           : leaveMeetings[index];
                       return ListTile(
-                        title: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                        title: Column(
                           children: [
-                            const Icon(Icons.meeting_room),
-                            Text('${meeting['meeting_type']}'),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('${index + 1}'),
+                                Row(
+                                  children: [
+                                    const Icon(Icons.calendar_month_rounded),
+                                    Text('${meeting['meeting_type']}'),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                         subtitle: Column(
@@ -688,11 +730,16 @@ class _TeamMeetingPageState extends State<TeamMeetingPage> {
                           ? absentMeetings[index]
                           : leaveMeetings[index];
                       return ListTile(
-                        title: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                        title:  Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Icon(Icons.meeting_room),
-                            Text('${meeting['meeting_type']}'),
+                            Text('${index + 1}'),
+                            Row(
+                              children: [
+                                const Icon(Icons.calendar_month_rounded),
+                                Text('${meeting['meeting_type']}'),
+                              ],
+                            ),
                           ],
                         ),
                         subtitle: Column(
@@ -990,11 +1037,16 @@ class _TrainingProgramState extends State<TrainingProgram> {
                           ? absentMeetings[index]
                           : leaveMeetings[index];
                       return ListTile(
-                        title: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                        title:  Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Icon(Icons.meeting_room),
-                            Text('${meeting['meeting_type']}'),
+                            Text('${index + 1}'),
+                            Row(
+                              children: [
+                                const Icon(Icons.calendar_month_rounded),
+                                Text('${meeting['meeting_type']}'),
+                              ],
+                            ),
                           ],
                         ),
                         subtitle: Column(

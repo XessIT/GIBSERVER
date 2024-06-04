@@ -10,39 +10,14 @@ import 'business_slip_history.dart';
 class G2GHistory extends StatefulWidget {
   final String? userType;
   final String? userId;
-
   G2GHistory({
     super.key, required this.userType, required this.userId
   });
-
   @override
   State<G2GHistory> createState() => _G2GHistoryState();
 }
 
 class _G2GHistoryState extends State<G2GHistory> {
-  @override
-  Widget build(BuildContext context) {
-    return  Scaffold(
-      body: SlipHistory(userType: widget.userType, userId: widget.userId,),
-
-    );
-  }
-}
-
-
-
-
-class SlipHistory extends StatefulWidget {
-  final String? userType;
-  final String? userId;
-  SlipHistory({
-    super.key, required this.userType, required this.userId
-  });
-  @override
-  State<SlipHistory> createState() => _SlipHistoryState();
-}
-
-class _SlipHistoryState extends State<SlipHistory> {
   String? uid="";
   String? mobile ="";
   String? firstname ="";
@@ -109,21 +84,28 @@ class _SlipHistoryState extends State<SlipHistory> {
     }
   }
 
-
+  bool isLoading = true;
   @override
   void initState() {
     fetchData();
     super.initState();
+    Future.delayed(const Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('G2G Slip History', style: TextStyle(color: Colors.white),),
+        title:  Text('G2G Slip History', style: Theme.of(context).textTheme.displayLarge,),
         centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
+
       ),
-      body:ListView.builder(
+      body:isLoading ? const Center(child: CircularProgressIndicator(),)
+          :  ListView.builder(
           itemCount: data.length,
           itemBuilder: (context, i) {
             return Center(

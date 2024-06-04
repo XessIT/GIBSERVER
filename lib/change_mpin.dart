@@ -2,8 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gipapp/Non_exe_pages/settings_non_executive.dart';
+import 'package:gipapp/settings_page_executive.dart';
 import 'Non_exe_pages/non_exe_home.dart';
 import 'guest_home.dart';
+import 'guest_settings.dart';
 import 'home.dart';
 import 'login.dart';
 import 'package:http/http.dart' as http;
@@ -106,10 +109,37 @@ class _ChangeState extends State<Change> {
       if (response.statusCode == 200) {
         print("Response Status: ${response.statusCode}");
         print("Response Body: ${response.body}");
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => Login()),
-        );
+        if (widget.userType == "Non-Executive") {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => NavigationBarNon(
+                userType: widget.userType.toString(),
+                userId: widget.userID.toString(),
+              ),
+            ),
+          );
+        } else if (widget.userType == "Guest") {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => GuestSettings(
+                userType: widget.userType.toString(),
+                userId: widget.userID.toString(),
+              ),
+            ),
+          );
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => NavigationBarExe(
+                userType: widget.userType.toString(),
+                userId: widget.userID.toString(),
+              ),
+            ),
+          );
+        }
       } else {
         print('Error: ${response.statusCode}');
       }
@@ -134,7 +164,7 @@ class _ChangeState extends State<Change> {
       appBar: AppBar(
         // Appbar title
         title: Text('Change M-Pin', style: Theme.of(context).textTheme.displayLarge),
-        centerTitle: true,
+
         leading: IconButton(
             onPressed: () {
               Navigator.push(
@@ -143,17 +173,17 @@ class _ChangeState extends State<Change> {
                   builder: (context) {
                     switch (widget.userType) {
                       case "Non-Executive":
-                        return NavigationBarNon(
+                        return SettingsPageNon(
                           userType: widget.userType,
                           userId: widget.userID,
                         );
                       case "Guest":
-                        return GuestHome(
+                        return GuestSettings(
                           userType: widget.userType,
                           userId: widget.userID,
                         );
                       default:
-                        return NavigationBarExe(
+                        return SettingsPageExecutive(
                           userType: widget.userType,
                           userId: widget.userID,
                         ); // Placeholder, replace with appropriate widget
@@ -162,7 +192,7 @@ class _ChangeState extends State<Change> {
                 ),
               );
             },
-            icon: const Icon(Icons.arrow_back)),
+            icon: const Icon(Icons.navigate_before)),
         iconTheme: const IconThemeData(
           color: Colors.white, // Set the color for the drawer icon
         ),
@@ -177,7 +207,7 @@ class _ChangeState extends State<Change> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => NavigationBarNon(
+                builder: (context) => SettingsPageNon(
                   userType: widget.userType.toString(),
                   userId: widget.userID.toString(),
                 ),
@@ -187,7 +217,7 @@ class _ChangeState extends State<Change> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => GuestHome(
+                builder: (context) => GuestSettings(
                   userType: widget.userType.toString(),
                   userId: widget.userID.toString(),
                 ),
@@ -197,7 +227,7 @@ class _ChangeState extends State<Change> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => NavigationBarExe(
+                builder: (context) => SettingsPageExecutive(
                   userType: widget.userType.toString(),
                   userId: widget.userID.toString(),
                 ),
@@ -374,7 +404,7 @@ class _ChangeState extends State<Change> {
                         }
                       },
                       child: const Text(
-                        'Submit',
+                        'Update',
                         style: TextStyle(color: Colors.white),
                       )),
                   const SizedBox(

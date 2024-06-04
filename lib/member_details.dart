@@ -2,15 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:gipapp/video_player.dart';
 
 
-class Details extends StatelessWidget {
+class Details extends StatefulWidget {
+
   Details(this.itemId, {Key? key}) : super(key: key){}
 
   String itemId;
-  late Map data;
-  String? email ="";
-  String? mobile="";
-  //bool isVisible;
 
+  @override
+  State<Details> createState() => _DetailsState();
+}
+
+class _DetailsState extends State<Details> {
+  late Map data;
+
+  String? email ="";
+
+  String? mobile="";
+
+  //bool isVisible;
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -32,7 +41,7 @@ class Details extends StatelessWidget {
                             InkWell(
                                 onTap: (){
                                   Navigator.push(context, MaterialPageRoute(
-                                      builder: (context) => GalleryTab(itemId: itemId,)));
+                                      builder: (context) => GalleryTab(itemId: widget.itemId,)));
                                 },
                                 child: Tab(text: "Gallery",))
                           ]),
@@ -390,7 +399,7 @@ class Details extends StatelessWidget {
                               ),
                             ),
                             // Personal(),
-                            BusinessTab(itemId),
+                            BusinessTab(widget.itemId),
                           ],
                         ),
                       ),

@@ -1,3 +1,5 @@
+import 'dart:core';
+
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:babstrap_settings_screen/babstrap_settings_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,7 +16,9 @@ import '../gib_gallery.dart';
 import '../gib_members.dart';
 import '../login.dart';
 import '../profile.dart';
+import 'about_view.dart';
 import 'business.dart';
+import 'change_mpin.dart';
 import 'home.dart';
 import 'meeting.dart';
 import 'my_activity.dart';
@@ -33,24 +37,13 @@ class SettingsPageExecutive extends StatelessWidget {
           ? Colors.white
           : Colors.black,
       appBar: AppBar(
-        centerTitle: true,
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             color: Colors.green,
-/*
-              gradient: LinearGradient(
-                begin: Alignment.topRight,
-                end: Alignment.bottomLeft,
-                colors: [
-                  Colors.green,
-                  Color(0xFF8155BA),
-                ],
-              )
-*/
           ),
         ),
         title: Text(
-          "Settings",
+          "Account",
           style: Theme.of(context).textTheme.displayLarge,
         ),
         leading: IconButton(
@@ -84,11 +77,6 @@ class SettingsPageExecutive extends StatelessWidget {
           padding: const EdgeInsets.all(10),
           child: ListView(
             children: [
-              // user card
-              // SimpleUserCard(
-              //   userName: "Nom de l'utilisateur",
-              //   userProfilePic: AssetImage("assets/profilpic.png"),
-              // ),
               SettingsGroup(
                 items: [
                   SettingsItem(
@@ -115,19 +103,19 @@ class SettingsPageExecutive extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => BusinessPage(
+                            builder: (context) => Activity(
                                   userType: userType.toString(),
                                   userId: userId.toString(),
                                 )),
                       );
                     },
-                    icons: CupertinoIcons.calendar,
+                    icons: CupertinoIcons.person_2,
                     iconStyle: IconStyle(
                       iconsColor: Colors.white,
                       withBackground: true,
                       backgroundColor: Colors.pink[400],
                     ),
-                    title: 'Business',
+                    title: 'Reference',
                     titleStyle: Theme.of(context).textTheme.bodyMedium,
                     // subtitle:'Profile Image, Name, Income',
                     titleMaxLine: 1,
@@ -161,8 +149,9 @@ class SettingsPageExecutive extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => MyGallery(
+                            builder: (context) => Gallery(
                                   userId: userId.toString(),
+                                  userType: userType.toString(),
                                 )),
                       );
                     },
@@ -220,25 +209,6 @@ class SettingsPageExecutive extends StatelessWidget {
                     titleStyle: Theme.of(context).textTheme.bodyMedium,
                     //subtitle: "Lock Ziar'App to improve your privacy",
                   ),
-/*
-                  SettingsItem(
-                    onTap: () {},
-                    icons: Icons.dark_mode_rounded,
-                    iconStyle: IconStyle(
-                      iconsColor: Colors.white,
-                      withBackground: true,
-                      backgroundColor: Colors.red,
-                    ),
-                    title: 'Dark mode',
-                    //subtitle: "Automatic",
-                    trailing: Switch.adaptive(
-                      value: Theme.of(context).brightness == Brightness.dark,
-                      onChanged: (value) {
-
-                      },
-                    ),
-                  ),
-*/
                 ],
               ),
               SettingsGroup(
@@ -248,7 +218,7 @@ class SettingsPageExecutive extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => GibGallery(
+                            builder: (context) => ViewPhotosPage(
                                   userType: userType.toString(),
                                   userID: userId.toString(),
                                 )),
@@ -385,55 +355,57 @@ class SettingsPageExecutive extends StatelessWidget {
                     ),
                     title: 'Blood Group',
                     titleStyle: Theme.of(context).textTheme.bodyMedium,
+                    // subtitle:'Profile Image, Name, Income',
                     titleMaxLine: 1,
                     subtitleMaxLine: 1,
                   ),
                   SettingsItem(
-                    onTap: () {
+                    onTap: () => {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => Activity(
+                            builder: (context) => AboutTab(
                                   userId: userId.toString(),
                                   userType: userType.toString(),
                                 )),
-                      );
+                      )
                     },
-                    icons: Icons.question_mark_outlined,
+                    icons: CupertinoIcons.photo_on_rectangle,
                     iconStyle: IconStyle(
-                      backgroundColor: Colors.purple,
+                      iconsColor: Colors.white,
+                      withBackground: true,
+                      backgroundColor: Colors.green,
                     ),
-                    title: 'Reference',
-                    //subtitle: "Learn more about Ziar'App",
+                    title: 'About GIB',
+                    titleStyle: Theme.of(context).textTheme.bodyMedium,
+                    // subtitle:'Profile Image, Name, Income',
+                    titleMaxLine: 1,
+                    subtitleMaxLine: 1,
+                  ),
+                  SettingsItem(
+                    onTap: () => {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Change(
+                                userType: userType.toString(),
+                                userID: userId.toString())),
+                      )
+                    },
+                    icons: Icons.fingerprint,
+                    iconStyle: IconStyle(
+                      iconsColor: Colors.white,
+                      withBackground: true,
+                      backgroundColor: Colors.green,
+                    ),
+                    title: 'Change M-PIN',
+                    titleStyle: Theme.of(context).textTheme.bodyMedium,
+                    // subtitle:'Profile Image, Name, Income',
+                    titleMaxLine: 1,
+                    subtitleMaxLine: 1,
                   ),
                 ],
               ),
-              /* SettingsGroup(
-                items: [
-                  SettingsItem(
-                    onTap: () {
-
-                    },
-                    icons: Icons.question_mark_outlined,
-                    iconStyle: IconStyle(
-                      backgroundColor: Colors.purple,
-                    ),
-                    title: 'FAQ',
-                    //subtitle: "Learn more about Ziar'App",
-                  ),
-                  SettingsItem(
-                    onTap: () {
-
-                    },
-                    icons: Icons.star_rate_rounded,
-                    iconStyle: IconStyle(
-                      backgroundColor: Colors.teal,
-                    ),
-                    title: 'Feedback',
-                    //  subtitle: "Learn more about Ziar'App",
-                  ),
-                ],
-              ),*/
               // You can add a settings title
               SettingsGroup(
                 // settingsGroupTitle: "Account",
@@ -488,7 +460,12 @@ class SettingsPageExecutive extends StatelessWidget {
                       ).show();
                     },
                     icons: Icons.exit_to_app_rounded,
-                    title: "Sign Out",
+                    iconStyle: IconStyle(
+                      iconsColor: Colors.white,
+                      withBackground: true,
+                      backgroundColor: Colors.red,
+                    ),
+                    title: "Log Out",
                     titleStyle: Theme.of(context).textTheme.bodyMedium,
                   ),
                   /* SettingsItem(

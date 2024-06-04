@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -16,6 +17,7 @@ class EditOffer extends StatefulWidget {
   final String? currentvalidity;
   final String? Id;
   final String user_id;
+  final String userType;
 
   EditOffer({Key? key,
     required this.currentimage,
@@ -24,7 +26,8 @@ class EditOffer extends StatefulWidget {
     required this.currentDiscount,
     required this.currentvalidity,
     required this.Id,
-    required this.user_id
+    required this.user_id,
+    required this.userType
   }) : super(key: key);
 
   @override
@@ -56,24 +59,23 @@ class _EditOfferState extends State<EditOffer> {
     type = widget.currenttype;
     image = widget.currentimage!;
     imageUrl = 'http://mybudgetbook.in/GIBAPI/$image';
+
+    _checkConnectivityAndGetData();
+    Connectivity().onConnectivityChanged.listen((result) {
+      setState(() {
+        _connectivityResult = result;
+      });
+    });
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
   }
   String? image = "";
   String imageUrl = "";
   bool showLocalImage = false;
   File? pickedimage;
-  /*pickImageFromGallery() async {
-    ImagePicker imagepicker = ImagePicker();
-    XFile? file = await imagepicker.pickImage(source: ImageSource.gallery);
-    showLocalImage = true;
-    print('${file?.path}');
-    pickedimage = File(file!.path);
-    setState(() {
-
-    });
-    if(file == null) return;
-    String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
-
-  }*/
 
   late String imageName;
   late String imageData;
@@ -181,7 +183,56 @@ class _EditOfferState extends State<EditOffer> {
       // Handle error as needed
     }
   }
+  var _connectivityResult = ConnectivityResult.none;
+  Future<void> _checkConnectivityAndGetData() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectivityResult;
+    });
+    if (_connectivityResult != ConnectivityResult.none) {
+      _getInternet();
+    }
+  }
+  Future<void> _getInternet() async {
+    // Replace the URL with your PHP backend URL
+    var url = 'http://mybudgetbook.in/BUDGETAPI/internet.php';
 
+    try {
+      var response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        // Handle successful response
+        var data = json.decode(response.body);
+        print(data);
+        // Show online status message
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(
+        //     content: Text('Now online.'),
+        //   ),
+        // );
+      } else {
+        // Handle other status codes
+        print('Request failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle network errors
+      print('Error: $e');
+      // Show offline status message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please check your internet connection.'),
+        ),
+      );
+    }
+  }
+  bool isLoading = true;
+  ///refresh
+  List<String> items = List.generate(20, (index) => 'Item $index');
+  Future<void> _refresh() async {
+    await Future.delayed(const Duration(seconds: 1));
+    setState(() {
+
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -364,7 +415,7 @@ class _EditOfferState extends State<EditOffer> {
                         else if (_formKey.currentState!.validate()) {
                           selectedImage != null ? Editoffers() : UpdateOffers();
                           Navigator.push(context,
-                            MaterialPageRoute(builder: (context)=> OfferList(userId: widget.user_id)),);
+                            MaterialPageRoute(builder: (context)=> OfferList(userId: widget.user_id, userType: widget.userType,)),);
                           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                               content: Text("Successfully Updated a Offer")));
                         }

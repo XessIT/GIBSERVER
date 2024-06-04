@@ -3,17 +3,9 @@ import 'package:babstrap_settings_screen/babstrap_settings_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../Offer/offer.dart';
-import '../attendance.dart';
-import '../attendance_scanner.dart';
 import '../blood_group.dart';
-import '../gib_achievements.dart';
 import '../gib_doctors.dart';
-import '../gib_gallery.dart';
-import '../gib_members.dart';
 import '../login.dart';
-import '../profile.dart';
 import 'about_view.dart';
 import 'change_mpin.dart';
 import 'guest_home.dart';
@@ -32,7 +24,6 @@ class GuestSettings extends StatelessWidget {
           ? Colors.white
           : Colors.black,
       appBar: AppBar(
-        centerTitle: true,
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             color: Colors.green,
@@ -49,7 +40,7 @@ class GuestSettings extends StatelessWidget {
           ),
         ),
         title: Text(
-          "Settings",
+          "Account",
           style: Theme.of(context).textTheme.displayLarge,
         ),
         leading: IconButton(
@@ -99,25 +90,8 @@ class GuestSettings extends StatelessWidget {
                     titleMaxLine: 1,
                     subtitleMaxLine: 1,
                   ),
+
                  /* SettingsItem(
-                    // onTap: () {
-                    //   Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) => const AttendanceScanner()),
-                    //   );
-                    // },
-                    icons: Icons.supervisor_account,
-                    iconStyle: IconStyle(
-                      iconsColor: Colors.white,
-                      withBackground: true,
-                      backgroundColor: Colors.green,
-                    ),
-                    title: 'Business',
-                    titleStyle: Theme.of(context).textTheme.bodyMedium,
-                    //subtitle: "Lock Ziar'App to improve your privacy",
-                  ),*/
-                  SettingsItem(
                     onTap: () {
                       Navigator.push(
                         context,
@@ -137,7 +111,7 @@ class GuestSettings extends StatelessWidget {
                     title: 'Offers',
                     titleStyle: Theme.of(context).textTheme.bodyMedium,
                     //subtitle: "Lock Ziar'App to improve your privacy",
-                  ),
+                  ),*/
                   SettingsItem(
                     onTap: () {
                       Navigator.push(
@@ -219,7 +193,7 @@ class GuestSettings extends StatelessWidget {
                       withBackground: true,
                       backgroundColor: Colors.green,
                     ),
-                    title: 'Change MPIN',
+                    title: 'Change M-PIN',
                     titleStyle: Theme.of(context).textTheme.bodyMedium,
                     // subtitle:'Profile Image, Name, Income',
                     titleMaxLine: 1,
@@ -243,8 +217,8 @@ class GuestSettings extends StatelessWidget {
                         body: StatefulBuilder(
                           builder: (context, setState) {
                             return Container(
-                                padding: EdgeInsets.all(20),
-                                child: Text("Are you sure do you want to Log out?"));
+                                padding: const EdgeInsets.all(20),
+                                child: const Text("Are you sure do you want to Log out?"));
                           },
                         ),
                         btnOk: ElevatedButton(
@@ -254,7 +228,7 @@ class GuestSettings extends StatelessWidget {
                             await prefs.setBool('isLoggedIn', false);
                             Navigator.pushReplacement(
                               context,
-                              MaterialPageRoute(builder: (context) => Login()),
+                              MaterialPageRoute(builder: (context) => const Login()),
                             );
 
                             // Handle OK button press
@@ -276,7 +250,7 @@ class GuestSettings extends StatelessWidget {
                             backgroundColor:
                                 MaterialStateProperty.all<Color>(Colors.red),
                           ),
-                          child: Text(
+                          child: const Text(
                             'No',
                             style: TextStyle(color: Colors.white),
                           ),

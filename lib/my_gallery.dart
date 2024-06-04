@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:gipapp/settings_page_executive.dart';
 import 'package:gipapp/video_player.dart';
 import 'package:http_parser/http_parser.dart';
 
@@ -11,11 +12,15 @@ import 'package:http/http.dart' as http;
 import 'home.dart';
 import 'dart:typed_data';
 import 'package:video_player/video_player.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
 import 'package:chewie/chewie.dart';
 
 class MyGallery extends StatefulWidget {
   final String? userId;
-  const MyGallery({super.key, required this.userId});
+  final String? userType;
+  const MyGallery
+      ({super.key, required this.userId, required this.userType});
 
   @override
   State<MyGallery> createState() => _MyGalleryState();
@@ -29,84 +34,76 @@ class _MyGalleryState extends State<MyGallery> {
       child: Scaffold(
         appBar: AppBar(
           // Appbar title
-          title: Center(
-            child: Text('My Gallery',
-                style: Theme.of(context).textTheme.displayLarge),
-          ),
-          centerTitle: true,
+          title: Text('My Gallery', style: Theme.of(context).textTheme.displayLarge),
+
+        //  centerTitle: true,
           iconTheme: const IconThemeData(color: Colors.white),
           leading: IconButton(
               onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Homepage(
-                              userType: '',
-                              userId: widget.userId,
-                            )));
+                Navigator.push(context, MaterialPageRoute(builder: (context) =>  SettingsPageExecutive(userType: widget.userType, userId: widget.userId,)));
               },
               icon: const Icon(Icons.navigate_before)),
         ),
-        body: Column(
-          children: [
-            const TabBar(
-                isScrollable: true,
-                labelColor: Colors.green,
-                unselectedLabelColor: Colors.black,
-                tabs: [
-                  Tab(
-                    text: 'Image',
-                  ),
-                  Tab(
-                    text: 'Video',
-                  ),
-                ]),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  Gallery(userId: widget.userId),
-                  Video(userId: widget.userId),
-                ],
+        body: PopScope(
+          canPop: false,
+          onPopInvoked: (didPop)  {
+            Navigator.push(context, MaterialPageRoute(builder: (context) =>  SettingsPageExecutive(userType: widget.userType, userId: widget.userId,)));
+          },
+          child: Column(
+            children:   [
+              const TabBar(
+                  isScrollable: true,
+                  labelColor: Colors.green,
+                  unselectedLabelColor: Colors.black,
+                  tabs: [
+                    Tab(text: 'Image',),
+                    Tab(text: 'Video',),
+                  ]),
+              Expanded(
+                child: TabBarView(
+                  children: [
+                //   Gallery(userId: widget.userId,),
+                    Video(userId: widget.userId),
+                  ],
+                ),
+
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
+
+
+
 class Gallery extends StatefulWidget {
   final String? userId;
-
-  const Gallery({super.key, required this.userId});
+  final String? userType;
+  Gallery({super.key, required this.userId, required this.userType});
 
   @override
-  State<Gallery> createState() => _GalleryState();
+  _GalleryState createState() => _GalleryState();
 }
 
 class _GalleryState extends State<Gallery> {
-  Uint8List? _imageBytes;
   final ImagePicker _imagePicker = ImagePicker();
-  List<Uint8List> _imageBytesList = [];
+  List<String> _imageUrlsList = [];
   List<Map<String, dynamic>> _imageDataList = [];
-  List<bool> _isSelectedList = [];
 
   Future<void> _pickAndUploadImage(ImageSource source) async {
-    final pickedImages = await _imagePicker.pickMultiImage(
-      imageQuality: 100,
+    final pickedImage = await _imagePicker.pickImage(
+      source: source,
+      imageQuality: 10,
       maxHeight: 1000,
       maxWidth: 1000,
     );
 
-    if (pickedImages != null) {
-      for (var pickedImage in pickedImages) {
-        final bytes = await pickedImage.readAsBytes();
-        setState(() {
-          _imageBytesList.add(bytes);
-        });
-        await _uploadImage(bytes);
-      }
+    if (pickedImage != null) {
+      final bytes = await pickedImage.readAsBytes();
+      await _uploadImage(bytes);
     }
   }
 
@@ -122,7 +119,16 @@ class _GalleryState extends State<Gallery> {
     );
 
     if (response.statusCode == 200) {
-      print('Image uploaded successfully.');
+      final responseData = jsonDecode(response.body);
+      final imageUrl = responseData['image_url'];
+      Navigator.push(context, MaterialPageRoute(builder: (context) =>  Gallery(userType: widget.userType, userId: widget.userId,)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Image uploaded successfully.')),
+      );
+      setState(() {
+        _imageUrlsList.add(imageUrl);
+      });
+
       // Refresh the gallery after successful upload
       _fetchImages();
     } else {
@@ -139,20 +145,15 @@ class _GalleryState extends State<Gallery> {
     if (response.statusCode == 200) {
       List<dynamic> imageData = jsonDecode(response.body);
 
-      _imageBytesList.clear();
-      _imageDataList.clear();
-
-      for (var data in imageData) {
-        final imageUrl = 'http://mybudgetbook.in/GIBAPI/${data['image_path']}';
-        final imageResponse = await http.get(Uri.parse(imageUrl));
-        if (imageResponse.statusCode == 200) {
-          Uint8List imageBytes = imageResponse.bodyBytes;
-          setState(() {
-            _imageBytesList.add(imageBytes);
-            _imageDataList.add(data);
-          });
+      setState(() {
+        _imageUrlsList.clear();
+        _imageDataList.clear();
+        for (var data in imageData) {
+          final imageUrl = 'http://mybudgetbook.in/GIBAPI/${data['image_path']}';
+          _imageUrlsList.add(imageUrl);
+          _imageDataList.add(data);
         }
-      }
+      });
     } else {
       print('Failed to fetch images.');
     }
@@ -169,7 +170,7 @@ class _GalleryState extends State<Gallery> {
     if (response.statusCode == 200) {
       print('Image deleted successfully.');
       setState(() {
-        _imageBytesList.removeAt(imageIndex);
+        _imageUrlsList.removeAt(imageIndex);
         _imageDataList.removeAt(imageIndex);
       });
     } else {
@@ -220,36 +221,31 @@ class _GalleryState extends State<Gallery> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        // Appbar title
+        title: Text('My Gallery', style: Theme.of(context).textTheme.displayLarge),
+
+        //  centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.white),
+        leading: IconButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) =>  SettingsPageExecutive(userType: widget.userType, userId: widget.userId,)));
+            },
+            icon: const Icon(Icons.navigate_before)),
+      ),
+
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.green,
+        foregroundColor: Colors.white,
         onPressed: () async {
-          if (_imageBytesList.length < 5) {
+          if (_imageUrlsList.length < 5) {
             showModalBottomSheet(
                 context: context,
                 builder: (ctx) {
                   return Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      ListTile(
-                        leading: const Icon(Icons.camera_alt),
-                        title: const Text("With Camera"),
-                        onTap: () async {
-                          final pickedImage = await _imagePicker.pickImage(
-                            source: ImageSource.camera,
-                          );
-
-                          if (pickedImage != null) {
-                            final bytes = await pickedImage.readAsBytes();
-
-                            setState(() {
-                              _imageBytes = bytes;
-                            });
-
-                            await _uploadImage(_imageBytes!);
-                          }
-                        },
-                      ),
                       ListTile(
                         leading: const Icon(Icons.photo_library),
                         title: const Text("From Gallery"),
@@ -283,37 +279,47 @@ class _GalleryState extends State<Gallery> {
         },
         child: const Icon(Icons.add),
       ),
-      body: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: 10.0,
-          crossAxisSpacing: 10.0,
-        ),
-        itemCount: _imageBytesList.length,
-        itemBuilder: (BuildContext context, i) {
-          return Stack(
-            children: [
-              Image.memory(
-                _imageBytesList[i],
-                fit: BoxFit.cover,
-              ),
-              Positioned(
-                top: 5,
-                right: 5,
-                child: IconButton(
-                  icon: Icon(Icons.cancel),
-                  onPressed: () {
-                    _showDeleteConfirmationDialog(i);
-                  },
-                ),
-              ),
-            ],
-          );
+      body: PopScope(
+        canPop: false,
+        onPopInvoked: (didPop)  {
+          Navigator.push(context, MaterialPageRoute(builder: (context) =>  SettingsPageExecutive(userType: widget.userType, userId: widget.userId,)));
         },
+        child: _imageUrlsList.isEmpty ? const Center(child: Text("No Images")) : GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisSpacing: 10.0,
+            crossAxisSpacing: 10.0,
+          ),
+          itemCount: _imageUrlsList.length,
+          itemBuilder: (BuildContext context, i) {
+            return Stack(
+              children: [
+                CachedNetworkImage(
+                  imageUrl: _imageUrlsList[i],
+                  placeholder: (context, url) => CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
+                  fit: BoxFit.cover,
+                ),
+                Positioned(
+                  top: 5,
+                  right: 5,
+                  child: IconButton(
+                    icon: Icon(Icons.cancel),
+                    onPressed: () {
+                      _showDeleteConfirmationDialog(i);
+                    },
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
 }
+
+
 
 class Video extends StatefulWidget {
   final String? userId;
@@ -322,7 +328,6 @@ class Video extends StatefulWidget {
   @override
   State<Video> createState() => _VideoState();
 }
-
 class _VideoState extends State<Video> {
   final ImagePicker _picker = ImagePicker();
   List<dynamic> _videos = [];
@@ -335,20 +340,19 @@ class _VideoState extends State<Video> {
   }
 
   Future<void> _pickAndUploadVideo() async {
-    final XFile? pickedVideo =
-        await _picker.pickVideo(source: ImageSource.gallery);
+    final XFile? pickedVideo = await _picker.pickVideo(source: ImageSource.gallery);
 
     if (pickedVideo != null) {
       final Uint8List videoBytes = await pickedVideo.readAsBytes();
+      final String videoName = pickedVideo.name; // Get the actual video name
+
       if (videoBytes.length > 10 * 1024 * 1024) {
-        // File size exceeds the limit, show an alert
         showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
               title: Text('File Too Large'),
-              content: Text(
-                  'The selected file exceeds the maximum size limit of 10MB.'),
+              content: Text('The selected file exceeds the maximum size limit of 10MB.'),
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
@@ -363,12 +367,7 @@ class _VideoState extends State<Video> {
         return;
       }
 
-      print('videoBytes: $videoBytes');
-      final url =
-          'http://mybudgetbook.in/GIBAPI/videos.php?userId=${widget.userId}';
-
-      print('url: $url');
-      // Make HTTP request to upload video file to server
+      final url = 'http://mybudgetbook.in/GIBAPI/videos.php?userId=${widget.userId}';
 
       var request = http.MultipartRequest(
         'POST',
@@ -378,44 +377,38 @@ class _VideoState extends State<Video> {
         http.MultipartFile.fromBytes(
           'video',
           videoBytes,
-          filename:
-              'video.mp4', // Provide a filename with the appropriate extension
-          contentType: MediaType('video',
-              'mp4'), // Adjust the content type as per your video format
+          filename: videoName, // Use the actual video name
+          contentType: MediaType('video', 'mp4'),
         ),
       );
 
       var response = await request.send();
       if (response.statusCode == 200) {
-        // Video uploaded successfully
         print('Video uploaded successfully.');
-        // Optionally, you can show a success message to the user
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Video uploaded successfully.')),
         );
       } else {
-        // Failed to upload video
         print('Failed to upload video.');
-        // Optionally, you can show an error message to the user
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to upload video.')),
         );
       }
     }
   }
-
   Future<void> _fetchVideos() async {
     final url =
-        'http://mybudgetbook.in/GIBAPI/fetchvideos.php?userId=${widget.userId}';
+        'https://mybudgetbook.in/GIBAPI/fetchvideos.php?userId=${widget.userId}';
 
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       setState(() {
         _videos = jsonDecode(response.body);
+        _thumbnails = List<String>.filled(_videos.length, ''); // Initialize thumbnails list
+
         // Fetch thumbnails for each video
-        _thumbnails = List<String>.filled(_videos.length, '');
         for (int i = 0; i < _videos.length; i++) {
-          _fetchThumbnail(i);
+        //  _fetchThumbnail(i);
         }
       });
     } else {
@@ -424,21 +417,20 @@ class _VideoState extends State<Video> {
     }
   }
 
-  Future<void> _fetchThumbnail(int index) async {
+/*  Future<void> _fetchThumbnail(int index) async {
     final videoPath = _videos[index]['video_path'];
-    final url =
-        'http://mybudgetbook.in/GIBAPI/videosmp4.php?video_path=' + videoPath;
+    final thumbnailUrl = 'http://mybudgetbook.in/GIBAPI/thumbnail_$videoPath.jpg';
 
-    final response = await http.get(Uri.parse(url));
+    final response = await http.get(Uri.parse(thumbnailUrl));
     if (response.statusCode == 200) {
       setState(() {
-        _thumbnails[index] = response.body;
+        _thumbnails[index] = thumbnailUrl;
       });
     } else {
       // Handle error
-      print('Failed to fetch thumbnail for video at index $index');
+      print('Failed to fetch thumbnail for video: $videoPath');
     }
-  }
+  }*/
 
   Future<void> _deleteVideo(int videoIndex) async {
     int videoId = _videos[videoIndex]['id'];
@@ -550,10 +542,7 @@ class _VideoState extends State<Video> {
             title: Text(video_name),
             leading: Container(
               width: 50, // Adjust the width as needed
-              child: thumbnail.isNotEmpty
-                  ? Image.network(thumbnail)
-                  : CircularProgressIndicator(), // Show a loading indicator if thumbnail is being fetched
-            ),
+              child: Image(image: AssetImage('assets/Video Player.png'))),
             onTap: () {
               // Navigate to VideoPlayerScreen when the name is clicked
               Navigator.push(
@@ -625,11 +614,9 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
       await _controller.initialize();
 
-      if (mounted) {
-        setState(() {
-          _isPlaying = true;
-        });
-      }
+      setState(() {
+        _isPlaying = true;
+      });
     } catch (error) {
       setState(() {
         _errorMessage = 'Error initializing video player: $error';
@@ -659,3 +646,4 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     );
   }
 }
+

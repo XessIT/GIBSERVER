@@ -1,11 +1,13 @@
 import 'dart:convert';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gipapp/settings_page_executive.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
+import 'Non_exe_pages/settings_non_executive.dart';
 import 'home.dart';
 
 class Activity extends StatefulWidget {
@@ -157,167 +159,216 @@ class _ActivityState extends State<Activity> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          title: Center(
-              child: Text('Reference',
-                  style: Theme.of(context).textTheme.bodySmall)),
-          centerTitle: true,
+        appBar: AppBar(
+          title: Text('Reference',
+              style: Theme.of(context).textTheme.displayLarge),
           iconTheme: const IconThemeData(
             color: Colors.white, // Set the color for the drawer icon
           ),
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
+            icon: Icon(Icons.navigate_before),
             onPressed: () {
-              Navigator.push(
+              if (widget.userType == "Non-Executive") {
+                Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => SettingsPageExecutive(
-                            userType: widget.userType,
-                            userId: widget.userId,
-                          )));
-            },
-          )),
-      body: data.isNotEmpty
-          ? ListView.builder(
-              itemCount: data.length,
-              itemBuilder: (context, i) {
-                String imageUrl =
-                    'http://mybudgetbook.in/GIBAPI/${data[i]['profile_image']}';
-                return Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: Column(children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              CircleAvatar(
-                                radius:
-                                    35, // adjust the radius as per your requirement
-                                backgroundImage: NetworkImage(imageUrl),
-                              ),
-                              Expanded(
-                                child: Column(
-                                  children: [
-                                    Text('${data[i]['first_name']}'),
-                                    Text('${data[i]['company_name']}'),
-                                  ],
-                                ),
-                              ),
-                              IconButton(
-                                  onPressed: () async {
-                                    final call =
-                                        Uri.parse("tel://${data[i]['mobile']}");
-                                    if (await canLaunchUrl(call)) {
-                                      launchUrl(call);
-                                    } else {
-                                      throw 'Could not launch $call';
-                                    }
-                                  },
-                                  icon: Icon(
-                                    Icons.call,
-                                    color: Colors.green[900],
-                                  )),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                ElevatedButton(
-                                  onPressed: () async {
-                                    AwesomeDialog(
-                                      context: context,
-                                      animType: AnimType.leftSlide,
-                                      headerAnimationLoop: true,
-                                      dialogType: DialogType.warning,
-                                      showCloseIcon: true,
-                                      title: 'Reject',
-                                      titleTextStyle: TextStyle(
-                                        color: Theme.of(context).brightness ==
-                                                Brightness.light
-                                            ? Colors.black // Light theme color
-                                            : Colors.white, // Dark theme color
-                                      ),
-                                      desc:
-                                          'Do you want to reject this request?',
-                                      btnOkText: 'Yes',
-                                      btnCancelText: 'No',
-                                      btnCancelOnPress: () {},
-                                      btnOkOnPress: () {
-                                        delete(data[i]['id']);
-                                      },
-                                      // btnOkIcon: Icons.check_circle,
-                                      onDismissCallback: (type) {
-                                        debugPrint(
-                                            'Dialog Dismiss from callback $type');
-                                      },
-                                    ).show();
-                                  },
-                                  style: ButtonStyle(
-                                    backgroundColor:
-                                        MaterialStateProperty.all<Color>(
-                                            Colors.red),
-                                  ),
-                                  child: Text(
-                                    'Reject',
-                                    style:
-                                        Theme.of(context).textTheme.bodySmall,
-                                  ),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () async {
-                                    AwesomeDialog(
-                                      context: context,
-                                      animType: AnimType.leftSlide,
-                                      headerAnimationLoop: true,
-                                      dialogType: DialogType.success,
-                                      showCloseIcon: true,
-                                      title: 'Accept',
-                                      titleTextStyle: TextStyle(
-                                        color: Theme.of(context).brightness ==
-                                                Brightness.light
-                                            ? Colors.black // Light theme color
-                                            : Colors.white, // Dark theme color
-                                      ),
-                                      desc:
-                                          'Do you want to accept this request?',
-                                      btnOkText: 'Yes',
-                                      btnCancelText: 'No',
-                                      btnCancelOnPress: () {},
-                                      btnOkOnPress: () {
-                                        approved(int.parse(data[i]['id']));
-                                      },
-                                      // btnOkIcon: Icons.check_circle,
-                                      onDismissCallback: (type) {
-                                        debugPrint(
-                                            'Dialog Dismiss from callback $type');
-                                      },
-                                    ).show();
-                                  },
-                                  style: ButtonStyle(
-                                    backgroundColor:
-                                        MaterialStateProperty.all<Color>(
-                                            Colors.green[900]!),
-                                  ),
-                                  child: Text(
-                                    'Accept',
-                                    style:
-                                        Theme.of(context).textTheme.bodySmall,
-                                  ),
-                                ),
-                              ])
-                        ]),
-                      ),
+                    builder: (context) => SettingsPageNon(
+                      userType: widget.userType.toString(),
+                      userId: widget.userId.toString(),
                     ),
                   ),
                 );
-              })
-          : const Center(child: Text('No data available')),
-    );
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SettingsPageExecutive(
+                      userType: widget.userType.toString(),
+                      userId: widget.userId.toString(),
+                    ),
+                  ),
+                );
+              }
+            },
+          ),
+        ),
+        body: PopScope(
+          canPop: false,
+          onPopInvoked: (didPop) {
+            if (widget.userType == "Non-Executive") {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SettingsPageNon(
+                    userType: widget.userType.toString(),
+                    userId: widget.userId.toString(),
+                  ),
+                ),
+              );
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SettingsPageExecutive(
+                    userType: widget.userType.toString(),
+                    userId: widget.userId.toString(),
+                  ),
+                ),
+              );
+            }
+          },
+          child: data.isNotEmpty
+              ? ListView.builder(
+                  itemCount: data.length,
+                  itemBuilder: (context, i) {
+                    String imageUrl =
+                        'http://mybudgetbook.in/GIBAPI/${data[i]['profile_image']}';
+                    return Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: Column(children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  CircleAvatar(
+                                    radius:
+                                        35, // adjust the radius as per your requirement
+                                    backgroundImage:
+                                        CachedNetworkImageProvider(imageUrl),
+                                  ),
+                                  Expanded(
+                                    child: Column(
+                                      children: [
+                                        Text('${data[i]['first_name']}'),
+                                        Text('${data[i]['company_name']}'),
+                                      ],
+                                    ),
+                                  ),
+                                  IconButton(
+                                      onPressed: () async {
+                                        final call = Uri.parse(
+                                            "tel://${data[i]['mobile']}");
+                                        if (await canLaunchUrl(call)) {
+                                          launchUrl(call);
+                                        } else {
+                                          throw 'Could not launch $call';
+                                        }
+                                      },
+                                      icon: Icon(
+                                        Icons.call,
+                                        color: Colors.green[900],
+                                      )),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    ElevatedButton(
+                                      onPressed: () async {
+                                        AwesomeDialog(
+                                          context: context,
+                                          animType: AnimType.leftSlide,
+                                          headerAnimationLoop: true,
+                                          dialogType: DialogType.warning,
+                                          showCloseIcon: true,
+                                          title: 'Reject',
+                                          titleTextStyle: TextStyle(
+                                            color: Theme.of(context)
+                                                        .brightness ==
+                                                    Brightness.light
+                                                ? Colors
+                                                    .black // Light theme color
+                                                : Colors
+                                                    .white, // Dark theme color
+                                          ),
+                                          desc:
+                                              'Do you want to reject this request?',
+                                          btnOkText: 'Yes',
+                                          btnCancelText: 'No',
+                                          btnCancelOnPress: () {},
+                                          btnOkOnPress: () {
+                                            delete(data[i]['id']);
+                                          },
+                                          // btnOkIcon: Icons.check_circle,
+                                          onDismissCallback: (type) {
+                                            debugPrint(
+                                                'Dialog Dismiss from callback $type');
+                                          },
+                                        ).show();
+                                      },
+                                      style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all<Color>(
+                                                Colors.red),
+                                      ),
+                                      child: Text(
+                                        'Reject',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall,
+                                      ),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () async {
+                                        AwesomeDialog(
+                                          context: context,
+                                          animType: AnimType.leftSlide,
+                                          headerAnimationLoop: true,
+                                          dialogType: DialogType.success,
+                                          showCloseIcon: true,
+                                          title: 'Accept',
+                                          titleTextStyle: TextStyle(
+                                            color: Theme.of(context)
+                                                        .brightness ==
+                                                    Brightness.light
+                                                ? Colors
+                                                    .black // Light theme color
+                                                : Colors
+                                                    .white, // Dark theme color
+                                          ),
+                                          desc:
+                                              'Do you want to accept this request?',
+                                          btnOkText: 'Yes',
+                                          btnCancelText: 'No',
+                                          btnCancelOnPress: () {},
+                                          btnOkOnPress: () {
+                                            approved(int.parse(data[i]['id']));
+                                          },
+                                          // btnOkIcon: Icons.check_circle,
+                                          onDismissCallback: (type) {
+                                            debugPrint(
+                                                'Dialog Dismiss from callback $type');
+                                          },
+                                        ).show();
+                                      },
+                                      style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all<Color>(
+                                                Colors.green[900]!),
+                                      ),
+                                      child: Text(
+                                        'Accept',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall,
+                                      ),
+                                    ),
+                                  ])
+                            ]),
+                          ),
+                        ),
+                      ),
+                    );
+                  })
+              : const Center(child: Text('No data available')),
+        ));
   }
 }

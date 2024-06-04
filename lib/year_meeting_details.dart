@@ -443,11 +443,13 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'Non_exe_pages/non_exe_home.dart';
+import 'home.dart';
+
 class MeetingUpdateDate extends StatefulWidget {
   final String? userId;
   final String? userType;
-  const MeetingUpdateDate(
-      {super.key, required this.userId, required this.userType});
+  MeetingUpdateDate({Key? key, required this.userId, required this.userType}) : super(key: key);
 
   @override
   State<MeetingUpdateDate> createState() => _MeetingUpdateDateState();
@@ -509,75 +511,127 @@ class _MeetingUpdateDateState extends State<MeetingUpdateDate> {
       appBar: AppBar(
         title: Text(
           "Meeting Date Updates",
-          style: Theme.of(context).textTheme.bodySmall,
+          style: Theme.of(context).textTheme.displayLarge,
         ),
         centerTitle: true,
         iconTheme: IconThemeData(color: Colors.white),
-      ),
-      body: ListView.builder(
-        itemCount: sortedKeys.length,
-        itemBuilder: (context, index) {
-          int month = sortedKeys[index];
-          List<Map<String, dynamic>> meetings = groupedData[month]!;
-          meetings.sort((a, b) => DateTime.parse(a['meeting_date'])
-              .compareTo(DateTime.parse(b['meeting_date'])));
-
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  '${_getMonthName(month)}',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.green.shade900,
+        leading: IconButton(
+          icon: Icon(Icons.navigate_before),
+          onPressed: () {
+            if (widget.userType == "Non-Executive") {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NavigationBarNon(
+                    userType: widget.userType.toString(),
+                    userId: widget.userId.toString(),
                   ),
                 ),
-              ),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: meetings.length,
-                itemBuilder: (context, index) {
-                  final meeting = meetings[index];
-                  return Card(
-                    elevation: 10,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                meeting["meeting_date"],
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              Text(meeting["from_time"]),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(meeting["place"]),
-                              Text(meeting["meeting_name"]),
-                            ],
-                          ),
-                        ],
+              );
+            }
+            else{
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NavigationBarExe(
+                    userType: widget.userType.toString(),
+                    userId: widget.userId.toString(),
+                  ),
+                ),
+              );
+            }
+          },
+        ),
+      ),
+      body: PopScope(
+          canPop: false,
+          onPopInvoked: (didPop)  {
+            if (widget.userType == "Non-Executive") {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NavigationBarNon(
+                    userType: widget.userType.toString(),
+                    userId: widget.userId.toString(),
+                  ),
+                ),
+              );
+            }
+            else{
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NavigationBarExe(
+                    userType: widget.userType.toString(),
+                    userId: widget.userId.toString(),
+                  ),
+                ),
+              );
+            }
+          },
+          child:ListView.builder(
+            itemCount: sortedKeys.length,
+            itemBuilder: (context, index) {
+              int month = sortedKeys[index];
+              List<Map<String, dynamic>> meetings = groupedData[month]!;
+              meetings.sort((a, b) => DateTime.parse(a['meeting_date'])
+                  .compareTo(DateTime.parse(b['meeting_date'])));
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      '${_getMonthName(month)}',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green.shade900,
+
                       ),
                     ),
-                  );
-                },
-              ),
-            ],
-          );
-        },
-      ),
+                  ),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: meetings.length,
+                    itemBuilder: (context, index) {
+                      final meeting = meetings[index];
+                      return Card(
+                        elevation: 10,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    meeting["meeting_date"],
+                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(meeting["from_time"]),
+                                ],
+                              ),
+                              SizedBox(height: 10,),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(meeting["place"]),
+                                  Text(meeting["meeting_name"]),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              );
+            },
+          )),
     );
   }
 

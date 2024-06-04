@@ -66,9 +66,8 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: Icon(Icons.navigate_before),
           onPressed: () {
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => Login()));
@@ -76,7 +75,7 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
         ),
         title: Text(
           "Reset M-Pin",
-          style: Theme.of(context).textTheme.bodySmall,
+          style: Theme.of(context).textTheme.displayLarge,
         ),
         iconTheme: IconThemeData(color: Colors.white),
       ),
@@ -155,10 +154,12 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                           ),
                           Container(
                             child: OutlinedButton(
+                                style: OutlinedButton.styleFrom(
+                                  backgroundColor: Colors.green,
+                                ),
                                 onPressed: () async {
                                   String welcomeText =
                                       "$userName, Welcome To GIB,";
-
                                   if (_formkey.currentState!.validate()) {
                                     if (isRegistered) {
                                       String apikey =
@@ -177,6 +178,8 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                                         print(url);
                                         final response = await http.get(url);
                                         if (response.statusCode == 200) {
+                                          mobileController.clear();
+                                          Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
                                           print('SMS sent successfully');
                                         } else {
                                           ScaffoldMessenger.of(context)
