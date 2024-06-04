@@ -159,7 +159,7 @@ class _ActivityState extends State<Activity> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Reference', style: Theme.of(context).textTheme.bodySmall),
+        title: Text('Reference', style: Theme.of(context).textTheme.displayLarge),
         iconTheme:  const IconThemeData(
           color: Colors.white, // Set the color for the drawer icon
         ),

@@ -273,7 +273,7 @@ class _ViewPhotosPageState extends State<ViewPhotosPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("View Photos",style: Theme.of(context).textTheme.displayLarge),
+        title: Text("GiB Gallery",style: Theme.of(context).textTheme.displayLarge),
         iconTheme: IconThemeData(
           color: Colors.white,
         ),

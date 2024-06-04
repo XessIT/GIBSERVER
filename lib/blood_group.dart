@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gipapp/Non_exe_pages/settings_non_executive.dart';
+import 'package:gipapp/settings_page_executive.dart';
 import 'Non_exe_pages/non_exe_home.dart';
 import 'blood_group_list.dart';
 import 'guest_home.dart';
@@ -53,7 +55,7 @@ class _BloodState extends State<Blood> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => NavigationBarNon(
+                        builder: (context) => SettingsPageNon(
                               userType: widget.userType.toString(),
                               userId: widget.userId.toString(),
                             )));
@@ -71,7 +73,7 @@ class _BloodState extends State<Blood> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => NavigationBarExe(
+                        builder: (context) => SettingsPageExecutive(
                               userType: widget.userType.toString(),
                               userId: widget.userId.toString(),
                             )));
@@ -87,7 +89,7 @@ class _BloodState extends State<Blood> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => NavigationBarNon(
+                  builder: (context) => SettingsPageNon(
                     userType: widget.userType.toString(),
                     userId: widget.userId.toString(),
                   ),
@@ -107,7 +109,7 @@ class _BloodState extends State<Blood> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => NavigationBarExe(
+                  builder: (context) => SettingsPageExecutive(
                     userType: widget.userType.toString(),
                     userId: widget.userId.toString(),
                   ),
