@@ -968,10 +968,7 @@ class _MyTransactionState extends State<MyTransaction> {
                                 children: [
                                   CircleAvatar(
                                     radius: 30,
-                                    backgroundColor: Colors.green,
-                                    child: Text(
-                                      'G2G', style: TextStyle(color: Colors.white,fontSize: 30, fontWeight: FontWeight.bold),
-                                    ),
+                                    backgroundImage: AssetImage('assets/letter-g.png'),
                                   ),
                                 ],
 
@@ -1046,7 +1043,7 @@ class _MyTransactionState extends State<MyTransaction> {
                                 children: [
                                   CircleAvatar(
                                     radius: 30,
-                                    backgroundImage: AssetImage('assets/letter-g.png'),
+                                    backgroundImage: AssetImage('assets/letter-h.png'),
                                   ),
                                 ],
 

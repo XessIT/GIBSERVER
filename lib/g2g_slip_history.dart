@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
 import 'business_slip_history.dart';
+import 'g2g_slip.dart';
 
 
 class G2GHistory extends StatefulWidget {
@@ -100,8 +101,17 @@ class _G2GHistoryState extends State<G2GHistory> {
     return Scaffold(
       appBar: AppBar(
         title:  Text('G2G Slip History', style: Theme.of(context).textTheme.displayLarge,),
-        centerTitle: true,
+
         iconTheme: const IconThemeData(color: Colors.white),
+        leading: IconButton(
+          icon: const Icon(Icons.navigate_before),
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(
+                builder: (context) => GtoGPage(userType: widget.userType, userId: widget.userId)
+            ));
+          },
+        ),
+
 
       ),
       body:isLoading ? const Center(child: CircularProgressIndicator(),)
