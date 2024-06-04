@@ -70,7 +70,7 @@ class _AchievementsState extends State<Achievements> {
               ),
             );
           },
-          child: AchievementGibGallery(userType: widget.userType, userID: widget.userID,)));
+          child: AchievementViewPhotosPage(userType: widget.userType, userID: widget.userID,)));
   }
 }
 
@@ -146,7 +146,7 @@ class _AchievementGibGalleryState extends State<AchievementGibGallery> {
                 height: 1100,
                 child: Expanded(
                     child: TabBarView(children: [
-                      AchievementViewPhotosPage(),
+                //      AchievementViewPhotosPage(),
                       AchievementViewVideosPage(),
                     ]
                     )),
@@ -163,7 +163,13 @@ class _AchievementGibGalleryState extends State<AchievementGibGallery> {
 
 
 class AchievementViewPhotosPage extends StatefulWidget {
-  const AchievementViewPhotosPage({Key? key}) : super(key: key);
+  final String userType;
+  final String? userID;
+  const AchievementViewPhotosPage
+
+      ({super.key,
+    required this.userType,
+    required this. userID,});
 
   @override
   State<AchievementViewPhotosPage> createState() =>

@@ -55,6 +55,13 @@ class _DoctorsState extends State<Doctors> {
     fieldText.clear();
   }
   @override
+  void dispose() {
+    // TODO: implement dispose
+    fieldText.dispose();
+    super.dispose();
+
+  }
+  @override
   void initState() {
     // TODO: implement initState
     getGibDoctors();
@@ -243,8 +250,10 @@ class _DoctorsState extends State<Doctors> {
                         controller: fieldText,
                         decoration: InputDecoration(
                             suffixIcon: IconButton(
-                              icon: const Icon(Icons.clear),
-                              onPressed: clearText,
+                              icon: const Icon(Icons.refresh),
+                              onPressed: (){
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => Doctors(userType:widget.userType, userId:widget.userId,)),);
+                              },
                             ),
                             hintText: 'Search'
                         ),
