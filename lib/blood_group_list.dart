@@ -130,7 +130,7 @@ class _BloodListState extends State<BloodList> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Center(child: Text(blood, style: Theme.of(context).textTheme.displayLarge)),
+          title: Text(blood, style: Theme.of(context).textTheme.displayLarge),
           leading: IconButton(
             icon: const Icon(Icons.navigate_before),
             onPressed: () {

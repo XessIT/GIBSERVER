@@ -77,33 +77,31 @@ class _ReferralPageState extends State<ReferralPage> {
   Future<void> InsertBusinessSlip() async {
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/business_slip.php');
-        final response = await http.post(
-          url,
-          body: jsonEncode({
-            "type": typeofvisitor,
-            "Toname": to.text,
-            "Tomobile": tomobile.text,
-            "Tocompanyname": cname.text,
-            "purpose": purpose.text,
-            "referree_name": referreename.text,
-            "referree_mobile": referreemobile.text,
-            "referrer_name": fname,
-            "referrer_mobile": mobile,
-            "referrer_company": companyname,
-            "status": status,
-            "user_id": widget.userId,
-            "district": district,
-            "chapter": chapter
-          }),
-        );
-        print(url);
-        print("ResponseStatus: ${response.statusCode}");
-        if (response.statusCode == 200) {
-          print("Offers response: ${response.body}");
-        } else {
-          print("Error: ${response.statusCode}");
-        }
-      } catch (e) {
+      final response = await http.post(
+        url,
+        body: jsonEncode({
+          "type": typeofvisitor,
+          "Toname": to.text,
+          "Tomobile": tomobile.text,
+          "Tocompanyname": cname.text,
+          "purpose": purpose.text,
+          "referree_name": referreename.text,
+          "referree_mobile": referreemobile.text,
+          "referrer_name": fname,
+          "referrer_mobile": mobile,
+          "referrer_company": companyname,
+          "status": status,
+          "user_id": widget.userId
+        }),
+      );
+      print(url);
+      print("ResponseStatus: ${response.statusCode}");
+      if (response.statusCode == 200) {
+        print("Offers response: ${response.body}");
+      } else {
+        print("Error: ${response.statusCode}");
+      }
+    } catch (e) {
       print("Error during signup: $e");
       // Handle error as needed
     }
@@ -510,10 +508,7 @@ class _ReferralPageState extends State<ReferralPage> {
                               // fillColor: Colors.white,
                               contentPadding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 3.0),
                             ),
-                            inputFormatters: [
-                              AlphabetInputFormatter(),
-                              LengthLimitingTextInputFormatter(25)
-                            ],
+
                           ),
                         ),
 

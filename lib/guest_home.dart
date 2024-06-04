@@ -48,27 +48,18 @@ class _GuestHomeState extends State<GuestHome> {
           BottomNavigationBarItem(
             icon: Icon(
               Icons.home_outlined,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.black45
-                  : Colors.white,
             ),
             label: 'Home',
           ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.local_offer,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.black45
-                  : Colors.white,
             ),
             label: 'Offers',
           ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.settings,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.black45
-                  : Colors.white,
             ),
             label: 'Account',
           ),
@@ -315,105 +306,126 @@ class _GuestHomePageState extends State<GuestHomePage> {
                           ),
                         ),
                       ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.6,
+                      Container(
+                        height: MediaQuery.of(context).size.height *
+                            0.6, // Adjust the height as needed
                         child: ListView.builder(
                             itemCount: data.length,
                             itemBuilder: (context, i) {
                               String imageUrl =
                                   'http://mybudgetbook.in/GIBAPI/${data[i]["offer_image"]}';
+
+                              String dateString = data[i][
+                              'validity']; // This will print the properly encoded URL
                               DateTime dateTime =
-                              DateFormat('yyyy-MM-dd').parse(data[i]['validity']);
+                              DateFormat('yyyy-MM-dd').parse(dateString);
                               return Center(
                                 child: Card(
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Column(
                                       children: [
+                                        // MAIN ROW STARTS
                                         Stack(
                                           children: [
-                                            ListTile(
-                                              leading: CircleAvatar(
-                                                radius: 30.0,
-                                                backgroundColor: Colors.cyan,
-                                                backgroundImage: CachedNetworkImageProvider(imageUrl),
-                                              ),
-                                              title: Text(
-                                                '${data[i]['company_name']}',
-                                                style: const TextStyle(
-                                                  color: Colors.green,
-                                                  fontSize: 15,
-                                                ),
-                                              ),
-                                              subtitle: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    '${data[i]['offer_type']} - ${data[i]['name']}',
-                                                    style: const TextStyle(
-                                                      fontSize: 12,
-                                                      fontWeight: FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    "Mobile - ${data[i]['mobile']}",
-                                                    style: const TextStyle(
-                                                      fontSize: 12,
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    "Validity - ${DateFormat('d MMMM yyyy').format(DateFormat('yyyy-MM-dd').parse(data[i]['validity']))}",
-                                                    style: const TextStyle(
-                                                      fontSize: 12,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              trailing: IconButton(
-                                                onPressed: () {
-                                                  launchUrl(Uri.parse("tel://${data[i]['mobile']}"));
-                                                },
-                                                icon: Icon(
-                                                  Icons.call_outlined,
-                                                  color: Colors.green[900],
-                                                ),
-                                              ),
-                                            ),
                                             Row(
-                                              mainAxisAlignment: MainAxisAlignment.end,
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.start,
                                               children: [
-                                                data[i]['discount'].toString().isEmpty
-                                                    ? Container()
-                                                    : Positioned(
-                                                  top: 8,
-                                                  right: 8,
-                                                  child: Container(
-                                                    decoration: const BoxDecoration(
-                                                      color: Colors.red,
-                                                      borderRadius: BorderRadius.only(
-                                                        topLeft: Radius.circular(10.0),
-                                                        bottomRight: Radius.circular(10.0),
+                                                // CIRCLEAVATAR STARTS
+                                                Padding(
+                                                  padding:
+                                                  const EdgeInsets.all(8.0),
+                                                  child: CircleAvatar(
+                                                    radius: 30.0,
+                                                    backgroundColor: Colors.cyan,
+                                                    backgroundImage:
+                                                    NetworkImage(imageUrl),
+                                                  ),
+                                                ),
+                                                SizedBox(width: 20),
+                                                // END CIRCLEAVATAR
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment
+                                                      .start, // Align texts to the start
+                                                  children: [
+                                                    // START TEXTS
+                                                    Text(
+                                                      '${data[i]['company_name']}',
+                                                      // Text style starts
+                                                      style: const TextStyle(
+                                                        color: Colors.green,
+                                                        fontSize: 15,
                                                       ),
                                                     ),
-                                                    padding: const EdgeInsets.symmetric(
-                                                        horizontal: 6.0,
-                                                        vertical: 2.0),
-                                                    child: Row(
-                                                      children: [
-                                                        Text(
-                                                          '${data[i]['discount']}% off',
-                                                          style: const TextStyle(
-                                                            color: Colors.white,
-                                                            fontWeight: FontWeight.bold,
-                                                            fontStyle: FontStyle.italic,
-                                                            fontSize: 12.0,
-                                                          ),
-                                                        ),
-                                                      ],
+                                                    // start texts
+                                                    Text(
+                                                      '${data[i]['offer_type']} - ${data[i]['name']}',
+                                                      // Text style starts
+                                                      style: const TextStyle(
+                                                        fontSize: 11,
+                                                        fontWeight: FontWeight.bold,
+                                                      ),
                                                     ),
-                                                  ),
+                                                    Text(
+                                                      "Mobile - ${data[i]['mobile']}",
+                                                      // New date format
+                                                      style: const TextStyle(
+                                                        fontSize: 12,
+                                                      ),
+                                                    ),
+                                                    // Text starts
+                                                    Text(
+                                                      "Validity - ${DateFormat('d MMMM yyyy').format(dateTime)}",
+                                                      // New date format
+                                                      style: const TextStyle(
+                                                        fontSize: 12,
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ],
+                                            ),
+                                            // Banner in the top right side
+                                            data[i]['discount'].toString().isEmpty
+                                                ? Container()
+                                                : Positioned(
+                                              top: 8,
+                                              right:
+                                              8, // Adjust position if needed
+                                              child: Container(
+                                                decoration: const BoxDecoration(
+                                                  color: Colors
+                                                      .red, // Change the color here
+                                                  borderRadius:
+                                                  BorderRadius.only(
+                                                    topLeft:
+                                                    Radius.circular(10.0),
+                                                    bottomRight:
+                                                    Radius.circular(10.0),
+                                                  ),
+                                                ),
+                                                padding: const EdgeInsets.symmetric(
+                                                    horizontal: 6.0,
+                                                    vertical: 2.0),
+                                                child: Row(
+                                                  children: [
+                                                    Text(
+                                                      '${data[i]['discount']}% off', // Text for your banner
+                                                      style: const TextStyle(
+                                                        color: Colors
+                                                            .white, // Change the text color here
+                                                        fontWeight:
+                                                        FontWeight.bold,
+                                                        fontStyle: FontStyle
+                                                            .italic, // Add any additional styles here
+                                                        fontSize:
+                                                        12.0, // Adjust font size as needed
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
                                             ),
                                           ],
                                         ),

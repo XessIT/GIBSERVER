@@ -338,6 +338,8 @@ class _AddOfferPageState extends State<AddOfferPage> {
                   const SizedBox(height: 20,),
                   InkWell(
                    child: Container(
+                     width: 150,
+                     height: 150,
                      child: ClipOval(
                         child: selectedImage != null
                             ? Image.memory(
