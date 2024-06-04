@@ -10,6 +10,7 @@ import'package:http/http.dart'as http;
 import 'guest_home.dart';
 import 'login.dart';
 
+
 class Registration extends StatelessWidget {
   const Registration({Key? key}) : super(key: key);
 

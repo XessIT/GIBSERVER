@@ -64,7 +64,6 @@ class _ViewState extends State<View> {
           iconTheme: const IconThemeData(
             color: Colors.white, // Set the color for the drawer icon
           ),
-          centerTitle: true,
           leading: IconButton(
             onPressed: () {
               if (widget.userType == "Non-Executive") {
