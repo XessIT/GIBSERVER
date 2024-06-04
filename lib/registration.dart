@@ -220,14 +220,18 @@ class _GuestState extends State<Guest> {
   String blockStatus ="UnBlock";
   String adminRights ="Waiting";
   Future<void> uploadImage(Uint8List imageBytes) async {
-    if(membertype=="Non-Executive") {
-      setState(() {
-        membertype = "Guest";
-        print("type:$membertype");
-        blockStatus = "UnBlock";
-        adminRights = "Accepted";
 
-      });
+    if (type == "Guest") {
+      membertype = "Guest";
+      print("type:$membertype");
+      blockStatus = "UnBlock";
+      adminRights = "Accepted";
+    } else if (type == "Member") {
+      membertype = "Non-Executive"; // Or any other default member type
+    } else {
+      // Handle unexpected type value (optional)
+      print("Unexpected member type: $type");
+      return; // Or throw an exception
     }
     try {
       String uri = "http://mybudgetbook.in/GIBAPI/registration.php";
@@ -273,7 +277,8 @@ class _GuestState extends State<Guest> {
             "website": websitecontroller.text.trim(),
             "b_year": yearcontroller.text.trim(),
             "referrer_id": referreridcotroller.text.trim(),
-          }));
+          })
+      );
 
       if (res.statusCode == 200) {
         print(uri);
@@ -388,7 +393,6 @@ class _GuestState extends State<Guest> {
       appBar: AppBar(
         // Appbar title
         title:  Text('REGISTRATION',style: Theme.of(context).textTheme.displayLarge),
-        centerTitle: true,
         iconTheme:  const IconThemeData(
           color: Colors.white, // Set the color for the drawer icon
         ),
@@ -927,8 +931,15 @@ class _GuestState extends State<Guest> {
                             width: 305,
                             height: 50,
                             child: TypeAheadFormField<String>(
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return '* Select Your District';
+                                }
+                                return null;
+                              },
                               textFieldConfiguration: TextFieldConfiguration(
                                 controller: districtController,
+
                                 decoration: const InputDecoration(
                                     fillColor: Colors.white,
                                     filled: true,
@@ -968,6 +979,12 @@ class _GuestState extends State<Guest> {
                             width: 305,
                             height: 50,
                             child: TypeAheadFormField<String>(
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return '* Select Your Chapter';
+                                }
+                                return null;
+                              },
                               textFieldConfiguration: TextFieldConfiguration(
                                 controller: chapterController,
                                 decoration: const InputDecoration(
@@ -1889,14 +1906,14 @@ class _GuestState extends State<Guest> {
                             width: 300,
                             child: TextFormField(
                               controller: educationcontroller,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return '* Enter your Education Details';
-                                } else if (nameRegExp.hasMatch(value)) {
-                                  return null;
-                                }
-                                return null;
-                              },
+                              // validator: (value) {
+                              //   if (value!.isEmpty) {
+                              //     return '* Enter your Education Details';
+                              //   } else if (nameRegExp.hasMatch(value)) {
+                              //     return null;
+                              //   }
+                              //   return null;
+                              // },
                               onChanged: (value) {
                                 String capitalizedValue = capitalizeFirstLetter(value);
                                 educationcontroller.value = educationcontroller.value.copyWith(
