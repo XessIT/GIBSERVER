@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gipapp/Non_exe_pages/settings_non_executive.dart';
+import 'package:gipapp/settings_page_executive.dart';
 import 'Non_exe_pages/non_exe_home.dart';
 import 'guest_home.dart';
 import 'guest_settings.dart';
@@ -171,7 +173,7 @@ class _ChangeState extends State<Change> {
                   builder: (context) {
                     switch (widget.userType) {
                       case "Non-Executive":
-                        return NavigationBarNon(
+                        return SettingsPageNon(
                           userType: widget.userType,
                           userId: widget.userID,
                         );
@@ -181,7 +183,7 @@ class _ChangeState extends State<Change> {
                           userId: widget.userID,
                         );
                       default:
-                        return NavigationBarExe(
+                        return SettingsPageExecutive(
                           userType: widget.userType,
                           userId: widget.userID,
                         ); // Placeholder, replace with appropriate widget
@@ -205,7 +207,7 @@ class _ChangeState extends State<Change> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => NavigationBarNon(
+                builder: (context) => SettingsPageNon(
                   userType: widget.userType.toString(),
                   userId: widget.userID.toString(),
                 ),
@@ -225,7 +227,7 @@ class _ChangeState extends State<Change> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => NavigationBarExe(
+                builder: (context) => SettingsPageExecutive(
                   userType: widget.userType.toString(),
                   userId: widget.userID.toString(),
                 ),

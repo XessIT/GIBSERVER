@@ -314,6 +314,7 @@ class _PersonalState extends State<Personal> {
                             currentChapter: chapter!,
                             currentDob: dob!,
                             userId: widget.userID.toString(),
+                            userType: widget.userType.toString(),
                             imageUrl: imageParameter,
                           ),
                         ),
@@ -832,7 +833,8 @@ class _BusinessInfoState extends State<BusinessInfo> {
                       // documentid: documentid,
                       currentbusinesskeywords: businesskeywords,
                       currentbusinesstype: businesstype,
-                      id: widget.userID,
+                      userId: widget.userID,
+                      userType: widget.userType.toString(),
                       imageUrl: imageParameter,
 
                     )));

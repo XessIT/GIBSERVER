@@ -94,11 +94,11 @@ class _VisitorsSlipState extends State<VisitorsSlip> {
       if (res.statusCode == 200) {
            ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Guest Added Successfully")));
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => Homepage(
-                    userType: widget.userType, userId: widget.userId)));
+        // Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //         builder: (context) => Homepage(
+        //             userType: widget.userType, userId: widget.userId)));
       } else {
         print(
             "Failed to Guest Add. Server returned status code: ${res.statusCode}");
