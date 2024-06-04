@@ -97,8 +97,7 @@ class _HonorHistoryState extends State<HonorHistory> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Honoring History", style: Theme.of(context).textTheme.bodySmall,),
-        centerTitle: true,
+        title: Text("Honoring History", style: Theme.of(context).textTheme.displayLarge,),
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: ListView.builder(
@@ -118,11 +117,9 @@ class _HonorHistoryState extends State<HonorHistory> {
                                       style: TextStyle(color: Colors.white),
                                     ),
                                   ),
-                                  /*leading:data[i]["Tomobile"]!=fetchMobile ?const Icon(Icons.call_made, color: Colors.red,)
-                                      :   Icon(Icons.call_received, color: Colors.green[800],),*/
-                                  title: data[i]["Tomobile"] != fetchMobile ? Text(
-                                      "${data[i]["Toname"]}") :
-                                  Text("${data[i]["name"]}"),
+                                  title : data[i]["Tomobile"] != fetchMobile ? Text(
+                                       "${data[i]["Toname"]}") :
+                                  Text(" ${data[i]["name"]}"),
 
                                   children:[ Column(
                                     // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -131,14 +128,14 @@ class _HonorHistoryState extends State<HonorHistory> {
                                         children: [
                                           Padding(
                                               padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
-                                              child:data[i]["Tomobile"]!=fetchMobile ? Text('Company Name  :'"${data[i]["Tocompanyname"]}",) : Text('Company Name  :'"${data[i]["name"]}",)
+                                              child:data[i]["Tomobile"]!=fetchMobile ? Text('Company Name : '"${data[i]["Tocompanyname"]}",) : Text('Company Name  :'"${data[i]["name"]}",)
                                           ),
                                         ],
                                       ),
                                       const SizedBox(height: 10,),
                                       data[i]['businessName'].isNotEmpty
                                           ? ListTile(
-                                        title: Text("Referee Name: ${data[i]["businessName"]}"),
+                                        title: Text("   Referee Name : ${data[i]["businessName"]}",style: TextStyle(fontWeight: FontWeight.bold),),
                                         trailing: IconButton(
                                           onPressed: () async {
                                             final call = Uri.parse("tel://${data[i]["businessMobile"]}");
@@ -151,7 +148,7 @@ class _HonorHistoryState extends State<HonorHistory> {
                                           icon: Icon(Icons.call, color: Colors.green),
                                         ),
                                       ) : Container(),
-                                      const SizedBox(height: 10,),
+                                      const SizedBox(height: 5,),
                                       Row(
                                         // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                           children:  [
@@ -159,32 +156,42 @@ class _HonorHistoryState extends State<HonorHistory> {
                                               padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
                                               child: Row(
                                                 children: [
-                                                  Text('Purpose  :${data[i]["purpose"]}'),
+                                                  Text('Purpose : ${data[i]["purpose"]}'),
                                                   //  Text(purpose!),
                                                 ],
                                               ),
                                             ),
                                           ]
                                       ),
-                                      const SizedBox(height: 10,),
+                                      const SizedBox(height: 5,),
                                       Row(
                                         // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                         children:  [
                                           Padding(
                                             padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
-                                            child: Text('Date   :$formattedDate'),
+                                            child: Text('Date : $formattedDate'),
                                           ),
-
                                         ],
-                                      )
+                                      ),
+                                      const SizedBox(height: 5,),
+                                      Row(
+                                        // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                          children:  [
+                                            Padding(
+                                              padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
+                                              child: Row(
+                                                children: [
+                                                  Text('Value : ${data[i]["amount"]}'),
+                                                  //  Text(purpose!),
+                                                ],
+                                              ),
+                                            ),
+                                          ]
+                                      ),
                                     ],
                                   ),]
                               ),
                             ),
-
-
-
-
                           ],
                         ),
                       );

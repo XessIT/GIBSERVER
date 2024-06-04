@@ -344,6 +344,16 @@ class _GibTransactionState extends State<GibTransaction> {
                     margin: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
                       children: [
+                        const Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Text(
+                            'Business',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
                         // Network Image
                         Container(
                           height: 110,
@@ -389,16 +399,6 @@ class _GibTransactionState extends State<GibTransaction> {
                           ),
                         ),
                         // Text "Business"
-                        const Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Text(
-                            'Business',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
                       ],
                     ),
                   ),
@@ -411,6 +411,16 @@ class _GibTransactionState extends State<GibTransaction> {
                     margin: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
                       children: [
+                        const Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Text(
+                            'G2G',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
                         // Network Image
                         Container(
                           height: 110,
@@ -452,16 +462,7 @@ class _GibTransactionState extends State<GibTransaction> {
                           ),
                         ),
                         // Text "Business"
-                        const Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Text(
-                            'G2G',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
+
                       ],
                     ),
                   ),
@@ -474,6 +475,16 @@ class _GibTransactionState extends State<GibTransaction> {
                     margin: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
                       children: [
+                        const Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Text(
+                            'Guest',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
                         // Network Image
                         Container(
                           height: 110,
@@ -513,16 +524,7 @@ class _GibTransactionState extends State<GibTransaction> {
                           ),
                         ),
                         // Text "Business"
-                        const Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Text(
-                            'Guest',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
+
                       ],
                     ),
                   ),
@@ -535,6 +537,16 @@ class _GibTransactionState extends State<GibTransaction> {
                     margin: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
                       children: [
+                        const Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Text(
+                            'Honoring',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
                         // Network Image
                         Container(
                           height: 110,
@@ -574,16 +586,7 @@ class _GibTransactionState extends State<GibTransaction> {
                           ),
                         ),
                         // Text "Business"
-                        const Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Text(
-                            'Honoring',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
+
                       ],
                     ),
                   ),
