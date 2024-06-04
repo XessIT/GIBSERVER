@@ -844,7 +844,8 @@ class _BusinessInfoState extends State<BusinessInfo> {
                       currentybe: ybe,
                       // documentid: documentid,
                       currentbusinesskeywords: businesskeywords,
-                      currentbusinesstype: businesstype, id: widget.userID,
+                      currentbusinesstype: businesstype,
+                      id: widget.userID,
                       imageUrl: imageParameter,
 
                     )));
