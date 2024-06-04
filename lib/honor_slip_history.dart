@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:gipapp/honor_slip.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -84,11 +85,19 @@ class _HonorHistoryState extends State<HonorHistory> {
       throw e; // rethrow the error if needed
     }
   }
+  bool isLoading = true;
+
+
 
 
   @override
   void initState() {
     fetchData();
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
     // TODO: implement initState
     super.initState();
   }
@@ -99,8 +108,25 @@ class _HonorHistoryState extends State<HonorHistory> {
       appBar: AppBar(
         title: Text("Honoring History", style: Theme.of(context).textTheme.displayLarge,),
         iconTheme: IconThemeData(color: Colors.white),
+        leading: IconButton(
+          icon: Icon(Icons.navigate_before),
+
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(
+                builder: (context) => Direct(userType: widget.userType, userId: widget.userId)
+            ));
+          },
+
+        ),
+
+
       ),
-      body: ListView.builder(
+      body: isLoading
+          ? const Center(
+        // Show CircularProgressIndicator while loading
+        child: CircularProgressIndicator(),
+      ):
+      data.isEmpty ? Center(child: Text("No Record Found")) : ListView.builder(
                   itemCount: data.length,
                   itemBuilder: (context, i) {
                     DateTime createdOn = DateTime.parse(data[i]["createdOn"]);
