@@ -401,7 +401,12 @@ class SettingsPageExecutive extends StatelessWidget {
                       ).show();
                     },
                     icons: Icons.exit_to_app_rounded,
-                    title: "Sign Out",
+                    iconStyle: IconStyle(
+                      iconsColor: Colors.white,
+                      withBackground: true,
+                      backgroundColor: Colors.red,
+                    ),
+                    title: "Log Out",
                     titleStyle: Theme.of(context).textTheme.bodyMedium,
                   ),
                   /* SettingsItem(

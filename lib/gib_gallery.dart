@@ -7,6 +7,8 @@ import 'package:flutter/services.dart';
 import 'dart:typed_data';
 import 'package:video_player/video_player.dart';
 
+import 'Non_exe_pages/settings_non_executive.dart';
+
 
 
 class GibGallery extends StatefulWidget {
@@ -32,15 +34,54 @@ class _GibGalleryState extends State<GibGallery> {
           ),
           leading:IconButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) =>  SettingsPageExecutive(userType: widget.userType, userId: widget.userID,)));
+                if (widget.userType == "Non-Executive") {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SettingsPageNon(
+                        userType: widget.userType.toString(),
+                        userId: widget.userID.toString(),
+                      ),
+                    ),
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SettingsPageExecutive(
+                        userType: widget.userType.toString(),
+                        userId: widget.userID.toString(),
+                      ),
+                    ),
+                  );
+                }
               },
-              icon: const Icon(Icons.arrow_back,color: Colors.white,)),
+              icon: const Icon(Icons.navigate_before,color: Colors.white,)),
         ),
         body: PopScope(
           canPop: false,
           onPopInvoked: (didPop)  {
-            Navigator.push(context, MaterialPageRoute(builder: (context) =>  SettingsPageExecutive(userType: widget.userType, userId: widget.userID,)));
-          },
+            if (widget.userType == "Non-Executive") {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SettingsPageNon(
+                    userType: widget.userType.toString(),
+                    userId: widget.userID.toString(),
+                  ),
+                ),
+              );
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SettingsPageExecutive(
+                    userType: widget.userType.toString(),
+                    userId: widget.userID.toString(),
+                  ),
+                ),
+              );
+            }          },
           child: Column(
             children: [
               Container(

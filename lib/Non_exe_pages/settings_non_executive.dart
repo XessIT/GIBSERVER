@@ -200,7 +200,7 @@ class SettingsPageNon extends StatelessWidget {
               ),
               SettingsGroup(
                 items: [
-                  SettingsItem(
+                  /*SettingsItem(
                     onTap: () {
                       Navigator.push(
                         context,
@@ -219,8 +219,8 @@ class SettingsPageNon extends StatelessWidget {
                     // subtitle:'Profile Image, Name, Income',
                     titleMaxLine: 1,
                     subtitleMaxLine: 1,
-                  ),
-                  SettingsItem(
+                  ),*/
+                 /* SettingsItem(
                     onTap: () {
                       Navigator.push(
                         context,
@@ -238,7 +238,7 @@ class SettingsPageNon extends StatelessWidget {
                     // subtitle:'Profile Image, Name, Income',
                     titleMaxLine: 1,
                     subtitleMaxLine: 1,
-                  ),
+                  ),*/
                 ],
               ),
               SettingsGroup(

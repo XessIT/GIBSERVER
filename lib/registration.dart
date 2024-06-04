@@ -276,24 +276,6 @@ class _GuestState extends State<Guest> {
             "referrer_id": referreridcotroller.text.trim(),
           }));
 
-      /*if (res.statusCode == 200) {
-        print(uri);
-        print("Response Status: ${res.statusCode}");
-        print("Response Body: ${res.body}");
-        var response = jsonDecode(res.body);
-        if (response["success"] == "true") {
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>const Login()));
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please wait for Admin Approval")));
-          print("Uploaded image successfully");
-        } else {
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>const Login()));
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Registration is successfull\n"
-              "Please wait for Admin Approval")));
-          print("Image upload failed. Server response: ${response["message"]}");
-        }
-      } else {
-        print("Failed to upload image. Server returned status code: ${res.statusCode}");
-      }*/
       if (res.statusCode == 200) {
         print(uri);
         print("Response Status: ${res.statusCode}");

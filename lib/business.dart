@@ -242,18 +242,26 @@ class _GibTransactionState extends State<GibTransaction> {
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/gibBusiness.php?table=visitorBusinessCurrentYear');
       final response = await http.get(url);
+
       if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        setState(() {
-          visitoraccountingYear = responseData['totalRows'];
-        });
+        final contentType = response.headers['content-type'];
+        if (contentType != null && contentType.contains('application/json')) {
+          final responseData = json.decode(response.body);
+          setState(() {
+            visitoraccountingYear = responseData['totalRows'];
+          });
+        } else {
+          print('Error: Unexpected content type ${contentType}');
+        }
       } else {
         print('Error: ${response.statusCode}');
+        print('Response body: ${response.body}');
       }
     } catch (error) {
       print('Error: $error');
     }
   }
+
 
   String? honortotalRows = "0";
 
@@ -295,12 +303,12 @@ class _GibTransactionState extends State<GibTransaction> {
 
   @override
   void initState() {
-    getBusinessCount();
+     getBusinessCount();
     g2ggetBusinessCount();
     getaccountBusinessCount();
     g2ggetaccountBusinessCount();
     visitorgetBusinessCount();
-    visitorgetaccountBusinessCount();
+     visitorgetaccountBusinessCount();
     honorBusinessCount();
     honorgetaccountBusinessCount();
     // TODO: implement initState

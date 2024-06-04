@@ -52,7 +52,7 @@ class _GtoGPageState extends State<GtoGPage> {
 
   String uid = "";
   TextEditingController metwith = TextEditingController();
-  TextEditingController companyname = TextEditingController();
+  TextEditingController metcompanyname = TextEditingController();
   TextEditingController location = TextEditingController();
   TextEditingController metdate = TextEditingController();
   TextEditingController fromtime = TextEditingController();
@@ -69,6 +69,7 @@ class _GtoGPageState extends State<GtoGPage> {
   String? lname = "";
   String mobile ="";
   String firstname="";
+  String companyname = "";
   List dynamicdata=[];
   String errormesssage='';
 
@@ -114,20 +115,28 @@ class _GtoGPageState extends State<GtoGPage> {
     final response = await http.post(url, body: jsonEncode({
       'met_name': metwith.text,
       'user_id':widget.userId,
-      'met_company_name': companyname.text,
+      'met_company_name': metcompanyname.text,
       'met_number': companymobile.text,
       'date': formattedDate,
       'from_time': fromtime.text,
       'to_time': totime.text,
       'location': location.text,
       "first_name": fname,
-      "mobile": mobile,
-      "company_name": companyname.text,
+      "mobile": mobile.toString(),
+      "company_name": companyname.toString(),
       "district": district,
       "chapter": chapter
     }));
-
     if (response.statusCode == 200) {
+      print('Response body: ${response.body}');
+      var responseData = json.decode(response.body);
+      // Rest of your code
+    } else {
+      print('Error sending data: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+
+    /*if (response.statusCode == 200) {
       var responseData = json.decode(response.body);
       if (responseData['success']) {
         // Data sent successfully
@@ -154,10 +163,11 @@ class _GtoGPageState extends State<GtoGPage> {
           },
         );
       }
-    } else {
+    }
+    else {
       // Handle other errors
       print('Error sending data: ${response.statusCode}');
-    }
+    }*/
   }
   final _formKey =GlobalKey<FormState>();
 
@@ -272,7 +282,7 @@ class _GtoGPageState extends State<GtoGPage> {
                             searchController.text="${suggestion['first_name']} ${suggestion['last_name']}";
                             metwith.text = suggestion['first_name'];
                             companymobile.text = suggestion['mobile'];
-                            companyname.text = suggestion['company_name'];
+                            metcompanyname.text = suggestion['company_name'];
                             // Update other text fields as needed
                           });
                         },
@@ -323,7 +333,7 @@ class _GtoGPageState extends State<GtoGPage> {
                               width: 320,
                               height: 50,
                               child: TextFormField(
-                                controller: companyname,
+                                controller: metcompanyname,
                                 validator: (value) {
                                   if(value!.isEmpty){
                                     return "* Enter the Company name";
@@ -333,7 +343,7 @@ class _GtoGPageState extends State<GtoGPage> {
                                 },
                                   onChanged: (value) {
                                     String capitalizedValue = capitalizeFirstLetter(value);
-                                    companyname.value = companyname.value.copyWith(
+                                    metcompanyname.value = metcompanyname.value.copyWith(
                                       text: capitalizedValue,
                                       selection: TextSelection.collapsed(offset: capitalizedValue.length),
                                     );

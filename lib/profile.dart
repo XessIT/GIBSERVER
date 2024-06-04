@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:gipapp/Non_exe_pages/settings_non_executive.dart';
 import 'package:gipapp/personal_edit.dart';
 import 'package:gipapp/settings_page_executive.dart';
 import 'package:gipapp/view_gallery_image.dart';
@@ -69,7 +70,7 @@ class _ViewState extends State<View> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => NavigationBarNon(
+                    builder: (context) => SettingsPageNon(
                       userType: widget.userType.toString(),
                       userId: widget.userID.toString(),
                     ),
@@ -98,7 +99,7 @@ class _ViewState extends State<View> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => NavigationBarNon(
+                    builder: (context) => SettingsPageNon(
                       userType: widget.userType.toString(),
                       userId: widget.userID.toString(),
                     ),

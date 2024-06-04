@@ -107,10 +107,37 @@ class _ChangeState extends State<Change> {
       if (response.statusCode == 200) {
         print("Response Status: ${response.statusCode}");
         print("Response Body: ${response.body}");
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => Login()),
-        );
+        if (widget.userType == "Non-Executive") {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => NavigationBarNon(
+                userType: widget.userType.toString(),
+                userId: widget.userID.toString(),
+              ),
+            ),
+          );
+        } else if (widget.userType == "Guest") {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => GuestSettings(
+                userType: widget.userType.toString(),
+                userId: widget.userID.toString(),
+              ),
+            ),
+          );
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => NavigationBarExe(
+                userType: widget.userType.toString(),
+                userId: widget.userID.toString(),
+              ),
+            ),
+          );
+        }
       } else {
         print('Error: ${response.statusCode}');
       }

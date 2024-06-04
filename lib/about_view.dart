@@ -304,7 +304,7 @@ class _AboutTabState extends State<AboutTab> {
                       )
                     ]),
                 SizedBox(
-                  height: 500,
+                  height: 1000,
                   width: 400,
                   child: TabBarView(
                     children: [
