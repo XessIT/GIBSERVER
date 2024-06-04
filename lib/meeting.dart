@@ -44,7 +44,7 @@ class _MeetingUpcomingPageState extends State<MeetingUpcomingPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => SettingsPageNon(
+                    builder: (context) => NavigationBarNon(
                       userType: widget.userType.toString(),
                       userId: widget.userId.toString(),
                     ),
@@ -55,7 +55,7 @@ class _MeetingUpcomingPageState extends State<MeetingUpcomingPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => SettingsPageExecutive(
+                    builder: (context) => NavigationBarExe(
                       userType: widget.userType.toString(),
                       userId: widget.userId.toString(),
                     ),
@@ -74,7 +74,7 @@ class _MeetingUpcomingPageState extends State<MeetingUpcomingPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SettingsPageNon(
+                  builder: (context) => NavigationBarNon(
                     userType: widget.userType.toString(),
                     userId: widget.userId.toString(),
                   ),
@@ -85,7 +85,7 @@ class _MeetingUpcomingPageState extends State<MeetingUpcomingPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SettingsPageExecutive(
+                  builder: (context) => NavigationBarExe(
                     userType: widget.userType.toString(),
                     userId: widget.userId.toString(),
                   ),

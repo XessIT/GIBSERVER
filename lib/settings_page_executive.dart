@@ -121,7 +121,7 @@ class SettingsPageExecutive extends StatelessWidget {
                     titleMaxLine: 1,
                     subtitleMaxLine: 1,
                   ),
-                  SettingsItem(
+                 /* SettingsItem(
                     onTap: () {
                       Navigator.push(
                         context,
@@ -143,7 +143,7 @@ class SettingsPageExecutive extends StatelessWidget {
                     // subtitle:'Profile Image, Name, Income',
                     titleMaxLine: 1,
                     subtitleMaxLine: 1,
-                  ),
+                  ),*/
                   SettingsItem(
                     onTap: () {
                       Navigator.push(
@@ -155,7 +155,7 @@ class SettingsPageExecutive extends StatelessWidget {
                                 )),
                       );
                     },
-                    icons: CupertinoIcons.calendar,
+                    icons: CupertinoIcons.photo,
                     iconStyle: IconStyle(
                       iconsColor: Colors.white,
                       withBackground: true,

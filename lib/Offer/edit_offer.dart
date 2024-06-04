@@ -122,7 +122,7 @@ class _EditOfferState extends State<EditOffer> {
   Future<void> Editoffers() async {
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/offers.php');
-      final DateTime parsedDate = DateFormat('yyyy-MM-dd').parse(_date.text);
+      final DateTime parsedDate = DateFormat('dd/MM/yyyy').parse(_date.text);
       final formattedDate = DateFormat('yyyy/MM/dd').format(parsedDate);
       // final url = Uri.parse('http://192.168.29.129/API/offers.php');
       final response = await http.put(
@@ -155,7 +155,7 @@ class _EditOfferState extends State<EditOffer> {
   Future<void> UpdateOffers() async {
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/offers.php');
-      final DateTime parsedDate = DateFormat('yyyy-MM-dd').parse(_date.text);
+      final DateTime parsedDate = DateFormat('dd/MM/yyyy').parse(_date.text);
       final formattedDate = DateFormat('yyyy/MM/dd').format(parsedDate);
       // final url = Uri.parse('http://192.168.29.129/API/offers.php');
       final response = await http.put(
@@ -238,7 +238,6 @@ class _EditOfferState extends State<EditOffer> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit Offer', style: Theme.of(context).textTheme.displayLarge,),
-        centerTitle: true,
         iconTheme:  const IconThemeData(
           color: Colors.white, // Set the color for the drawer icon
         ),
@@ -353,6 +352,7 @@ class _EditOfferState extends State<EditOffer> {
               SizedBox(
                 width:300,
                 child: TextFormField(
+                    readOnly: true,
                     controller: _date,
                     validator: (value) {
                       if(value!.isEmpty){
