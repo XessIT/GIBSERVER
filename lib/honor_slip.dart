@@ -443,6 +443,8 @@ class _DirectState extends State<Direct> {
   String? fname = "";
   String? lname = "";
   String? mobile = "";
+  String? district = "";
+  String? chapter = "";
   String? companyname = "";
   List dynamicdata=[];
   Future<void> fetchData(String userId) async {
@@ -462,6 +464,8 @@ class _DirectState extends State<Direct> {
                 lname= dynamicdata[0]['last_name'];
                 mobile=dynamicdata[0]["mobile"];
                 companyname=dynamicdata[0]["company_name"];
+                district=dynamicdata[0]["district"];
+                chapter=dynamicdata[0]["chapter"];
               });
             }
           });
@@ -494,7 +498,9 @@ class _DirectState extends State<Direct> {
           "amount": amountcontroller.text.trim(),
           "name": fname,
           "mobile": mobile,
-          "company": companyname
+          "company": companyname.toString(),
+          "district": district.toString(),
+          "chapter": chapter.toString(),
         }),
       );
       print(url);
@@ -506,7 +512,6 @@ class _DirectState extends State<Direct> {
       }
     } catch (e) {
       print("Error during signup: $e");
-      // Handle error as needed
     }
   }
   @override

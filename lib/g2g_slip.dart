@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'business.dart';
 import 'g2g_slip_history.dart';
 
 
@@ -70,6 +71,7 @@ class _GtoGPageState extends State<GtoGPage> {
   String? lname = "";
   String mobile ="";
   String firstname="";
+  String mycomapny="";
   List dynamicdata=[];
   String errormesssage='';
 
@@ -81,7 +83,6 @@ class _GtoGPageState extends State<GtoGPage> {
         print("response S: ${response.statusCode}");
         print("response B: ${response.body}");
         print('-----------------------------------');
-
         final responseData = json.decode(response.body);
         if (responseData is List<dynamic>) {
           setState(() {
@@ -91,7 +92,9 @@ class _GtoGPageState extends State<GtoGPage> {
                 fname = dynamicdata[0]["first_name"];
                 lname= dynamicdata[0]['last_name'];
                 mobile=dynamicdata[0]["mobile"];
-                companyname=dynamicdata[0]["company_name"];
+                mycomapny=dynamicdata[0]["company_name"];
+                district=dynamicdata[0]["district"];
+                chapter=dynamicdata[0]["chapter"];
 
               });
             }
@@ -99,8 +102,9 @@ class _GtoGPageState extends State<GtoGPage> {
           print('-----------------------------------');
           print('name $fname');
           print('name $mobile');
-          print('name $mobile');
-          print('widget $companyname');
+          print('widget $mycomapny');
+          print('district $district');
+          print('chapter $chapter');
         } else {
           // Handle invalid response data (not a List)
           print('Invalid response data format');
@@ -116,57 +120,6 @@ class _GtoGPageState extends State<GtoGPage> {
   }
 
 
-  Future<void> postData() async {
-    var url = Uri.parse('http://mybudgetbook.in/GIBAPI/g2g_slip.php');
-    final DateTime parsedDate = DateFormat('dd/MM/yyyy').parse(metdate.text);
-    final formattedDate = DateFormat('yyyy/MM/dd').format(parsedDate);
-    final response = await http.post(url, body: jsonEncode({
-      'met_name': metwith.text,
-      'user_id':widget.userId,
-      'met_company_name': companyname.text,
-      'met_number': companymobile.text,
-      'date': formattedDate,
-      'from_time': fromtime.text,
-      'to_time': totime.text,
-      'location': location.text,
-      "first_name": fname,
-      "mobile": mobile,
-      "company_name": companyname.text, // Extract text from TextEditingController
-      // Add other fields here
-    }));
-
-    if (response.statusCode == 200) {
-      var responseData = json.decode(response.body);
-      if (responseData['success']) {
-        // Data sent successfully
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Data sent successfully")),
-        );
-      } else {
-        // Error sending data
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text("Alert"),
-              content: Text(responseData['message']),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text("OK"),
-                ),
-              ],
-            );
-          },
-        );
-      }
-    } else {
-      // Handle other errors
-      print('Error sending data: ${response.statusCode}');
-    }
-  }
   final _formKey =GlobalKey<FormState>();
 
   /// Search bar
@@ -215,6 +168,56 @@ class _GtoGPageState extends State<GtoGPage> {
 
 
 
+  Future<void> postData() async {
+    var url = Uri.parse('http://mybudgetbook.in/GIBAPI/g2g_slip.php');
+    // final DateTime parsedDate = DateFormat('dd/MM/yyyy').parse(metdate.text);
+    // final formattedDate = DateFormat('yyyy/MM/dd').format(parsedDate);
+    final response = await http.post(url, body: jsonEncode({
+      'met_name': metwith.text,
+      'user_id':widget.userId,
+      'met_company_name': companyname.text,
+      'met_number': companymobile.text,
+      'date': metdate.text,
+      'from_time': fromtime.text,
+      'to_time': totime.text,
+      'location': location.text,
+      "first_name": fname,
+      "mobile": mobile,
+      "district": district.toString(),
+      "chapter": chapter.toString(),
+      "company_name": mycomapny.toString(), // Extract text from TextEditingController
+      // Add other fields here
+    }));
+    if (response.statusCode == 200) {
+      var responseData = json.decode(response.body);
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>BusinessPage(userId: widget.userId, userType: widget.userType)));
+
+      if (responseData['success']) {
+      } else {
+        // Error sending data
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Alert"),
+              content: Text(responseData['message']),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("OK"),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    } else {
+      // Handle other errors
+      print('Error sending data: ${response.statusCode}');
+    }
+  }
   TextEditingController searchController = TextEditingController();
   List<dynamic> searchResults = [];
   List<dynamic> allItems = [];
@@ -442,7 +445,7 @@ class _GtoGPageState extends State<GtoGPage> {
                                         lastDate: DateTime(2100));
                                     if(pickDate==null) return;{
                                       setState(() {
-                                        metdate.text =DateFormat('dd/MM/yyyy').format(pickDate);
+                                        metdate.text =DateFormat('yyyy/MM/dd').format(pickDate);
                                       });
                                     }
                                   },

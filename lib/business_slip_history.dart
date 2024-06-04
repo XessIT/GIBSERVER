@@ -29,7 +29,6 @@ class _BusinessHistoryState extends State<BusinessHistory> {
       child: Scaffold(
         appBar: AppBar(
           title: Text("Business History", style: Theme.of(context).textTheme.displayLarge,),
-          centerTitle: true,
           iconTheme: const IconThemeData(color: Colors.white),
           leading: IconButton(
             onPressed: () {
