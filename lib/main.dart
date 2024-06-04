@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workmanager/workmanager.dart';
 import 'Non_exe_pages/non_exe_home.dart';
@@ -141,47 +142,35 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        appBarTheme: AppBarTheme(backgroundColor: Colors.green[900]),
-        textTheme: TextTheme(
-            displayLarge: TextStyle(
-                fontSize: 30.0,
-                fontWeight: FontWeight.bold,
-                color: Colors.green[900]),
-            displayMedium: TextStyle(fontSize: 20.0, color: Colors.green[900]),
-            displaySmall: const TextStyle(fontSize: 20.0, color: Colors.yellow),
-            headlineMedium: const TextStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-                color: Colors.black),
-            headlineSmall: TextStyle(
-                fontSize: 16.0,
-                color: Colors.green[900],
-                fontWeight: FontWeight.bold),
-            titleLarge: const TextStyle(fontSize: 16, color: Colors.white),
-            bodyLarge: const TextStyle(fontSize: 18.0),
-            bodyMedium: const TextStyle(fontSize: 16),
-            headlineLarge: TextStyle(
-                fontSize: 16.0,
-                color: Colors.blue[900],
-                fontWeight: FontWeight.bold),
-            titleSmall: const TextStyle(
-                fontSize: 13.5,
-                color: Colors.white70,
-                fontWeight: FontWeight.w200),
-            bodySmall: const TextStyle(
-                fontSize: 15, color: Colors.white, fontWeight: FontWeight.bold)
-            //   subtitle1:   TextStyle( fontSize: 20, color: Colors.black, ),
-            //    labelSmall: const TextStyle(fontSize: 16, color: Colors.white),
+        appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.green
+        ),
+        /// app bar 18
+        /// inside body heding  16
+        /// inside text 14
+        /// body for black
+        /// label for white
+        /// headline for medium  green
 
-            ),
-        outlinedButtonTheme: OutlinedButtonThemeData(
-            style: OutlinedButton.styleFrom(
-                // primary: Colors.white,
-                backgroundColor: Colors.green[800],
-                // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.0)  ),
-                padding:
-                    const EdgeInsets.symmetric(vertical: 15, horizontal: 50),
-                textStyle: const TextStyle(fontSize: 15))),
+        textTheme: GoogleFonts.aBeeZeeTextTheme().copyWith(
+          headlineSmall: const TextStyle(fontSize: 16.0,color: Colors.green),
+          headlineMedium: const TextStyle(fontSize: 16.0,color: Colors.green,fontWeight: FontWeight.bold),
+          headlineLarge:  const TextStyle(fontSize: 16.0,color: Colors.blue),
+
+
+          bodySmall: const TextStyle(fontSize: 14, color: Colors.black),
+          bodyMedium: const TextStyle(fontSize: 16, color: Colors.black,fontWeight: FontWeight.bold),
+          bodyLarge: const TextStyle(fontSize: 18.0, color: Colors.black),
+
+          displayLarge:const TextStyle(fontSize: 18, color: Colors.white),
+          displayMedium: const TextStyle(fontSize: 16, color: Colors.white,fontWeight: FontWeight.bold),
+          displaySmall: const TextStyle(fontSize: 14, color: Colors.white), // Assuming this is for labels
+        ),
+
+
+
+
+
       ),
 
       home: FutureBuilder<Map<String, dynamic>>(
@@ -222,25 +211,22 @@ class MyApp extends StatelessWidget {
 
             if (isLoggedIn) {
               switch (userType) {
-                case "Executive":
-                  return Homepage(
+                case "Non-Executive":
+                  return NavigationBarNon(
                     userType: userType,
                     userId: id,
-                  );
-                case "Non-Executive":
-                  return NonExecutiveHome(
-                    userType: userType,
-                    userID: id,
                   ); // Pass firstName to Homepage
                 //   return NonExecutiveHome();
                 case "Guest":
-                  return GuestHomePage(
+                  return GuestHome(
                     userType: userType,
                     userId: id,
                   );
                 default:
-                  // Handle unexpected user types
-                  return Text('Unknown user type: $userType');
+                  return NavigationBarExe(
+                    userType: userType,
+                    userId: id,
+                  );
               }
             } else {
               return const Login();

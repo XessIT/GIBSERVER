@@ -353,14 +353,14 @@ class _AddOfferPageState extends State<AddOfferPage> {
                         return Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            ListTile(
+                          /*  ListTile(
                               leading: const Icon(Icons.camera_alt),
                               title: const Text("With Camera"),
                               onTap: () async {
                                 pickImageFromCamera();
                                 Navigator.of(context).pop();
                               },
-                            ),
+                            ),*/
                             ListTile(
                               leading: const Icon(Icons.storage),
                               title: const Text("From Gallery"),
@@ -445,6 +445,7 @@ class _AddOfferPageState extends State<AddOfferPage> {
                   SizedBox(
                     width: 300,
                     child: TextFormField(
+                      readOnly: true,
                       controller: _date,
                       validator: (value) {
                         if (value!.isEmpty) {
