@@ -1,20 +1,33 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:gipapp/settings_page_executive.dart';
 import 'Non_exe_pages/non_exe_home.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
 import 'dart:typed_data';
 import 'package:video_player/video_player.dart';
+import 'package:collection/collection.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 
 
-class GibGallery extends StatelessWidget {
+import 'Non_exe_pages/settings_non_executive.dart';
+
+
+
+class GibGallery extends StatefulWidget {
   final String userType;
   final String? userID;
-  const GibGallery({super.key,
+  const GibGallery
+      ({super.key,
     required this.userType,
     required this. userID,});
 
+  @override
+  State<GibGallery> createState() => _GibGalleryState();
+}
+
+class _GibGalleryState extends State<GibGallery> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -22,20 +35,59 @@ class GibGallery extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           // Appbar title
-          title:  Text('GIB Gallery',style: Theme.of(context).textTheme.displayLarge,
+          title:  Text('GIB Galleryy',style: Theme.of(context).textTheme.displayLarge,
           ),
-          centerTitle: true,
+
           leading:IconButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) =>  NavigationBarNon(userType: '', userId: '',)));
+                if (widget.userType == "Non-Executive") {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SettingsPageNon(
+                        userType: widget.userType.toString(),
+                        userId: widget.userID.toString(),
+                      ),
+                    ),
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SettingsPageExecutive(
+                        userType: widget.userType.toString(),
+                        userId: widget.userID.toString(),
+                      ),
+                    ),
+                  );
+                }
               },
-              icon: const Icon(Icons.arrow_back,color: Colors.white,)),
+              icon: const Icon(Icons.navigate_before,color: Colors.white,)),
         ),
         body: PopScope(
           canPop: false,
           onPopInvoked: (didPop)  {
-            Navigator.push(context, MaterialPageRoute(builder: (context) =>  NavigationBarNon(userType: '', userId: '',)));
-          },
+            if (widget.userType == "Non-Executive") {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SettingsPageNon(
+                    userType: widget.userType.toString(),
+                    userId: widget.userID.toString(),
+                  ),
+                ),
+              );
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SettingsPageExecutive(
+                    userType: widget.userType.toString(),
+                    userId: widget.userID.toString(),
+                  ),
+                ),
+              );
+            }          },
           child: Column(
             children: [
               Container(
@@ -82,7 +134,7 @@ class GibGallery extends StatelessWidget {
                 height: 1100,
                 child: Expanded(
                     child: TabBarView(children: [
-                      ViewPhotosPage(),
+                     // ViewPhotosPage(),
                       ViewVideosPage(),
                     ]
                     )),
@@ -96,9 +148,15 @@ class GibGallery extends StatelessWidget {
   }
 }
 
-
 class ViewPhotosPage extends StatefulWidget {
-  const ViewPhotosPage({Key? key}) : super(key: key);
+  final String userType;
+  final String? userID;
+
+  const ViewPhotosPage({
+    super.key,
+    required this.userType,
+    required this.userID,
+  });
 
   @override
   State<ViewPhotosPage> createState() => _ViewPhotosPageState();
@@ -106,32 +164,118 @@ class ViewPhotosPage extends StatefulWidget {
 
 class _ViewPhotosPageState extends State<ViewPhotosPage> {
   List<Map<String, dynamic>> _imageGroups = [];
+
   Future<void> _fetchImages() async {
-    final url = Uri.parse('http://mybudgetbook.in/GIBADMINAPI/gibimagefetch.php');
-    final response = await http.get(url);
-    if (response.statusCode == 200) {
-      List<dynamic> imageData = jsonDecode(response.body);
-      setState(() {
-        _imageGroups = imageData.map((data) {
-          return {
-            'event_name': data['event_name'],
-            'selectedDate': data['selectedDate'],
-            'imagepaths': data['imagepaths']
+    try {
+      final url = Uri.parse('http://mybudgetbook.in/GIBADMINAPI/gibimagefetch.php');
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        List<dynamic> imageData = jsonDecode(response.body);
+        Map<String, List<dynamic>> groupedEvents = groupBy(imageData, (obj) => obj['event_name']);
+
+        List<Map<String, dynamic>> result = [];
+
+        groupedEvents.forEach((key, value) {
+          List<String> imagePaths = [];
+          value.forEach((element) {
+            imagePaths.addAll(element['imagepaths'].cast<String>());
+          });
+
+          Map<String, dynamic> groupedObject = {
+            'event_name': key,
+            'selectedDate': value[0]['selectedDate'],
+            'id': value[0]['id'],
+            'imagepaths': imagePaths,
           };
-        }).toList();
-      });
-    } else {
-      print('Failed to fetch images.');
+
+          result.add(groupedObject);
+        });
+
+        setState(() {
+          _imageGroups = result;
+        });
+      } else {
+        throw Exception('Failed to fetch images');
+      }
+    } catch (e) {
+      print('Error fetching images: $e');
     }
   }
+
+  Future<void> deleteImage(int imageId) async {
+    try {
+      final url = Uri.parse('http://mybudgetbook.in/GIBADMINAPI/gibimagefetch.php');
+      print('Deleting image with URL: $url');
+
+      Map<String, dynamic> jsonData = {'id': imageId};
+
+      final response = await http.delete(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(jsonData),
+      );
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Image deleted successfully'),
+          ),
+        );
+        print('Image deleted successfully');
+        _fetchImages(); // Refresh the list after deletion
+      } else {
+        throw Exception('Failed to delete image. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error deleting image: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: Failed to delete image.'),
+        ),
+      );
+    }
+  }
+
+  Future<void> _showDeleteConfirmationDialog(int imageId) async {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Delete Image"),
+          content: Text("Are you sure you want to delete this image?"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                deleteImage(imageId);
+                Navigator.of(context).pop(true);
+              },
+              child: Text("Delete"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
     _fetchImages();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text("View Photos",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),),
+      ),
       body: ListView.builder(
         itemCount: _imageGroups.length,
         itemBuilder: (context, index) {
@@ -147,70 +291,45 @@ class _ViewPhotosPageState extends State<ViewPhotosPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Event Name- ${group['event_name']}',
+                        'Event Name - ${group['event_name'] ?? 'Unknown'}',
                         style: TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Container(
-                        decoration: const BoxDecoration(
-                          color: Colors.green, // Change the color here
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(10.0),
-                            bottomRight: Radius.circular(10.0),
-                          ),
-                        ),
-                        padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
-                        child: Text(
-                          'Date - ${group['selectedDate']}',
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      Text(
+                        'Date - ${group['selectedDate'] ?? 'Unknown'}',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-
                     ],
                   ),
-                  SizedBox(height: 8.0),
+                  const SizedBox(height: 8.0),
                   GridView.builder(
                     shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 8.0, /// Space between columns
-                      mainAxisSpacing: 15.0, /// Space between rows
+                      crossAxisCount: 5,
+                      crossAxisSpacing: 8.0,
+                      mainAxisSpacing: 10.0,
                     ),
-                    itemCount: group['imagepaths'].length,
+                    itemCount: group['imagepaths']?.length ?? 0,
                     itemBuilder: (context, imageIndex) {
-                      final imagePath = group['imagepaths'][imageIndex];
-                      return FutureBuilder(
-                        future: http.get(Uri.parse('http://mybudgetbook.in/GIBADMINAPI/$imagePath')),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
-                            final imageResponse = snapshot.data as http.Response;
-                            if (imageResponse.statusCode == 200) {
-                              return Stack(
-                                children: [
-                                  Image.memory(
-                                    Uint8List.fromList(imageResponse.bodyBytes),
-                                    fit: BoxFit.cover,
-                                    width: double.infinity,
-                                    height: double.infinity,
-                                  ),
+                      final imagePath = group['imagepaths']?[imageIndex] ?? '';
+                      final imageName = imagePath.split('/').last;
 
-                                ],
-                              );
-                            } else {
-                              return Text('Error loading image');
-                            }
-                          } else if (snapshot.connectionState == ConnectionState.waiting) {
-                            return Center(child: CircularProgressIndicator());
-                          } else {
-                            return Text('Error loading image');
-                          }
-                        },
+                      return Stack(
+                        children: [
+                          CachedNetworkImage(
+                            imageUrl: 'http://mybudgetbook.in/GIBADMINAPI/$imagePath',
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                            errorWidget: (context, url, error) => Text('Error loading image'),
+                          ),
+                        ],
                       );
                     },
                   ),
@@ -225,7 +344,7 @@ class _ViewPhotosPageState extends State<ViewPhotosPage> {
 }
 
 
-
+/// video purpose
 class ViewVideosPage extends StatefulWidget {
   const ViewVideosPage({Key? key}) : super(key: key);
 

@@ -52,11 +52,8 @@ class _GtoGPageState extends State<GtoGPage> {
   }
 
   String uid = "";
-
-  String district = "";
-  String chapter="";
   TextEditingController metwith = TextEditingController();
-  TextEditingController companyname = TextEditingController();
+  TextEditingController metcompanyname = TextEditingController();
   TextEditingController location = TextEditingController();
   TextEditingController metdate = TextEditingController();
   TextEditingController fromtime = TextEditingController();
@@ -67,6 +64,8 @@ class _GtoGPageState extends State<GtoGPage> {
     if (text.isEmpty) return text;
     return text.substring(0, 1).toUpperCase() + text.substring(1);
   }
+  String district = "";
+  String chapter = "";
   String? fname = "";
   String? lname = "";
   String mobile ="";
@@ -80,6 +79,7 @@ class _GtoGPageState extends State<GtoGPage> {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=$userId');
       final response = await http.get(url);
       if (response.statusCode == 200) {
+
         print("response S: ${response.statusCode}");
         print("response B: ${response.body}");
         print('-----------------------------------');
@@ -95,7 +95,6 @@ class _GtoGPageState extends State<GtoGPage> {
                 mycomapny=dynamicdata[0]["company_name"];
                 district=dynamicdata[0]["district"];
                 chapter=dynamicdata[0]["chapter"];
-
               });
             }
           });
@@ -118,8 +117,6 @@ class _GtoGPageState extends State<GtoGPage> {
       print('Error: $error');
     }
   }
-
-
   final _formKey =GlobalKey<FormState>();
 
   /// Search bar
@@ -175,7 +172,7 @@ class _GtoGPageState extends State<GtoGPage> {
     final response = await http.post(url, body: jsonEncode({
       'met_name': metwith.text,
       'user_id':widget.userId,
-      'met_company_name': companyname.text,
+      'met_company_name': metcompanyname.text,
       'met_number': companymobile.text,
       'date': metdate.text,
       'from_time': fromtime.text,
@@ -283,7 +280,7 @@ class _GtoGPageState extends State<GtoGPage> {
                             searchController.text="${suggestion['first_name']} ${suggestion['last_name']}";
                             metwith.text = suggestion['first_name'];
                             companymobile.text = suggestion['mobile'];
-                            companyname.text = suggestion['company_name'];
+                            metcompanyname.text = suggestion['company_name'];
                             // Update other text fields as needed
                           });
                         },
@@ -334,7 +331,7 @@ class _GtoGPageState extends State<GtoGPage> {
                               width: 320,
                               height: 50,
                               child: TextFormField(
-                                controller: companyname,
+                                controller: metcompanyname,
                                 validator: (value) {
                                   if(value!.isEmpty){
                                     return "* Enter the Company name";
@@ -344,7 +341,7 @@ class _GtoGPageState extends State<GtoGPage> {
                                 },
                                   onChanged: (value) {
                                     String capitalizedValue = capitalizeFirstLetter(value);
-                                    companyname.value = companyname.value.copyWith(
+                                    metcompanyname.value = metcompanyname.value.copyWith(
                                       text: capitalizedValue,
                                       selection: TextSelection.collapsed(offset: capitalizedValue.length),
                                     );

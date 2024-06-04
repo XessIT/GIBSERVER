@@ -4,9 +4,11 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:gipapp/settings_page_executive.dart';
 import 'package:http/http.dart'as http;
 
 import 'Non_exe_pages/non_exe_home.dart';
+import 'Non_exe_pages/settings_non_executive.dart';
 import 'guest_home.dart';
 import 'home.dart';
 
@@ -92,6 +94,7 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
       });
     });
     getData(qrstr);
+    fetchData(widget.userID.toString());
     // scanQr();
   }
 
@@ -107,7 +110,7 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => NavigationBarNon(
+              builder: (context) => SettingsPageNon(
                 userType: widget.userType.toString(),
                 userId: widget.userID.toString(),
               ),
@@ -118,7 +121,7 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => NavigationBarExe(
+              builder: (context) => SettingsPageExecutive(
                 userType: widget.userType.toString(),
                 userId: widget.userID.toString(),
               ),
@@ -177,13 +180,31 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
       // Handle error here (e.g., display error message to the user)
     }
   }
+  void fetchData(String id) async {
+    String url = 'http://mybudgetbook.in/GIBAPI/name_retrive.php?id=$id'; // Replace with your actual PHP file URL
+    var response = await http.get(Uri.parse(url));
 
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body);
+      for (var item in data) {
+        String firstName = item['first_name'];
+        String lastName = item['last_name'];
+        print('First Name: $firstName, Last Name: $lastName');
+      }
+    } else {
+      print('Failed to fetch data: ${response.statusCode}');
+    }
+  }
   Future<void> insertAttendance(Map<String, dynamic> meeting) async {
     try {
+      String firstName = ''; // Initialize these variables with actual user data
+      String lastName = '';  // Initialize these variables with actual user data
+      fetchData(widget.userID.toString());
       final response = await http.post(
         Uri.parse('http://mybudgetbook.in/GIBAPI/insert_attendance.php'),
         body: {
           'user_id': widget.userID,
+          'user_name': '$firstName $lastName',
           'meeting_name': meeting['meeting_name'],
           'meeting_id': meeting['id'],
           'meeting_type': meeting['meeting_type'],
@@ -243,17 +264,7 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => NavigationBarNon(
-                    userType: widget.userType.toString(),
-                    userId: widget.userID.toString(),
-                  ),
-                ),
-              );
-            } else if (widget.userType == "Guest") {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => GuestHome(
+                  builder: (context) => SettingsPageNon(
                     userType: widget.userType.toString(),
                     userId: widget.userID.toString(),
                   ),
@@ -263,7 +274,7 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => NavigationBarExe(
+                  builder: (context) => SettingsPageExecutive(
                     userType: widget.userType.toString(),
                     userId: widget.userID.toString(),
                   ),
@@ -283,7 +294,7 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => NavigationBarNon(
+                  builder: (context) => SettingsPageNon(
                     userType: widget.userType.toString(),
                     userId: widget.userID.toString(),
                   ),
@@ -294,7 +305,7 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => NavigationBarExe(
+                  builder: (context) => SettingsPageExecutive(
                     userType: widget.userType.toString(),
                     userId: widget.userID.toString(),
                   ),

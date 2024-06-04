@@ -1,6 +1,7 @@
 import 'dart:convert'; // for base64Encode
 //import 'dart:typed_data'; // Import this for Uint8List
 //import 'dart:html' as html;
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -28,14 +29,13 @@ class _OfferListState extends State<OfferList> {
       child: Scaffold(
         //APPBAR STARTS
         appBar: AppBar(
-          title: Text('OFFERS',
+          title: Text('Offers',
               style: Theme.of(context).textTheme.displayLarge),
-          centerTitle: true,
           iconTheme:  const IconThemeData(
             color: Colors.white, // Set the color for the drawer icon
           ),
           leading: IconButton(
-            icon: Icon(Icons.navigate_before),
+            icon: const Icon(Icons.navigate_before),
             onPressed: (){
               Navigator.push(
                 context,
@@ -124,8 +124,6 @@ class _AddOfferPageState extends State<AddOfferPage> {
   @override
   void initState() {
    getData();
-    // print("USER ID---${widget.userId}");
-    // TODO: implement initState
     super.initState();
    _checkConnectivityAndGetData();
    Connectivity().onConnectivityChanged.listen((result) {
@@ -139,6 +137,7 @@ class _AddOfferPageState extends State<AddOfferPage> {
      });
    });
   }
+
   var _connectivityResult = ConnectivityResult.none;
   Future<void> _checkConnectivityAndGetData() async {
     var connectivityResult = await Connectivity().checkConnectivity();
@@ -193,27 +192,6 @@ class _AddOfferPageState extends State<AddOfferPage> {
 
   String message = "";
   TextEditingController caption = TextEditingController();
-
-  /*String? imagename;
-  String? imagedata;*/
-  /*Future<void> getImage() async {
-    final html.FileUploadInputElement input = html.FileUploadInputElement();
-    input.click();
-    input.onChange.listen((e) {
-      final html.File file = input.files!.first;
-      final reader = html.FileReader();
-      reader.onLoadEnd.listen((e) {
-        setState(() {
-          selectedImage = reader.result as Uint8List?;
-          imagename = file.name;
-          imagedata = base64Encode(selectedImage!);
-          print('Image Name: $imagename');
-          print('Image Data: $imagedata');
-        });
-      });
-      reader.readAsArrayBuffer(file);
-    });
-  }*/
 
   bool showLocalImage = false;
   /* XFile? pickedImage; */
@@ -348,7 +326,7 @@ class _AddOfferPageState extends State<AddOfferPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body:
-      data.isEmpty ? Center(child: Text('No data found')) :
+     // data.isEmpty ? Center(child: Text('No data found')) :
       RefreshIndicator(
         onRefresh: _refresh,
         child: SingleChildScrollView(
@@ -360,6 +338,8 @@ class _AddOfferPageState extends State<AddOfferPage> {
                   const SizedBox(height: 20,),
                   InkWell(
                    child: Container(
+                     width: 150,
+                     height: 150,
                      child: ClipOval(
                         child: selectedImage != null
                             ? Image.memory(
@@ -743,7 +723,7 @@ class _RunningPageState extends State<RunningPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body:
+        body: isLoading ? const Center(child: CircularProgressIndicator(),) :
         data.isEmpty ? Center(child: Text('No data found')) :
         ListView.builder(
             itemCount: data.length,
@@ -768,7 +748,7 @@ class _RunningPageState extends State<RunningPage> {
                                       CircleAvatar(
                                         radius: 30.0,
                                         backgroundColor: Colors.cyan,
-                                        backgroundImage: NetworkImage(imageUrl),
+                                        backgroundImage: CachedNetworkImageProvider(imageUrl),
                                         //IMAGE STARTS CIRCLEAVATAR
                                         //  Image.network('${data[i]['offer_image']}').image,
                                         /* child: Stack(
@@ -953,8 +933,68 @@ class _CompletedPageState extends State<CompletedPage> {
   @override
   void initState() {
     getData();
-    // TODO: implement initState
+    _checkConnectivityAndGetData();
+    Connectivity().onConnectivityChanged.listen((result) {
+      setState(() {
+        _connectivityResult = result;
+      });
+    });
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
     super.initState();
+  }
+  var _connectivityResult = ConnectivityResult.none;
+  Future<void> _checkConnectivityAndGetData() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectivityResult;
+    });
+    if (_connectivityResult != ConnectivityResult.none) {
+      _getInternet();
+    }
+  }
+  Future<void> _getInternet() async {
+    // Replace the URL with your PHP backend URL
+    var url = 'http://mybudgetbook.in/BUDGETAPI/internet.php';
+
+    try {
+      var response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        // Handle successful response
+        var data = json.decode(response.body);
+        print(data);
+        // Show online status message
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(
+        //     content: Text('Now online.'),
+        //   ),
+        // );
+      } else {
+        // Handle other status codes
+        print('Request failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle network errors
+      print('Error: $e');
+      // Show offline status message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please check your internet connection.'),
+        ),
+      );
+    }
+  }
+  bool isLoading = true;
+  ///refresh
+  List<String> items = List.generate(20, (index) => 'Item $index');
+  Future<void> _refresh() async {
+    await Future.delayed(const Duration(seconds: 1));
+    setState(() {
+      initState();
+    });
   }
   List<Map<String, dynamic>> data=[];
   Future<void> getData() async {
@@ -1002,7 +1042,7 @@ class _CompletedPageState extends State<CompletedPage> {
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
-        body:
+        body: isLoading ? const Center(child: CircularProgressIndicator(),) :
         data.isEmpty ? Center(child: Text('No data found')) :
         ListView.builder(
             itemCount: data.length,
@@ -1027,7 +1067,7 @@ class _CompletedPageState extends State<CompletedPage> {
                                   backgroundColor: Colors.cyan,
                                   backgroundImage:
                                   //IMAGE STARTS CIRCLEAVATAR
-                                  NetworkImage(imageUrl),
+                                  CachedNetworkImageProvider(imageUrl),
                                 ),
                                 Column(
                                   children: [
@@ -1098,7 +1138,68 @@ class _BlockPageState extends State<BlockPage> {
   @override
   void initState() {
     getData();
+    _checkConnectivityAndGetData();
+    Connectivity().onConnectivityChanged.listen((result) {
+      setState(() {
+        _connectivityResult = result;
+      });
+    });
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
     super.initState();
+  }
+  var _connectivityResult = ConnectivityResult.none;
+  Future<void> _checkConnectivityAndGetData() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectivityResult;
+    });
+    if (_connectivityResult != ConnectivityResult.none) {
+      _getInternet();
+    }
+  }
+  Future<void> _getInternet() async {
+    // Replace the URL with your PHP backend URL
+    var url = 'http://mybudgetbook.in/BUDGETAPI/internet.php';
+
+    try {
+      var response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        // Handle successful response
+        var data = json.decode(response.body);
+        print(data);
+        // Show online status message
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(
+        //     content: Text('Now online.'),
+        //   ),
+        // );
+      } else {
+        // Handle other status codes
+        print('Request failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle network errors
+      print('Error: $e');
+      // Show offline status message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please check your internet connection.'),
+        ),
+      );
+    }
+  }
+  bool isLoading = true;
+  ///refresh
+  List<String> items = List.generate(20, (index) => 'Item $index');
+  Future<void> _refresh() async {
+    await Future.delayed(const Duration(seconds: 1));
+    setState(() {
+      initState();
+    });
   }
   List<Map<String, dynamic>> data = [];
 
@@ -1198,7 +1299,7 @@ class _BlockPageState extends State<BlockPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body:
+        body: isLoading ? const Center(child: CircularProgressIndicator(),) :
         data.isEmpty ? Center(child: Text('No data found')) :
         ListView.builder(
             itemCount: data.length,
@@ -1218,7 +1319,7 @@ class _BlockPageState extends State<BlockPage> {
                           CircleAvatar(
                             radius: 40,
                             backgroundColor: Colors.cyan,
-                             backgroundImage: NetworkImage(imageUrl),
+                             backgroundImage: CachedNetworkImageProvider(imageUrl),
                             child: Stack(
                               children: [
                                 Align(

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'Non_exe_pages/non_exe_home.dart';
 import 'guest_home.dart';
+import 'guest_settings.dart';
 import 'home.dart';
 import 'login.dart';
 import 'package:http/http.dart' as http;
@@ -106,10 +107,37 @@ class _ChangeState extends State<Change> {
       if (response.statusCode == 200) {
         print("Response Status: ${response.statusCode}");
         print("Response Body: ${response.body}");
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => Login()),
-        );
+        if (widget.userType == "Non-Executive") {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => NavigationBarNon(
+                userType: widget.userType.toString(),
+                userId: widget.userID.toString(),
+              ),
+            ),
+          );
+        } else if (widget.userType == "Guest") {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => GuestSettings(
+                userType: widget.userType.toString(),
+                userId: widget.userID.toString(),
+              ),
+            ),
+          );
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => NavigationBarExe(
+                userType: widget.userType.toString(),
+                userId: widget.userID.toString(),
+              ),
+            ),
+          );
+        }
       } else {
         print('Error: ${response.statusCode}');
       }
@@ -148,7 +176,7 @@ class _ChangeState extends State<Change> {
                           userId: widget.userID,
                         );
                       case "Guest":
-                        return GuestHome(
+                        return GuestSettings(
                           userType: widget.userType,
                           userId: widget.userID,
                         );
@@ -187,7 +215,7 @@ class _ChangeState extends State<Change> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => GuestHome(
+                builder: (context) => GuestSettings(
                   userType: widget.userType.toString(),
                   userId: widget.userID.toString(),
                 ),

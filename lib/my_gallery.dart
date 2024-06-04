@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:gipapp/settings_page_executive.dart';
 import 'package:gipapp/video_player.dart';
 import 'package:http_parser/http_parser.dart';
 
@@ -18,7 +19,8 @@ import 'package:chewie/chewie.dart';
 class MyGallery extends StatefulWidget {
   final String? userId;
   final String? userType;
-  const MyGallery({super.key, required this.userId, required this.userType});
+  const MyGallery
+      ({super.key, required this.userId, required this.userType});
 
   @override
   State<MyGallery> createState() => _MyGalleryState();
@@ -38,11 +40,15 @@ class _MyGalleryState extends State<MyGallery> {
           iconTheme: const IconThemeData(color: Colors.white),
           leading: IconButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) =>  NavigationBarExe(userType: widget.userType, userId: widget.userId,)));
+                Navigator.push(context, MaterialPageRoute(builder: (context) =>  SettingsPageExecutive(userType: widget.userType, userId: widget.userId,)));
               },
               icon: const Icon(Icons.navigate_before)),
         ),
         body: PopScope(
+          canPop: false,
+          onPopInvoked: (didPop)  {
+            Navigator.push(context, MaterialPageRoute(builder: (context) =>  SettingsPageExecutive(userType: widget.userType, userId: widget.userId,)));
+          },
           child: Column(
             children:   [
               const TabBar(
@@ -56,7 +62,7 @@ class _MyGalleryState extends State<MyGallery> {
               Expanded(
                 child: TabBarView(
                   children: [
-                    Gallery(userId: widget.userId,),
+                //   Gallery(userId: widget.userId,),
                     Video(userId: widget.userId),
                   ],
                 ),
@@ -71,10 +77,12 @@ class _MyGalleryState extends State<MyGallery> {
 }
 
 
+
+
 class Gallery extends StatefulWidget {
   final String? userId;
-
-  Gallery({required this.userId});
+  final String? userType;
+  Gallery({super.key, required this.userId, required this.userType});
 
   @override
   _GalleryState createState() => _GalleryState();
@@ -112,10 +120,10 @@ class _GalleryState extends State<Gallery> {
 
     if (response.statusCode == 200) {
       final responseData = jsonDecode(response.body);
-      final imageUrl = responseData['image_url']; // Assuming server returns the URL
-
-      print('Image uploaded successfully.');
-
+      final imageUrl = responseData['image_url'];
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Image uploaded successfully.')),
+      );
       setState(() {
         _imageUrlsList.add(imageUrl);
       });
@@ -136,16 +144,15 @@ class _GalleryState extends State<Gallery> {
     if (response.statusCode == 200) {
       List<dynamic> imageData = jsonDecode(response.body);
 
-      _imageUrlsList.clear();
-      _imageDataList.clear();
-
-      for (var data in imageData) {
-        final imageUrl = 'http://mybudgetbook.in/GIBAPI/${data['image_path']}';
-        setState(() {
+      setState(() {
+        _imageUrlsList.clear();
+        _imageDataList.clear();
+        for (var data in imageData) {
+          final imageUrl = 'http://mybudgetbook.in/GIBAPI/${data['image_path']}';
           _imageUrlsList.add(imageUrl);
           _imageDataList.add(data);
-        });
-      }
+        }
+      });
     } else {
       print('Failed to fetch images.');
     }
@@ -213,6 +220,19 @@ class _GalleryState extends State<Gallery> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        // Appbar title
+        title: Text('My Gallery', style: Theme.of(context).textTheme.displayLarge),
+
+        //  centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.white),
+        leading: IconButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) =>  NavigationBarExe(userType: widget.userType, userId: widget.userId,)));
+            },
+            icon: const Icon(Icons.navigate_before)),
+      ),
+
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.green,
@@ -291,6 +311,7 @@ class _GalleryState extends State<Gallery> {
     );
   }
 }
+
 
 
 class Video extends StatefulWidget {
@@ -380,7 +401,7 @@ class _VideoState extends State<Video> {
 
         // Fetch thumbnails for each video
         for (int i = 0; i < _videos.length; i++) {
-         // _fetchThumbnail(i);
+        //  _fetchThumbnail(i);
         }
       });
     } else {
@@ -403,7 +424,6 @@ class _VideoState extends State<Video> {
       print('Failed to fetch thumbnail for video: $videoPath');
     }
   }*/
-
 
   Future<void> _deleteVideo(int videoIndex) async {
     int videoId = _videos[videoIndex]['id'];

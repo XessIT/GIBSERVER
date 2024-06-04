@@ -242,18 +242,26 @@ class _GibTransactionState extends State<GibTransaction> {
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/gibBusiness.php?table=visitorBusinessCurrentYear');
       final response = await http.get(url);
+
       if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        setState(() {
-          visitoraccountingYear = responseData['totalRows'];
-        });
+        final contentType = response.headers['content-type'];
+        if (contentType != null && contentType.contains('application/json')) {
+          final responseData = json.decode(response.body);
+          setState(() {
+            visitoraccountingYear = responseData['totalRows'];
+          });
+        } else {
+          print('Error: Unexpected content type ${contentType}');
+        }
       } else {
         print('Error: ${response.statusCode}');
+        print('Response body: ${response.body}');
       }
     } catch (error) {
       print('Error: $error');
     }
   }
+
 
   String? honortotalRows = "0";
 
@@ -295,12 +303,12 @@ class _GibTransactionState extends State<GibTransaction> {
 
   @override
   void initState() {
-    getBusinessCount();
+     getBusinessCount();
     g2ggetBusinessCount();
     getaccountBusinessCount();
     g2ggetaccountBusinessCount();
     visitorgetBusinessCount();
-    visitorgetaccountBusinessCount();
+     visitorgetaccountBusinessCount();
     honorBusinessCount();
     honorgetaccountBusinessCount();
     // TODO: implement initState
@@ -831,6 +839,28 @@ class _MyTransactionState extends State<MyTransaction> {
                   margin: EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
                     children: [
+                      Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("     "),
+                            Text(
+                              'Business',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            IconButton(onPressed: (){
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => ReferralPage(userType: widget.userType, userId: widget.userId,)),
+                              );
+                            }, icon: Icon(Icons.add_circle_outline,color: Colors.black,),),
+                          ],
+                        ),
+                      ),
                       // Network Image
                       Container(
                         height: 110,
@@ -872,28 +902,7 @@ class _MyTransactionState extends State<MyTransaction> {
                         ),
                       ),
                       // Text "Business"
-                      Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("     "),
-                            Text(
-                              'Business',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            IconButton(onPressed: (){
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => ReferralPage(userType: widget.userType, userId: widget.userId,)),
-                              );
-                            }, icon: Icon(Icons.add_circle_outline,color: Colors.black,),),
-                          ],
-                        ),
-                      ),
+
                     ],
                   ),
                 ),
@@ -906,6 +915,28 @@ class _MyTransactionState extends State<MyTransaction> {
                   margin: EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
                     children: [
+                      Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("     "),
+                            Text(
+                              'G2G',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            IconButton(onPressed: (){
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) =>    GtoG(userType: widget.userType, userId: widget.userId,)),
+                              );
+                            }, icon: Icon(Icons.add_circle_outline,color: Colors.black,),),
+                          ],
+                        ),
+                      ),
                       // Network Image
                       Container(
                         height: 110,
@@ -950,28 +981,7 @@ class _MyTransactionState extends State<MyTransaction> {
                         ),
                       ),
                       // Text "Business"
-                      Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("     "),
-                            Text(
-                              'G2G',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            IconButton(onPressed: (){
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) =>    GtoG(userType: widget.userType, userId: widget.userId,)),
-                              );
-                            }, icon: Icon(Icons.add_circle_outline,color: Colors.black,),),
-                          ],
-                        ),
-                      ),
+
                     ],
                   ),
                 ),
@@ -984,6 +994,28 @@ class _MyTransactionState extends State<MyTransaction> {
                   margin: EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
                     children: [
+                      Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("     "),
+                            Text(
+                              'Hounoring',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            IconButton(onPressed: (){
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => Direct(userId: widget.userId, userType: widget.userType)),
+                              );
+                            }, icon: Icon(Icons.add_circle_outline,color: Colors.black,),),
+                          ],
+                        ),
+                      ),
                       // Network Image
                       Container(
                         height: 110,
@@ -1024,28 +1056,7 @@ class _MyTransactionState extends State<MyTransaction> {
                         ),
                       ),
                       // Text "Business"
-                      Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("     "),
-                            Text(
-                              'Hounoring',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            IconButton(onPressed: (){
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => Direct(userId: widget.userId, userType: widget.userType)),
-                              );
-                            }, icon: Icon(Icons.add_circle_outline,color: Colors.black,),),
-                          ],
-                        ),
-                      ),
+
                     ],
                   ),
                 ),
@@ -1058,6 +1069,28 @@ class _MyTransactionState extends State<MyTransaction> {
                   margin: EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
                     children: [
+                      Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("     "),
+                            Text(
+                              'Guest',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            IconButton(onPressed: (){
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => GuestHistory(userId: widget.userId.toString(),)),
+                              );
+                            }, icon: Icon(Icons.navigate_next,color: Colors.black,),),
+                          ],
+                        ),
+                      ),
                       // Network Image
                       Container(
                         height: 110,
@@ -1098,28 +1131,7 @@ class _MyTransactionState extends State<MyTransaction> {
                         ),
                       ),
                       // Text "Business"
-                      Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("     "),
-                            Text(
-                              'Guest',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            IconButton(onPressed: (){
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => GuestHistory(userId: widget.userId.toString(),)),
-                              );
-                            }, icon: Icon(Icons.navigate_next,color: Colors.black,),),
-                          ],
-                        ),
-                      ),
+
                     ],
                   ),
                 ),

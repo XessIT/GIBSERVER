@@ -162,7 +162,7 @@ class SettingsPageNon extends StatelessWidget {
                     onTap: () {
                          Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) =>   GibGallery( userType: userType.toString(), userID: userId.toString(),)),
+                            MaterialPageRoute(builder: (context) =>   ViewPhotosPage( userType: userType.toString(), userID: userId.toString(),)),
                           );
                     },
                     icons: CupertinoIcons.photo_on_rectangle,
@@ -200,7 +200,7 @@ class SettingsPageNon extends StatelessWidget {
               ),
               SettingsGroup(
                 items: [
-                  SettingsItem(
+                  /*SettingsItem(
                     onTap: () {
                       Navigator.push(
                         context,
@@ -219,8 +219,8 @@ class SettingsPageNon extends StatelessWidget {
                     // subtitle:'Profile Image, Name, Income',
                     titleMaxLine: 1,
                     subtitleMaxLine: 1,
-                  ),
-                  SettingsItem(
+                  ),*/
+                 /* SettingsItem(
                     onTap: () {
                       Navigator.push(
                         context,
@@ -238,7 +238,7 @@ class SettingsPageNon extends StatelessWidget {
                     // subtitle:'Profile Image, Name, Income',
                     titleMaxLine: 1,
                     subtitleMaxLine: 1,
-                  ),
+                  ),*/
                 ],
               ),
               SettingsGroup(

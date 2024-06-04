@@ -1,8 +1,11 @@
 import 'dart:convert';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'guest_edit.dart';
 import 'guest_home.dart';
+import 'guest_settings.dart';
 
 class GuestProfile extends StatefulWidget {
   final String? userID;
@@ -37,7 +40,8 @@ class _GuestProfileState extends State<GuestProfile> {
           if (itemGroups.isNotEmpty) {
             setState(() {
               data = itemGroups.cast<Map<String, dynamic>>();
-              sanitizeImageUrl(data[0]["profile_image"]);
+              imageParameter = data[0]["profile_image"];
+              imageUrl = 'http://mybudgetbook.in/GIBAPI/$imageParameter';
             });
             print('Data: $data');
           } else {
@@ -47,7 +51,8 @@ class _GuestProfileState extends State<GuestProfile> {
           // If responseData is a Map (single record)
           setState(() {
             data = [responseData];
-            sanitizeImageUrl(responseData["profile_image"]);
+            imageParameter = responseData["profile_image"];
+            imageUrl = 'http://mybudgetbook.in/GIBAPI/$imageParameter';
           });
           print('Data: $data');
         } else {
@@ -63,21 +68,6 @@ class _GuestProfileState extends State<GuestProfile> {
     }
   }
 
-  void sanitizeImageUrl(String imageUrl) {
-    if (imageUrl != null && imageUrl.isNotEmpty) {
-      // Replace backslashes with forward slashes and remove any leading slashes
-      imageUrl = imageUrl.replaceAll('\\ ', '/').replaceAll(RegExp('^/'), '');
-      // Construct the full image URL with the base URL
-      imageUrl = 'http://mybudgetbook.in/GIBAPI/$imageUrl';
-      setState(() {
-        this.imageUrl = imageUrl;
-        print('Image URL: $imageUrl');
-      });
-    } else {
-      print('Profile image URL is null or empty.');
-    }
-  }
-
   @override
   void initState() {
     getData();
@@ -85,7 +75,67 @@ class _GuestProfileState extends State<GuestProfile> {
     // TODO: implement initState
     super.initState();
 
-    print('Image URL 45454545454: $imageParameter');
+    _checkConnectivityAndGetData();
+    Connectivity().onConnectivityChanged.listen((result) {
+      setState(() {
+        _connectivityResult = result;
+      });
+    });
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
+  }
+  var _connectivityResult = ConnectivityResult.none;
+  Future<void> _checkConnectivityAndGetData() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectivityResult;
+    });
+    if (_connectivityResult != ConnectivityResult.none) {
+      _getInternet();
+    }
+  }
+  Future<void> _getInternet() async {
+    // Replace the URL with your PHP backend URL
+    var url = 'http://mybudgetbook.in/GIBAPI/internet.php';
+
+    try {
+      var response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        // Handle successful response
+        var data = json.decode(response.body);
+        print(data);
+        // Show online status message
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(
+        //     content: Text('Now online.'),
+        //   ),
+        // );
+      } else {
+        // Handle other status codes
+        print('Request failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle network errors
+      print('Error: $e');
+      // Show offline status message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please check your internet connection.'),
+        ),
+      );
+    }
+  }
+  bool isLoading = true;
+  ///refresh
+  List<String> items = List.generate(20, (index) => 'Item $index');
+  Future<void> _refresh() async {
+    await Future.delayed(const Duration(seconds: 1));
+    setState(() {
+      initState();
+    });
   }
 
   @override
@@ -93,7 +143,6 @@ class _GuestProfileState extends State<GuestProfile> {
     return Scaffold(
         appBar: AppBar(
             title: Text('Profile', style: Theme.of(context).textTheme.displayLarge),
-            centerTitle: true,
             iconTheme: const IconThemeData(
               color: Colors.white, // Set the color for the drawer icon
             ),
@@ -103,7 +152,7 @@ class _GuestProfileState extends State<GuestProfile> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => GuestHome(
+                      builder: (context) => GuestSettings(
                             userId: widget.userID,
                             userType: widget.userType,
                           )),
@@ -136,253 +185,256 @@ class _GuestProfileState extends State<GuestProfile> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => GuestHome(
+                  builder: (context) => GuestSettings(
                         userId: widget.userID,
                         userType: widget.userType,
                       )),
             );
           },
-          child: SingleChildScrollView(
-              child: Center(
-                  child: Column(children: [
-            //imageUrl = 'http://mybudgetbook.in/GIBAPI/${dynamicdata[0]["profile_image"]}';
-            Container(
-              child: AspectRatio(
-                aspectRatio: 16 /
-                    12, // You can adjust this ratio based on your image's aspect ratio
-                child: Image.network(
-                  imageUrl,
-                  fit: BoxFit.cover,
+          child: RefreshIndicator(
+            onRefresh: _refresh,
+            child: SingleChildScrollView(
+                child: Center(
+                    child: Column(children: [
+              //imageUrl = 'http://mybudgetbook.in/GIBAPI/${dynamicdata[0]["profile_image"]}';
+              Container(
+                child: AspectRatio(
+                  aspectRatio: 16 /
+                      12, // You can adjust this ratio based on your image's aspect ratio
+                  child: CachedNetworkImage(
+                    imageUrl: imageUrl,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
-            ),
 
-            SizedBox(height: 20),
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Padding(
+              SizedBox(height: 20),
+              Padding(
                 padding: EdgeInsets.all(8.0),
-                child:
-                    Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                  Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "First Name",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 2,
-                        ),
-                        Text(
-                          "Last Name",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 2,
-                        ),
-                        Text(
-                          "Company Name",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 2,
-                        ),
-                        Text(
-                          "Mobile",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 2,
-                        ),
-                        Text(
-                          "Email",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 2,
-                        ),
-                        Text(
-                          "Blood Group",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 2,
-                        ),
-                        Text(
-                          "Location",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                      ]),
-                  const SizedBox(width: 20),
-                  Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          ":",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 2,
-                        ),
-                        Text(
-                          ":",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 2,
-                        ),
-                        Text(
-                          ":",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 2,
-                        ),
-                        Text(
-                          ":",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 2,
-                        ),
-                        Text(
-                          ":",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 2,
-                        ),
-                        Text(
-                          ":",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 2,
-                        ),
-                        Text(
-                          ":",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                      ]),
-                  SizedBox(width: 20),
-                  Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          data.isNotEmpty ? "${data[0]['first_name']}" : "",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 2,
-                        ),
-                        Text(
-                          data.isNotEmpty ? "${data[0]['last_name']}" : "",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 2,
-                        ),
-                        Text(
-                          data.isNotEmpty ? "${data[0]['company_name']}" : "",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 2,
-                        ),
-                        Text(
-                          data.isNotEmpty ? "${data[0]['mobile']}" : "",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 2,
-                        ),
-                        Text(
-                          data.isNotEmpty ? "${data[0]['email']}" : "",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 2,
-                        ),
-                        Text(
-                          data.isNotEmpty ? "${data[0]['blood_group']}" : "",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 2,
-                        ),
-                        Text(
-                          data.isNotEmpty ? "${data[0]['place']}" : "",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                      ])
-                ]),
-              ),
-            )
-          ]))),
+                child: Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child:
+                      Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+                    Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "First Name",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 2,
+                          ),
+                          Text(
+                            "Last Name",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 2,
+                          ),
+                          Text(
+                            "Company Name",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 2,
+                          ),
+                          Text(
+                            "Mobile",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 2,
+                          ),
+                          Text(
+                            "Email",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 2,
+                          ),
+                          Text(
+                            "Blood Group",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 2,
+                          ),
+                          Text(
+                            "Location",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                        ]),
+                    const SizedBox(width: 20),
+                    Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            ":",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 2,
+                          ),
+                          Text(
+                            ":",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 2,
+                          ),
+                          Text(
+                            ":",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 2,
+                          ),
+                          Text(
+                            ":",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 2,
+                          ),
+                          Text(
+                            ":",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 2,
+                          ),
+                          Text(
+                            ":",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 2,
+                          ),
+                          Text(
+                            ":",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                        ]),
+                    SizedBox(width: 20),
+                    Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            data.isNotEmpty ? "${data[0]['first_name']}" : "",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 2,
+                          ),
+                          Text(
+                            data.isNotEmpty ? "${data[0]['last_name']}" : "",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 2,
+                          ),
+                          Text(
+                            data.isNotEmpty ? "${data[0]['company_name']}" : "",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 2,
+                          ),
+                          Text(
+                            data.isNotEmpty ? "${data[0]['mobile']}" : "",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 2,
+                          ),
+                          Text(
+                            data.isNotEmpty ? "${data[0]['email']}" : "",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 2,
+                          ),
+                          Text(
+                            data.isNotEmpty ? "${data[0]['blood_group']}" : "",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 2,
+                          ),
+                          Text(
+                            data.isNotEmpty ? "${data[0]['place']}" : "",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                        ])
+                  ]),
+                ),
+              )
+            ]))),
+          ),
         ));
   }
 }

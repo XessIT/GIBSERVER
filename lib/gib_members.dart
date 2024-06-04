@@ -42,11 +42,12 @@ class Members extends StatefulWidget {
 
 
 class _MembersState extends State<Members> {
-  String name = "";
+
   String? chapter = "";
   String? district = "";
   String type = "Member";
   String MemberType = "Non-Executive";
+  String name = "";
   final fieldText = TextEditingController();
   void clearText() {
     fieldText.clear();
@@ -286,7 +287,6 @@ class _MembersState extends State<Members> {
             ],),
           ],
         ),
-
         body: PopScope(
           canPop: false,
           onPopInvoked: (didPop) {
@@ -314,6 +314,35 @@ class _MembersState extends State<Members> {
           },
           child: Column(
             children: [
+              /*Visibility(
+                visible: isVisible,
+                child: Container(
+                  width: double.infinity,
+                  height: 40,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(5)
+                  ),
+                  child: Center(
+                    child: TextField(
+                      onChanged: (val){
+                        setState(() {
+                          name = val ;
+                        });
+                      },
+                      controller: fieldText,
+                      decoration: InputDecoration(
+                          suffixIcon: IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: clearText,
+                          ),
+                          hintText: 'Search'
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10,),*/
               Visibility(
                 visible: _showFields,
                 child: Row(

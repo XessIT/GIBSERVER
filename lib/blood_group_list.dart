@@ -130,8 +130,7 @@ class _BloodListState extends State<BloodList> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Center(child: Text(blood, style: Theme.of(context).textTheme.displayLarge)),
-          centerTitle: true,
+          title: Text(blood, style: Theme.of(context).textTheme.displayLarge),
           leading: IconButton(
             icon: const Icon(Icons.navigate_before),
             onPressed: () {
@@ -142,68 +141,71 @@ class _BloodListState extends State<BloodList> {
             color: Colors.white, // Set the color for the drawer icon
           ),
         ),
-        body: PopScope(
-            canPop: false,
-            onPopInvoked: (didPop) {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => BloodGroup(userType: widget.userType, userId: widget.userId,)));
-            },
-        child: data.isEmpty
-            ? const Center(child: Text("Data not found", style: TextStyle(color: Colors.black)))
-         : ListView.builder(
-            itemCount: data.length,
-            itemBuilder: (context, i) {
-              String imageUrl = 'http://mybudgetbook.in/GIBAPI/${data[i]['profile_image']}';
-            String getMobile = data[i]["mobile"];
-            return
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                CircleAvatar(
-                                  radius: 35, // adjust the radius as per your requirement
-                                  backgroundImage: NetworkImage(imageUrl),
-                                ),
-                                Expanded(
-                                  child: Column(
-                                    children: [
-                                      Text('${data[i]['first_name']}'),
-                                      Text('${data[i]['company_name']}'),
-                                    ],
+        body: RefreshIndicator(
+          onRefresh: _refresh,
+          child: PopScope(
+              canPop: false,
+              onPopInvoked: (didPop) {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => BloodGroup(userType: widget.userType, userId: widget.userId,)));
+              },
+          child: isLoading ? const Center(child: CircularProgressIndicator())
+              : data.isEmpty ? const Center(child: Text("Data not found", style: TextStyle(color: Colors.black)))
+           : ListView.builder(
+              itemCount: data.length,
+              itemBuilder: (context, i) {
+                String imageUrl = 'http://mybudgetbook.in/GIBAPI/${data[i]['profile_image']}';
+              String getMobile = data[i]["mobile"];
+              return
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  CircleAvatar(
+                                    radius: 35, // adjust the radius as per your requirement
+                                    backgroundImage: NetworkImage(imageUrl),
                                   ),
-                                ),
-                                IconButton(
-                                    onPressed: () async {
-                                      final call = Uri.parse(
-                                          "tel://${data[i]['mobile']}");
-                                      if (await canLaunchUrl(call)) {
-                                        launchUrl(call);
-                                      } else {
-                                        throw 'Could not launch $call';
-                                      }
-                                    },
-                                    icon: Icon(
-                                      Icons.call, color: Colors.green[900],)),
-                              ],
-                            ),
-                          ]
+                                  Expanded(
+                                    child: Column(
+                                      children: [
+                                        Text('${data[i]['first_name']}'),
+                                        Text('${data[i]['company_name']}'),
+                                      ],
+                                    ),
+                                  ),
+                                  IconButton(
+                                      onPressed: () async {
+                                        final call = Uri.parse(
+                                            "tel://${data[i]['mobile']}");
+                                        if (await canLaunchUrl(call)) {
+                                          launchUrl(call);
+                                        } else {
+                                          throw 'Could not launch $call';
+                                        }
+                                      },
+                                      icon: Icon(
+                                        Icons.call, color: Colors.green[900],)),
+                                ],
+                              ),
+                            ]
+                        ),
                       ),
                     ),
                   ),
-                ),
-              );
+                );
 
-            }
+              }
 
 
+          )
+              ),
         )
-    )
     );
   }
 }

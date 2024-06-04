@@ -99,9 +99,11 @@ class _ReferralPageState extends State<ReferralPage> {
       print("ResponseStatus: ${response.statusCode}");
       if (response.statusCode == 200) {
         print("Offers response: ${response.body}");
+
         Navigator.push(context, MaterialPageRoute(builder: (context)=>BusinessPage(userId: widget.userId, userType: widget.userType)));
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text("Business Add Successfully")));
+
       } else {
         print("Error: ${response.statusCode}");
       }
@@ -138,6 +140,8 @@ class _ReferralPageState extends State<ReferralPage> {
           print("Error: ${response.statusCode}");
         }
       } catch (e) {
+=======
+>>>>>>> d8809981efdef3c0a2f685c1cba51f3a6554bbe7
       print("Error during signup: $e");
       // Handle error as needed
     }
@@ -552,10 +556,7 @@ class _ReferralPageState extends State<ReferralPage> {
                               // fillColor: Colors.white,
                               contentPadding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 3.0),
                             ),
-                            inputFormatters: [
-                              AlphabetInputFormatter(),
-                              LengthLimitingTextInputFormatter(25)
-                            ],
+
                           ),
                         ),
 

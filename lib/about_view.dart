@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:gipapp/home.dart';
 import 'Non_exe_pages/non_exe_home.dart';
 import 'guest_home.dart';
+import 'guest_settings.dart';
 
 class AboutTab extends StatefulWidget {
   final String? userId;
@@ -225,7 +226,7 @@ class _AboutTabState extends State<AboutTab> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => GuestHome(
+                    builder: (context) => GuestSettings(
                       userType: widget.userType.toString(),
                       userId: widget.userId.toString(),
                     ),
@@ -266,7 +267,7 @@ class _AboutTabState extends State<AboutTab> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => GuestHome(
+                    builder: (context) => GuestSettings(
                       userType: widget.userType.toString(),
                       userId: widget.userId.toString(),
                     ),
@@ -303,7 +304,7 @@ class _AboutTabState extends State<AboutTab> {
                       )
                     ]),
                 SizedBox(
-                  height: 500,
+                  height: 1000,
                   width: 400,
                   child: TabBarView(
                     children: [
@@ -313,14 +314,6 @@ class _AboutTabState extends State<AboutTab> {
                             Center(
                               child: Column(
                                 children: [
-                                  // Row(
-                                  //   crossAxisAlignment:CrossAxisAlignment.end,
-                                  //   children: [
-                                  //     IconButton(onPressed: (){
-                                  //     //  Navigator.push(context, MaterialPageRoute(builder: (context)=>GIBEditAbout()));
-                                  //     }, icon: Icon(Icons.edit))
-                                  //   ],
-                                  // ),
                                   Image.asset('assets/logo.png', width: 300,),
                                   Padding(
                                     padding: const EdgeInsets.all(12.0),
