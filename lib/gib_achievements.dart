@@ -8,11 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
 
-<<<<<<< HEAD
 
-
-=======
->>>>>>> 32d1aee13e69d1c8acb3c02f42c70f800fe9b212
 class Achievements extends StatefulWidget {
   final String userType;
   final String? userID;
@@ -24,7 +20,6 @@ class Achievements extends StatefulWidget {
   @override
   State<Achievements> createState() => _AchievementsState();
 }
-
 class _AchievementsState extends State<Achievements> {
   @override
   Widget build(BuildContext context) {
@@ -61,9 +56,7 @@ class _AchievementsState extends State<Achievements> {
         ),
 
       ),
-<<<<<<< HEAD
-      body: AchievementViewPhotosPage(),
-=======
+
       body: PopScope(
           canPop: false,
           onPopInvoked: (didPop)  {
@@ -77,9 +70,7 @@ class _AchievementsState extends State<Achievements> {
               ),
             );
           },
-          child: AchievementGibGallery()),
->>>>>>> 32d1aee13e69d1c8acb3c02f42c70f800fe9b212
-    );
+          child: AchievementGibGallery(userType: widget.userType, userID: widget.userID,)));
   }
 }
 

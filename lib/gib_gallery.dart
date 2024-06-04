@@ -35,10 +35,7 @@ class _GibGalleryState extends State<GibGallery> {
           // Appbar title
           title:  Text('GIB Galleryy',style: Theme.of(context).textTheme.displayLarge,
           ),
-<<<<<<< HEAD
-          //centerTitle: true,
-=======
->>>>>>> 32d1aee13e69d1c8acb3c02f42c70f800fe9b212
+
           leading:IconButton(
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) =>  SettingsPageExecutive(userType: widget.userType, userId: widget.userID,)));
