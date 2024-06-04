@@ -1,13 +1,17 @@
 import 'dart:convert';
 import 'dart:core';
 import 'package:connectivity/connectivity.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:gipapp/Non_exe_pages/settings_non_executive.dart';
+import 'package:gipapp/settings_page_executive.dart';
 import 'package:http/http.dart' as http;
 import 'package:gipapp/home.dart';
 import 'Non_exe_pages/non_exe_home.dart';
 import 'guest_home.dart';
 import 'guest_settings.dart';
+
 
 class AboutTab extends StatefulWidget {
   final String? userId;
@@ -215,7 +219,7 @@ class _AboutTabState extends State<AboutTab> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => NavigationBarNon(
+                    builder: (context) => SettingsPageNon(
                       userType: widget.userType.toString(),
                       userId: widget.userId.toString(),
                     ),
@@ -237,7 +241,7 @@ class _AboutTabState extends State<AboutTab> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => NavigationBarExe(
+                    builder: (context) => SettingsPageExecutive(
                       userType: widget.userType.toString(),
                       userId: widget.userId.toString(),
                     ),
@@ -257,7 +261,7 @@ class _AboutTabState extends State<AboutTab> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => NavigationBarNon(
+                    builder: (context) => SettingsPageNon(
                       userType: widget.userType.toString(),
                       userId: widget.userId.toString(),
                     ),
@@ -277,7 +281,7 @@ class _AboutTabState extends State<AboutTab> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => NavigationBarExe(
+                    builder: (context) => SettingsPageExecutive(
                       userType: widget.userType.toString(),
                       userId: widget.userId.toString(),
                     ),
@@ -303,9 +307,8 @@ class _AboutTabState extends State<AboutTab> {
                         text: 'Mission',
                       )
                     ]),
-                SizedBox(
-                  height: 1000,
-                  width: 400,
+                Expanded(
+
                   child: TabBarView(
                     children: [
                       SingleChildScrollView(

@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
+import 'package:gipapp/Non_exe_pages/settings_non_executive.dart';
 import 'package:gipapp/search_doctor.dart';
+import 'package:gipapp/settings_page_executive.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart'as http;
 
@@ -53,6 +55,13 @@ class _DoctorsState extends State<Doctors> {
   final fieldText = TextEditingController();
   void clearText() {
     fieldText.clear();
+  }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    fieldText.dispose();
+    super.dispose();
+
   }
   @override
   void initState() {
@@ -136,7 +145,7 @@ class _DoctorsState extends State<Doctors> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => NavigationBarNon(
+                    builder: (context) => SettingsPageNon(
                       userType: widget.userType.toString(),
                       userId: widget.userId.toString(),
                     ),
@@ -158,7 +167,7 @@ class _DoctorsState extends State<Doctors> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => NavigationBarExe(
+                    builder: (context) => SettingsPageExecutive(
                       userType: widget.userType.toString(),
                       userId: widget.userId.toString(),
                     ),
@@ -190,7 +199,7 @@ class _DoctorsState extends State<Doctors> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => NavigationBarNon(
+                    builder: (context) => SettingsPageNon(
                       userType: widget.userType.toString(),
                       userId: widget.userId.toString(),
                     ),
@@ -212,7 +221,7 @@ class _DoctorsState extends State<Doctors> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => NavigationBarExe(
+                    builder: (context) => SettingsPageExecutive(
                       userType: widget.userType.toString(),
                       userId: widget.userId.toString(),
                     ),
@@ -243,8 +252,10 @@ class _DoctorsState extends State<Doctors> {
                         controller: fieldText,
                         decoration: InputDecoration(
                             suffixIcon: IconButton(
-                              icon: const Icon(Icons.clear),
-                              onPressed: clearText,
+                              icon: const Icon(Icons.refresh),
+                              onPressed: (){
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => Doctors(userType:widget.userType, userId:widget.userId,)),);
+                              },
                             ),
                             hintText: 'Search'
                         ),

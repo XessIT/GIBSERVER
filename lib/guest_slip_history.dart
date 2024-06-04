@@ -57,7 +57,7 @@ class _GuestHistoryState extends State<GuestHistory> {
 
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
+
         title: Text(
           'Guest History',
           style: Theme
@@ -99,9 +99,16 @@ class _GuestHistoryState extends State<GuestHistory> {
                       height: 83,
                     //  padding: const EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
-                          border: Border.all(
-                              color: Colors.green, width: 1),
-                          borderRadius: BorderRadius.circular(10.0)
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 3,
+                            blurRadius: 7,
+                            offset: Offset(0, 3), // changes position of shadow
+                          ),
+                        ],
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -117,7 +124,7 @@ class _GuestHistoryState extends State<GuestHistory> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text("Location: ${visitor["location"]}"),
-                                Text("Time: ${visitor["time"]}"),
+                                Text("Meeting Date: ${visitor["meeting_date"]}"),
                               ],
                             ),
 

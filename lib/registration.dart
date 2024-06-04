@@ -220,6 +220,7 @@ class _GuestState extends State<Guest> {
   String blockStatus ="UnBlock";
   String adminRights ="Waiting";
   Future<void> uploadImage(Uint8List imageBytes) async {
+
     if (type == "Guest") {
       membertype = "Guest";
       print("type:$membertype");

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gipapp/profile.dart';
@@ -17,7 +18,8 @@ class BusinessEditPage extends StatefulWidget {
   final String? currentaddress;
   final String? currentwebsite;
   final String? currentybe;
-  final String? id;
+  final String? userId;
+  final String? userType;
   final String? currentbusinessimage;
   final String? imageUrl;
 
@@ -31,7 +33,8 @@ class BusinessEditPage extends StatefulWidget {
     required  this.currentaddress,
     required   this.currentwebsite,
     required  this.currentybe,
-    required this.id,
+    required this.userId,
+    required this.userType,
     required this.currentbusinessimage,
     required this.imageUrl,
 
@@ -58,7 +61,7 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
     websitecontroller = TextEditingController(text: widget.currentwebsite,);
     ybecontroller = TextEditingController(text: widget.currentybe,);
     businesstype = widget.currentbusinesstype!;
-    uid = widget.id!;
+    uid = widget.userId!;
     print('uid: $uid');
     // TODO: implement build
     super.initState();
@@ -78,7 +81,7 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/business_edit.php');
       print('url: $url');
-      print('id: ${widget.id}');
+      print('id: ${widget.userId}');
       final requestBody = jsonEncode({
         'business_image': widget.imageUrl,
         "company_name": companynamecontroller.text,
@@ -89,7 +92,7 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
         "b_year": ybecontroller.text,
         "business_keywords": businesskeywordcontroller.text,
         "business_type": businesstype,
-        "id": widget.id
+        "id": widget.userId
       });
 
       print("Request Body: $requestBody");
@@ -105,7 +108,7 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
           "b_year": ybecontroller.text,
           "business_keywords": businesskeywordcontroller.text,
           "business_type": businesstype,
-          "id": widget.id
+          "id": widget.userId
         }),
       );
       print(url);
@@ -114,7 +117,7 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
         final responseData = jsonDecode(utf8.decode(response.bodyBytes));
         print("Raw response body: ${response.body}");
         print("Message: ${responseData['message']}");
-        Navigator.push(context, MaterialPageRoute(builder: (context) => Profile(userID: widget.id, userType: '',)));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => Profile(userID: widget.userId, userType: widget.userType.toString(),)));
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text("Profile Successfully Updated")));
       } else {
@@ -130,7 +133,7 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/business_edit.php');
       print('url: $url');
-      print('id: ${widget.id}');
+      print('id: ${widget.userId}');
       final requestBody = jsonEncode({
         'imagename': imageName,
         'imagedata': imageData,
@@ -142,7 +145,7 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
         "b_year": ybecontroller.text,
         "business_keywords": businesskeywordcontroller.text,
         "business_type": businesstype,
-        "id": widget.id
+        "id": widget.userId
       });
 
       print("Request Body: $requestBody");
@@ -159,7 +162,7 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
           "b_year": ybecontroller.text,
           "business_keywords": businesskeywordcontroller.text,
           "business_type": businesstype,
-          "id": widget.id
+          "id": widget.userId
         }),
       );
       print(url);
@@ -168,7 +171,7 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
         final responseData = jsonDecode(utf8.decode(response.bodyBytes));
         print("Raw response body: ${response.body}");
         print("Message: ${responseData['message']}");
-        Navigator.push(context, MaterialPageRoute(builder: (context) => Profile(userID: widget.id, userType: '',)));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => Profile(userID: widget.userId, userType: widget.userType.toString(),)));
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text("Profile Successfully Updated"))
         );
@@ -244,290 +247,311 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
     return Scaffold(
       appBar: AppBar(
         title:  Text('Business Edit Profile',style: Theme.of(context).textTheme.displayLarge,),
-        centerTitle: true,
+        //centerTitle: true,
         iconTheme:  const IconThemeData(
           color: Colors.white, // Set the color for the drawer icon
         ),
+          leading: IconButton(
+            icon: const Icon(Icons.navigate_before),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Profile(userID: widget.userId, userType: widget.userType.toString(),)),
+              );
+            },
+          )
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  const SizedBox(height: 10,),
-                  Text('Business Information',
-                    style: Theme.of(context).textTheme.bodySmall,),
-                  const SizedBox(width: 20,),
-                  InkWell(
-                    child: ClipOval(
-                      child: Container(
-                        width: 150,
-                        height: 150,
-                        child: selectedImage == null ? Image.network(image) : Image.memory(selectedImage!),
+      body: PopScope(
+        canPop: false,
+        onPopInvoked: (didPop)  {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Profile(userID: widget.userId, userType: widget.userType.toString(),)),
+          );
+        },
+        child: SingleChildScrollView(
+          child: Center(
+            child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    const SizedBox(height: 10,),
+                    Text('Business Information',
+                      style: Theme.of(context).textTheme.bodySmall,),
+                    const SizedBox(height: 20,),
+                    InkWell(
+                      child: ClipOval(
+                        child: CachedNetworkImage(
+                          imageUrl: image, // Your network image URL
+                          placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                          errorWidget: (context, url, error) => Icon(Icons.error),
+                          cacheKey: image + DateTime.now().toString(), // Unique cache key
+                          fadeOutDuration: Duration(milliseconds: 200), // Smooth fade-out
+                          fadeInDuration: Duration(milliseconds: 200), // Smooth fade-in
+                          filterQuality: FilterQuality.high, // Maintain image quality
+                        ),
+                      ),
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (ctx) {
+                            return Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ListTile(
+                                  leading: Icon(Icons.storage),
+                                  title: Text("From Gallery"),
+                                  onTap: () {
+                                    pickImageFromGallery();
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 10,),
+                    Container(
+                      width: 320,
+                      padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 4),
+                      child: DropdownButtonFormField<String>(
+                        value: businesstype,
+                        icon: const Icon(Icons.arrow_drop_down),
+                        isExpanded: true,
+                        items: <String>["Business Type", "Manufacturer", "Whole Sale", "Ditributor", "Service", "Retail"]
+                            .map<DropdownMenuItem<String>>((String Value) {
+                          return DropdownMenuItem<String>(
+                              value: Value,
+                              child: Text(Value));
+                        }
+                        ).toList(),
+                        onChanged: (String? newValue){
+                          setState(() {
+                            businesstype = newValue!;
+                          });
+                        },
+                        validator: (value) {
+                          if (businesstype == 'Business Type') return 'Select Business Type';
+                          return null;
+                        },
                       ),
                     ),
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        builder: (ctx) {
-                          return Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              ListTile(
-                                leading: Icon(Icons.storage),
-                                title: Text("From Gallery"),
-                                onTap: () {
-                                  pickImageFromGallery();
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
+                    // Company Address textfield starts
+                    const SizedBox(height: 10,),
+
+                    SizedBox(
+                      width: 300,
+                      child: TextFormField(
+                        controller: companynamecontroller,
+                        validator: (value){
+                          if (value!.isEmpty) {
+                            return '* Enter your Company Name/Occupation';
+                          } else if(nameRegExp.hasMatch(value)){
+                            return null;
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          String capitalizedValue = capitalizeFirstLetter(value);
+                          companynamecontroller.value = companynamecontroller.value.copyWith(
+                            text: capitalizedValue,
+                            selection: TextSelection.collapsed(offset: capitalizedValue.length),
                           );
                         },
-                      );
-                    },
-                  ),
-
-                  const SizedBox(height: 10,),
-                  Container(
-                    width: 320,
-                    padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 4),
-                    child: DropdownButtonFormField<String>(
-                      value: businesstype,
-                      icon: const Icon(Icons.arrow_drop_down),
-                      isExpanded: true,
-                      items: <String>["Business Type", "Manufacturer", "Whole Sale", "Ditributor", "Service", "Retail"]
-                          .map<DropdownMenuItem<String>>((String Value) {
-                        return DropdownMenuItem<String>(
-                            value: Value,
-                            child: Text(Value));
-                      }
-                      ).toList(),
-                      onChanged: (String? newValue){
-                        setState(() {
-                          businesstype = newValue!;
-                        });
-                      },
-                      validator: (value) {
-                        if (businesstype == 'Business Type') return 'Select Business Type';
-                        return null;
-                      },
-                    ),
-                  ),
-                  // Company Address textfield starts
-                  const SizedBox(height: 10,),
-
-                  SizedBox(
-                    width: 300,
-                    child: TextFormField(
-                      controller: companynamecontroller,
-                      validator: (value){
-                        if (value!.isEmpty) {
-                          return '* Enter your Company Name/Occupation';
-                        } else if(nameRegExp.hasMatch(value)){
-                          return null;
-                        }
-                        return null;
-                      },
-                      onChanged: (value) {
-                        String capitalizedValue = capitalizeFirstLetter(value);
-                        companynamecontroller.value = companynamecontroller.value.copyWith(
-                          text: capitalizedValue,
-                          selection: TextSelection.collapsed(offset: capitalizedValue.length),
-                        );
-                      },
-                      decoration:  const InputDecoration(
-                      //  labelText:'Company Name',
-                        hintText: "Company Name",
-                        suffixIcon: Icon(Icons.business,color: Colors.green,)
+                        decoration:  const InputDecoration(
+                        //  labelText:'Company Name',
+                          hintText: "Company Name",
+                          suffixIcon: Icon(Icons.business,color: Colors.green,)
+                        ),
+                        inputFormatters: [
+                          LengthLimitingTextInputFormatter(25),
+                        ],
                       ),
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(25),
+                    ),
+                    const SizedBox(height: 10,),
+
+                    SizedBox(
+                      width: 300,
+                      child: TextFormField(
+                        controller: businesskeywordcontroller,
+                        validator: (value){
+                          if (value!.isEmpty) {
+                            return '* Enter your business keyword';
+                          } else if(nameRegExp.hasMatch(value)){
+                            return null;
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          String capitalizedValue = capitalizeFirstLetter(value);
+                          businesskeywordcontroller.value = businesskeywordcontroller.value.copyWith(
+                            text: capitalizedValue,
+                            selection: TextSelection.collapsed(offset: capitalizedValue.length),
+                          );
+                        },
+                        decoration: const InputDecoration(
+                          //labelText: "Business Keywords",
+                          hintText: "Business Keywords",
+                          suffixIcon: Icon(Icons.business,color: Colors.green,)
+                          // hintText: '',
+                        ),
+                        inputFormatters: [
+                          LengthLimitingTextInputFormatter(30),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10,),
+
+                    SizedBox(
+                      width: 300,
+                      child: TextFormField(
+                        controller: mobilecontroller,
+                        validator: (value){
+                          if (value!.isEmpty) {
+                            return "* Enter your Mobile Number";
+                          } else if (value.length < 10) {
+                            return "* Mobile Number should be 10 digits";
+                          }  else{
+                            return null;}
+                        },
+                        decoration:  const InputDecoration(
+                         // labelText:'Mobile Number',
+                          hintText: "Mobile Number",
+                          suffixIcon: Icon(Icons.phone_android,color: Colors.green,)
+                        ),
+                        keyboardType: TextInputType.number,
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(10)
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10,),
+                    SizedBox(
+                      width: 300,
+                      child: TextFormField(
+                        controller: emailcontroller,
+                        validator: (value){
+                          if (value!.isEmpty) {
+                            return '* Enter your Email Address';
+                          }  if (!RegExp(r'\S+@\S+\.\S+').hasMatch(value)) {
+                         return '* Enter a valid Email Address';
+                          }
+                          return null;
+                        },
+                        decoration:  const InputDecoration(
+                         // labelText: 'Email Address',
+                          hintText: 'Email Address',
+                          suffixIcon: Icon(Icons.mail,color: Colors.green,),
+
+
+                        ),),
+                    ),
+                    const SizedBox(height: 10,),
+
+                    SizedBox(
+                      width: 300,
+                      child: TextFormField(
+                        minLines: 1,
+                        maxLines: 5,
+                        maxLength: 100,
+                        controller: addresscontroller,
+                        validator: (value){
+                          if (value!.isEmpty) {
+                            return '* Enter your Company Address';
+                          } else if(nameRegExp.hasMatch(value)){
+                            return null;
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          String capitalizedValue = capitalizeFirstLetter(value);
+                          addresscontroller.value = addresscontroller.value.copyWith(
+                            text: capitalizedValue,
+                            selection: TextSelection.collapsed(offset: capitalizedValue.length),
+                          );
+                        },
+                        decoration: const InputDecoration(
+                         // labelText: 'Company address',
+                          hintText: 'Company address',
+                          suffixIcon: Icon(Icons.business,color: Colors.green,),
+                        ),),
+                    ),
+                    const SizedBox(height: 10,),
+
+                    SizedBox(
+                      width: 300,
+                      child: TextFormField(
+                        controller: websitecontroller,
+                        validator: (value){
+                          if (value!.isEmpty) {
+                            return '* Enter your Website';
+                          } else if(nameRegExp.hasMatch(value)){
+                            return null;
+                          }else if (value.length<5) {
+                            return '* Enter a valid Website';
+                          }
+                          return null;
+                        },
+                        decoration:  const InputDecoration(
+                          //labelText: 'Website',
+                          hintText: 'Website',
+                          suffixIcon: Icon(Icons.web,color: Colors.green,)
+                        ),),
+                    ),
+                    const SizedBox(height: 10,),
+
+                    SizedBox(
+                      width: 300,
+                      child: TextFormField(
+                        controller: ybecontroller,
+                        validator: (value){
+                          if (value!.isEmpty) {
+                            return '* Enter Year of business established';
+                          } else if(nameRegExp.hasMatch(value)){
+                            return null;
+                          }
+                          return null;
+                        },
+                        decoration: const InputDecoration(
+                          hintText: 'Year of established (YYYY)',
+                          suffixIcon: Icon(Icons.calendar_month,color: Colors.green,),
+                        ),
+                        keyboardType: TextInputType.number,
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 30,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Save button starts
+                        MaterialButton(
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)  ),
+                            minWidth: 250,
+                            height: 50,
+                            color: Colors.green[800],
+                            onPressed: () async {
+                              if (_formKey.currentState!.validate()) {
+                                selectedImage == null ? Edit() : Update();
+                              }
+
+                            },
+                            child: const Text('SAVE',
+                              style: TextStyle(color: Colors.white),)),
+                        // Save button ends
+                        // Cancel button starts
+                        // Cancel button ends
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 10,),
-
-                  SizedBox(
-                    width: 300,
-                    child: TextFormField(
-                      controller: businesskeywordcontroller,
-                      validator: (value){
-                        if (value!.isEmpty) {
-                          return '* Enter your business keyword';
-                        } else if(nameRegExp.hasMatch(value)){
-                          return null;
-                        }
-                        return null;
-                      },
-                      onChanged: (value) {
-                        String capitalizedValue = capitalizeFirstLetter(value);
-                        businesskeywordcontroller.value = businesskeywordcontroller.value.copyWith(
-                          text: capitalizedValue,
-                          selection: TextSelection.collapsed(offset: capitalizedValue.length),
-                        );
-                      },
-                      decoration: const InputDecoration(
-                        //labelText: "Business Keywords",
-                        hintText: "Business Keywords",
-                        suffixIcon: Icon(Icons.business,color: Colors.green,)
-                        // hintText: '',
-                      ),
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(30),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 10,),
-
-                  SizedBox(
-                    width: 300,
-                    child: TextFormField(
-                      controller: mobilecontroller,
-                      validator: (value){
-                        if (value!.isEmpty) {
-                          return "* Enter your Mobile Number";
-                        } else if (value.length < 10) {
-                          return "* Mobile Number should be 10 digits";
-                        }  else{
-                          return null;}
-                      },
-                      decoration:  const InputDecoration(
-                       // labelText:'Mobile Number',
-                        hintText: "Mobile Number",
-                        suffixIcon: Icon(Icons.phone_android,color: Colors.green,)
-                      ),
-                      keyboardType: TextInputType.number,
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.digitsOnly,
-                        LengthLimitingTextInputFormatter(10)
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 10,),
-                  SizedBox(
-                    width: 300,
-                    child: TextFormField(
-                      controller: emailcontroller,
-                      validator: (value){
-                        if (value!.isEmpty) {
-                          return '* Enter your Email Address';
-                        }  if (!RegExp(r'\S+@\S+\.\S+').hasMatch(value)) {
-                       return '* Enter a valid Email Address';
-                        }
-                        return null;
-                      },
-                      decoration:  const InputDecoration(
-                       // labelText: 'Email Address',
-                        hintText: 'Email Address',
-                        suffixIcon: Icon(Icons.mail,color: Colors.green,),
-
-
-                      ),),
-                  ),
-                  const SizedBox(height: 10,),
-
-                  SizedBox(
-                    width: 300,
-                    child: TextFormField(
-                      minLines: 1,
-                      maxLines: 5,
-                      maxLength: 100,
-                      controller: addresscontroller,
-                      validator: (value){
-                        if (value!.isEmpty) {
-                          return '* Enter your Company Address';
-                        } else if(nameRegExp.hasMatch(value)){
-                          return null;
-                        }
-                        return null;
-                      },
-                      onChanged: (value) {
-                        String capitalizedValue = capitalizeFirstLetter(value);
-                        addresscontroller.value = addresscontroller.value.copyWith(
-                          text: capitalizedValue,
-                          selection: TextSelection.collapsed(offset: capitalizedValue.length),
-                        );
-                      },
-                      decoration: const InputDecoration(
-                       // labelText: 'Company address',
-                        hintText: 'Company address',
-                        suffixIcon: Icon(Icons.business,color: Colors.green,),
-                      ),),
-                  ),
-                  const SizedBox(height: 10,),
-
-                  SizedBox(
-                    width: 300,
-                    child: TextFormField(
-                      controller: websitecontroller,
-                      validator: (value){
-                        if (value!.isEmpty) {
-                          return '* Enter your Website';
-                        } else if(nameRegExp.hasMatch(value)){
-                          return null;
-                        }else if (value.length<5) {
-                          return '* Enter a valid Website';
-                        }
-                        return null;
-                      },
-                      decoration:  const InputDecoration(
-                        //labelText: 'Website',
-                        hintText: 'Website',
-                        suffixIcon: Icon(Icons.web,color: Colors.green,)
-                      ),),
-                  ),
-                  const SizedBox(height: 10,),
-
-                  SizedBox(
-                    width: 300,
-                    child: TextFormField(
-                      controller: ybecontroller,
-                      validator: (value){
-                        if (value!.isEmpty) {
-                          return '* Enter Year of business established';
-                        } else if(nameRegExp.hasMatch(value)){
-                          return null;
-                        }
-                        return null;
-                      },
-                      decoration: const InputDecoration(
-                        hintText: 'Year of established (YYYY)',
-                        suffixIcon: Icon(Icons.calendar_month,color: Colors.green,),
-                      ),
-                      keyboardType: TextInputType.number,
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.digitsOnly,
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 30,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Save button starts
-                      MaterialButton(
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)  ),
-                          minWidth: 130,
-                          height: 50,
-                          color: Colors.green[800],
-                          onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              selectedImage == null ? Edit() : Update();
-                            }
-
-                          },
-                          child: const Text('SAVE',
-                            style: TextStyle(color: Colors.white),)),
-                      // Save button ends
-                      // Cancel button starts
-                      // Cancel button ends
-                    ],
-                  ),
-                  const SizedBox(height: 20,)
-                ],
-              )
+                    const SizedBox(height: 20,)
+                  ],
+                )
+            ),
           ),
         ),
       ),

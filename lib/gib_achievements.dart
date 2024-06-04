@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gipapp/Non_exe_pages/settings_non_executive.dart';
 import 'package:gipapp/settings_page_executive.dart';
 import 'Non_exe_pages/non_exe_home.dart';
 import 'guest_home.dart';
@@ -24,53 +25,66 @@ class _AchievementsState extends State<Achievements> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('GiB Achievements',style: Theme.of(context).textTheme.displayLarge,),
+        appBar: AppBar(
+          title: Text('GiB Achievements',style: Theme.of(context).textTheme.displayLarge,),
 
-        leading: IconButton(
-          onPressed: () {
-            if (widget.userType == "Non-Executive") {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => NavigationBarNon(
-                    userType: widget.userType.toString(),
-                    userId: widget.userID.toString(),
+          leading: IconButton(
+            onPressed: () {
+              if (widget.userType == "Non-Executive") {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SettingsPageNon(
+                      userType: widget.userType.toString(),
+                      userId: widget.userID.toString(),
+                    ),
                   ),
-                ),
-              );
-            }
-            else{
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SettingsPageExecutive(
-                    userType: widget.userType.toString(),
-                    userId: widget.userID.toString(),
+                );
+              }
+              else{
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SettingsPageExecutive(
+                      userType: widget.userType.toString(),
+                      userId: widget.userID.toString(),
+                    ),
                   ),
-                ),
-              );
-            }
-          },
-          icon: const Icon(Icons.arrow_back,color: Colors.white,),
+                );
+              }
+            },
+            icon: const Icon(Icons.arrow_back,color: Colors.white,),
+          ),
+
         ),
 
-      ),
-
-      body: PopScope(
-          canPop: false,
-          onPopInvoked: (didPop)  {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SettingsPageExecutive(
-                  userType: widget.userType.toString(),
-                  userId: widget.userID.toString(),
-                ),
-              ),
-            );
-          },
-          child: AchievementGibGallery(userType: widget.userType, userID: widget.userID,)));
+        body: PopScope(
+            canPop: false,
+            onPopInvoked: (didPop)  {
+              if (widget.userType == "Non-Executive") {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SettingsPageNon(
+                      userType: widget.userType.toString(),
+                      userId: widget.userID.toString(),
+                    ),
+                  ),
+                );
+              }
+              else{
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SettingsPageExecutive(
+                      userType: widget.userType.toString(),
+                      userId: widget.userID.toString(),
+                    ),
+                  ),
+                );
+              }
+            },
+            child: AchievementViewPhotosPage(userType: widget.userType, userID: widget.userID,)));
   }
 }
 
@@ -146,7 +160,7 @@ class _AchievementGibGalleryState extends State<AchievementGibGallery> {
                 height: 1100,
                 child: Expanded(
                     child: TabBarView(children: [
-                      AchievementViewPhotosPage(),
+                      //      AchievementViewPhotosPage(),
                       AchievementViewVideosPage(),
                     ]
                     )),
@@ -163,7 +177,13 @@ class _AchievementGibGalleryState extends State<AchievementGibGallery> {
 
 
 class AchievementViewPhotosPage extends StatefulWidget {
-  const AchievementViewPhotosPage({Key? key}) : super(key: key);
+  final String userType;
+  final String? userID;
+  const AchievementViewPhotosPage
+
+      ({super.key,
+    required this.userType,
+    required this. userID,});
 
   @override
   State<AchievementViewPhotosPage> createState() =>

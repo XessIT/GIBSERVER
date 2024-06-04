@@ -4,6 +4,7 @@ import 'package:gipapp/settings_page_executive.dart';
 import 'package:intl/intl.dart';
 
 import 'Non_exe_pages/non_exe_home.dart';
+import 'Non_exe_pages/settings_non_executive.dart';
 import 'guest_home.dart';
 import 'home.dart';
 import 'home1.dart';
@@ -35,7 +36,7 @@ class _AttendancePageState extends State<AttendancePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => NavigationBarNon(
+                      builder: (context) => SettingsPageNon(
                         userType: widget.userType.toString(),
                         userId: widget.userID.toString(),
                       ),
@@ -63,7 +64,7 @@ class _AttendancePageState extends State<AttendancePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => NavigationBarNon(
+                  builder: (context) => SettingsPageNon(
                     userType: widget.userType.toString(),
                     userId: widget.userID.toString(),
                   ),

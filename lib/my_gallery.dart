@@ -121,6 +121,7 @@ class _GalleryState extends State<Gallery> {
     if (response.statusCode == 200) {
       final responseData = jsonDecode(response.body);
       final imageUrl = responseData['image_url'];
+      Navigator.push(context, MaterialPageRoute(builder: (context) =>  Gallery(userType: widget.userType, userId: widget.userId,)));
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Image uploaded successfully.')),
       );
@@ -228,7 +229,7 @@ class _GalleryState extends State<Gallery> {
         iconTheme: const IconThemeData(color: Colors.white),
         leading: IconButton(
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) =>  NavigationBarExe(userType: widget.userType, userId: widget.userId,)));
+              Navigator.push(context, MaterialPageRoute(builder: (context) =>  SettingsPageExecutive(userType: widget.userType, userId: widget.userId,)));
             },
             icon: const Icon(Icons.navigate_before)),
       ),
@@ -278,35 +279,41 @@ class _GalleryState extends State<Gallery> {
         },
         child: const Icon(Icons.add),
       ),
-      body: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: 10.0,
-          crossAxisSpacing: 10.0,
-        ),
-        itemCount: _imageUrlsList.length,
-        itemBuilder: (BuildContext context, i) {
-          return Stack(
-            children: [
-              CachedNetworkImage(
-                imageUrl: _imageUrlsList[i],
-                placeholder: (context, url) => CircularProgressIndicator(),
-                errorWidget: (context, url, error) => Icon(Icons.error),
-                fit: BoxFit.cover,
-              ),
-              Positioned(
-                top: 5,
-                right: 5,
-                child: IconButton(
-                  icon: Icon(Icons.cancel),
-                  onPressed: () {
-                    _showDeleteConfirmationDialog(i);
-                  },
-                ),
-              ),
-            ],
-          );
+      body: PopScope(
+        canPop: false,
+        onPopInvoked: (didPop)  {
+          Navigator.push(context, MaterialPageRoute(builder: (context) =>  SettingsPageExecutive(userType: widget.userType, userId: widget.userId,)));
         },
+        child: _imageUrlsList.isEmpty ? const Center(child: Text("No Images")) : GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisSpacing: 10.0,
+            crossAxisSpacing: 10.0,
+          ),
+          itemCount: _imageUrlsList.length,
+          itemBuilder: (BuildContext context, i) {
+            return Stack(
+              children: [
+                CachedNetworkImage(
+                  imageUrl: _imageUrlsList[i],
+                  placeholder: (context, url) => CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
+                  fit: BoxFit.cover,
+                ),
+                Positioned(
+                  top: 5,
+                  right: 5,
+                  child: IconButton(
+                    icon: Icon(Icons.cancel),
+                    onPressed: () {
+                      _showDeleteConfirmationDialog(i);
+                    },
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
