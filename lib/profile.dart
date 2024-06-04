@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gipapp/Non_exe_pages/settings_non_executive.dart';
 import 'package:gipapp/personal_edit.dart';
@@ -809,27 +810,13 @@ class _BusinessInfoState extends State<BusinessInfo> {
         child: Center(
           child: Column(
             children: [
-              // SizedBox(
-              //   width: double.infinity,
-              //   height: 300,
-              //   child: Image.asset('assets/logo.png', fit: BoxFit.cover),
-              // ),
-              // SizedBox(
-              //   width: double.infinity,
-              //   height: 300,
-              //   child: Image.network(imageUrl, fit: BoxFit.fill,),
-              // ),
-
-              Container(
+              SizedBox(
                 width: double.infinity,
                 height: 300,
                 child: imageUrl.isEmpty
                     ? Image.asset('assets/logo.png', fit: BoxFit.cover)
-                    : Image.network(imageUrl, fit: BoxFit.fill,),
+                    : CachedNetworkImage( fit: BoxFit.fill, imageUrl: imageUrl,),
               ),
-
-
-
               Align(
                 alignment: Alignment.topRight,
                 child: IconButton(

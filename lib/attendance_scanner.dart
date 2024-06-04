@@ -256,8 +256,7 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-        title: const Text('Attendance Scanner'),
+        title:  Text('Attendance Scanner', style: Theme.of(context).textTheme.displayLarge,),
         leading: IconButton(
           onPressed: () {
             if (widget.userType == "Non-Executive") {
@@ -282,7 +281,10 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
               );
             }
           },
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.navigate_before),
+        ),
+        iconTheme: IconThemeData(
+          color: Colors.white,
         ),
       ),
       body: RefreshIndicator(
@@ -353,7 +355,7 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
                                   inputFormatters: <TextInputFormatter>[
                                     FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                                     FilteringTextInputFormatter.digitsOnly,
-                                    LengthLimitingTextInputFormatter(10),
+                                    LengthLimitingTextInputFormatter(3),
                                   ],
                                   decoration: const InputDecoration.collapsed(
                                     hintText: 'ex.0 or 1,2,3,etc...',
