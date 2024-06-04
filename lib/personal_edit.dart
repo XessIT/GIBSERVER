@@ -37,9 +37,6 @@ class PersonalEdit extends StatefulWidget {
   final String? userId;
   final String? imageUrl;
 
-
-
-
   const PersonalEdit({Key? key,
     required this.currentID,
     required this.currentFname,
@@ -64,10 +61,6 @@ class PersonalEdit extends StatefulWidget {
     required this.currentPastExperience,
     required this.userId,
     required this.imageUrl,
-
-
-
-
   }) : super(key: key);
 
 
@@ -384,33 +377,7 @@ class _PersonalEditState extends State<PersonalEdit> {
                 Text('Personal Information ${widget.currentID.toString()}',
                   style: Theme.of(context).textTheme.displayMedium,),
                 const SizedBox(width: 20,),
-                // InkWell(
-                //   child: CircleAvatar(
-                //     radius: 80,
-                //     backgroundImage: pickedImage != null ? FileImage(pickedImage!) : null,
-                //     backgroundColor: Colors.grey,
-                //   ),
-                //   onTap: () {
-                //     showModalBottomSheet(
-                //       context: context,
-                //       builder: (ctx) {
-                //         return Column(
-                //           mainAxisSize: MainAxisSize.min,
-                //           children: [
-                //             ListTile(
-                //               leading: Icon(Icons.storage),
-                //               title: Text("From Gallery"),
-                //               onTap: () {
-                //                 pickImageFromGallery();
-                //                 Navigator.of(context).pop();
-                //               },
-                //             ),
-                //           ],
-                //         );
-                //       },
-                //     );
-                //   },
-                // ),
+
                 InkWell(
                   child: ClipOval(
                     child: Container(
@@ -574,6 +541,7 @@ class _PersonalEditState extends State<PersonalEdit> {
                 SizedBox(
                   width: 300,
                   child: TextFormField(
+                    readOnly: true,
                     controller: _dobdate ,
                     validator: (value){
                       if (value!.isEmpty) {
@@ -618,6 +586,7 @@ class _PersonalEditState extends State<PersonalEdit> {
                   child: SizedBox(
                     width: 300,
                     child: TextFormField(
+                      readOnly: true,
                       controller: _waddate,
                       decoration: InputDecoration(
                         hintText: "WAD",
@@ -1283,7 +1252,7 @@ class _PersonalEditState extends State<PersonalEdit> {
                     // Save button starts
                     MaterialButton(
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)  ),
-                        minWidth: 130,
+                        minWidth: 300,
                         height: 50,
                         color: Colors.green[800],
                         onPressed: ()  {
@@ -1296,7 +1265,7 @@ class _PersonalEditState extends State<PersonalEdit> {
                           }
 
                         },
-                        child: const Text('Save',
+                        child: const Text('Update',
                           style: TextStyle(color: Colors.white),)),
                     // Save button ends
                     // Cancel button starts
