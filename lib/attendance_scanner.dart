@@ -92,6 +92,7 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
       });
     });
     getData(qrstr);
+    fetchData(widget.userID.toString());
    // scanQr();
   }
 
@@ -177,13 +178,31 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
       // Handle error here (e.g., display error message to the user)
     }
   }
+  void fetchData(String id) async {
+    String url = 'http://mybudgetbook.in/GIBAPI/name_retrive.php?id=$id'; // Replace with your actual PHP file URL
+    var response = await http.get(Uri.parse(url));
 
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body);
+      for (var item in data) {
+        String firstName = item['first_name'];
+        String lastName = item['last_name'];
+        print('First Name: $firstName, Last Name: $lastName');
+      }
+    } else {
+      print('Failed to fetch data: ${response.statusCode}');
+    }
+  }
   Future<void> insertAttendance(Map<String, dynamic> meeting) async {
     try {
+      String firstName = ''; // Initialize these variables with actual user data
+      String lastName = '';  // Initialize these variables with actual user data
+       fetchData(widget.userID.toString());
       final response = await http.post(
         Uri.parse('http://mybudgetbook.in/GIBAPI/insert_attendance.php'),
         body: {
           'user_id': widget.userID,
+          'user_name': '$firstName $lastName',
           'meeting_name': meeting['meeting_name'],
           'meeting_id': meeting['id'],
           'meeting_type': meeting['meeting_type'],
