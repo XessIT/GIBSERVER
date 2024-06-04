@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:gipapp/settings_page_executive.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
@@ -170,7 +171,7 @@ class _ActivityState extends State<Activity> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => Homepage(
+                      builder: (context) => SettingsPageExecutive(
                             userType: widget.userType,
                             userId: widget.userId,
                           )));

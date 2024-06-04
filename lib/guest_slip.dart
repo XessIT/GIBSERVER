@@ -122,11 +122,11 @@ class _VisitorsSlipPageState extends State<VisitorsSlipPage> {
         // Navigator.push(context, MaterialPageRoute(builder: (context)=> Home(userType: widget.userType, userId:widget.userId)));
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Guest Added Successfully")));
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => Homepage(
-                    userType: widget.userType, userId: widget.userId)));
+        // Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //         builder: (context) => Homepage(
+        //             userType: widget.userType, userId: widget.userId)));
       } else {
         print(
             "Failed to Guest Add. Server returned status code: ${res.statusCode}");

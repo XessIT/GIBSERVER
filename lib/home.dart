@@ -317,15 +317,15 @@ class _HomepageState extends State<Homepage> {
         }
       } else {
         print(
-            "Failed to upload image. Server returned status code: ${res.statusCode}");
+            "Failed to register meeting. Server returned status code: ${res.statusCode}");
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(
                 "Failed to register meeting. Server returned status code: ${res.statusCode}")));
       }
     } catch (e) {
-      print("Error uploading image: $e");
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Error uploading image: $e")));
+      print("Error uploading meeting data: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error uploading meeting data: $e")));
     }
   }
 
@@ -711,7 +711,7 @@ class _HomepageState extends State<Homepage> {
                                                                             onPressed:
                                                                                 () {
                                                                               //store purpose..
-                                                                              // registerDateStoreDatabase(id, meetingType, meetingDate, meetingPlace);
+                                                                              //registerDateStoreDatabase(id, meetingType, meetingDate, meetingPlace);
                                                                               showDialog(
                                                                                   context: context,
                                                                                   builder: (ctx) => Form(

@@ -1,117 +1,256 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:gipapp/sample_login.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:workmanager/workmanager.dart';
 import 'Non_exe_pages/non_exe_home.dart';
 import 'guest_home.dart';
 import 'home.dart';
 import 'login.dart';
+import 'dart:async';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:flutter/services.dart';
+import 'notification.dart';
+import 'package:http/http.dart' as http;
 
-void main() {
+sendData() {
+  print("Hi Flutter");
+}
+
+final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+final task = 'firstTask';
+
+@pragma('vm:entry-point')
+void callbackDispatcher() {
+  Workmanager().executeTask((task, inputData) async {
+    if (task == 'uniqueKey') {
+      // Fetch data and show local notification
+      await fetchData();
+    }
+    return Future.value(true);
+  });
+}
+
+void initializeNotifications() async {
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+  const InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+  );
+
+  await flutterLocalNotificationsPlugin.initialize(
+    initializationSettings,
+  );
+}
+
+Future<void> fetchData() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? id = prefs.getString('id');
+  if (id != null) {
+    try {
+      print("MObile for message notification");
+      final url = Uri.parse(
+          'http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=$id');
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        if (responseData is List<dynamic>) {
+          List<Map<String, dynamic>> userdata =
+              responseData.cast<Map<String, dynamic>>();
+          if (userdata.isNotEmpty) {
+            String fetchMobile = userdata[0]["mobile"] ?? "";
+            await getData(fetchMobile);
+          }
+        } else {
+          print('Invalid response data format');
+        }
+      } else {
+        print('Error fetching data: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error fetching data: $error');
+    }
+  }
+}
+
+Future<void> getData(String fetchMobile) async {
+  try {
+    final url = Uri.parse(
+        'http://mybudgetbook.in/GIBAPI/registration.php?table=waiting&mobile=$fetchMobile');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      if (responseData is List<dynamic>) {
+        List<Map<String, dynamic>> data =
+            responseData.cast<Map<String, dynamic>>();
+        if (data.isNotEmpty) {
+          showLocalNotification('New Message',
+              'Your friend is waiting for your Approval!.Check for more Details');
+        }
+      } else {
+        print('Invalid response data format');
+      }
+    } else {
+      print('Error getting data: ${response.statusCode}');
+    }
+  } catch (error) {
+    print('Error getting data: $error');
+  }
+}
+
+void showLocalNotification(String title, String message) async {
+  const AndroidNotificationDetails androidPlatformChannelSpecifics =
+      AndroidNotificationDetails(
+    'default_channel_id',
+    'Default Channel',
+    channelDescription: 'Default Channel for notifications',
+    importance: Importance.high,
+    priority: Priority.high,
+  );
+  const NotificationDetails platformChannelSpecifics =
+      NotificationDetails(android: androidPlatformChannelSpecifics);
+
+  await flutterLocalNotificationsPlugin.show(
+    0,
+    title,
+    message,
+    platformChannelSpecifics,
+  );
+}
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(
-      MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          appBarTheme: const AppBarTheme(
-              backgroundColor: Colors.green
-          ),
-          /// app bar 18
-          /// inside body heding  16
-          /// inside text 14
-          /// body for black
-          /// label for white
-          /// headline for medium  green
+  Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
+  Workmanager().registerPeriodicTask(
+    "1",
+    "uniqueKey",
+    frequency: Duration(minutes: 15),
+  );
 
-          textTheme: GoogleFonts.aBeeZeeTextTheme().copyWith(
-            headlineSmall: const TextStyle(fontSize: 16.0,color: Colors.green),
-            headlineMedium: const TextStyle(fontSize: 16.0,color: Colors.green,fontWeight: FontWeight.bold),
-            headlineLarge:  const TextStyle(fontSize: 16.0,color: Colors.blue),
+  initializeNotifications();
+  runApp(MyApp());
+}
 
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        appBarTheme: AppBarTheme(backgroundColor: Colors.green[900]),
+        textTheme: TextTheme(
+            displayLarge: TextStyle(
+                fontSize: 30.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.green[900]),
+            displayMedium: TextStyle(fontSize: 20.0, color: Colors.green[900]),
+            displaySmall: const TextStyle(fontSize: 20.0, color: Colors.yellow),
+            headlineMedium: const TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.black),
+            headlineSmall: TextStyle(
+                fontSize: 16.0,
+                color: Colors.green[900],
+                fontWeight: FontWeight.bold),
+            titleLarge: const TextStyle(fontSize: 16, color: Colors.white),
+            bodyLarge: const TextStyle(fontSize: 18.0),
+            bodyMedium: const TextStyle(fontSize: 16),
+            headlineLarge: TextStyle(
+                fontSize: 16.0,
+                color: Colors.blue[900],
+                fontWeight: FontWeight.bold),
+            titleSmall: const TextStyle(
+                fontSize: 13.5,
+                color: Colors.white70,
+                fontWeight: FontWeight.w200),
+            bodySmall: const TextStyle(
+                fontSize: 15, color: Colors.white, fontWeight: FontWeight.bold)
+            //   subtitle1:   TextStyle( fontSize: 20, color: Colors.black, ),
+            //    labelSmall: const TextStyle(fontSize: 16, color: Colors.white),
 
-            bodySmall: const TextStyle(fontSize: 14, color: Colors.black),
-            bodyMedium: const TextStyle(fontSize: 16, color: Colors.black,fontWeight: FontWeight.bold),
-            bodyLarge: const TextStyle(fontSize: 18.0, color: Colors.black),
+            ),
+        outlinedButtonTheme: OutlinedButtonThemeData(
+            style: OutlinedButton.styleFrom(
+                // primary: Colors.white,
+                backgroundColor: Colors.green[800],
+                // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.0)  ),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 15, horizontal: 50),
+                textStyle: const TextStyle(fontSize: 15))),
+      ),
 
-            displayLarge:const TextStyle(fontSize: 18, color: Colors.white),
-            displayMedium: const TextStyle(fontSize: 16, color: Colors.white,fontWeight: FontWeight.bold),
-            displaySmall: const TextStyle(fontSize: 14, color: Colors.white), // Assuming this is for labels
-          ),
+      home: FutureBuilder<Map<String, dynamic>>(
+        future: isLoggedIn(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator();
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            // Extract isLoggedIn, userType, and firstName from snapshot.data
+            bool isLoggedIn = snapshot.data?['isLoggedIn'] ?? false;
+            String? userType = snapshot.data?['userType'];
+            String? firstName = snapshot.data?['firstName'];
+            String? district = snapshot.data?['district'];
+            String? chapter = snapshot.data?['chapter'];
+            String? native = snapshot.data?['native'];
+            String? DOB = snapshot.data?['DOB'];
+            String? Koottam = snapshot.data?['Koottam'];
+            String? Kovil = snapshot.data?['Kovil'];
+            String? BloodGroup = snapshot.data?['BloodGroup'];
+            String? lastName = snapshot.data?['lastName'];
+            String? spouse_name = snapshot.data?['s_name'];
+            String? spouse_blood = snapshot.data?['s_blood'];
+            String? Wad = snapshot.data?['WAD'];
+            String? place = snapshot.data?['place'];
+            String? skoottam = snapshot.data?['s_father_koottam'];
+            String? skovil = snapshot.data?['s_father_kovil'];
+            String? pexe = snapshot.data?['past_experience'];
+            String? edu = snapshot.data?['education'];
+            String? email = snapshot.data?['email'];
+            String? rid = snapshot.data?['referrer_id'];
+            String? website = snapshot.data?['website'];
+            String? byear = snapshot.data?['b_year'];
+            String? mobile = snapshot.data?['mobile'];
+            String? image = snapshot.data?['profile_image'];
+            String? id = snapshot.data?['id'];
 
-
-
-
-
-        ),
-
-        home: FutureBuilder<Map<String, dynamic>>(
-          future: isLoggedIn(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
-            } else if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            } else {
-              // Extract isLoggedIn, userType, and firstName from snapshot.data
-              bool isLoggedIn = snapshot.data?['isLoggedIn'] ?? false;
-              String? userType = snapshot.data?['userType'];
-              String? firstName = snapshot.data?['firstName'];
-              String? district = snapshot.data?['district'];
-              String? chapter = snapshot.data?['chapter'];
-              String? native = snapshot.data?['native'];
-              String? DOB = snapshot.data?['DOB'];
-              String? Koottam = snapshot.data?['Koottam'];
-              String? Kovil = snapshot.data?['Kovil'];
-              String? BloodGroup = snapshot.data?['BloodGroup'];
-              String? lastName = snapshot.data?['lastName'];
-              String? spouse_name = snapshot.data?['s_name'];
-              String? spouse_blood = snapshot.data?['s_blood'];
-              String? Wad = snapshot.data?['WAD'];
-              String? place = snapshot.data?['place'];
-              String? skoottam = snapshot.data?['s_father_koottam'];
-              String? skovil = snapshot.data?['s_father_kovil'];
-              String? pexe = snapshot.data?['past_experience'];
-              String? edu = snapshot.data?['education'];
-              String? email = snapshot.data?['email'];
-              String? rid = snapshot.data?['referrer_id'];
-              String? website = snapshot.data?['website'];
-              String? byear = snapshot.data?['b_year'];
-              String? mobile = snapshot.data?['mobile'];
-              String? image = snapshot.data?['profile_image'];
-              String? id = snapshot.data?['id'];
-
-              if (isLoggedIn) {
-                switch (userType) {
-                  case "Executive":
-                    return NavigationBarExe(
-                      userType: userType ,
-                      userId: id,
-                    );
-                  case "Non-Executive":
-                    return NavigationBarNon(
-                      userType: userType ,
-                      userId: id,
-                    ); // Pass firstName to Homepage
+            if (isLoggedIn) {
+              switch (userType) {
+                case "Executive":
+                  return Homepage(
+                    userType: userType,
+                    userId: id,
+                  );
+                case "Non-Executive":
+                  return NonExecutiveHome(
+                    userType: userType,
+                    userID: id,
+                  ); // Pass firstName to Homepage
                 //   return NonExecutiveHome();
-                  case "Guest":
-                    return GuestHome(
-                      userType: userType ,
-                      userId: id,
-                    );
-                  default:
+                case "Guest":
+                  return GuestHomePage(
+                    userType: userType,
+                    userId: id,
+                  );
+                default:
                   // Handle unexpected user types
-                    return Text('Unknown user type: $userType');
-                }
-              } else {
-                return const Login();
+                  return Text('Unknown user type: $userType');
               }
+            } else {
+              return const Login();
             }
-          },
-        ),
+          }
+        },
+      ),
 
-
-        ///
-///
+      ///
+      ///
 
 /*
         home: FutureBuilder<bool>(
@@ -126,11 +265,9 @@ void main() {
 
       ),
 */
-
-      ));
+    );
+  }
 }
-
-
 
 Future<Map<String, dynamic>> isLoggedIn() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -163,32 +300,31 @@ Future<Map<String, dynamic>> isLoggedIn() async {
   return {
     'isLoggedIn': isLoggedIn,
     'userType': userType,
-    'firstName': firstName ,
-    'lastName': lastName ,
-    'district':district,
-    'chapter':chapter,
-    'native':native,
-    'DOB':DOB,
-    'Koottam':Koottam,
-    'Kovil':Kovil,
-    'BloodGroup':BloodGroup,
-    's_father_koottam':s_koottam,
-    's_father_kovil':s_kovil,
-    'past_experience':pexe,
-    'website':website,
-    'b_year':byear,
-    'referrer_id':rid,
-    'education':edu,
-    'mobile':mobile,
-    'email':email,
-    'place':place,
-    's_name':s_name,
-    's_blood':s_blood,
-    "WAD":WAD,
-    "id":id
+    'firstName': firstName,
+    'lastName': lastName,
+    'district': district,
+    'chapter': chapter,
+    'native': native,
+    'DOB': DOB,
+    'Koottam': Koottam,
+    'Kovil': Kovil,
+    'BloodGroup': BloodGroup,
+    's_father_koottam': s_koottam,
+    's_father_kovil': s_kovil,
+    'past_experience': pexe,
+    'website': website,
+    'b_year': byear,
+    'referrer_id': rid,
+    'education': edu,
+    'mobile': mobile,
+    'email': email,
+    'place': place,
+    's_name': s_name,
+    's_blood': s_blood,
+    "WAD": WAD,
+    "id": id
   };
 }
-
 
 /*
 Future<bool> isLoggedIn() async {
@@ -197,8 +333,3 @@ Future<bool> isLoggedIn() async {
 
 }
 */
-
-
-
-
-

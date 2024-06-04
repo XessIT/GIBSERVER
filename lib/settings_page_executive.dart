@@ -1,4 +1,3 @@
-
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:babstrap_settings_screen/babstrap_settings_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -18,14 +17,14 @@ import '../profile.dart';
 import 'business.dart';
 import 'home.dart';
 import 'meeting.dart';
+import 'my_activity.dart';
 import 'my_gallery.dart';
-
-
 
 class SettingsPageExecutive extends StatelessWidget {
   final String? userId;
   final String? userType;
-  const SettingsPageExecutive({super.key, required this.userId,required this.userType }) ;
+  const SettingsPageExecutive(
+      {super.key, required this.userId, required this.userType});
 
   @override
   Widget build(BuildContext context) {
@@ -50,8 +49,7 @@ class SettingsPageExecutive extends StatelessWidget {
 */
           ),
         ),
-        title:
-        Text(
+        title: Text(
           "Settings",
           style: Theme.of(context).textTheme.displayLarge,
         ),
@@ -61,15 +59,26 @@ class SettingsPageExecutive extends StatelessWidget {
             color: Colors.white,
           ),
           onPressed: () {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>NavigationBarExe(userType: userType.toString(), userId: userId.toString(),)));
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => NavigationBarExe(
+                          userType: userType.toString(),
+                          userId: userId.toString(),
+                        )));
           },
         ),
-
       ),
       body: PopScope(
         canPop: false,
-        onPopInvoked: (didPop)  {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>NavigationBarExe(userType: userType.toString(), userId: userId.toString(),)));
+        onPopInvoked: (didPop) {
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => NavigationBarExe(
+                        userType: userType.toString(),
+                        userId: userId.toString(),
+                      )));
         },
         child: Padding(
           padding: const EdgeInsets.all(10),
@@ -86,8 +95,11 @@ class SettingsPageExecutive extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) =>   Profile( userType: userType.toString(), userID: userId.toString(),
-                        )),
+                        MaterialPageRoute(
+                            builder: (context) => Profile(
+                                  userType: userType.toString(),
+                                  userID: userId.toString(),
+                                )),
                       );
                     },
                     icons: CupertinoIcons.profile_circled,
@@ -102,7 +114,11 @@ class SettingsPageExecutive extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => BusinessPage(userType: userType.toString(), userId: userId.toString(),)),
+                        MaterialPageRoute(
+                            builder: (context) => BusinessPage(
+                                  userType: userType.toString(),
+                                  userId: userId.toString(),
+                                )),
                       );
                     },
                     icons: CupertinoIcons.calendar,
@@ -121,7 +137,11 @@ class SettingsPageExecutive extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => MeetingUpcoming(userType: userType.toString(), userId: userId.toString(),)),
+                        MaterialPageRoute(
+                            builder: (context) => MeetingUpcoming(
+                                  userType: userType.toString(),
+                                  userId: userId.toString(),
+                                )),
                       );
                     },
                     icons: CupertinoIcons.calendar,
@@ -140,7 +160,10 @@ class SettingsPageExecutive extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => MyGallery(userId: userId.toString(),)),
+                        MaterialPageRoute(
+                            builder: (context) => MyGallery(
+                                  userId: userId.toString(),
+                                )),
                       );
                     },
                     icons: CupertinoIcons.calendar,
@@ -159,7 +182,11 @@ class SettingsPageExecutive extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) =>   AttendancePage(userType: userType.toString(), userID: userId.toString(),)),
+                        MaterialPageRoute(
+                            builder: (context) => AttendancePage(
+                                  userType: userType.toString(),
+                                  userID: userId.toString(),
+                                )),
                       );
                     },
                     icons: Icons.fingerprint_outlined,
@@ -174,8 +201,13 @@ class SettingsPageExecutive extends StatelessWidget {
                   ),
                   SettingsItem(
                     onTap: () {
-                      Navigator.push(context,
-                        MaterialPageRoute(builder: (context) =>   AttendanceScannerPage( userType: userType.toString(), userID: userId.toString(),)),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AttendanceScannerPage(
+                                  userType: userType.toString(),
+                                  userID: userId.toString(),
+                                )),
                       );
                     },
                     icons: Icons.scanner_outlined,
@@ -215,7 +247,11 @@ class SettingsPageExecutive extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) =>   GibGallery(userType: userType.toString(), userID: userId.toString(),)),
+                        MaterialPageRoute(
+                            builder: (context) => GibGallery(
+                                  userType: userType.toString(),
+                                  userID: userId.toString(),
+                                )),
                       );
                     },
                     icons: CupertinoIcons.photo_on_rectangle,
@@ -234,7 +270,11 @@ class SettingsPageExecutive extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) =>   Achievements(userType: userType.toString(), userID: userId.toString(),)),
+                        MaterialPageRoute(
+                            builder: (context) => Achievements(
+                                  userType: userType.toString(),
+                                  userID: userId.toString(),
+                                )),
                       );
                     },
                     icons: Icons.emoji_events,
@@ -257,8 +297,11 @@ class SettingsPageExecutive extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => GibMembers( userType: userType.toString(), userId: userId.toString(),
-                        )),
+                        MaterialPageRoute(
+                            builder: (context) => GibMembers(
+                                  userType: userType.toString(),
+                                  userId: userId.toString(),
+                                )),
                       );
                     },
                     icons: Icons.supervisor_account,
@@ -277,7 +320,11 @@ class SettingsPageExecutive extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) =>   OffersPage( userType: userType.toString(), userId: userId.toString(),)),
+                        MaterialPageRoute(
+                            builder: (context) => OffersPage(
+                                  userType: userType.toString(),
+                                  userId: userId.toString(),
+                                )),
                       );
                     },
                     icons: Icons.local_offer,
@@ -300,7 +347,11 @@ class SettingsPageExecutive extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) =>   Doctors( userType: userType.toString(), userId: userId.toString(),)),
+                        MaterialPageRoute(
+                            builder: (context) => Doctors(
+                                  userType: userType.toString(),
+                                  userId: userId.toString(),
+                                )),
                       );
                     },
                     icons: Icons.add_circle,
@@ -319,7 +370,11 @@ class SettingsPageExecutive extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) =>   BloodGroup( userType: userType.toString(), userId: userId.toString(),)),
+                        MaterialPageRoute(
+                            builder: (context) => BloodGroup(
+                                  userType: userType.toString(),
+                                  userId: userId.toString(),
+                                )),
                       );
                     },
                     icons: Icons.bloodtype,
@@ -330,9 +385,26 @@ class SettingsPageExecutive extends StatelessWidget {
                     ),
                     title: 'Blood Group',
                     titleStyle: Theme.of(context).textTheme.bodyMedium,
-                    // subtitle:'Profile Image, Name, Income',
                     titleMaxLine: 1,
                     subtitleMaxLine: 1,
+                  ),
+                  SettingsItem(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Activity(
+                                  userId: userId.toString(),
+                                  userType: userType.toString(),
+                                )),
+                      );
+                    },
+                    icons: Icons.question_mark_outlined,
+                    iconStyle: IconStyle(
+                      backgroundColor: Colors.purple,
+                    ),
+                    title: 'Reference',
+                    //subtitle: "Learn more about Ziar'App",
                   ),
                 ],
               ),
@@ -382,7 +454,7 @@ class SettingsPageExecutive extends StatelessWidget {
                         btnOk: ElevatedButton(
                           onPressed: () async {
                             SharedPreferences prefs =
-                            await SharedPreferences.getInstance();
+                                await SharedPreferences.getInstance();
                             await prefs.setBool('isLoggedIn', false);
                             Navigator.pushReplacement(
                               context,
@@ -393,7 +465,7 @@ class SettingsPageExecutive extends StatelessWidget {
                           },
                           style: ButtonStyle(
                             backgroundColor:
-                            MaterialStateProperty.all<Color>(Colors.green),
+                                MaterialStateProperty.all<Color>(Colors.green),
                           ),
                           child: const Text(
                             'Yes',
@@ -406,7 +478,7 @@ class SettingsPageExecutive extends StatelessWidget {
                           },
                           style: ButtonStyle(
                             backgroundColor:
-                            MaterialStateProperty.all<Color>(Colors.red),
+                                MaterialStateProperty.all<Color>(Colors.red),
                           ),
                           child: Text(
                             'No',
