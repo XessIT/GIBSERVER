@@ -7,6 +7,7 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import'package:http/http.dart'as http;
+import 'guest_home.dart';
 import 'login.dart';
 
 class Registration extends StatelessWidget {
@@ -52,7 +53,7 @@ class _GuestState extends State<Guest> {
   String spouseblood = "Blood Group";
   String? chooseDistrict;
   RegExp nameRegExp = RegExp(r'^[a-zA-Z\s]+$');
-  String membertype = "Member Type";
+  String membertype = "Non-Executive";
   String gender = "Gender";
   String koottam = "Koottam";
   String spousekoottam = "Spouse Father Koottam";
@@ -131,7 +132,6 @@ class _GuestState extends State<Guest> {
         print("response.statusCode :${response.statusCode}" );
         print("response .body :${response.body}" );
         final responseData = json.decode(response.body);
-
         if (responseData is List<dynamic>) {
           setState(() {
             mobileBaseFetchIDdata = responseData.cast<Map<String, dynamic>>();
@@ -139,7 +139,6 @@ class _GuestState extends State<Guest> {
               setState(() {
                 referreridcotroller.text = mobileBaseFetchIDdata[0]["member_id"];
                 print("referrer ID--${referreridcotroller.text}" );
-
               });
             }
           });
@@ -221,14 +220,17 @@ class _GuestState extends State<Guest> {
   String blockStatus ="UnBlock";
   String adminRights ="Waiting";
   Future<void> uploadImage(Uint8List imageBytes) async {
-    if(membertype=="Member Type") {
-      setState(() {
-        membertype = "Guest";
-        print("type:$membertype");
-        blockStatus = "UnBlock";
-        adminRights = "Accepted";
-
-      });
+    if (type == "Guest") {
+      membertype = "Guest";
+      print("type:$membertype");
+      blockStatus = "UnBlock";
+      adminRights = "Accepted";
+    } else if (type == "Member") {
+      membertype = "Non-Executive"; // Or any other default member type
+    } else {
+      // Handle unexpected type value (optional)
+      print("Unexpected member type: $type");
+      return; // Or throw an exception
     }
     try {
       String uri = "http://mybudgetbook.in/GIBAPI/registration.php";
@@ -240,7 +242,7 @@ class _GuestState extends State<Guest> {
             "image": base64Encode(imageBytes),
             "mobile": mobilecontroller.text.trim(),
             "password": confirmpasswordcontroller.text.trim(),
-            "member_type": membertype.toString(),
+            "member_type": membertype,
             "gender": gender.toString(),
             "first_name": firstnamecontroller.text.trim(),
             "last_name": lastnamecontroller.text.trim(),
@@ -274,7 +276,8 @@ class _GuestState extends State<Guest> {
             "website": websitecontroller.text.trim(),
             "b_year": yearcontroller.text.trim(),
             "referrer_id": referreridcotroller.text.trim(),
-          }));
+          })
+      );
 
       if (res.statusCode == 200) {
         print(uri);
@@ -305,6 +308,7 @@ class _GuestState extends State<Guest> {
 
 
   ///get image from file code starts here
+  bool hasError = false;
   Uint8List? selectedImage;
   String message = "";
   TextEditingController caption = TextEditingController();
@@ -388,7 +392,6 @@ class _GuestState extends State<Guest> {
       appBar: AppBar(
         // Appbar title
         title:  Text('REGISTRATION',style: Theme.of(context).textTheme.displayLarge),
-        centerTitle: true,
         iconTheme:  const IconThemeData(
           color: Colors.white, // Set the color for the drawer icon
         ),
@@ -505,11 +508,9 @@ class _GuestState extends State<Guest> {
                                   if( value.isEmpty){
                                     referrermobilecontroller.clear();
                                   }
-
-
                                 },
                                 decoration: const InputDecoration(
-                                  labelText: "Referrer Executive GiB Member ID",
+
                                   hintText: "Referrer Executive GiB Member ID",
                                   suffixIcon: Icon(Icons.confirmation_num),
                                 ),
@@ -535,15 +536,17 @@ class _GuestState extends State<Guest> {
                                   return null;
                                 },
                                 decoration: const InputDecoration(
-                                  labelText: "Referrer Mobile Number",
+                                  hintText: "Referrer Mobile Number",
                                   prefixText: '+91 ',
                                   prefixStyle: TextStyle(color: Colors.blue), // Set the color here
                                   suffixIcon: Icon(Icons.phone_android),
                                 ),
                                 onChanged: (value){
-                                    if(value.length==10)
-                                      referreridcotroller.clear();
-                                    MobileBaseIdFetched(referrermobilecontroller.text);
+                                  if (value.length == 10) {
+                                    referreridcotroller.clear();
+                                    // Assuming you have the context and the method defined within the state
+                                    MobileBaseIdFetched(value);
+                                  }
                                 },
                                 keyboardType: TextInputType.number,
                                 inputFormatters: <TextInputFormatter>[
@@ -576,7 +579,7 @@ class _GuestState extends State<Guest> {
                           );
                         },
                         decoration: const InputDecoration(
-                          labelText: "First Name",
+                          hintText: "First Name",
                           suffixIcon: Icon(Icons.account_circle),
                         ),
                         inputFormatters: [AlphabetInputFormatter(),
@@ -608,7 +611,7 @@ class _GuestState extends State<Guest> {
                           );
                         },
                         decoration: const InputDecoration(
-                          labelText: "Last Name",
+                          //labelText: "Last Name",
                           hintText: "Last Name",
                           suffixIcon: Icon(Icons.account_circle),
                         ),
@@ -642,7 +645,7 @@ class _GuestState extends State<Guest> {
                         },
 
                         decoration: const InputDecoration(
-                          labelText: "Company Name/Occupation",
+
                           hintText: "Company Name/Occupation",
                           suffixIcon: Icon(Icons.business),
                         ),
@@ -673,7 +676,7 @@ class _GuestState extends State<Guest> {
                           return null;
                         },
                         decoration: const InputDecoration(
-                          labelText: "Email",
+
                           hintText: "Email",
                           suffixIcon: Icon(Icons.mail),
                         ),
@@ -698,7 +701,7 @@ class _GuestState extends State<Guest> {
                         },
 
                         decoration: const InputDecoration(
-                          labelText: "Mobile Number",
+
                           hintText: "Mobile Number",
                           prefixText: '+91 ',
                           prefixStyle: TextStyle(color: Colors.blue), // Set the color here
@@ -785,7 +788,7 @@ class _GuestState extends State<Guest> {
                         },
 
                         decoration: const InputDecoration(
-                          labelText: "Location",
+
                           hintText: "Location",
                           suffixIcon: Icon(Icons.location_on_rounded),
                         ),
@@ -804,17 +807,17 @@ class _GuestState extends State<Guest> {
                         controller: passwordcontroller,
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return "* Enter Your Pin";
+                            return "* Enter Your M-Pin";
                           } else if (value.length < 6) {
-                            return "* Pin must be 6 characters";
+                            return "* M-Pin must be 6 characters";
                           } else {
                             return null;
                           }
                         },
                         obscureText: _isObscure,
                         decoration: InputDecoration(
-                          labelText: 'Pin',
-                          hintText: "Pin",
+
+                          hintText: "M-Pin",
                           //hintText: 'Enter your Pin',
                           suffixIcon: IconButton(
                             icon: Icon(
@@ -843,10 +846,10 @@ class _GuestState extends State<Guest> {
                         controller: confirmpasswordcontroller,
                         validator: (value){
                           if (value!.isEmpty) {
-                            return "* Enter Your Confirm Pin";
+                            return "* Enter Your Confirm M-Pin";
                           } else if (passwordcontroller.value !=
                               confirmpasswordcontroller.value) {
-                            return "* Pin Doesn't match";
+                            return "* M-Pin Doesn't match";
                           } else if (passwordcontroller.value ==
                               confirmpasswordcontroller.value) {
                             return null;
@@ -855,8 +858,8 @@ class _GuestState extends State<Guest> {
                         },
                         obscureText: _isObscure,
                         decoration: InputDecoration(
-                          labelText: 'Confirm Pin',
-                          hintText: "Confirm Pin",
+
+                          hintText: "Confirm M-Pin",
                           //hintText: 'Enter your Confirm Pin',
                           suffixIcon: IconButton(
                             icon: Icon(
@@ -892,32 +895,32 @@ class _GuestState extends State<Guest> {
                           ),
                           // Member type drop down button starts
                           const SizedBox(height: 15,),
-                          SizedBox(
-                            width: 300,
-                            child: DropdownButtonFormField<String>(
-                              value: membertype,
-                              icon: const Icon(Icons.arrow_drop_down),
-                              isExpanded: true,
-                              items: <String>["Member Type", "Non-Executive"]
-                                  .map<DropdownMenuItem<String>>((String value) {
-                                return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value));
-                              }
-                              ).toList(),
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  membertype = newValue!;
-                                });
-                              },
-                              validator: (value) {
-                                if (membertype == 'Member Type') {
-                                  return '* Select your Member Type';
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
+                          // SizedBox(
+                          //   width: 300,
+                          //   child: DropdownButtonFormField<String>(
+                          //     value: membertype,
+                          //     icon: const Icon(Icons.arrow_drop_down),
+                          //     isExpanded: true,
+                          //     items: <String>[ "Non-Executive"]
+                          //         .map<DropdownMenuItem<String>>((String value) {
+                          //       return DropdownMenuItem<String>(
+                          //           value: value,
+                          //           child: Text(value));
+                          //     }
+                          //     ).toList(),
+                          //     onChanged: (String? newValue) {
+                          //       setState(() {
+                          //         membertype = newValue!;
+                          //       });
+                          //     },
+                          //     validator: (value) {
+                          //       if (membertype == 'Member Type') {
+                          //         return '* Select your Member Type';
+                          //       }
+                          //       return null;
+                          //     },
+                          //   ),
+                          // ),
                           // Member type dropdown button ends here
 
                           // District drop down button starts
@@ -927,12 +930,19 @@ class _GuestState extends State<Guest> {
                             width: 305,
                             height: 50,
                             child: TypeAheadFormField<String>(
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return '* Select Your District';
+                                }
+                                return null;
+                              },
                               textFieldConfiguration: TextFieldConfiguration(
                                 controller: districtController,
+
                                 decoration: const InputDecoration(
                                     fillColor: Colors.white,
                                     filled: true,
-                                    labelText: "District"
+                                    hintText: "District"
                                 ),
                               ),
                               suggestionsCallback: (pattern) async {
@@ -968,12 +978,18 @@ class _GuestState extends State<Guest> {
                             width: 305,
                             height: 50,
                             child: TypeAheadFormField<String>(
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return '* Select Your Chapter';
+                                }
+                                return null;
+                              },
                               textFieldConfiguration: TextFieldConfiguration(
                                 controller: chapterController,
                                 decoration: const InputDecoration(
                                     fillColor: Colors.white,
                                     filled: true,
-                                    labelText: "Chapter"
+                                    hintText: "Chapter"
                                 ),
                               ),
                               suggestionsCallback: (pattern) async {
@@ -1057,7 +1073,6 @@ class _GuestState extends State<Guest> {
                                 }
                               },
                               decoration: const InputDecoration(
-                                labelText: "DOB",
                                 hintText: "Date Of Birth",
                                 suffixIcon: Icon(Icons.calendar_today_outlined),
                               ),
@@ -1264,11 +1279,9 @@ class _GuestState extends State<Guest> {
                                 );
                               },
                               decoration: const InputDecoration(
-                                labelText: "Kovil",
                                 hintText: "Kovil",
                                 suffixIcon: Icon(Icons.temple_hindu),
                               ),
-                              inputFormatters: [AlphabetInputFormatter()],
                             ),
                           ),
                           // Kovil textfield ends here
@@ -1352,7 +1365,7 @@ class _GuestState extends State<Guest> {
                                       );
                                     },
                                     decoration: const InputDecoration(
-                                      labelText: "Spouse Name",
+
                                       hintText: "Spouce Name",
                                       suffixIcon: Icon(Icons.account_circle),
                                     ),
@@ -1436,7 +1449,6 @@ class _GuestState extends State<Guest> {
                                       );
                                     },
                                     decoration: const InputDecoration(
-                                      labelText: "Spouse Native",
                                       hintText: "Spouse Native",
                                     ),
                                     inputFormatters: [
@@ -1479,7 +1491,6 @@ class _GuestState extends State<Guest> {
                                       }
                                     },
                                     decoration: const InputDecoration(
-                                      labelText: "WAD",
                                       hintText: "Wedding Aniversery Date",
                                       suffixIcon:Icon(Icons.calendar_today_outlined),
                                     ),
@@ -1690,7 +1701,6 @@ class _GuestState extends State<Guest> {
                                       );
                                     },
                                     decoration: const InputDecoration(
-                                      labelText: "Spouse Father Kovil",
                                       hintText: "Spouse Father Kovil",
                                       suffixIcon: Icon(Icons.temple_hindu),
                                     ),
@@ -1773,7 +1783,7 @@ class _GuestState extends State<Guest> {
                                 );
                               },
                               decoration: const InputDecoration(
-                                labelText: "Company Address",
+
                                 hintText: "Company Address",
                                 suffixIcon: Icon(Icons.business),
                               ),
@@ -1802,7 +1812,6 @@ class _GuestState extends State<Guest> {
                                 );
                               },
                               decoration: const InputDecoration(
-                                labelText: "Business keywords",
                                 hintText: "Business keywords",
                                 suffixIcon: Icon(Icons.business),
                               ),
@@ -1818,19 +1827,18 @@ class _GuestState extends State<Guest> {
                             width: 300,
                             child: TextFormField(
                               controller: websitecontroller,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return '* Enter your Website';
-                                }else if (value.length<5) {
-                                  return '* Enter a valid Website';
-                                }
-                                else if (nameRegExp.hasMatch(value)) {
-                                  return null;
-                                }
-                                return null;
-                              },
+                              // validator: (value) {
+                              //   if (value!.isEmpty) {
+                              //     return '* Enter your Website';
+                              //   }else if (value.length<5) {
+                              //     return '* Enter a valid Website';
+                              //   }
+                              //   else if (nameRegExp.hasMatch(value)) {
+                              //     return null;
+                              //   }
+                              //   return null;
+                              // },
                               decoration: const InputDecoration(
-                                labelText: "Website",
                                 hintText: "Website",
                                 suffixIcon: Icon(Icons.web),
                               ),
@@ -1879,8 +1887,7 @@ class _GuestState extends State<Guest> {
                               },*/
 
                               decoration: const InputDecoration(
-                                labelText: "business established year",
-                                hintText: "yyyy",
+                                hintText: "business established year (YYYY)",
                                 suffixIcon:
                                 Icon(Icons.calendar_today_outlined),
                               ),
@@ -1898,14 +1905,14 @@ class _GuestState extends State<Guest> {
                             width: 300,
                             child: TextFormField(
                               controller: educationcontroller,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return '* Enter your Education Details';
-                                } else if (nameRegExp.hasMatch(value)) {
-                                  return null;
-                                }
-                                return null;
-                              },
+                              // validator: (value) {
+                              //   if (value!.isEmpty) {
+                              //     return '* Enter your Education Details';
+                              //   } else if (nameRegExp.hasMatch(value)) {
+                              //     return null;
+                              //   }
+                              //   return null;
+                              // },
                               onChanged: (value) {
                                 String capitalizedValue = capitalizeFirstLetter(value);
                                 educationcontroller.value = educationcontroller.value.copyWith(
@@ -1914,7 +1921,6 @@ class _GuestState extends State<Guest> {
                                 );
                               },
                               decoration: const InputDecoration(
-                                labelText: "Education",
                                 hintText: "Education",
                                 suffixIcon: Icon(Icons.cast_for_education),
                               ),
@@ -1928,17 +1934,7 @@ class _GuestState extends State<Guest> {
                             width: 300,
                             child: TextFormField(
                               controller: pastexpcontroller,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return '* Enter your Past Experience';
-                                }
-                                else if (nameRegExp.hasMatch(value)) {
-                                  return null;
-                                }
-                                return null;
-                              },
                               decoration: const InputDecoration(
-                                labelText: "Past Experience",
                                 hintText: "Past Experience",
                                 suffixIcon: Icon(Icons.man),
                               ),
@@ -2111,63 +2107,47 @@ class _GuestState extends State<Guest> {
 
                     const SizedBox(height: 30,),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // Login button starts
+                        // Login button (unchanged)
+
+                        // Sign up button with error handling
                         MaterialButton(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5.0)),
-                            minWidth: 130,
-                            height: 50,
-                            color: Colors.green[800],
-
-                            onPressed: () {
-
-                              /*      if (type == null) {
+                          minWidth: 130,
+                          height: 50,
+                          color: Colors.green,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5.0)),
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              if (selectedImage == null) {
+                                // Show error message using ScaffoldMessenger
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text("Select the Type")));
+                                  const SnackBar(
+                                    content: Text("Select a profile picture"),
+                                  ),
+                                );
+                              } else {
+                                uploadImage(selectedImage!);
+                                if(membertype!="Non-Executive") {Navigator.push(context, MaterialPageRoute(builder: (context) =>  Login(
+                                )));
+                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Registration Successfully")));
+                                }
+                                else{
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => const Login()));
+                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please wait for Admin Approval")));
+                                }
                               }
-                              *//*  else if (pickedimage == null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text("Please Select Image")));
-                              }*//*
-                              else if (_formKey.currentState!.validate()) {
-                                if(type == guest){
-                                }
-                                else if (otpcodevisible) {
-                                }
-                                else {
-                                }
-
-                              }*/
-                            },
-                            child: otpcodevisible == true ? const Text('Save',
-                              style: TextStyle(color: Colors.white),)
-                                : const Text("Verify", style: TextStyle(color: Colors.white),)),
-                        // Login button ends
-
-                        // Sign up button starts
-                        MaterialButton(
-                            minWidth: 130,
-                            height: 50,
-                            color: Colors.orangeAccent,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5.0)),
-                            onPressed: () {
-                              //signUp();
-                              uploadImage(selectedImage!);
-                              Navigator.push(context, MaterialPageRoute(builder: (context)=>const Login()));
-                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please wait for Admin Approval")));
-                            },
-                            child: const Text('Save',
-                              style: TextStyle(color: Colors.white),)),
-                        // Sign up button ends
+                            }
+                          },
+                          child: const Text(
+                            'Register',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 20,)
-
                   ],
                 ),
               ),
