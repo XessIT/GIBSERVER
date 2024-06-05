@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
+import 'business.dart';
 import 'honor_slip_history.dart';
 
 
@@ -61,6 +62,9 @@ class _ThankNotesState extends State<ThankNotes> {
     );
   }
 }
+
+
+
 class Online extends StatefulWidget {
 
   const Online({Key? key,
@@ -513,13 +517,24 @@ class _DirectState extends State<Direct> {
   Widget build(BuildContext context) {
     return  Scaffold(
       appBar: AppBar(
-        title: Text("Honor Slip", style: Theme.of(context).textTheme.displayLarge),
+        title: Text("Honoring Slip", style: Theme.of(context).textTheme.displayLarge,),
         actions: [
           IconButton(
               onPressed:(){
                 Navigator.push(context, MaterialPageRoute(builder: (context) => HonorHistory(userType: widget.userType, userId: widget.userId))); },
-              icon: const Icon(Icons.more_vert)),
+              icon: const Icon(Icons.history)),
         ],
+        leading: IconButton(
+          icon: Icon(Icons.navigate_before),
+
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => BusinessPage(userType: widget.userType, userId: widget.userId)
+              ));
+            },
+
+        ),
+
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Form(
