@@ -184,7 +184,6 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
     }
   }
 
-
   Future<File?> CropImage({required File imageFile}) async{
     CroppedFile? croppedImage = await ImageCropper().cropImage(sourcePath: imageFile.path);
     if(croppedImage == null) return null;
