@@ -1,8 +1,10 @@
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
+import 'package:gipapp/settings_page_executive.dart';
 import 'package:intl/intl.dart';
 
 import 'Non_exe_pages/non_exe_home.dart';
+import 'Non_exe_pages/settings_non_executive.dart';
 import 'guest_home.dart';
 import 'home.dart';
 import 'home1.dart';
@@ -26,26 +28,15 @@ class _AttendancePageState extends State<AttendancePage> {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title:  Text('Attendance'),
-          centerTitle: true,
+          title:  Text('Attendance', style: Theme.of(context).textTheme.displayLarge,),
+          iconTheme: const IconThemeData(color: Colors.white), // Set the color for the drawer icon),
           leading:IconButton(
               onPressed: () {
                 if (widget.userType == "Non-Executive") {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => NavigationBarNon(
-                        userType: widget.userType.toString(),
-                        userId: widget.userID.toString(),
-                      ),
-                    ),
-                  );
-                }
-                else if (widget.userType == "Guest") {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => GuestHome(
+                      builder: (context) => SettingsPageNon(
                         userType: widget.userType.toString(),
                         userId: widget.userID.toString(),
                       ),
@@ -56,7 +47,7 @@ class _AttendancePageState extends State<AttendancePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => NavigationBarExe(
+                      builder: (context) => SettingsPageExecutive(
                         userType: widget.userType.toString(),
                         userId: widget.userID.toString(),
                       ),
@@ -64,7 +55,7 @@ class _AttendancePageState extends State<AttendancePage> {
                   );
                 }
               },
-              icon: const Icon(Icons.arrow_back)),
+              icon: const Icon(Icons.navigate_before)),
         ),
         body:PopScope(
           canPop: false,
@@ -73,18 +64,7 @@ class _AttendancePageState extends State<AttendancePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => NavigationBarNon(
-                    userType: widget.userType.toString(),
-                    userId: widget.userID.toString(),
-                  ),
-                ),
-              );
-            }
-            else if (widget.userType == "Guest") {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => GuestHome(
+                  builder: (context) => SettingsPageNon(
                     userType: widget.userType.toString(),
                     userId: widget.userID.toString(),
                   ),
@@ -95,7 +75,7 @@ class _AttendancePageState extends State<AttendancePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => NavigationBarExe(
+                  builder: (context) => SettingsPageExecutive(
                     userType: widget.userType.toString(),
                     userId: widget.userID.toString(),
                   ),
@@ -106,20 +86,17 @@ class _AttendancePageState extends State<AttendancePage> {
 
           child:  Column(
               children: [
-
-                //TABBAR STARTS
                 TabBar(
                   isScrollable: true,
                   labelColor: Colors.green.shade100,
                   unselectedLabelColor: Colors.black,
-                  tabs: [
+                  tabs: const [
                     Tab(text: ('Network Meeting'),),
                     Tab(text: ('Team Meeting') ,),
                     Tab(text:('Training Program'),
                     ),
                   ],
-                )  ,
-                //TABBAR VIEW STARTS
+                ),
                 Expanded(
                   child: TabBarView(children: [
                     NetworkAttendance(userType: widget.userType, userID: widget.userID,),
@@ -177,12 +154,6 @@ class _NetworkAttendanceState extends State<NetworkAttendance> {
         // Handle successful response
         var data = json.decode(response.body);
         print(data);
-        // Show online status message
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(
-        //     content: Text('Now online.'),
-        //   ),
-        // );
       } else {
         // Handle other status codes
         print('Request failed with status: ${response.statusCode}');
@@ -192,7 +163,7 @@ class _NetworkAttendanceState extends State<NetworkAttendance> {
       print('Error: $e');
       // Show offline status message
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Please check your internet connection.'),
         ),
       );
@@ -216,7 +187,7 @@ class _NetworkAttendanceState extends State<NetworkAttendance> {
         _connectivityResult = result;
       });
     });
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(const Duration(seconds: 1), () {
       setState(() {
         isLoading = false; // Hide the loading indicator after 4 seconds
       });

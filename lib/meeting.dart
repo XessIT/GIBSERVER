@@ -74,7 +74,7 @@ class _MeetingUpcomingPageState extends State<MeetingUpcomingPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => NavigationBarNon(
+                  builder: (context) => SettingsPageNon(
                     userType: widget.userType.toString(),
                     userId: widget.userId.toString(),
                   ),
@@ -85,7 +85,7 @@ class _MeetingUpcomingPageState extends State<MeetingUpcomingPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => NavigationBarExe(
+                  builder: (context) => SettingsPageExecutive(
                     userType: widget.userType.toString(),
                     userId: widget.userId.toString(),
                   ),
@@ -233,16 +233,26 @@ class _UpComingNetworkMeetingState extends State<UpComingNetworkMeeting> {
       throw e; // rethrow the error if needed
     }
   }
-
+  bool isLoading = true;
   @override
   void initState() {
     super.initState();
     getData();
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body:data.isNotEmpty
+        body: isLoading
+            ? const Center(
+          // Show CircularProgressIndicator while loading
+          child: CircularProgressIndicator(),
+        )
+            : data.isNotEmpty
             ? ListView.builder(
             itemCount: data.length,
             itemBuilder:(context, i){
@@ -361,16 +371,27 @@ class _CompletedNetworkMeetingState extends State<CompletedNetworkMeeting> {
       throw e; // rethrow the error if needed
     }
   }
+  bool isLoading = true;
   @override
   void initState() {
     super.initState();
     getData();
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
 
-        body:data.isNotEmpty
+        body: isLoading
+            ? const Center(
+          // Show CircularProgressIndicator while loading
+          child: CircularProgressIndicator(),
+        )
+            : data.isNotEmpty
             ? ListView.builder(
             itemCount: data.length,
             itemBuilder:(context, i){
@@ -483,44 +504,7 @@ class _UpcomingTeamMeetingState extends State<UpcomingTeamMeeting> {
   String type = "Team Meeting";
 
   List<Map<String, dynamic>> data=[];
-/*
-  Future<void> getData() async {
-    print('Attempting to make HTTP request...');
-    try {
-      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type');
-      final response = await http.get(url);
-      if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        final List<dynamic> itemGroups = responseData;
-        setState(() {});
-        List<dynamic> filteredData = itemGroups.where((item) {
-          DateTime validityDate;
-          try {
-            validityDate = DateTime.parse(item['meeting_date']);
-          } catch (e) {
-            print('Error parsing validity date: $e');
-            return false;
-          }
-          print('Validity Date: $validityDate');
-          print('Current Date: ${DateTime.now()}');
-          bool satisfiesFilter =  validityDate.isAfter(DateTime.now());
-          print('Satisfies Filter: $satisfiesFilter');
-          return satisfiesFilter;
-        }).toList();
-        setState(() {
-          // Cast the filtered data to the correct type
-          data = filteredData.cast<Map<String, dynamic>>();
-        });
-      } else {
-        print('Error: ${response.statusCode}');
-      }
-      print('HTTP request completed. Status code: ${response.statusCode}');
-    } catch (e) {
-      print('Error making HTTP request: $e');
-      throw e; // rethrow the error if needed
-    }
-  }
-*/
+
   Future<void> getData() async {
     print('Attempting to make HTTP request...');
     try {
@@ -562,21 +546,27 @@ class _UpcomingTeamMeetingState extends State<UpcomingTeamMeeting> {
     }
   }
 
+  bool isLoading = true;
   @override
   void initState() {
     super.initState();
     getData();
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: data.isNotEmpty
+        body:  isLoading
+            ? const Center(
+          // Show CircularProgressIndicator while loading
+          child: CircularProgressIndicator(),
+        )
+            : data.isNotEmpty
             ?ListView.builder(
-          /* gridDelegate:const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 5.0,
-                mainAxisSpacing: 5.0,
-              ),*/
             itemCount: data.length,
             itemBuilder:(context, i){
               const SizedBox(height: 20,);
@@ -703,15 +693,26 @@ class _CompletedTeamMeetingState extends State<CompletedTeamMeeting> {
       throw e; // rethrow the error if needed
     }
   }
+  bool isLoading = true;
   @override
   void initState() {
     super.initState();
     getData();
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body:data.isNotEmpty
+        body: isLoading
+            ? const Center(
+          // Show CircularProgressIndicator while loading
+          child: CircularProgressIndicator(),
+        )
+            : data.isNotEmpty
         ? ListView.builder(
             itemCount: data.length,
             itemBuilder:(context, i){
@@ -798,9 +799,6 @@ class TrainingProgram extends StatelessWidget {
 
               //TABBAR STARTS
               child: const TabBar(
-                /*indicator: BoxDecoration(
-                  color: Colors.green,
-                ),*/
                 labelColor: Colors.green,
                 //TABS STARTS
                 unselectedLabelColor: Colors.black,
@@ -877,15 +875,26 @@ class _UpComingTrainingProgramState extends State<UpComingTrainingProgram> {
     }
   }
 
+  bool isLoading = true;
   @override
   void initState() {
     super.initState();
     getData();
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: data.isNotEmpty
+        body:  isLoading
+            ? const Center(
+          // Show CircularProgressIndicator while loading
+          child: CircularProgressIndicator(),
+        )
+            : data.isNotEmpty
         ? ListView.builder(
             itemCount: data.length,
             itemBuilder:(context, i){
@@ -997,15 +1006,26 @@ class _CompletedTrainingProgramState extends State<CompletedTrainingProgram> {
       throw e; // rethrow the error if needed
     }
   }
+  bool isLoading = true;
   @override
   void initState() {
     super.initState();
     getData();
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:data.isNotEmpty
+      body: isLoading
+          ? const Center(
+        // Show CircularProgressIndicator while loading
+        child: CircularProgressIndicator(),
+      )
+          : data.isNotEmpty
           ? ListView.builder(
           itemCount: data.length,
           itemBuilder:(context, i){
@@ -1167,53 +1187,26 @@ class _UpComingGIBMeetingState extends State<UpComingGIBMeeting> {
     }
   }
 
-/*
-  Future<void> getData() async {
-    print('Attempting to make HTTP request...');
-    try {
-      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type');
-      final response = await http.get(url);
-      if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        final List<dynamic> itemGroups = responseData;
-        setState(() {});
-        List<dynamic> filteredData = itemGroups.where((item) {
-          DateTime validityDate;
-          try {
-            validityDate = DateTime.parse(item['meeting_date']);
-          } catch (e) {
-            print('Error parsing validity date: $e');
-            return false;
-          }
-          print('Validity Date: $validityDate');
-          print('Current Date: ${DateTime.now()}');
-          bool satisfiesFilter =  validityDate.isAfter(DateTime.now());
-          print('Satisfies Filter: $satisfiesFilter');
-          return satisfiesFilter;
-        }).toList();
-        setState(() {
-          // Cast the filtered data to the correct type
-          data = filteredData.cast<Map<String, dynamic>>();
-        });
-      } else {
-        print('Error: ${response.statusCode}');
-      }
-      print('HTTP request completed. Status code: ${response.statusCode}');
-    } catch (e) {
-      print('Error making HTTP request: $e');
-      throw e; // rethrow the error if needed
-    }
-  }
-*/
+  bool isLoading = true;
   @override
   void initState() {
     super.initState();
     getData();
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body:data.isNotEmpty
+        body: isLoading
+            ? const Center(
+          // Show CircularProgressIndicator while loading
+          child: CircularProgressIndicator(),
+        )
+            : data.isNotEmpty
         ? ListView.builder(
             itemCount: data.length,
             itemBuilder:(context, i){
@@ -1268,7 +1261,7 @@ class _UpComingGIBMeetingState extends State<UpComingGIBMeeting> {
                 ),
               );
             })
-        :Center(child: const Text("There is No Meeting")),
+        :const Center(child: Text("There is No Meeting")),
 
     );
   }
@@ -1323,15 +1316,26 @@ class _CompletedGIBMeetingState extends State<CompletedGIBMeeting> {
       throw e; // rethrow the error if needed
     }
   }
+  bool isLoading = true;
   @override
   void initState() {
     super.initState();
     getData();
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body:data.isNotEmpty
+        body: isLoading
+            ? const Center(
+          // Show CircularProgressIndicator while loading
+          child: CircularProgressIndicator(),
+        )
+            : data.isNotEmpty
         ? ListView.builder(
             itemCount: data.length,
             itemBuilder:(context, i){

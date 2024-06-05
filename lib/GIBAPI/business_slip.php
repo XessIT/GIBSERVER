@@ -81,10 +81,12 @@ else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
    $referrer_mobile = mysqli_real_escape_string($conn, $data->referrer_mobile);
    $referrer_company = mysqli_real_escape_string($conn, $data->referrer_company);
    $status = mysqli_real_escape_string($conn, $data->status);
+   $district = mysqli_real_escape_string($conn, $data->district);
+   $chapter = mysqli_real_escape_string($conn, $data->chapter);
    $user_id = mysqli_real_escape_string($conn, $data->user_id);
 
-       $insertUserQuery = "INSERT INTO `business_slip`(`type`, `Toname`, `Tomobile`, `Tocompanyname`, `purpose`, `referree_name`, `referree_mobile`, `referrer_name`, `referrer_mobile`, `referrer_company`, `status`, `user_id`)
-      VALUES ('$type','$Toname','$Tomobile','$Tocompanyname','$purpose', '$referree_name', '$referree_mobile', '$referrer_name', '$referrer_mobile', '$referrer_company', '$status', '$user_id')";
+       $insertUserQuery = "INSERT INTO `business_slip`(`type`, `Toname`, `Tomobile`, `Tocompanyname`, `purpose`, `referree_name`, `referree_mobile`, `referrer_name`, `referrer_mobile`, `referrer_company`, `status`, `district`, `chapter`, `user_id`)
+      VALUES ('$type','$Toname','$Tomobile','$Tocompanyname','$purpose', '$referree_name', '$referree_mobile', '$referrer_name', '$referrer_mobile', '$referrer_company', '$status', '$district', '$chapter', '$user_id')";
       $arr = [];
       $insertUserResult = mysqli_query($conn, $insertUserQuery);
       if($insertUserResult) {
@@ -93,7 +95,6 @@ else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
          $arr["Success"] = false;
       }
       echo json_encode($arr);
-
 }
 
 else if ($_SERVER['REQUEST_METHOD'] === 'PUT') {

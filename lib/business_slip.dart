@@ -34,6 +34,8 @@ class _ReferralPageState extends State<ReferralPage> {
   String? lname = "";
   String? mobile = "";
   String? companyname = "";
+  String? district = "";
+  String? chapter = "";
   List dynamicdata=[];
   Future<void> fetchData(String userId) async {
     try {
@@ -54,6 +56,8 @@ class _ReferralPageState extends State<ReferralPage> {
                 lname= dynamicdata[0]['last_name'];
                 mobile=dynamicdata[0]["mobile"];
                 companyname=dynamicdata[0]["company_name"];
+                district=dynamicdata[0]["district"];
+                chapter=dynamicdata[0]["chapter"];
               });
             }
           });
@@ -70,23 +74,61 @@ class _ReferralPageState extends State<ReferralPage> {
       print('Error: $error');
     }
   }
+
   Future<void> InsertBusinessSlip() async {
+    try {
+      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/business_slip.php');
+      final response = await http.post(
+        url,
+        body: jsonEncode({
+          "type": typeofvisitor,
+          "Toname": to.text,
+          "Tomobile": tomobile.text,
+          "Tocompanyname": cname.text,
+          "purpose": purpose.text,
+          "referree_name": referreename.text,
+          "referree_mobile": referreemobile.text,
+          "referrer_name": fname,
+          "referrer_mobile": mobile,
+          "referrer_company": companyname,
+          "status": status,
+          "user_id": widget.userId
+        }),
+      );
+      print(url);
+      print("ResponseStatus: ${response.statusCode}");
+      if (response.statusCode == 200) {
+        print("Offers response: ${response.body}");
+
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>BusinessPage(userId: widget.userId, userType: widget.userType)));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text("Business Add Successfully")));
+
+      } else {
+        print("Error: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error during signup: $e");
+      // Handle error as needed
+    }
+  }
+/*  Future<void> InsertBusinessSlip() async {
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/business_slip.php');
         final response = await http.post(
           url,
           body: jsonEncode({
-            "type": typeofvisitor,
+            "type": typeofvisitor.toString(),
             "Toname": to.text,
             "Tomobile": tomobile.text,
             "Tocompanyname": cname.text,
             "purpose": purpose.text,
             "referree_name": referreename.text,
             "referree_mobile": referreemobile.text,
-            "referrer_name": fname,
-            "referrer_mobile": mobile,
-            "referrer_company": companyname,
-            "status": status,
+            "referrer_name": fname.toString(),
+            "referrer_mobile": mobile.toString(),
+            "referrer_company": companyname.toString(),
+            "status": status.toString(),
             "user_id": widget.userId
           }),
         );
@@ -98,10 +140,12 @@ class _ReferralPageState extends State<ReferralPage> {
           print("Error: ${response.statusCode}");
         }
       } catch (e) {
+=======
+>>>>>>> d8809981efdef3c0a2f685c1cba51f3a6554bbe7
       print("Error during signup: $e");
       // Handle error as needed
     }
-  }
+  }*/
 
 
   void updateTextFields(int index) {
@@ -119,6 +163,10 @@ class _ReferralPageState extends State<ReferralPage> {
     print("searchResults: $searchResults");
     fetchRegistrationData();
     print('fetchRegistrationData$fetchRegistrationData');
+    print("type  ${typeofvisitor}");
+    print("F name${fname}");
+    print(mobile);
+    print(companyname);
 
     // TODO: implement initState
     super.initState();
@@ -186,7 +234,6 @@ class _ReferralPageState extends State<ReferralPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('BUSINESS SLIP', style: Theme.of(context).textTheme.displayLarge),
-        centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
         leading: IconButton(
           icon: const Icon(Icons.navigate_before),
@@ -246,10 +293,15 @@ class _ReferralPageState extends State<ReferralPage> {
                         // Handle when a suggestion is selected
                         // Update text fields with suggestion data
                         setState(() {
+                          searchController.text = "${suggestion['first_name']} ${suggestion['last_name']}";
                           to.text = suggestion['first_name'];
                           tomobile.text = suggestion['mobile'];
                           cname.text = suggestion['company_name'];
                           // Update other text fields as needed
+                          print("type  ${typeofvisitor}");
+                          print("F name${fname}");
+                          print(mobile);
+                          print(companyname);
                         });
                       },
                     ),
@@ -504,10 +556,7 @@ class _ReferralPageState extends State<ReferralPage> {
                               // fillColor: Colors.white,
                               contentPadding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 3.0),
                             ),
-                            inputFormatters: [
-                              AlphabetInputFormatter(),
-                              LengthLimitingTextInputFormatter(25)
-                            ],
+
                           ),
                         ),
 
@@ -551,9 +600,7 @@ class _ReferralPageState extends State<ReferralPage> {
                       onPressed: (){
                         if (_formKey.currentState!.validate()) {
                           InsertBusinessSlip();
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>BusinessPage(userId: widget.userId, userType: widget.userType)));
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                              content: Text("Registered Successfully")));
+
                         }
                       },
                       child: const Text('SUBMIT',

@@ -4,9 +4,11 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:gipapp/settings_page_executive.dart';
 import 'package:http/http.dart'as http;
 
 import 'Non_exe_pages/non_exe_home.dart';
+import 'Non_exe_pages/settings_non_executive.dart';
 import 'guest_home.dart';
 import 'home.dart';
 
@@ -93,7 +95,7 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
     });
     getData(qrstr);
     fetchData(widget.userID.toString());
-   // scanQr();
+    // scanQr();
   }
 
   Future<void> getData(String meetingId) async {
@@ -108,7 +110,7 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => NavigationBarNon(
+              builder: (context) => SettingsPageNon(
                 userType: widget.userType.toString(),
                 userId: widget.userID.toString(),
               ),
@@ -119,7 +121,7 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => NavigationBarExe(
+              builder: (context) => SettingsPageExecutive(
                 userType: widget.userType.toString(),
                 userId: widget.userID.toString(),
               ),
@@ -197,7 +199,7 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
     try {
       String firstName = ''; // Initialize these variables with actual user data
       String lastName = '';  // Initialize these variables with actual user data
-       fetchData(widget.userID.toString());
+      fetchData(widget.userID.toString());
       final response = await http.post(
         Uri.parse('http://mybudgetbook.in/GIBAPI/insert_attendance.php'),
         body: {
@@ -254,25 +256,14 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-        title: const Text('Attendance Scanner'),
+        title:  Text('Attendance Scanner', style: Theme.of(context).textTheme.displayLarge,),
         leading: IconButton(
           onPressed: () {
             if (widget.userType == "Non-Executive") {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => NavigationBarNon(
-                    userType: widget.userType.toString(),
-                    userId: widget.userID.toString(),
-                  ),
-                ),
-              );
-            } else if (widget.userType == "Guest") {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => GuestHome(
+                  builder: (context) => SettingsPageNon(
                     userType: widget.userType.toString(),
                     userId: widget.userID.toString(),
                   ),
@@ -282,7 +273,7 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => NavigationBarExe(
+                  builder: (context) => SettingsPageExecutive(
                     userType: widget.userType.toString(),
                     userId: widget.userID.toString(),
                   ),
@@ -290,7 +281,10 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
               );
             }
           },
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.navigate_before),
+        ),
+        iconTheme: IconThemeData(
+          color: Colors.white,
         ),
       ),
       body: RefreshIndicator(
@@ -302,7 +296,7 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => NavigationBarNon(
+                  builder: (context) => SettingsPageNon(
                     userType: widget.userType.toString(),
                     userId: widget.userID.toString(),
                   ),
@@ -313,7 +307,7 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => NavigationBarExe(
+                  builder: (context) => SettingsPageExecutive(
                     userType: widget.userType.toString(),
                     userId: widget.userID.toString(),
                   ),
@@ -361,7 +355,7 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
                                   inputFormatters: <TextInputFormatter>[
                                     FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                                     FilteringTextInputFormatter.digitsOnly,
-                                    LengthLimitingTextInputFormatter(10),
+                                    LengthLimitingTextInputFormatter(3),
                                   ],
                                   decoration: const InputDecoration.collapsed(
                                     hintText: 'ex.0 or 1,2,3,etc...',

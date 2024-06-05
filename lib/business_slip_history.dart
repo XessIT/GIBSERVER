@@ -2,10 +2,8 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
@@ -31,7 +29,6 @@ class _BusinessHistoryState extends State<BusinessHistory> {
       child: Scaffold(
         appBar: AppBar(
           title: Text("Business History", style: Theme.of(context).textTheme.displayLarge,),
-          centerTitle: true,
           iconTheme: const IconThemeData(color: Colors.white),
           leading: IconButton(
             onPressed: () {
@@ -683,6 +680,8 @@ class _PendingState extends State<Pending> {
                                                                 "mobile": data[i]["Tomobile"],
                                                                 "company": data[i]["Tocompanyname"],
                                                                 "amount": amountController.text.trim(),
+                                                                "district": data[i]["district"],
+                                                                "chapter": data[i]["chapter"],
                                                               }),
                                                             );
                                                             print(url);

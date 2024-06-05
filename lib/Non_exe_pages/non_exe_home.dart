@@ -14,6 +14,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 import '../Offer/offer.dart';
 import '../about_view.dart';
 import '../attendance.dart';
@@ -131,7 +132,7 @@ class _NonExecutiveHomeNavState extends State<NonExecutiveHomeNav> {
     return Scaffold(
 
       body: RefreshIndicator(
-        onRefresh: _refresh,
+          onRefresh: _refresh,
           child: _pages[_currentIndex]),
     );
   }
@@ -219,7 +220,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
             userdata = responseData.cast<Map<String, dynamic>>();
             if (userdata.isNotEmpty) {
               profileImage =
-                  'http://mybudgetbook.in/GIBAPI/${userdata[0]["profile_image"]}';
+              'http://mybudgetbook.in/GIBAPI/${userdata[0]["profile_image"]}';
               _imageBytes = base64Decode(userdata[0]['profile_image']);
             }
           });
@@ -264,11 +265,11 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
 
           // Check if the registration opening date is before the current date
           bool isOpenForRegistration =
-              registrationOpeningDate.isBefore(DateTime.now());
+          registrationOpeningDate.isBefore(DateTime.now());
 
           // Check if the registration closing date is after the current date
           bool isRegistrationOpen =
-              registrationClosingDate.isAfter(DateTime.now());
+          registrationClosingDate.isAfter(DateTime.now());
 
           print('Is Open for Registration: $isOpenForRegistration');
           print('Is Registration Open: $isRegistrationOpen');
@@ -441,23 +442,19 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                   data.isEmpty
                       ? SizedBox.shrink()
                       :
-                      // SizedBox(height: 180),
-                      Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Card(
-                            elevation: 0,
-                            child: Container(
-                              child: Text(
-                                'Upcoming Meetings',
-                                style: GoogleFonts.aBeeZee(
-                                  fontSize: 20,
-                                  color: Colors.green,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
+                  SizedBox(height: 180),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Card(
+                      elevation: 0,
+                      child: Container(
+                        child: Text(
+                          'Upcoming Meetings',
+                          style: Theme.of(context).textTheme.headlineMedium,
                         ),
+                      ),
+                    ),
+                  ),
                   Container(
                     child: CarouselSlider(
                       items: data.map((meeting) {
@@ -480,14 +477,104 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                     children: [
                                       Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                        MainAxisAlignment.center,
                                         children: [
                                           Text(
-                                            '${meeting['meeting_type']}',
-                                            style: TextStyle(
-                                                color: Colors.green,
-                                                fontSize: 20),
+                                              '${meeting['meeting_type']}',
+                                              style: Theme.of(context).textTheme.headlineMedium
                                           ),
+                                          IconButton(
+                                              onPressed: () {
+                                                print('press icon');
+                                                showDialog(
+                                                    context: context,
+                                                    builder: (ctx) =>
+                                                    // Dialog box for register meeting and add guest
+                                                    AlertDialog(
+                                                      backgroundColor:
+                                                      Colors
+                                                          .grey[800],
+                                                      title: const Text(
+                                                          'Meeting',
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .white)),
+                                                      content: const Text(
+                                                          "Do You Want to Register the Meeting?",
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .white)),
+                                                      actions: [
+                                                        TextButton(
+                                                            onPressed:
+                                                                () {
+                                                              GlobalKey<
+                                                                  FormState>
+                                                              tempKey =
+                                                              GlobalKey<
+                                                                  FormState>();
+
+                                                              //store purpose..
+                                                              registerDateStoreDatabase(
+                                                                  id,
+                                                                  meetingType,
+                                                                  meetingDate,
+                                                                  meetingPlace);
+                                                              showDialog(
+                                                                  context:
+                                                                  context,
+                                                                  builder: (ctx) =>
+                                                                      Form(
+                                                                        key: tempKey,
+                                                                        child: AlertDialog(
+                                                                          backgroundColor: Colors.grey[800],
+                                                                          title: const Text('Do you wish to add Guest?', style: TextStyle(color: Colors.white)),
+                                                                          content: TextFormField(
+                                                                            controller: guestcount,
+                                                                            validator: (value) {
+                                                                              if (value!.isEmpty) {
+                                                                                return "* Enter a Guest Count";
+                                                                              }
+                                                                              return null;
+                                                                            },
+                                                                            decoration: const InputDecoration(
+                                                                              labelText: "Guest Count",
+                                                                              labelStyle: TextStyle(color: Colors.white),
+                                                                              hintText: "Ex:5",
+                                                                            ),
+                                                                          ),
+                                                                          actions: [
+                                                                            TextButton(
+                                                                                onPressed: () {
+                                                                                  if (tempKey.currentState!.validate()) {
+                                                                                    Navigator.push(context, MaterialPageRoute(builder: (context) => VisitorsSlip(userId: widget.userID, meetingId: id, guestcount: guestcount.text.trim(), userType: widget.userType, meeting_date: meetingDate,
+                                                                                      user_mobile: fetchMobile.toString(), user_name: '', member_id: '',)));                                                                                      print("UserID:-${widget.userID}${widget.userType}");
+                                                                                  }
+                                                                                },
+                                                                                child: const Text('Yes')),
+                                                                            TextButton(onPressed: () {}, child: const Text('No'))
+                                                                          ],
+                                                                        ),
+                                                                      ));
+                                                            },
+                                                            child:
+                                                            const Text(
+                                                                'OK')),
+                                                        TextButton(
+                                                            onPressed:
+                                                                () {
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                            child: const Text(
+                                                                'Cancel'))
+                                                      ],
+                                                    ));
+                                              },
+                                              icon: const Icon(
+                                                Icons.person_add_alt_1,
+                                                color: Colors.green,
+                                              ))
                                         ],
                                       ),
                                       SizedBox(
@@ -497,19 +584,15 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                         padding: const EdgeInsets.all(8.0),
                                         child: Row(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                          MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
                                               '${meeting['meeting_date']}',
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 20),
+                                              style: Theme.of(context).textTheme.bodyMedium,
                                             ),
                                             Text(
                                               '${meeting['meeting_name']}',
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 20),
+                                              style: Theme.of(context).textTheme.bodyMedium,
                                             ),
                                           ],
                                         ),
@@ -517,125 +600,24 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
                                               '${_formatTimeString(meeting['from_time'])} to ${_formatTimeString(meeting['to_time'])}',
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 20),
+                                              style: Theme.of(context).textTheme.bodyMedium,
                                             ),
                                             SizedBox(
                                                 width:
-                                                    10), // Space between icon and text
+                                                20), // Space between icon and text
                                             Icon(
                                               Icons.location_on,
                                               color: Colors.green,
                                             ), // Location icon
-                                            SizedBox(
-                                                width:
-                                                    2), // Space between icon and text
                                             Text(meeting['place'],
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 20)),
+                                              style: Theme.of(context).textTheme.bodyMedium,),
                                             SizedBox(
                                               width: 20,
                                             ),
-                                            IconButton(
-                                                onPressed: () {
-                                                  print('press icon');
-                                                  showDialog(
-                                                      context: context,
-                                                      builder: (ctx) =>
-                                                          // Dialog box for register meeting and add guest
-                                                          AlertDialog(
-                                                            backgroundColor:
-                                                                Colors
-                                                                    .grey[800],
-                                                            title: const Text(
-                                                                'Meeting',
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .white)),
-                                                            content: const Text(
-                                                                "Do You Want to Register the Meeting?",
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .white)),
-                                                            actions: [
-                                                              TextButton(
-                                                                  onPressed:
-                                                                      () {
-                                                                    GlobalKey<
-                                                                            FormState>
-                                                                        tempKey =
-                                                                        GlobalKey<
-                                                                            FormState>();
-
-                                                                    //store purpose..
-                                                                    registerDateStoreDatabase(
-                                                                        id,
-                                                                        meetingType,
-                                                                        meetingDate,
-                                                                        meetingPlace);
-                                                                    showDialog(
-                                                                        context:
-                                                                            context,
-                                                                        builder: (ctx) =>
-                                                                            Form(
-                                                                              key: tempKey,
-                                                                              child: AlertDialog(
-                                                                                backgroundColor: Colors.grey[800],
-                                                                                title: const Text('Do you wish to add Guest?', style: TextStyle(color: Colors.white)),
-                                                                                content: TextFormField(
-                                                                                  controller: guestcount,
-                                                                                  validator: (value) {
-                                                                                    if (value!.isEmpty) {
-                                                                                      return "* Enter a Guest Count";
-                                                                                    }
-                                                                                    return null;
-                                                                                  },
-                                                                                  decoration: const InputDecoration(
-                                                                                    labelText: "Guest Count",
-                                                                                    labelStyle: TextStyle(color: Colors.white),
-                                                                                    hintText: "Ex:5",
-                                                                                  ),
-                                                                                ),
-                                                                                actions: [
-                                                                                  TextButton(
-                                                                                      onPressed: () {
-                                                                                        if (tempKey.currentState!.validate()) {
-                                                                                          Navigator.push(context, MaterialPageRoute(builder: (context) => VisitorsSlip(userId: widget.userID, meetingId: id, guestcount: guestcount.text.trim(), userType: widget.userType, meeting_date: meetingDate, user_mobile: fetchMobile.toString())));
-                                                                                          print("UserID:-${widget.userID}${widget.userType}");
-                                                                                        }
-                                                                                      },
-                                                                                      child: const Text('Yes')),
-                                                                                  TextButton(onPressed: () {}, child: const Text('No'))
-                                                                                ],
-                                                                              ),
-                                                                            ));
-                                                                  },
-                                                                  child:
-                                                                      const Text(
-                                                                          'OK')),
-                                                              TextButton(
-                                                                  onPressed:
-                                                                      () {
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  },
-                                                                  child: const Text(
-                                                                      'Cancel'))
-                                                            ],
-                                                          ));
-                                                },
-                                                icon: const Icon(
-                                                  Icons
-                                                      .person_add_alt_1_rounded,
-                                                  color: Colors.green,
-                                                ))
                                           ],
                                         ),
                                       ),
@@ -681,9 +663,9 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                               'http://mybudgetbook.in/GIBAPI/${data1[i]["offer_image"]}';
 
                           String dateString = data1[i][
-                              'validity']; // This will print the properly encoded URL
+                          'validity']; // This will print the properly encoded URL
                           DateTime dateTime =
-                              DateFormat('yyyy-MM-dd').parse(dateString);
+                          DateFormat('yyyy-MM-dd').parse(dateString);
                           return Center(
                             child: Card(
                               child: Padding(
@@ -695,17 +677,27 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                       children: [
                                         Row(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.start,
+                                          MainAxisAlignment.start,
                                           children: [
                                             // CIRCLEAVATAR STARTS
                                             Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: CircleAvatar(
-                                                radius: 30.0,
-                                                backgroundColor: Colors.cyan,
-                                                backgroundImage:
-                                                    NetworkImage(imageUrl),
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: InkWell(
+                                                onTap: () {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (BuildContext context) {
+                                                      return AlertDialog(
+                                                        content: Image.network(imageUrl),
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                                child: CircleAvatar(
+                                                  radius: 30.0,
+                                                  backgroundColor: Colors.cyan,
+                                                  backgroundImage: NetworkImage(imageUrl),
+                                                ),
                                               ),
                                             ),
                                             SizedBox(width: 20),
@@ -755,43 +747,54 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                         data1[i]['discount'].toString().isEmpty
                                             ? Container()
                                             : Positioned(
-                                                top: 8,
-                                                right:
-                                                    8, // Adjust position if needed
-                                                child: Container(
-                                                  decoration: BoxDecoration(
+                                          top: 8,
+                                          right:
+                                          8, // Adjust position if needed
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color: Colors
+                                                  .red, // Change the color here
+                                              borderRadius:
+                                              BorderRadius.only(
+                                                topLeft:
+                                                Radius.circular(10.0),
+                                                bottomRight:
+                                                Radius.circular(10.0),
+                                              ),
+                                            ),
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 6.0,
+                                                vertical: 2.0),
+                                            child: Row(
+                                              children: [
+                                                Text(
+                                                  '${data1[i]['discount']}% off', // Text for your banner
+                                                  style: TextStyle(
                                                     color: Colors
-                                                        .red, // Change the color here
-                                                    borderRadius:
-                                                        BorderRadius.only(
-                                                      topLeft:
-                                                          Radius.circular(10.0),
-                                                      bottomRight:
-                                                          Radius.circular(10.0),
-                                                    ),
-                                                  ),
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 6.0,
-                                                      vertical: 2.0),
-                                                  child: Row(
-                                                    children: [
-                                                      Text(
-                                                        '${data1[i]['discount']}% off', // Text for your banner
-                                                        style: TextStyle(
-                                                          color: Colors
-                                                              .white, // Change the text color here
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontStyle: FontStyle
-                                                              .italic, // Add any additional styles here
-                                                          fontSize:
-                                                              12.0, // Adjust font size as needed
-                                                        ),
-                                                      ),
-                                                    ],
+                                                        .white, // Change the text color here
+                                                    fontWeight:
+                                                    FontWeight.bold,
+                                                    fontStyle: FontStyle
+                                                        .italic, // Add any additional styles here
+                                                    fontSize:
+                                                    12.0, // Adjust font size as needed
                                                   ),
                                                 ),
-                                              ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        Positioned(top: 25, right: 8, // Adjust position if needed
+                                          child: IconButton(
+                                            onPressed: () {
+                                              launchUrl(Uri.parse("tel://${data[i]['mobile']}"));
+                                            },
+                                            icon: Icon(
+                                              Icons.call_outlined,
+                                              color: Colors.green[900],
+                                            ),
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ],
@@ -829,6 +832,16 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                               fontWeight: FontWeight.bold),
                         ),
                       ),
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: CircleAvatar(
+                          radius: 25,
+                          backgroundImage: AssetImage(
+                            'assets/logo.png',
+                          ),
+                          backgroundColor: Colors.green,
+                        ),
+                      ),
                       /* Padding(
                       padding: EdgeInsets.only(right: 20),
                       child: IconButton(
@@ -856,19 +869,25 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Padding(
-                          padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(8.0),
+                        child: InkWell(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  content: Image.network(imageUrl),
+                                );
+                              },
+                            );
+                          },
                           child: CircleAvatar(
+                            radius: 30.0,
                             backgroundColor: Colors.cyan,
-                            radius:
-                                30.0, // This will give you a 60.0 diameter circle
-                            backgroundImage: profileImage.isNotEmpty
-                                ? NetworkImage(profileImage)
-                                : null,
-                            child: profileImage.isEmpty
-                                ? const Icon(Icons.person,
-                                    size: 30.0, color: Colors.white)
-                                : null,
-                          )),
+                            backgroundImage: NetworkImage(imageUrl),
+                          ),
+                        ),
+                      ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Column(
@@ -984,16 +1003,16 @@ class _NavigationBarNonState extends State<NavigationBarNon> {
           ),
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.settings,
+              Icons.more_horiz,
               color: Theme.of(context).brightness == Brightness.light
                   ? Colors.black45
                   : Colors.white,
             ),
-            label: 'Settings',
+            label: 'More',
           ),
         ],
         type:
-            BottomNavigationBarType.fixed, // Set type to fixed for text labels
+        BottomNavigationBarType.fixed, // Set type to fixed for text labels
         currentIndex: _currentIndex,
         // selectedItemColor: Theme.of(context).brightness == Brightness.light
         //     ? Colors.black45
@@ -1012,7 +1031,7 @@ class _NavigationBarNonState extends State<NavigationBarNon> {
         selectedLabelStyle: TextStyle(color: Colors.white),
         unselectedLabelStyle: TextStyle(color: Colors.white),
         selectedIconTheme:
-            IconThemeData(color: Colors.green), // Set selected icon color
+        IconThemeData(color: Colors.green), // Set selected icon color
       ),
     );
   }

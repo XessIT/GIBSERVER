@@ -37,7 +37,7 @@ class _ThankNotesState extends State<ThankNotes> {
             key: _formKey,
             child: Column(
               children: [
-                TabBar(
+                const TabBar(
                   isScrollable: true,
                   labelColor: Colors.green,
                   unselectedLabelColor: Colors.black,
@@ -62,14 +62,9 @@ class _ThankNotesState extends State<ThankNotes> {
   }
 }
 class Online extends StatefulWidget {
-  // final String? currenthold;
-//  final String? currentsuccess;
-  // final String? currentunsuccess;
 
   const Online({Key? key,
-    //  required this.currenthold,
-    // required this.currentsuccess,
-    //  required this.currentunsuccess,
+
   }) : super(key: key);
 
   @override
@@ -443,6 +438,8 @@ class _DirectState extends State<Direct> {
   String? fname = "";
   String? lname = "";
   String? mobile = "";
+  String? district = "";
+  String? chapter = "";
   String? companyname = "";
   List dynamicdata=[];
   Future<void> fetchData(String userId) async {
@@ -462,6 +459,8 @@ class _DirectState extends State<Direct> {
                 lname= dynamicdata[0]['last_name'];
                 mobile=dynamicdata[0]["mobile"];
                 companyname=dynamicdata[0]["company_name"];
+                district=dynamicdata[0]["district"];
+                chapter=dynamicdata[0]["chapter"];
               });
             }
           });
@@ -494,7 +493,9 @@ class _DirectState extends State<Direct> {
           "amount": amountcontroller.text.trim(),
           "name": fname,
           "mobile": mobile,
-          "company": companyname
+          "company": companyname.toString(),
+          "district": district.toString(),
+          "chapter": chapter.toString(),
         }),
       );
       print(url);
@@ -506,7 +507,6 @@ class _DirectState extends State<Direct> {
       }
     } catch (e) {
       print("Error during signup: $e");
-      // Handle error as needed
     }
   }
   @override
@@ -514,7 +514,6 @@ class _DirectState extends State<Direct> {
     return  Scaffold(
       appBar: AppBar(
         title: Text("Honor Slip", style: Theme.of(context).textTheme.displayLarge),
-        centerTitle: true,
         actions: [
           IconButton(
               onPressed:(){
@@ -559,6 +558,7 @@ class _DirectState extends State<Direct> {
                     // Handle when a suggestion is selected
                     // Update text fields with suggestion data
                     setState(() {
+                      searchController.text =('${suggestion['first_name']} ${suggestion['last_name']}');
                       tocontroller.text = suggestion['first_name'];
                       tomobilenocontroller.text = suggestion['mobile'];
                       companynamecontroller.text = suggestion['company_name'];

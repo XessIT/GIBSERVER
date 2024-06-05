@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:gipapp/settings_page_executive.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
@@ -157,15 +159,14 @@ class _ActivityState extends State<Activity> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: Text('Reference', style: Theme.of(context).textTheme.bodySmall)),
-        centerTitle: true,
+        title: Text('Reference', style: Theme.of(context).textTheme.displayLarge),
         iconTheme:  const IconThemeData(
           color: Colors.white, // Set the color for the drawer icon
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.navigate_before),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Homepage(userType: widget.userType, userId: widget.userId,)));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPageExecutive(userType: widget.userType, userId: widget.userId,)));
           },
         )
       ),
@@ -184,10 +185,25 @@ class _ActivityState extends State<Activity> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              CircleAvatar(
-                                radius:
-                                    35, // adjust the radius as per your requirement
-                                backgroundImage: NetworkImage(imageUrl),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: InkWell(
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          content: Image.network(imageUrl),
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: CircleAvatar(
+                                    radius: 30.0,
+                                    backgroundColor: Colors.cyan,
+                                    backgroundImage: CachedNetworkImageProvider(imageUrl),
+                                  ),
+                                ),
                               ),
                               Expanded(
                                 child: Column(

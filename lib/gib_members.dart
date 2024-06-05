@@ -17,7 +17,7 @@ class GibMembers extends StatelessWidget {
   final String userType;
   final String? userId;
 
-   GibMembers({Key? key, required this.userType, required this.userId}) : super(key: key);
+  GibMembers({Key? key, required this.userType, required this.userId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +34,7 @@ class GibMembers extends StatelessWidget {
 class Members extends StatefulWidget {
   final String userType;
   final String? userId;
-   Members({Key? key, required this.userType, required this.userId}) : super(key: key);
+  Members({Key? key, required this.userType, required this.userId}) : super(key: key);
 
   @override
   State<Members> createState() => _MembersState();
@@ -42,11 +42,12 @@ class Members extends StatefulWidget {
 
 
 class _MembersState extends State<Members> {
-  String name = "";
+
   String? chapter = "";
   String? district = "";
   String type = "Member";
   String MemberType = "Non-Executive";
+  String name = "";
   final fieldText = TextEditingController();
   void clearText() {
     fieldText.clear();
@@ -170,7 +171,7 @@ class _MembersState extends State<Members> {
         setState(() {
           setState(() {
           });
-         // chapterController.clear();
+          // chapterController.clear();
         });
       } else {
         print('chapter Error: ${response.statusCode}');
@@ -179,7 +180,7 @@ class _MembersState extends State<Members> {
       print(' chapter Error: $error');
     }
   }
-
+  bool isLoading = true;
   @override
   void initState() {
     getDistrict();
@@ -190,271 +191,298 @@ class _MembersState extends State<Members> {
     }).catchError((error) {
       print("Error in fetchData: $error");
     });
+    Future.delayed(Duration(seconds: 2), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
     // TODO: implement initState
     super.initState();
+  }
+  ///refresh
+  List<String> items = List.generate(20, (index) => 'Item $index');
+  Future<void> _refresh() async {
+    await Future.delayed(const Duration(seconds: 1));
+    setState(() {
+      getDistrict();
+      fetchData().then((_) {
+        if (chapter!.isNotEmpty&& district!.isNotEmpty)  {
+          getData(district! ,chapter!);
+        }
+      }).catchError((error) {
+        print("Error in fetchData: $error");
+      });
+    });
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-            if (widget.userType == "Non-Executive") {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => NavigationBarNon(
-                    userType: widget.userType.toString(),
-                    userId: widget.userId.toString(),
-                  ),
-                ),
-              );
-            }
-            else{
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => NavigationBarExe(
-                    userType: widget.userType.toString(),
-                    userId: widget.userId.toString(),
-                  ),
-                ),
-              );
-            }
-          },
-          icon: const Icon(Icons.navigate_before),
-        ),
-        iconTheme:  const IconThemeData(
-          color: Colors.white,),
-        title: Column(
-          children: [
-            Visibility(
-                visible: titleVisible,
-                child: Center(child: Text('GIB MEMBERS', style: Theme.of(context).textTheme.displayLarge,))),
-            Visibility(
-              visible: isVisible,
-              child: Container(
-                width: double.infinity,
-                height: 40,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(5)
-                ),
-                child: Center(
-                  child: TextField(
-                    onChanged: (val){
-                      setState(() {
-                        name = val ;
-                      });
-                    },
-                    controller: fieldText,
-                    decoration: InputDecoration(
-                        suffixIcon: IconButton(
-                          icon: const Icon(Icons.clear),
-                          onPressed: clearText,
-                        ),
-                        hintText: 'Search'
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {
+              if (widget.userType == "Non-Executive") {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => NavigationBarNon(
+                      userType: widget.userType.toString(),
+                      userId: widget.userId.toString(),
                     ),
                   ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        centerTitle: true,
-        actions: <Widget>[
-          Row(children: [
-            IconButton(
-              onPressed: () {
-                setState(() {
-                  _showFields = !_showFields;
-                });
-              },
-              icon: const Icon(Icons.filter_alt, color: Colors.white),
-            ),
-            const SizedBox(width: 5,),
-            IconButton(
-              icon: const Icon(Icons.search),
-              onPressed: () {
-                setState(() {
-                  isVisible = true;
-                  titleVisible = false;
-                });
-              },
-            ),
-          ],),
-        ],
-      ),
-
-        body: PopScope(
-          canPop: false,
-          onPopInvoked: (didPop) {
-            if (widget.userType == "Non-Executive") {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => NavigationBarNon(
-                    userType: widget.userType.toString(),
-                    userId: widget.userId.toString(),
+                );
+              }
+              else{
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => NavigationBarExe(
+                      userType: widget.userType.toString(),
+                      userId: widget.userId.toString(),
+                    ),
                   ),
-                ),
-              );
-            } else {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => NavigationBarExe(
-                    userType: widget.userType.toString(),
-                    userId: widget.userId.toString(),
-                  ),
-                ),
-              );
-            }
-          },
-          child: Column(
+                );
+              }
+            },
+            icon: const Icon(Icons.navigate_before),
+          ),
+          iconTheme:  const IconThemeData(
+            color: Colors.white,),
+          title: Column(
             children: [
               Visibility(
-                visible: _showFields,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 150,
-                      height: 50,
-                      child: TypeAheadFormField<String>(
-                        textFieldConfiguration: TextFieldConfiguration(
-                          controller: districtController,
-                          decoration: const InputDecoration(
-                            fillColor: Colors.white,
-                            filled: true,
-                            hintText: "District",
-                          ),
-                        ),
-                        suggestionsCallback: (pattern) async {
-                          return suggesstiondistrictdata
-                              .where((item) => (item['district']?.toString().toLowerCase() ?? '').startsWith(pattern.toLowerCase()))
-                              .map((item) => item['district'].toString())
-                              .toList();
-                        },
-                        itemBuilder: (context, suggestion) {
-                          return ListTile(
-                            title: Text(suggestion),
-                          );
-                        },
-                        onSuggestionSelected: (suggestion) async {
-                          setState(() {
-                            districtController.text = suggestion;
-                          });
-                          getchapter(districtController.text.trim());
-                          if (chapterController.text.isNotEmpty) {
-                            getData(districtController.text, chapterController.text);
-                          }
-                        },
+                  visible: titleVisible,
+                  child: Text('GiB Members', style: Theme.of(context).textTheme.displayLarge,)),
+              Visibility(
+                visible: isVisible,
+                child: Container(
+                  width: double.infinity,
+                  height: 40,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(5)
+                  ),
+                  child: Center(
+                    child: TextField(
+                      onChanged: (val){
+                        setState(() {
+                          name = val ;
+                        });
+                      },
+                      controller: fieldText,
+                      decoration: InputDecoration(
+                        /*suffixIcon: IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: clearText,
+                          ),*/
+                          hintText: 'Search'
                       ),
                     ),
-                    const SizedBox(height: 10, width: 20),
-                    SizedBox(
-                      width: 150,
-                      height: 50,
-                      child: TypeAheadFormField<String>(
-                        textFieldConfiguration: TextFieldConfiguration(
-                          controller: chapterController,
-                          decoration: const InputDecoration(
-                            fillColor: Colors.white,
-                            filled: true,
-                            hintText: "Chapter",
-                          ),
-                        ),
-                        suggestionsCallback: (pattern) async {
-                          return suggesstionchapterdata
-                              .where((item) => (item['chapter']?.toString().toLowerCase() ?? '').startsWith(pattern.toLowerCase()))
-                              .map((item) => item['chapter'].toString())
-                              .toList();
-                        },
-                        itemBuilder: (context, suggestion) {
-                          return ListTile(
-                            title: Text(suggestion),
-                          );
-                        },
-                        onSuggestionSelected: (suggestion) async {
-                          setState(() {
-                            chapterController.text = suggestion;
-                            getData(districtController.text.trim(), chapterController.text.trim());
-                          });
-                        },
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: data.length,
-                  itemBuilder: (context, i) {
-                    String imageUrl =
-                        'http://mybudgetbook.in/GIBAPI/${data[i]['profile_image']}';
-                    if ((data[i]['first_name']
-                        .toString()
-                        .toLowerCase()
-                        .startsWith(name.toLowerCase()) ||
-                        data[i]['company_name']
-                            .toString()
-                            .toLowerCase()
-                            .startsWith(name.toLowerCase())) &&
-                        (districtController.text.isEmpty ||
-                            data[i]['district']
-                                .toString()
-                                .toLowerCase()
-                                .startsWith(districtController.text.toLowerCase())) &&
-                        (chapterController.text.isEmpty ||
-                            data[i]['chapter']
-                                .toString()
-                                .toLowerCase()
-                                .startsWith(chapterController.text.toLowerCase()))) {
-                      return SingleChildScrollView(
-                        child: Center(
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileMembers(userID: widget.userId, userType: widget.userType,memberId:data[i]['id'],)));
-
-                            },
-                            child: Card(
-                              child: ListTile(
-                                leading: CircleAvatar(
-                                  radius: 40, // adjust the radius as per your requirement
-                                  backgroundImage: NetworkImage(imageUrl),
-                                ),
-                                title: Text('${data[i]['first_name']}'),
-                                subtitle: Text('${data[i]['id']}'),
-
-                                trailing: IconButton(
-                                  onPressed: () async {
-                                    final call =
-                                    Uri.parse("tel://${data[i]['mobile']}");
-                                    if (await canLaunchUrl(call)) {
-                                      launchUrl(call);
-                                    } else {
-                                      throw 'Could not launch $call';
-                                    }
-                                  },
-                                  icon: Icon(
-                                    Icons.call,
-                                    color: Colors.green[800],
+            ],
+          ),
+          actions: <Widget>[
+            Row(children: [
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    _showFields = !_showFields;
+                  });
+                },
+                icon: const Icon(Icons.filter_alt, color: Colors.white),
+              ),
+              const SizedBox(width: 5,),
+              IconButton(
+                icon: const Icon(Icons.search),
+                onPressed: () {
+                  setState(() {
+                    isVisible = !isVisible;
+                    titleVisible = !titleVisible;
+                  });
+                },
+              ),
+            ],),
+          ],
+        ),
+        body: RefreshIndicator(
+          onRefresh: _refresh,
+          child: PopScope(
+            canPop: false,
+            onPopInvoked: (didPop) {
+              if (widget.userType == "Non-Executive") {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => NavigationBarNon(
+                      userType: widget.userType.toString(),
+                      userId: widget.userId.toString(),
+                    ),
+                  ),
+                );
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => NavigationBarExe(
+                      userType: widget.userType.toString(),
+                      userId: widget.userId.toString(),
+                    ),
+                  ),
+                );
+              }
+            },
+            child: Column(
+              children: [
+                Visibility(
+                  visible: _showFields,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 150,
+                        height: 50,
+                        child: TypeAheadFormField<String>(
+                          textFieldConfiguration: TextFieldConfiguration(
+                            controller: districtController,
+                            decoration: const InputDecoration(
+                              fillColor: Colors.white,
+                              filled: true,
+                              hintText: "District",
+                            ),
+                          ),
+                          suggestionsCallback: (pattern) async {
+                            return suggesstiondistrictdata
+                                .where((item) => (item['district']?.toString().toLowerCase() ?? '').startsWith(pattern.toLowerCase()))
+                                .map((item) => item['district'].toString())
+                                .toList();
+                          },
+                          itemBuilder: (context, suggestion) {
+                            return ListTile(
+                              title: Text(suggestion),
+                            );
+                          },
+                          onSuggestionSelected: (suggestion) async {
+                            setState(() {
+                              districtController.text = suggestion;
+                            });
+                            getchapter(districtController.text.trim());
+                            if (chapterController.text.isNotEmpty) {
+                              getData(districtController.text, chapterController.text);
+                            }
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 10, width: 20),
+                      SizedBox(
+                        width: 150,
+                        height: 50,
+                        child: TypeAheadFormField<String>(
+                          textFieldConfiguration: TextFieldConfiguration(
+                            controller: chapterController,
+                            decoration: const InputDecoration(
+                              fillColor: Colors.white,
+                              filled: true,
+                              hintText: "Chapter",
+                            ),
+                          ),
+                          suggestionsCallback: (pattern) async {
+                            return suggesstionchapterdata
+                                .where((item) => (item['chapter']?.toString().toLowerCase() ?? '').startsWith(pattern.toLowerCase()))
+                                .map((item) => item['chapter'].toString())
+                                .toList();
+                          },
+                          itemBuilder: (context, suggestion) {
+                            return ListTile(
+                              title: Text(suggestion),
+                            );
+                          },
+                          onSuggestionSelected: (suggestion) async {
+                            setState(() {
+                              chapterController.text = suggestion;
+                              getData(districtController.text.trim(), chapterController.text.trim());
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: isLoading ? const Center(child: CircularProgressIndicator())
+                      : data.isEmpty ? const Center(child: Text('No Data Found'))
+                      : ListView.builder(
+                    itemCount: data.length,
+                    itemBuilder: (context, i) {
+                      String imageUrl =
+                          'http://mybudgetbook.in/GIBAPI/${data[i]['profile_image']}';
+                      if ((data[i]['first_name']
+                          .toString()
+                          .toLowerCase()
+                          .startsWith(name.toLowerCase()) ||
+                          data[i]['company_name']
+                              .toString()
+                              .toLowerCase()
+                              .startsWith(name.toLowerCase())) &&
+                          (districtController.text.isEmpty ||
+                              data[i]['district']
+                                  .toString()
+                                  .toLowerCase()
+                                  .startsWith(districtController.text.toLowerCase())) &&
+                          (chapterController.text.isEmpty ||
+                              data[i]['chapter']
+                                  .toString()
+                                  .toLowerCase()
+                                  .startsWith(chapterController.text.toLowerCase()))) {
+                        return SingleChildScrollView(
+                          child: Center(
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileMembers(memberId: data[i]['id'], userType: widget.userType, userID: widget.userId,)));
+                                // Add your onTap functionality here
+                              },
+                              child: Card(
+                                child: ListTile(
+                                  leading: CircleAvatar(
+                                    radius: 40, // adjust the radius as per your requirement
+                                    backgroundImage: NetworkImage(imageUrl),
+                                  ),
+                                  title: Text('${data[i]['first_name']}'),
+                                  subtitle: Text('${data[i]['company_name']}'),
+                                  trailing: IconButton(
+                                    onPressed: () async {
+                                      final call =
+                                      Uri.parse("tel://${data[i]['mobile']}");
+                                      if (await canLaunchUrl(call)) {
+                                        launchUrl(call);
+                                      } else {
+                                        throw 'Could not launch $call';
+                                      }
+                                    },
+                                    icon: Icon(
+                                      Icons.call,
+                                      color: Colors.green[800],
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      );
-                    }
-                    return Container();
-                  },
+                        );
+                      }
+                      return Container();
+                    },
+                  ),
                 ),
-              ),
 
-            ],
+              ],
+            ),
           ),
         )
     );

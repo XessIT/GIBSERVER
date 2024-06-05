@@ -7,16 +7,28 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import'package:http/http.dart'as http;
+import 'guest_home.dart';
 import 'login.dart';
 
-class Registration extends StatefulWidget {
+class Registration extends StatelessWidget {
   const Registration({Key? key}) : super(key: key);
 
   @override
-  State<Registration> createState() => _RegistrationState();
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Guest(),
+    );
+  }
 }
 
-class _RegistrationState extends State<Registration> {
+class Guest extends StatefulWidget {
+  const Guest({Key? key}) : super(key: key);
+
+  @override
+  State<Guest> createState() => _GuestState();
+}
+
+class _GuestState extends State<Guest> {
 
   bool _isObscure = true;
   final _formKey = GlobalKey<FormState>();
@@ -41,7 +53,7 @@ class _RegistrationState extends State<Registration> {
   String spouseblood = "Blood Group";
   String? chooseDistrict;
   RegExp nameRegExp = RegExp(r'^[a-zA-Z\s]+$');
-  String membertype = "Member Type";
+  String membertype = "Non-Executive";
   String gender = "Gender";
   String koottam = "Koottam";
   String spousekoottam = "Spouse Father Koottam";
@@ -120,26 +132,23 @@ class _RegistrationState extends State<Registration> {
         print("response.statusCode :${response.statusCode}" );
         print("response .body :${response.body}" );
         final responseData = json.decode(response.body);
-
         if (responseData is List<dynamic>) {
           setState(() {
             mobileBaseFetchIDdata = responseData.cast<Map<String, dynamic>>();
             if (mobileBaseFetchIDdata.isNotEmpty) {
               setState(() {
-
                 referreridcotroller.text = mobileBaseFetchIDdata[0]["member_id"];
                 print("referrer ID--${referreridcotroller.text}" );
-
               });
             }
           });
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+            const SnackBar(
               content: Text("This mobile number is not member. Enter the member mobile number."),
             ),
           );
-      //    referreridcotroller.clear();
+          //    referreridcotroller.clear();
           print('Invalid response data format');
         }
       } else {
@@ -211,60 +220,66 @@ class _RegistrationState extends State<Registration> {
   String blockStatus ="UnBlock";
   String adminRights ="Waiting";
   Future<void> uploadImage(Uint8List imageBytes) async {
-      if(membertype=="Member Type") {
-        setState(() {
-          membertype = "Guest";
-          print("type:$membertype");
-          blockStatus = "UnBlock";
-          adminRights = "Accepted";
 
-        });
-      }
+    if (type == "Guest") {
+      membertype = "Guest";
+      print("type:$membertype");
+      blockStatus = "UnBlock";
+      adminRights = "Accepted";
+    } else if (type == "Member") {
+      membertype = "Non-Executive"; // Or any other default member type
+    } else {
+      // Handle unexpected type value (optional)
+      print("Unexpected member type: $type");
+      return; // Or throw an exception
+    }
     try {
-      final uri = Uri.parse("http://mybudgetbook.in/GIBAPI/registration.php");
+      String uri = "http://mybudgetbook.in/GIBAPI/registration.php";
       print("registration URL: $uri");
-     // String uri = "http://mybudgetbook.in/GIBAPI/save_image.php";
+      // String uri = "http://mybudgetbook.in/GIBAPI/save_image.php";
       print("ImageName: $imagename");
-      var res = await http.post(uri,
+      var res = await http.post(Uri.parse(uri),
           body: jsonEncode({
-        "image": base64Encode(imageBytes),
-        "mobile": mobilecontroller.text.trim(),
-        "password": confirmpasswordcontroller.text.trim(),
-        "member_type": membertype.toString(),
-        "gender": gender.toString(),
-        "first_name": firstnamecontroller.text.trim(),
-        "last_name": lastnamecontroller.text.trim(),
-        "company_name": companynamecontroller.text.trim(),
-        "email": emailcontroller.text.trim(),
-        "blood_group": blood.toString(),
-        "place": locationcontroller.text.trim(),
-        "pin": passwordcontroller.text.trim(),
-        "referrer_mobile": referrermobilecontroller.text.trim(),
-        "OTP": databaseOTP.toString(),
-        "block_status": blockStatus.toString(),
-        "admin_rights": adminRights.toString(),
-        "type": type.toString(),
-        "district": districtController.text,
-        "chapter": chapterController.text,
-        "dob": _dobdate.text.trim(),
-        "koottam": koottam.toString(),
-        "marital_status": status.toString(),
-        "business_type": businesstype.toString(),
-        "company_address": companyaddresscontroller.text.trim(),
-        "business_keywords": businesskeywordscontroller.text.trim(),
-        "education": educationcontroller.text.trim(),
-        "native": spousenativecontroller.text.trim(),
-        "kovil": kovilcontroller.text.trim(),
-        "s_name": spousenamecontroller.text.trim(),
-        "WAD": _waddate.text.trim(),
-        "s_blood": spouseblood.toString(),
-        "s_father_koottam": spousekoottam.toString(),
-        "s_father_kovil": spousekovilcontroller.text.trim(),
-        "past_experience": pastexpcontroller.text.trim(),
-        "website": websitecontroller.text.trim(),
-        "b_year": yearcontroller.text.trim(),
-        "referrer_id": referreridcotroller.text.trim(),
-      }));
+            "image": base64Encode(imageBytes),
+            "mobile": mobilecontroller.text.trim(),
+            "password": confirmpasswordcontroller.text.trim(),
+            "member_type": membertype,
+            "gender": gender.toString(),
+            "first_name": firstnamecontroller.text.trim(),
+            "last_name": lastnamecontroller.text.trim(),
+            "company_name": companynamecontroller.text.trim(),
+            "email": emailcontroller.text.trim(),
+            "blood_group": blood.toString(),
+            "place": locationcontroller.text.trim(),
+            "pin": passwordcontroller.text.trim(),
+            "referrer_mobile": referrermobilecontroller.text.trim(),
+            "OTP": databaseOTP.toString(),
+            "block_status": blockStatus.toString(),
+            "admin_rights": adminRights.toString(),
+            "type": type.toString(),
+            "district": districtController.text,
+            "chapter": chapterController.text,
+            "dob": _dobdate.text.trim(),
+            "koottam": koottam.toString(),
+            "marital_status": status.toString(),
+            "business_type": businesstype.toString(),
+            "company_address": companynamecontroller.text.trim(),
+            "business_keywords": businesskeywordscontroller.text.trim(),
+            "education": educationcontroller.text.trim(),
+            "native": spousenativecontroller.text.trim(),
+            "kovil": kovilcontroller.text.trim(),
+            "s_name": spousenamecontroller.text.trim(),
+            "WAD": _waddate.text.trim(),
+            "s_blood": spouseblood.toString(),
+            "s_father_koottam": spousekoottam.toString(),
+            "s_father_kovil": spousekovilcontroller.text.trim(),
+            "past_experience": pastexpcontroller.text.trim(),
+            "website": websitecontroller.text.trim(),
+            "b_year": yearcontroller.text.trim(),
+            "referrer_id": referreridcotroller.text.trim(),
+          })
+      );
+
       if (res.statusCode == 200) {
         print(uri);
         print("Response Status: ${res.statusCode}");
@@ -294,13 +309,14 @@ class _RegistrationState extends State<Registration> {
 
 
   ///get image from file code starts here
+  bool hasError = false;
   Uint8List? selectedImage;
   String message = "";
   TextEditingController caption = TextEditingController();
   String? imagename;
   String? imagedata;
   bool showLocalImage = false;
- // XFile? pickedImage;
+  // XFile? pickedImage;
 
   pickImageFromGallery() async {
     final imagePicker = ImagePicker();
@@ -368,16 +384,7 @@ class _RegistrationState extends State<Registration> {
       print(' chapter Error: $error');
     }
   }
-
-
-
   /// ends here
-
-
-
-
-
-
   @override
   Widget build(BuildContext context) {
     getDistrict();
@@ -385,7 +392,7 @@ class _RegistrationState extends State<Registration> {
       // Appbar starts
       appBar: AppBar(
         // Appbar title
-        title:  Text('Registration',style: Theme.of(context).textTheme.displayLarge),
+        title:  Text('REGISTRATION',style: Theme.of(context).textTheme.displayLarge),
         iconTheme:  const IconThemeData(
           color: Colors.white, // Set the color for the drawer icon
         ),
@@ -471,7 +478,7 @@ class _RegistrationState extends State<Registration> {
                                 title: const Text("From Gallery"),
                                 onTap: () {
                                   pickImageFromGallery();
-                                //  getImage();
+                                  //  getImage();
                                   Navigator.of(context).pop();
                                 },
                               )
@@ -480,9 +487,80 @@ class _RegistrationState extends State<Registration> {
                         });
                       },
                     ),
+                    Visibility(
+                        visible: isVisible,
+                        child: Column(
+                          children: [
+                            // Executive GiB Member ID textfield starts here
+                            SizedBox(
+                              width: 300,
+                              child: TextFormField(
+                                controller: referreridcotroller,
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return '* Enter Referrer Executive GiB Member ID';
+                                  } else if (nameRegExp.hasMatch(value)) {
+                                    return null;
+                                  }
+                                  return null;
+                                },
+                                onChanged: (value){
+                                  idBaseMobileNoFetched(referreridcotroller.text);
+                                  if( value.isEmpty){
+                                    referrermobilecontroller.clear();
+                                  }
+                                },
+                                decoration: const InputDecoration(
 
+                                  hintText: "Referrer Executive GiB Member ID",
+                                  suffixIcon: Icon(Icons.confirmation_num),
+                                ),
+                              ),
+                            ),
+                            // Executive GiB Member ID textfield ends here
+
+                            const SizedBox(height: 15,),
+                            SizedBox(
+                              width: 300,
+                              child: TextFormField(
+                                controller: referrermobilecontroller,
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return '* Enter your Referrer Mobile Number';
+                                  } else if (value.length<10) {
+                                    "* Mobile Number should be 10 digits";
+                                    return null;
+                                  }
+                                  else if (nameRegExp.hasMatch(value)) {
+                                    return null;
+                                  }
+                                  return null;
+                                },
+                                decoration: const InputDecoration(
+                                  hintText: "Referrer Mobile Number",
+                                  prefixText: '+91 ',
+                                  prefixStyle: TextStyle(color: Colors.blue), // Set the color here
+                                  suffixIcon: Icon(Icons.phone_android),
+                                ),
+                                onChanged: (value){
+                                  if (value.length == 10) {
+                                    referreridcotroller.clear();
+                                    // Assuming you have the context and the method defined within the state
+                                    MobileBaseIdFetched(value);
+                                  }
+                                },
+                                keyboardType: TextInputType.number,
+                                inputFormatters: <TextInputFormatter>[
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(10)
+                                ],
+                              ),
+                            ),
+                          ],
+                        )
+                    ),
                     // First Name textfield starts
-                    const SizedBox(height: 30,),
+                    const SizedBox(height: 15,),
                     SizedBox(
                       width: 300,
                       child: TextFormField(
@@ -502,7 +580,7 @@ class _RegistrationState extends State<Registration> {
                           );
                         },
                         decoration: const InputDecoration(
-                          labelText: "First Name",
+                          hintText: "First Name",
                           suffixIcon: Icon(Icons.account_circle),
                         ),
                         inputFormatters: [AlphabetInputFormatter(),
@@ -534,7 +612,7 @@ class _RegistrationState extends State<Registration> {
                           );
                         },
                         decoration: const InputDecoration(
-                          labelText: "Last Name",
+                          //labelText: "Last Name",
                           hintText: "Last Name",
                           suffixIcon: Icon(Icons.account_circle),
                         ),
@@ -568,7 +646,7 @@ class _RegistrationState extends State<Registration> {
                         },
 
                         decoration: const InputDecoration(
-                          labelText: "Company Name/Occupation",
+
                           hintText: "Company Name/Occupation",
                           suffixIcon: Icon(Icons.business),
                         ),
@@ -599,7 +677,7 @@ class _RegistrationState extends State<Registration> {
                           return null;
                         },
                         decoration: const InputDecoration(
-                          labelText: "Email",
+
                           hintText: "Email",
                           suffixIcon: Icon(Icons.mail),
                         ),
@@ -624,7 +702,7 @@ class _RegistrationState extends State<Registration> {
                         },
 
                         decoration: const InputDecoration(
-                          labelText: "Mobile Number",
+
                           hintText: "Mobile Number",
                           prefixText: '+91 ',
                           prefixStyle: TextStyle(color: Colors.blue), // Set the color here
@@ -711,7 +789,7 @@ class _RegistrationState extends State<Registration> {
                         },
 
                         decoration: const InputDecoration(
-                          labelText: "Location",
+
                           hintText: "Location",
                           suffixIcon: Icon(Icons.location_on_rounded),
                         ),
@@ -730,17 +808,17 @@ class _RegistrationState extends State<Registration> {
                         controller: passwordcontroller,
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return "* Enter Your Pin";
+                            return "* Enter Your M-Pin";
                           } else if (value.length < 6) {
-                            return "* Pin must be 6 characters";
+                            return "* M-Pin must be 6 characters";
                           } else {
                             return null;
                           }
                         },
                         obscureText: _isObscure,
                         decoration: InputDecoration(
-                          labelText: 'Pin',
-                          hintText: "Pin",
+
+                          hintText: "M-Pin",
                           //hintText: 'Enter your Pin',
                           suffixIcon: IconButton(
                             icon: Icon(
@@ -769,10 +847,10 @@ class _RegistrationState extends State<Registration> {
                         controller: confirmpasswordcontroller,
                         validator: (value){
                           if (value!.isEmpty) {
-                            return "* Enter Your Confirm Pin";
+                            return "* Enter Your Confirm M-Pin";
                           } else if (passwordcontroller.value !=
                               confirmpasswordcontroller.value) {
-                            return "* Pin Doesn't match";
+                            return "* M-Pin Doesn't match";
                           } else if (passwordcontroller.value ==
                               confirmpasswordcontroller.value) {
                             return null;
@@ -781,8 +859,8 @@ class _RegistrationState extends State<Registration> {
                         },
                         obscureText: _isObscure,
                         decoration: InputDecoration(
-                          labelText: 'Confirm Pin',
-                          hintText: "Confirm Pin",
+
+                          hintText: "Confirm M-Pin",
                           //hintText: 'Enter your Confirm Pin',
                           suffixIcon: IconButton(
                             icon: Icon(
@@ -818,32 +896,32 @@ class _RegistrationState extends State<Registration> {
                           ),
                           // Member type drop down button starts
                           const SizedBox(height: 15,),
-                          SizedBox(
-                            width: 300,
-                            child: DropdownButtonFormField<String>(
-                              value: membertype,
-                              icon: const Icon(Icons.arrow_drop_down),
-                              isExpanded: true,
-                              items: <String>["Member Type", "Non-Executive"]
-                                  .map<DropdownMenuItem<String>>((String value) {
-                                return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value));
-                              }
-                              ).toList(),
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  membertype = newValue!;
-                                });
-                              },
-                              validator: (value) {
-                                if (membertype == 'Member Type') {
-                                  return '* Select your Member Type';
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
+                          // SizedBox(
+                          //   width: 300,
+                          //   child: DropdownButtonFormField<String>(
+                          //     value: membertype,
+                          //     icon: const Icon(Icons.arrow_drop_down),
+                          //     isExpanded: true,
+                          //     items: <String>[ "Non-Executive"]
+                          //         .map<DropdownMenuItem<String>>((String value) {
+                          //       return DropdownMenuItem<String>(
+                          //           value: value,
+                          //           child: Text(value));
+                          //     }
+                          //     ).toList(),
+                          //     onChanged: (String? newValue) {
+                          //       setState(() {
+                          //         membertype = newValue!;
+                          //       });
+                          //     },
+                          //     validator: (value) {
+                          //       if (membertype == 'Member Type') {
+                          //         return '* Select your Member Type';
+                          //       }
+                          //       return null;
+                          //     },
+                          //   ),
+                          // ),
                           // Member type dropdown button ends here
 
                           // District drop down button starts
@@ -853,12 +931,19 @@ class _RegistrationState extends State<Registration> {
                             width: 305,
                             height: 50,
                             child: TypeAheadFormField<String>(
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return '* Select Your District';
+                                }
+                                return null;
+                              },
                               textFieldConfiguration: TextFieldConfiguration(
                                 controller: districtController,
+
                                 decoration: const InputDecoration(
                                     fillColor: Colors.white,
                                     filled: true,
-                                    labelText: "District"
+                                    hintText: "District"
                                 ),
                               ),
                               suggestionsCallback: (pattern) async {
@@ -894,12 +979,18 @@ class _RegistrationState extends State<Registration> {
                             width: 305,
                             height: 50,
                             child: TypeAheadFormField<String>(
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return '* Select Your Chapter';
+                                }
+                                return null;
+                              },
                               textFieldConfiguration: TextFieldConfiguration(
                                 controller: chapterController,
                                 decoration: const InputDecoration(
                                     fillColor: Colors.white,
                                     filled: true,
-                                    labelText: "Chapter"
+                                    hintText: "Chapter"
                                 ),
                               ),
                               suggestionsCallback: (pattern) async {
@@ -983,7 +1074,6 @@ class _RegistrationState extends State<Registration> {
                                 }
                               },
                               decoration: const InputDecoration(
-                                labelText: "DOB",
                                 hintText: "Date Of Birth",
                                 suffixIcon: Icon(Icons.calendar_today_outlined),
                               ),
@@ -1190,11 +1280,9 @@ class _RegistrationState extends State<Registration> {
                                 );
                               },
                               decoration: const InputDecoration(
-                                labelText: "Kovil",
                                 hintText: "Kovil",
                                 suffixIcon: Icon(Icons.temple_hindu),
                               ),
-                              inputFormatters: [AlphabetInputFormatter()],
                             ),
                           ),
                           // Kovil textfield ends here
@@ -1278,7 +1366,7 @@ class _RegistrationState extends State<Registration> {
                                       );
                                     },
                                     decoration: const InputDecoration(
-                                      labelText: "Spouse Name",
+
                                       hintText: "Spouce Name",
                                       suffixIcon: Icon(Icons.account_circle),
                                     ),
@@ -1362,7 +1450,6 @@ class _RegistrationState extends State<Registration> {
                                       );
                                     },
                                     decoration: const InputDecoration(
-                                      labelText: "Spouse Native",
                                       hintText: "Spouse Native",
                                     ),
                                     inputFormatters: [
@@ -1405,7 +1492,6 @@ class _RegistrationState extends State<Registration> {
                                       }
                                     },
                                     decoration: const InputDecoration(
-                                      labelText: "WAD",
                                       hintText: "Wedding Aniversery Date",
                                       suffixIcon:Icon(Icons.calendar_today_outlined),
                                     ),
@@ -1616,7 +1702,6 @@ class _RegistrationState extends State<Registration> {
                                       );
                                     },
                                     decoration: const InputDecoration(
-                                      labelText: "Spouse Father Kovil",
                                       hintText: "Spouse Father Kovil",
                                       suffixIcon: Icon(Icons.temple_hindu),
                                     ),
@@ -1699,7 +1784,7 @@ class _RegistrationState extends State<Registration> {
                                 );
                               },
                               decoration: const InputDecoration(
-                                labelText: "Company Address",
+
                                 hintText: "Company Address",
                                 suffixIcon: Icon(Icons.business),
                               ),
@@ -1728,7 +1813,6 @@ class _RegistrationState extends State<Registration> {
                                 );
                               },
                               decoration: const InputDecoration(
-                                labelText: "Business keywords",
                                 hintText: "Business keywords",
                                 suffixIcon: Icon(Icons.business),
                               ),
@@ -1744,19 +1828,18 @@ class _RegistrationState extends State<Registration> {
                             width: 300,
                             child: TextFormField(
                               controller: websitecontroller,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return '* Enter your Website';
-                                }else if (value.length<5) {
-                                  return '* Enter a valid Website';
-                                }
-                                else if (nameRegExp.hasMatch(value)) {
-                                  return null;
-                                }
-                                return null;
-                              },
+                              // validator: (value) {
+                              //   if (value!.isEmpty) {
+                              //     return '* Enter your Website';
+                              //   }else if (value.length<5) {
+                              //     return '* Enter a valid Website';
+                              //   }
+                              //   else if (nameRegExp.hasMatch(value)) {
+                              //     return null;
+                              //   }
+                              //   return null;
+                              // },
                               decoration: const InputDecoration(
-                                labelText: "Website",
                                 hintText: "Website",
                                 suffixIcon: Icon(Icons.web),
                               ),
@@ -1805,8 +1888,7 @@ class _RegistrationState extends State<Registration> {
                               },*/
 
                               decoration: const InputDecoration(
-                                labelText: "business established year",
-                                hintText: "yyyy",
+                                hintText: "business established year (YYYY)",
                                 suffixIcon:
                                 Icon(Icons.calendar_today_outlined),
                               ),
@@ -1824,14 +1906,14 @@ class _RegistrationState extends State<Registration> {
                             width: 300,
                             child: TextFormField(
                               controller: educationcontroller,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return '* Enter your Education Details';
-                                } else if (nameRegExp.hasMatch(value)) {
-                                  return null;
-                                }
-                                return null;
-                              },
+                              // validator: (value) {
+                              //   if (value!.isEmpty) {
+                              //     return '* Enter your Education Details';
+                              //   } else if (nameRegExp.hasMatch(value)) {
+                              //     return null;
+                              //   }
+                              //   return null;
+                              // },
                               onChanged: (value) {
                                 String capitalizedValue = capitalizeFirstLetter(value);
                                 educationcontroller.value = educationcontroller.value.copyWith(
@@ -1840,7 +1922,6 @@ class _RegistrationState extends State<Registration> {
                                 );
                               },
                               decoration: const InputDecoration(
-                                labelText: "Education",
                                 hintText: "Education",
                                 suffixIcon: Icon(Icons.cast_for_education),
                               ),
@@ -1854,17 +1935,7 @@ class _RegistrationState extends State<Registration> {
                             width: 300,
                             child: TextFormField(
                               controller: pastexpcontroller,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return '* Enter your Past Experience';
-                                }
-                                else if (nameRegExp.hasMatch(value)) {
-                                  return null;
-                                }
-                                return null;
-                              },
                               decoration: const InputDecoration(
-                                labelText: "Past Experience",
                                 hintText: "Past Experience",
                                 suffixIcon: Icon(Icons.man),
                               ),
@@ -1874,82 +1945,6 @@ class _RegistrationState extends State<Registration> {
                                 FilteringTextInputFormatter.digitsOnly,
                               ],
                             ),
-                          ),
-
-                          // Executive GiB Member ID textfield starts here
-                          const SizedBox(height: 15,),
-                          SizedBox(
-                            width: 300,
-                            child: TextFormField(
-                              controller: referreridcotroller,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return '* Enter Referrer Executive GiB Member ID';
-                                } else if (nameRegExp.hasMatch(value)) {
-                                  return null;
-                                }
-                                return null;
-                              },
-                              onChanged: (value){
-                                idBaseMobileNoFetched(referreridcotroller.text);
-                               if( value.isEmpty){
-                                 referrermobilecontroller.clear();
-                               }
-
-
-                              },
-                              decoration: const InputDecoration(
-                                labelText: "Referrer Executive GiB Member ID",
-                                hintText: "Referrer Executive GiB Member ID",
-                                suffixIcon: Icon(Icons.phone_android),
-                              ),
-                            ),
-                          ),
-                          // Executive GiB Member ID textfield ends here
-
-                          const SizedBox(height: 15,),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                width: 300,
-                                child: TextFormField(
-                                  controller: referrermobilecontroller,
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
-                                      return '* Enter your Referrer Mobile Number';
-                                    } else if (value.length<10) {
-                                      "* Mobile Number should be 10 digits";
-                                      return null;
-                                    }
-                                    else if (nameRegExp.hasMatch(value)) {
-                                      return null;
-                                    }
-                                    return null;
-                                  },
-                                  decoration: const InputDecoration(
-                                    labelText: "Referrer Mobile Number",
-                                    prefixText: '+91 ',
-                                    prefixStyle: TextStyle(color: Colors.blue), // Set the color here
-                                    suffixIcon: Icon(Icons.phone_android),
-                                  ),
-                                  onChanged: (value){
-                                    setState(() {
-                                      if(value.length==10)
-                                        referreridcotroller.clear();
-                                      MobileBaseIdFetched(referrermobilecontroller.text);
-
-                                    });
-
-                                  },
-                                  keyboardType: TextInputType.number,
-                                  inputFormatters: <TextInputFormatter>[
-                                    FilteringTextInputFormatter.digitsOnly,
-                                    LengthLimitingTextInputFormatter(10)
-                                  ],
-                                ),
-                              ),
-                            ],
                           ),
 
                           const SizedBox(height: 15,),
@@ -2113,27 +2108,47 @@ class _RegistrationState extends State<Registration> {
 
                     const SizedBox(height: 30,),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // Sign up button starts
+                        // Login button (unchanged)
+
+                        // Sign up button with error handling
                         MaterialButton(
-                            minWidth: 300,
-                            height: 50,
-                            color: Colors.green,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5.0)),
-                            onPressed: () {
-                              uploadImage(selectedImage!);
-                              Navigator.push(context, MaterialPageRoute(builder: (context)=>const Login()));
-                             // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please wait for Admin Approval")));
-                            },
-                            child: const Text('Register',
-                              style: TextStyle(color: Colors.white),)),
-                        // Sign up button ends
+                          minWidth: 130,
+                          height: 50,
+                          color: Colors.green,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5.0)),
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              if (selectedImage == null) {
+                                // Show error message using ScaffoldMessenger
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Select a profile picture"),
+                                  ),
+                                );
+                              } else {
+                                uploadImage(selectedImage!);
+                                if(membertype!="Non-Executive") {Navigator.push(context, MaterialPageRoute(builder: (context) =>  Login(
+                                )));
+                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Registration Successfully")));
+                                }
+                                else{
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => const Login()));
+                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please wait for Admin Approval")));
+                                }
+                              }
+                            }
+                          },
+                          child: const Text(
+                            'Register',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 20,)
-
                   ],
                 ),
               ),

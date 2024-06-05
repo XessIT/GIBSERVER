@@ -1,10 +1,10 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'business.dart';
 import 'g2g_slip_history.dart';
 
 
@@ -14,10 +14,12 @@ class GtoG extends StatefulWidget {
    GtoG({
      super.key, required this.userType, required this.userId
    });
-
   @override
   State<GtoG> createState() => _GtoGState();
 }
+
+
+
 class _GtoGState extends State<GtoG> {
   @override
   Widget build(BuildContext context) {
@@ -50,11 +52,8 @@ class _GtoGPageState extends State<GtoGPage> {
   }
 
   String uid = "";
-
-  String district = "";
-  String chapter="";
   TextEditingController metwith = TextEditingController();
-  TextEditingController companyname = TextEditingController();
+  TextEditingController metcompanyname = TextEditingController();
   TextEditingController location = TextEditingController();
   TextEditingController metdate = TextEditingController();
   TextEditingController fromtime = TextEditingController();
@@ -65,10 +64,13 @@ class _GtoGPageState extends State<GtoGPage> {
     if (text.isEmpty) return text;
     return text.substring(0, 1).toUpperCase() + text.substring(1);
   }
+  String district = "";
+  String chapter = "";
   String? fname = "";
   String? lname = "";
   String mobile ="";
   String firstname="";
+  String mycomapny="";
   List dynamicdata=[];
   String errormesssage='';
 
@@ -77,10 +79,10 @@ class _GtoGPageState extends State<GtoGPage> {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=$userId');
       final response = await http.get(url);
       if (response.statusCode == 200) {
+
         print("response S: ${response.statusCode}");
         print("response B: ${response.body}");
         print('-----------------------------------');
-
         final responseData = json.decode(response.body);
         if (responseData is List<dynamic>) {
           setState(() {
@@ -90,16 +92,18 @@ class _GtoGPageState extends State<GtoGPage> {
                 fname = dynamicdata[0]["first_name"];
                 lname= dynamicdata[0]['last_name'];
                 mobile=dynamicdata[0]["mobile"];
-                companyname=dynamicdata[0]["company_name"];
-
+                mycomapny=dynamicdata[0]["company_name"];
+                district=dynamicdata[0]["district"];
+                chapter=dynamicdata[0]["chapter"];
               });
             }
           });
           print('-----------------------------------');
           print('name $fname');
           print('name $mobile');
-          print('name $mobile');
-          print('widget $companyname');
+          print('widget $mycomapny');
+          print('district $district');
+          print('chapter $chapter');
         } else {
           // Handle invalid response data (not a List)
           print('Invalid response data format');
@@ -111,59 +115,6 @@ class _GtoGPageState extends State<GtoGPage> {
     } catch (error) {
       // Handle other errors
       print('Error: $error');
-    }
-  }
-
-
-  Future<void> postData() async {
-    var url = Uri.parse('http://mybudgetbook.in/GIBAPI/g2g_slip.php');
-    final DateTime parsedDate = DateFormat('dd/MM/yyyy').parse(metdate.text);
-    final formattedDate = DateFormat('yyyy/MM/dd').format(parsedDate);
-    final response = await http.post(url, body: jsonEncode({
-      'met_name': metwith.text,
-      'user_id':widget.userId,
-      'met_company_name': companyname.text,
-      'met_number': companymobile.text,
-      'date': formattedDate,
-      'from_time': fromtime.text,
-      'to_time': totime.text,
-      'location': location.text,
-      "first_name": fname,
-      "mobile": mobile,
-      "company_name": companyname.text, // Extract text from TextEditingController
-      // Add other fields here
-    }));
-
-    if (response.statusCode == 200) {
-      var responseData = json.decode(response.body);
-      if (responseData['success']) {
-        // Data sent successfully
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Data sent successfully")),
-        );
-      } else {
-        // Error sending data
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text("Alert"),
-              content: Text(responseData['message']),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text("OK"),
-                ),
-              ],
-            );
-          },
-        );
-      }
-    } else {
-      // Handle other errors
-      print('Error sending data: ${response.statusCode}');
     }
   }
   final _formKey =GlobalKey<FormState>();
@@ -211,17 +162,59 @@ class _GtoGPageState extends State<GtoGPage> {
       searchResults = searchList;
     });
   }
-  void updateTextFields(int index) {
-    setState(() {
-      metwith.text = searchResults[index]['first_name'];
-      companymobile.text = searchResults[index]['mobile'];
-      companyname.text = searchResults[index]['company_name'];
-      // Update other text fields as needed
-    });
+
+
+
+  Future<void> postData() async {
+    var url = Uri.parse('http://mybudgetbook.in/GIBAPI/g2g_slip.php');
+    // final DateTime parsedDate = DateFormat('dd/MM/yyyy').parse(metdate.text);
+    // final formattedDate = DateFormat('yyyy/MM/dd').format(parsedDate);
+    final response = await http.post(url, body: jsonEncode({
+      'met_name': metwith.text,
+      'user_id':widget.userId,
+      'met_company_name': metcompanyname.text,
+      'met_number': companymobile.text,
+      'date': metdate.text,
+      'from_time': fromtime.text,
+      'to_time': totime.text,
+      'location': location.text,
+      "first_name": fname,
+      "mobile": mobile,
+      "district": district.toString(),
+      "chapter": chapter.toString(),
+      "company_name": mycomapny.toString(), // Extract text from TextEditingController
+      // Add other fields here
+    }));
+    if (response.statusCode == 200) {
+      var responseData = json.decode(response.body);
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>BusinessPage(userId: widget.userId, userType: widget.userType)));
+
+      if (responseData['success']) {
+      } else {
+        // Error sending data
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Alert"),
+              content: Text(responseData['message']),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("OK"),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    } else {
+      // Handle other errors
+      print('Error sending data: ${response.statusCode}');
+    }
   }
-
-
-
   TextEditingController searchController = TextEditingController();
   List<dynamic> searchResults = [];
   List<dynamic> allItems = [];
@@ -231,8 +224,6 @@ class _GtoGPageState extends State<GtoGPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-
         title: (Text('G2G',  style: Theme.of(context).textTheme.displayLarge,)
         ),
         actions: [
@@ -286,9 +277,10 @@ class _GtoGPageState extends State<GtoGPage> {
                           // Handle when a suggestion is selected
                           // Update text fields with suggestion data
                           setState(() {
+                            searchController.text="${suggestion['first_name']} ${suggestion['last_name']}";
                             metwith.text = suggestion['first_name'];
                             companymobile.text = suggestion['mobile'];
-                            companyname.text = suggestion['company_name'];
+                            metcompanyname.text = suggestion['company_name'];
                             // Update other text fields as needed
                           });
                         },
@@ -339,7 +331,7 @@ class _GtoGPageState extends State<GtoGPage> {
                               width: 320,
                               height: 50,
                               child: TextFormField(
-                                controller: companyname,
+                                controller: metcompanyname,
                                 validator: (value) {
                                   if(value!.isEmpty){
                                     return "* Enter the Company name";
@@ -349,7 +341,7 @@ class _GtoGPageState extends State<GtoGPage> {
                                 },
                                   onChanged: (value) {
                                     String capitalizedValue = capitalizeFirstLetter(value);
-                                    companyname.value = companyname.value.copyWith(
+                                    metcompanyname.value = metcompanyname.value.copyWith(
                                       text: capitalizedValue,
                                       selection: TextSelection.collapsed(offset: capitalizedValue.length),
                                     );
@@ -450,7 +442,7 @@ class _GtoGPageState extends State<GtoGPage> {
                                         lastDate: DateTime(2100));
                                     if(pickDate==null) return;{
                                       setState(() {
-                                        metdate.text =DateFormat('dd/MM/yyyy').format(pickDate);
+                                        metdate.text =DateFormat('yyyy/MM/dd').format(pickDate);
                                       });
                                     }
                                   },
@@ -538,7 +530,7 @@ class _GtoGPageState extends State<GtoGPage> {
                                       setState(() {
                                         totime.text = formattedTime;
                                       });
-                                    },                                    style: const TextStyle(fontSize: 12,
+                                    },style: const TextStyle(fontSize: 12,
                                         fontWeight: FontWeight.bold),
                                     decoration: InputDecoration(
                                       hintText: 'To Time',

@@ -1,6 +1,7 @@
 import 'dart:convert'; // for base64Encode
 //import 'dart:typed_data'; // Import this for Uint8List
 //import 'dart:html' as html;
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -28,14 +29,13 @@ class _OfferListState extends State<OfferList> {
       child: Scaffold(
         //APPBAR STARTS
         appBar: AppBar(
-          title: Text('OFFERS',
+          title: Text('Offers',
               style: Theme.of(context).textTheme.displayLarge),
-          centerTitle: true,
           iconTheme:  const IconThemeData(
             color: Colors.white, // Set the color for the drawer icon
           ),
           leading: IconButton(
-            icon: Icon(Icons.navigate_before),
+            icon: const Icon(Icons.navigate_before),
             onPressed: (){
               Navigator.push(
                 context,
@@ -124,8 +124,6 @@ class _AddOfferPageState extends State<AddOfferPage> {
   @override
   void initState() {
    getData();
-    // print("USER ID---${widget.userId}");
-    // TODO: implement initState
     super.initState();
    _checkConnectivityAndGetData();
    Connectivity().onConnectivityChanged.listen((result) {
@@ -139,6 +137,7 @@ class _AddOfferPageState extends State<AddOfferPage> {
      });
    });
   }
+
   var _connectivityResult = ConnectivityResult.none;
   Future<void> _checkConnectivityAndGetData() async {
     var connectivityResult = await Connectivity().checkConnectivity();
@@ -193,27 +192,6 @@ class _AddOfferPageState extends State<AddOfferPage> {
 
   String message = "";
   TextEditingController caption = TextEditingController();
-
-  /*String? imagename;
-  String? imagedata;*/
-  /*Future<void> getImage() async {
-    final html.FileUploadInputElement input = html.FileUploadInputElement();
-    input.click();
-    input.onChange.listen((e) {
-      final html.File file = input.files!.first;
-      final reader = html.FileReader();
-      reader.onLoadEnd.listen((e) {
-        setState(() {
-          selectedImage = reader.result as Uint8List?;
-          imagename = file.name;
-          imagedata = base64Encode(selectedImage!);
-          print('Image Name: $imagename');
-          print('Image Data: $imagedata');
-        });
-      });
-      reader.readAsArrayBuffer(file);
-    });
-  }*/
 
   bool showLocalImage = false;
   /* XFile? pickedImage; */
@@ -348,7 +326,7 @@ class _AddOfferPageState extends State<AddOfferPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body:
-      data.isEmpty ? Center(child: Text('No data found')) :
+     // data.isEmpty ? Center(child: Text('No data found')) :
       RefreshIndicator(
         onRefresh: _refresh,
         child: SingleChildScrollView(
@@ -360,6 +338,8 @@ class _AddOfferPageState extends State<AddOfferPage> {
                   const SizedBox(height: 20,),
                   InkWell(
                    child: Container(
+                     width: 150,
+                     height: 150,
                      child: ClipOval(
                         child: selectedImage != null
                             ? Image.memory(
@@ -437,7 +417,7 @@ class _AddOfferPageState extends State<AddOfferPage> {
                         }
                       },
                       decoration: const InputDecoration(
-                        labelText: 'Name:',
+                        labelText: 'Name',
                       ),
                     ),
                   ),
@@ -463,39 +443,57 @@ class _AddOfferPageState extends State<AddOfferPage> {
                     ),
                   ),
                   SizedBox(
-                    width:300,
+                    width: 300,
                     child: TextFormField(
-                        controller: _date,
-                        validator: (value) {
-                          if(value!.isEmpty){
-                            return "*Enter the Validity";
-                          }else{
-                            return null;
-                          }
-                        },
-                        decoration: InputDecoration(
-                          labelText: 'Validity',
-                          suffixIcon: IconButton(onPressed: ()async{
-                            DateTime? pickDate = await showDatePicker(
-                                context: context,
-                                initialDate: date,
-                                firstDate: date,
-                                lastDate: DateTime(2100));
-                            print("Picked date: $pickDate");
-                            if(pickDate != null) {
+                      controller: _date,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return "*Enter the Validity";
+                        } else {
+                          return null;
+                        }
+                      },
+                      onTap: () async {
+                        DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(), // Set initial date to today
+                          firstDate: DateTime(2000, 1, 1), // Set first date to a reasonable value in the past
+                          lastDate: DateTime(2100),
+                        );
+                        if (pickedDate != null) {
+                          setState(() {
+                            _date.text = DateFormat('dd/MM/yyyy').format(pickedDate);
+                          });
+                        }
+                      },
+
+                      decoration: InputDecoration(
+                        labelText: 'Validity',
+                        suffixIcon: IconButton(
+                          onPressed: () async
+                          {
+                            DateTime? pickedDate = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(), // Set initial date to today
+                              firstDate: DateTime(2000, 1, 1), // Set first date to a reasonable value in the past
+                              lastDate: DateTime(2100),
+                            );
+                            if (pickedDate != null) {
                               setState(() {
-                                _date.text = DateFormat('dd/MM/yyyy').format(pickDate);
-                                print("_date.text updated: ${_date.text}");
+                                _date.text = DateFormat('dd/MM/yyyy').format(pickedDate);
                               });
                             }
-                          }, icon: const Icon(
-                              Icons.calendar_today_outlined),
-                            color: Colors.green,),
+                          },
+                          icon: const Icon(
+                            Icons.calendar_today_outlined,
+                          ),
+                          color: Colors.green,
                         ),
-                        keyboardType: TextInputType.number,
-                        inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.digitsOnly,
-                        ]
+                      ),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly,
+                      ],
                     ),
                   ),
 
@@ -503,7 +501,7 @@ class _AddOfferPageState extends State<AddOfferPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      MaterialButton(
+                     /* MaterialButton(
                           minWidth: 130,
                           height: 50,
                           color: Colors.orangeAccent,
@@ -512,10 +510,10 @@ class _AddOfferPageState extends State<AddOfferPage> {
                             Navigator.pop(context);
                           },
                           child: const Text('Cancel',
-                            style: TextStyle(color: Colors.white),)),
+                            style: TextStyle(color: Colors.white),)),*/
                       MaterialButton(
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)  ),
-                          minWidth: 130,
+                          minWidth: 250,
                           height: 50,
                           color: Colors.green[800],
                           onPressed: (){
@@ -552,7 +550,7 @@ class _AddOfferPageState extends State<AddOfferPage> {
   }
 }
 
-class RunningPage extends StatefulWidget {
+class    RunningPage extends StatefulWidget {
   final String? userId;
   final String? userType;
   const RunningPage({Key? key, required this.userId, required this.userType}) : super(key: key);
@@ -566,10 +564,6 @@ class _RunningPageState extends State<RunningPage> {
   @override
   void initState() {
     getData();
-    print('----------------------------');
-
-    print('getdata $getData()');
-    print('----------------------------');
     // TODO: implement initState
     super.initState();
     _checkConnectivityAndGetData();
@@ -744,194 +738,201 @@ class _RunningPageState extends State<RunningPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         body:
-        data.isEmpty ? Center(child: Text('No data found')) :
-        ListView.builder(
-            itemCount: data.length,
-            itemBuilder: (context, i) {
-             String imageUrl = 'http://mybudgetbook.in/GIBAPI/${data[i]["offer_image"]}';
-              String dateString = data[i]['validity']; // This will print the properly encoded URL
-              DateTime dateTime = DateFormat('yyyy-MM-dd').parse(dateString);
-              return Center(
-                child: Card(
-                  child: Stack(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Column(
-                          children: [
-                            //MAIN ROW STARTS
-                            Stack(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    children:  [
-                                      CircleAvatar(
-                                        radius: 30.0,
-                                        backgroundColor: Colors.cyan,
-                                        backgroundImage: NetworkImage(imageUrl),
-                                        //IMAGE STARTS CIRCLEAVATAR
-                                        //  Image.network('${data[i]['offer_image']}').image,
-                                        /* child: Stack(
-                                    children: [
-                                      Align(
-                                        alignment: Alignment.bottomLeft,
-                                        //STARTS CIRCLE AVATAR OFFER
-                                        child: CircleAvatar(
-                                            radius: 20,
-                                            backgroundColor: Colors.green[900],
-                                            child: Text('${data[i]['discount']}%',
-                                                style: Theme.of(context).textTheme.titleLarge)),
-                                      ),
-                                    ],
-                                  ),*/
-                                      ),
-                                      Column(
-                                        children: [
-                                          //START TEXTS
-                                          Text('${data[i]['company_name']}',
-                                            //Text style starts
-                                            style: const TextStyle(
-                                                color: Colors.green,
-                                                fontSize: 15),),
-                                          const SizedBox(height: 10,),
-                                          //start texts
-                                          Text('${data[i]['offer_type']} - ${data[i]['name']}',
-                                            //Text style starts
-                                            style: const TextStyle(fontSize: 11,
+
+        RefreshIndicator(
+          onRefresh: _refresh,
+          child: isLoading ? const Center(child: CircularProgressIndicator(),) :
+          data.isEmpty ? Center(child: Text('No data found')) :
+          ListView.builder(
+              itemCount: data.length,
+              itemBuilder: (context, i) {
+               String imageUrl = 'http://mybudgetbook.in/GIBAPI/${data[i]["offer_image"]}';
+                String dateString = data[i]['validity']; // This will print the properly encoded URL
+                DateTime dateTime = DateFormat('yyyy-MM-dd').parse(dateString);
+                return Center(
+                  child: Card(
+                    child: Stack(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Column(
+                            children: [
+                              //MAIN ROW STARTS
+                              Stack(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      children:  [
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: InkWell(
+                                            onTap: () {
+                                              showDialog(
+                                                context: context,
+                                                builder: (BuildContext context) {
+                                                  return AlertDialog(
+                                                    content: Image.network(imageUrl),
+                                                  );
+                                                },
+                                              );
+                                            },
+                                            child: CircleAvatar(
+                                              radius: 30.0,
+                                              backgroundColor: Colors.cyan,
+                                              backgroundImage: CachedNetworkImageProvider(imageUrl),
+                                            ),
+                                          ),
+                                        ),
+                                        Column(
+                                          children: [
+                                            //START TEXTS
+                                            Text('${data[i]['company_name']}',
+                                              //Text style starts
+                                              style: const TextStyle(
+                                                  color: Colors.green,
+                                                  fontSize: 15),),
+                                            const SizedBox(height: 10,),
+                                            //start texts
+                                            Text('${data[i]['offer_type']} - ${data[i]['name']}',
+                                              //Text style starts
+                                              style: const TextStyle(fontSize: 13,
+                                                  fontWeight: FontWeight.bold
+                                              ),),
+                                            //Text starts
+                                            Text('Validatiy: ' + DateFormat('dd-MM-yyyy').format(dateTime), style: const TextStyle(fontSize: 13,
                                                 fontWeight: FontWeight.bold
                                             ),),
-                                          //Text starts
-                                          Text(DateFormat('dd-MM-yyyy').format(dateTime)),
-                                        ],
-                                      ),
-
-                                      Row(
-                                        children: [
-                                          IconButton(onPressed: (){
-                                            showDialog(
-                                                context: context,
-                                                builder: (context)=>
-                                                    AlertDialog(
-                                                      backgroundColor: Colors.white,
-                                                      title: const Text(
-                                                        "Confirmation!",
-                                                        style: TextStyle(color:Colors.black),
-                                                      ),
-                                                      content: const Text("Do you want to Block this Offer?",
-                                                        style: TextStyle(color: Colors.black),),
-                                                      actions: <Widget>[
-                                                        TextButton(
-                                                          child: const Text("Yes"),
-                                                          onPressed: (){
-                                                            blocked(int.parse(data[i]["ID"]));
-                                                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Your Offer Blocked Successfully")));
-                                                            Navigator.push(context, MaterialPageRoute(builder: (context)=> OfferList(userId: widget.userId, userType: widget.userType,)));
-                                                          }, ),
-                                                        TextButton(
+                                          ],
+                                        ),
+          
+                                        Row(
+                                          children: [
+                                            IconButton(onPressed: (){
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (context)=>
+                                                      AlertDialog(
+                                                        backgroundColor: Colors.white,
+                                                        title: const Text(
+                                                          "Confirmation!",
+                                                          style: TextStyle(color:Colors.black),
+                                                        ),
+                                                        content: const Text("Do you want to Block this Offer?",
+                                                          style: TextStyle(color: Colors.black),),
+                                                        actions: <Widget>[
+                                                          TextButton(
+                                                            child: const Text("Yes"),
                                                             onPressed: (){
-                                                              Navigator.pop(context);
-                                                            },
-                                                            child: const Text("No"))
-                                                      ],
-                                                    )
-                                            );
-                                          },
-                                              icon: const Icon(Icons.block_sharp,
-                                                color: Colors.red,)),
-                                          IconButton(onPressed: (){
-                                            Navigator.push(context, MaterialPageRoute(builder: (context)=> EditOffer(
-                                              Id: data[i]['ID'],
-                                              currentimage: data[i]['offer_image'],
-                                              currenttype: data[i]['offer_type'],
-                                              currentproductname: data[i]['name'],
-                                              currentDiscount: data[i]['discount'],
-                                              currentvalidity: data[i]['validity'],
-                                              user_id: data[i]['user_id'],
-                                              userType: widget.userType.toString(),
-                                            ))
-                                            );
-                                          },
-                                              icon: Icon(Icons.edit_outlined,
-                                                color: Colors.green[900],)),
-
-                                          IconButton(
-                                              onPressed: () {
-                                                showDialog(
-                                                    context: context,
-                                                    builder: (context)=>
-                                                        AlertDialog(
-                                                          backgroundColor: Colors.white,
-                                                          title: const Text(
-                                                            "Confirmation!",
-                                                            style: TextStyle(color:Colors.black),
-                                                          ),
-                                                          content: const Text("Do you want to delete this offer?",
-                                                            style: TextStyle(color: Colors.black),),
-                                                          actions: <Widget>[
-                                                            TextButton(
-                                                              child: const Text("Yes"),
+                                                              blocked(int.parse(data[i]["ID"]));
+                                                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Your Offer Blocked Successfully")));
+                                                              Navigator.push(context, MaterialPageRoute(builder: (context)=> OfferList(userId: widget.userId, userType: widget.userType,)));
+                                                            }, ),
+                                                          TextButton(
                                                               onPressed: (){
-                                                                delete(data[i]['ID']);
-                                                                // _delete(thisitem['id'], thisitem['Image']);
-                                                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                                                    content: Text("You have Successfully Deleted a Offer Item")));
-                                                                Navigator.push(context, MaterialPageRoute(builder: (context)=> OfferList(userId: widget.userId, userType: widget.userType,)));
+                                                                Navigator.pop(context);
                                                               },
+                                                              child: const Text("No"))
+                                                        ],
+                                                      )
+                                              );
+                                            },
+                                                icon: const Icon(Icons.block_sharp,
+                                                  color: Colors.red,)),
+                                            IconButton(onPressed: (){
+                                              Navigator.push(context, MaterialPageRoute(builder: (context)=> EditOffer(
+                                                Id: data[i]['ID'],
+                                                currentimage: data[i]['offer_image'],
+                                                currenttype: data[i]['offer_type'],
+                                                currentproductname: data[i]['name'],
+                                                currentDiscount: data[i]['discount'],
+                                                currentvalidity: data[i]['validity'],
+                                                user_id: data[i]['user_id'],
+                                                userType: widget.userType.toString(),
+                                              ))
+                                              );
+                                            },
+                                                icon: Icon(Icons.edit_outlined,
+                                                  color: Colors.green[900],)),
+          
+                                            IconButton(
+                                                onPressed: () {
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (context)=>
+                                                          AlertDialog(
+                                                            backgroundColor: Colors.white,
+                                                            title: const Text(
+                                                              "Confirmation!",
+                                                              style: TextStyle(color:Colors.black),
                                                             ),
-                                                            TextButton(
+                                                            content: const Text("Do you want to delete this offer?",
+                                                              style: TextStyle(color: Colors.black),),
+                                                            actions: <Widget>[
+                                                              TextButton(
+                                                                child: const Text("Yes"),
                                                                 onPressed: (){
-                                                                  Navigator.pop(context);
+                                                                  delete(data[i]['ID']);
+                                                                  // _delete(thisitem['id'], thisitem['Image']);
+                                                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                                                      content: Text("You have Successfully Deleted a Offer Item")));
+                                                                  Navigator.push(context, MaterialPageRoute(builder: (context)=> OfferList(userId: widget.userId, userType: widget.userType,)));
                                                                 },
-                                                                child: const Text("No"))
-                                                          ],
-                                                        )
-                                                );
-
-                                              },
-                                              icon: Icon(Icons.delete,color: Colors.green[900],))
-                                        ],
-                                      ),
-                                    ],
-
-                                  ),
-                                ]
-                            ),
-                          ],
-                        ),
-                      ),
-                      data[i]['discount'].toString().isEmpty ? Container() :
-                      Positioned(
-                        top: 5,
-                        left: 5, // Adjust position if needed
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.red, // Change the color here
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(10.0),
-                              bottomRight: Radius.circular(10.0),
-                            ),
-                          ),
-                          padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
-                          child: Row(
-                            children: [
-                              Text(
-                                '${data[i]['discount']}% off', // Text for your banner
-                                style: const TextStyle(
-                                  color: Colors.white, // Change the text color here
-                                  fontWeight: FontWeight.bold,
-                                  fontStyle: FontStyle.italic, // Add any additional styles here
-                                  fontSize: 12.0, // Adjust font size as needed
-                                ),
+                                                              ),
+                                                              TextButton(
+                                                                  onPressed: (){
+                                                                    Navigator.pop(context);
+                                                                  },
+                                                                  child: const Text("No"))
+                                                            ],
+                                                          )
+                                                  );
+          
+                                                },
+                                                icon: Icon(Icons.delete,color: Colors.green[900],))
+                                          ],
+                                        ),
+                                      ],
+          
+                                    ),
+                                  ]
                               ),
                             ],
                           ),
                         ),
-                      ),
-                    ]
+                        data[i]['discount'].toString().isEmpty ? Container() :
+                        Positioned(
+                          top: 5,
+                          left: 5, // Adjust position if needed
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.red, // Change the color here
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(10.0),
+                                bottomRight: Radius.circular(10.0),
+                              ),
+                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
+                            child: Row(
+                              children: [
+                                Text(
+                                  '${data[i]['discount']}% off', // Text for your banner
+                                  style: const TextStyle(
+                                    color: Colors.white, // Change the text color here
+                                    fontWeight: FontWeight.bold,
+                                    fontStyle: FontStyle.italic, // Add any additional styles here
+                                    fontSize: 12.0, // Adjust font size as needed
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ]
+                    ),
                   ),
-                ),
-              );
-            }
+                );
+              }
+          ),
         )
 
 
@@ -939,6 +940,9 @@ class _RunningPageState extends State<RunningPage> {
 
   }
 }
+
+
+
 class CompletedPage extends StatefulWidget {
   final String? userId;
   final String? userType;
@@ -953,8 +957,68 @@ class _CompletedPageState extends State<CompletedPage> {
   @override
   void initState() {
     getData();
-    // TODO: implement initState
+    _checkConnectivityAndGetData();
+    Connectivity().onConnectivityChanged.listen((result) {
+      setState(() {
+        _connectivityResult = result;
+      });
+    });
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
     super.initState();
+  }
+  var _connectivityResult = ConnectivityResult.none;
+  Future<void> _checkConnectivityAndGetData() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectivityResult;
+    });
+    if (_connectivityResult != ConnectivityResult.none) {
+      _getInternet();
+    }
+  }
+  Future<void> _getInternet() async {
+    // Replace the URL with your PHP backend URL
+    var url = 'http://mybudgetbook.in/BUDGETAPI/internet.php';
+
+    try {
+      var response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        // Handle successful response
+        var data = json.decode(response.body);
+        print(data);
+        // Show online status message
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(
+        //     content: Text('Now online.'),
+        //   ),
+        // );
+      } else {
+        // Handle other status codes
+        print('Request failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle network errors
+      print('Error: $e');
+      // Show offline status message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please check your internet connection.'),
+        ),
+      );
+    }
+  }
+  bool isLoading = true;
+  ///refresh
+  List<String> items = List.generate(20, (index) => 'Item $index');
+  Future<void> _refresh() async {
+    await Future.delayed(const Duration(seconds: 1));
+    setState(() {
+      initState();
+    });
   }
   List<Map<String, dynamic>> data=[];
   Future<void> getData() async {
@@ -1002,7 +1066,7 @@ class _CompletedPageState extends State<CompletedPage> {
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
-        body:
+        body: isLoading ? const Center(child: CircularProgressIndicator(),) :
         data.isEmpty ? Center(child: Text('No data found')) :
         ListView.builder(
             itemCount: data.length,
@@ -1022,12 +1086,25 @@ class _CompletedPageState extends State<CompletedPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children:  [
-                                CircleAvatar(
-                                  radius: 30.0,
-                                  backgroundColor: Colors.cyan,
-                                  backgroundImage:
-                                  //IMAGE STARTS CIRCLEAVATAR
-                                  NetworkImage(imageUrl),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: InkWell(
+                                    onTap: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            content: Image.network(imageUrl),
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: CircleAvatar(
+                                      radius: 30.0,
+                                      backgroundColor: Colors.cyan,
+                                      backgroundImage: CachedNetworkImageProvider(imageUrl),
+                                    ),
+                                  ),
                                 ),
                                 Column(
                                   children: [
@@ -1098,7 +1175,68 @@ class _BlockPageState extends State<BlockPage> {
   @override
   void initState() {
     getData();
+    _checkConnectivityAndGetData();
+    Connectivity().onConnectivityChanged.listen((result) {
+      setState(() {
+        _connectivityResult = result;
+      });
+    });
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
     super.initState();
+  }
+  var _connectivityResult = ConnectivityResult.none;
+  Future<void> _checkConnectivityAndGetData() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectivityResult;
+    });
+    if (_connectivityResult != ConnectivityResult.none) {
+      _getInternet();
+    }
+  }
+  Future<void> _getInternet() async {
+    // Replace the URL with your PHP backend URL
+    var url = 'http://mybudgetbook.in/BUDGETAPI/internet.php';
+
+    try {
+      var response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        // Handle successful response
+        var data = json.decode(response.body);
+        print(data);
+        // Show online status message
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(
+        //     content: Text('Now online.'),
+        //   ),
+        // );
+      } else {
+        // Handle other status codes
+        print('Request failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle network errors
+      print('Error: $e');
+      // Show offline status message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please check your internet connection.'),
+        ),
+      );
+    }
+  }
+  bool isLoading = true;
+  ///refresh
+  List<String> items = List.generate(20, (index) => 'Item $index');
+  Future<void> _refresh() async {
+    await Future.delayed(const Duration(seconds: 1));
+    setState(() {
+      initState();
+    });
   }
   List<Map<String, dynamic>> data = [];
 
@@ -1198,7 +1336,7 @@ class _BlockPageState extends State<BlockPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body:
+        body: isLoading ? const Center(child: CircularProgressIndicator(),) :
         data.isEmpty ? Center(child: Text('No data found')) :
         ListView.builder(
             itemCount: data.length,
@@ -1208,140 +1346,170 @@ class _BlockPageState extends State<BlockPage> {
               String imageUrl = 'http://mybudgetbook.in/GIBAPI/${data[i]['offer_image']}';
               return Center(
                 child: Card(
-                  child: Column(
-                    children: [
-                      //MAIN ROW STARTS
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children:  [
-                          //CIRCLEAVATAR STARTS
-                          CircleAvatar(
-                            radius: 40,
-                            backgroundColor: Colors.cyan,
-                             backgroundImage: NetworkImage(imageUrl),
-                            child: Stack(
+                  child: Stack(
+                      children: [
+                        //MAIN ROW STARTS
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children:  [
+                            //CIRCLEAVATAR STARTS
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: InkWell(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        content: Image.network(imageUrl),
+                                      );
+                                    },
+                                  );
+                                },
+                                child: CircleAvatar(
+                                  radius: 30.0,
+                                  backgroundColor: Colors.cyan,
+                                  backgroundImage: CachedNetworkImageProvider(imageUrl),
+                                ),
+                              ),
+                            ),
+                            //END CIRCLEAVATAR
+
+                            Column(
                               children: [
-                                Align(
-                                  alignment: Alignment.bottomLeft,
-                                  //STARTS CIRCLE AVATAR OFFER
-                                  child: CircleAvatar(
-                                      radius: 20,
-                                      backgroundColor: Colors.green[900],
-                                      child: Text('${data[i]['discount']}%',
-                                          style: Theme.of(context).textTheme.titleLarge)),
+                                //START TEXTS
+                                /* Text('${data[i]['company_name']}',
+                                  //Text style starts
+                                  style: const TextStyle(
+                                      color: Colors.green,
+                                      fontSize: 15),),*/
+                                const SizedBox(height: 10,),
+                                //start texts
+                                Text('${data[i]['offer_type']} - ${data[i]['name']}',
+                                  //Text style starts
+                                  style: const TextStyle(fontSize: 11,
+                                      fontWeight: FontWeight.bold
+                                  ),),
+                                //Text starts
+                                Text(DateFormat('dd-MM-yyyy').format(dateTime)),
+                              ],
+                            ),
+                            //IconButton starts
+
+                            //IconButton starts
+                            Row(
+                              children: [
+                                IconButton(onPressed: (){
+                                  showDialog(
+                                      context: context,
+                                      builder: (context)=>
+                                          AlertDialog(
+                                            backgroundColor: Colors.white,
+                                            title: const Text(
+                                              "Confirmation!",
+                                              style: TextStyle(color:Colors.black),
+                                            ),
+                                            content: const Text("Do you want to Unblock this offer?",
+                                              style: TextStyle(color: Colors.black),),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                child: const Text("Yes"),
+                                                onPressed: (){
+                                                  unblock(int.parse(data[i]["ID"]));
+                                                  /*Navigator.push(context, MaterialPageRoute(builder: (context)=> EditOffer(
+                                                    Id: data[i]['ID'],
+                                                    // currentimage: thisitem['Image'],
+                                                    currenttype: data[i]['offer_type'],
+                                                    currentproductname: data[i]['name'],
+                                                    currentDiscount: data[i]['discount'],
+                                                    currentvalidity: data[i]['validity'],
+                                                    user_id: data[i]['user_id'],
+                                                  ))
+                                                  );*/
+                                                  // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Your offer Unblocked Successfully")));
+                                                   Navigator.push(context, MaterialPageRoute(builder: (context)=> OfferList(userId: widget.userId, userType: widget.userType,)));
+                                                }, ),
+                                              TextButton(
+                                                  onPressed: (){
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: const Text("No"))
+                                            ],
+                                          )
+                                  );
+                                },
+                                    icon: Icon(Icons.check_circle,
+                                      color: Colors.green[900],)),
+
+                                IconButton(
+                                    onPressed: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context)=>
+                                              AlertDialog(
+                                                backgroundColor: Colors.white,
+                                                title: const Text(
+                                                  "Confirmation!",
+                                                  style: TextStyle(color:Colors.black),
+                                                ),
+                                                content: const Text("Do you want to Delete this Offer?",
+                                                  style: TextStyle(color: Colors.black),),
+                                                actions: <Widget>[
+                                                  TextButton(
+                                                    child: const Text("Yes"),
+                                                    onPressed: (){
+                                                      delete(data[i]['ID']);
+                                                      Navigator.push(context, MaterialPageRoute(builder: (context)=> OfferList(userId: widget.userId, userType: widget.userType,)));
+                                                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                                          content: Text("You have Successfully Deleted a Offer Item")));
+                                                      Navigator.pop(context);
+                                                    },
+                                                  ),
+                                                  TextButton(
+                                                      onPressed: (){
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: const Text("No"))
+                                                ],
+                                              )
+                                      );
+
+                                    },
+                                    icon: Icon(Icons.delete,color: Colors.green[900],))
+                              ],
+                            ),
+                          ],
+                        ),
+                        data[i]['discount'].toString().isEmpty ? Container() :
+                        Positioned(
+                          top: 5,
+                          left: 5, // Adjust position if needed
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              color: Colors.red, // Change the color here
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(10.0),
+                                bottomRight: Radius.circular(10.0),
+                              ),
+                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
+                            child: Row(
+                              children: [
+                                Text(
+                                  '${data[i]['discount']}% off', // Text for your banner
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontStyle: FontStyle.italic,
+                                    fontSize: 12.0, // Adjust font size as needed
+                                  ),
                                 ),
                               ],
                             ),
                           ),
-                          //END CIRCLEAVATAR
+                        ),
 
-                          Column(
-                            children: [
-                              //START TEXTS
-                              /* Text('${data[i]['company_name']}',
-                                //Text style starts
-                                style: const TextStyle(
-                                    color: Colors.green,
-                                    fontSize: 15),),*/
-                              const SizedBox(height: 10,),
-                              //start texts
-                              Text('${data[i]['offer_type']} - ${data[i]['name']}',
-                                //Text style starts
-                                style: const TextStyle(fontSize: 11,
-                                    fontWeight: FontWeight.bold
-                                ),),
-                              //Text starts
-                              Text(DateFormat('dd-MM-yyyy').format(dateTime)),
-                            ],
-                          ),
-                          //IconButton starts
-
-                          //IconButton starts
-                          Row(
-                            children: [
-                              IconButton(onPressed: (){
-                                showDialog(
-                                    context: context,
-                                    builder: (context)=>
-                                        AlertDialog(
-                                          backgroundColor: Colors.white,
-                                          title: const Text(
-                                            "Confirmation!",
-                                            style: TextStyle(color:Colors.black),
-                                          ),
-                                          content: const Text("Do you want to Unblock this offer?",
-                                            style: TextStyle(color: Colors.black),),
-                                          actions: <Widget>[
-                                            TextButton(
-                                              child: const Text("Yes"),
-                                              onPressed: (){
-                                                unblock(int.parse(data[i]["ID"]));
-                                                /*Navigator.push(context, MaterialPageRoute(builder: (context)=> EditOffer(
-                                                  Id: data[i]['ID'],
-                                                  // currentimage: thisitem['Image'],
-                                                  currenttype: data[i]['offer_type'],
-                                                  currentproductname: data[i]['name'],
-                                                  currentDiscount: data[i]['discount'],
-                                                  currentvalidity: data[i]['validity'],
-                                                  user_id: data[i]['user_id'],
-                                                ))
-                                                );*/
-                                                // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Your offer Unblocked Successfully")));
-                                                 Navigator.push(context, MaterialPageRoute(builder: (context)=> OfferList(userId: widget.userId, userType: widget.userType,)));
-                                              }, ),
-                                            TextButton(
-                                                onPressed: (){
-                                                  Navigator.pop(context);
-                                                },
-                                                child: const Text("No"))
-                                          ],
-                                        )
-                                );
-                              },
-                                  icon: Icon(Icons.check_circle,
-                                    color: Colors.green[900],)),
-
-                              IconButton(
-                                  onPressed: () {
-                                    showDialog(
-                                        context: context,
-                                        builder: (context)=>
-                                            AlertDialog(
-                                              backgroundColor: Colors.white,
-                                              title: const Text(
-                                                "Confirmation!",
-                                                style: TextStyle(color:Colors.black),
-                                              ),
-                                              content: const Text("Do you want to Delete this Offer?",
-                                                style: TextStyle(color: Colors.black),),
-                                              actions: <Widget>[
-                                                TextButton(
-                                                  child: const Text("Yes"),
-                                                  onPressed: (){
-                                                    delete(data[i]['ID']);
-                                                    Navigator.push(context, MaterialPageRoute(builder: (context)=> OfferList(userId: widget.userId, userType: widget.userType,)));
-                                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                                        content: Text("You have Successfully Deleted a Offer Item")));
-                                                    Navigator.pop(context);
-                                                  },
-                                                ),
-                                                TextButton(
-                                                    onPressed: (){
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: const Text("No"))
-                                              ],
-                                            )
-                                    );
-
-                                  },
-                                  icon: Icon(Icons.delete,color: Colors.green[900],))
-                            ],
-                          ),
-                        ],
-                      ),
-
-                    ],
+                      ],
                   ),
                 ),
               );

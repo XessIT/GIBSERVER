@@ -319,6 +319,7 @@ class _PersonalState extends State<Personal> {
                             currentDob: dob!,
                             userId: widget.userID.toString(),
                             imageUrl: imageParameter,
+                              userType: widget.userType.toString(),
                           ),
                         ),
                       );
