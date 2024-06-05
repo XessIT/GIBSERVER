@@ -201,67 +201,6 @@ class _ViewPhotosPageState extends State<ViewPhotosPage> {
     }
   }
 
-  Future<void> deleteImage(int imageId) async {
-    try {
-      final url = Uri.parse('http://mybudgetbook.in/GIBADMINAPI/gibimagefetch.php');
-      print('Deleting image with URL: $url');
-
-      Map<String, dynamic> jsonData = {'id': imageId};
-
-      final response = await http.delete(
-        url,
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(jsonData),
-      );
-
-      if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Image deleted successfully'),
-          ),
-        );
-        print('Image deleted successfully');
-        _fetchImages(); // Refresh the list after deletion
-      } else {
-        throw Exception('Failed to delete image. Status code: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error deleting image: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error: Failed to delete image.'),
-        ),
-      );
-    }
-  }
-
-  Future<void> _showDeleteConfirmationDialog(int imageId) async {
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Delete Image"),
-          content: Text("Are you sure you want to delete this image?"),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text("Cancel"),
-            ),
-            TextButton(
-              onPressed: () {
-                deleteImage(imageId);
-                Navigator.of(context).pop(true);
-              },
-              child: Text("Delete"),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   void initState() {
     super.initState();

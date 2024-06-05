@@ -426,7 +426,7 @@ class SettingsPageExecutive extends StatelessWidget {
                         btnOk: ElevatedButton(
                           onPressed: () async {
                             SharedPreferences prefs =
-                            await SharedPreferences.getInstance();
+                                await SharedPreferences.getInstance();
                             await prefs.setBool('isLoggedIn', false);
                             Navigator.pushReplacement(
                               context,
@@ -437,7 +437,7 @@ class SettingsPageExecutive extends StatelessWidget {
                           },
                           style: ButtonStyle(
                             backgroundColor:
-                            MaterialStateProperty.all<Color>(Colors.green),
+                                MaterialStateProperty.all<Color>(Colors.green),
                           ),
                           child: const Text(
                             'Yes',
@@ -450,7 +450,7 @@ class SettingsPageExecutive extends StatelessWidget {
                           },
                           style: ButtonStyle(
                             backgroundColor:
-                            MaterialStateProperty.all<Color>(Colors.red),
+                                MaterialStateProperty.all<Color>(Colors.red),
                           ),
                           child: Text(
                             'No',

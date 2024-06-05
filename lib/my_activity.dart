@@ -7,6 +7,7 @@ import 'package:gipapp/settings_page_executive.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
+import 'Non_exe_pages/settings_non_executive.dart';
 import 'home.dart';
 
 class Activity extends StatefulWidget {
@@ -164,13 +165,57 @@ class _ActivityState extends State<Activity> {
           color: Colors.white, // Set the color for the drawer icon
         ),
         leading: IconButton(
-          icon: const Icon(Icons.navigate_before),
+          icon: Icon(Icons.navigate_before),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPageExecutive(userType: widget.userType, userId: widget.userId,)));
+            if (widget.userType == "Non-Executive") {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SettingsPageNon(
+                    userType: widget.userType.toString(),
+                    userId: widget.userId.toString(),
+                  ),
+                ),
+              );
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SettingsPageExecutive(
+                    userType: widget.userType.toString(),
+                    userId: widget.userId.toString(),
+                  ),
+                ),
+              );
+            }
           },
-        )
+        ),
       ),
-      body: data.isNotEmpty ? ListView.builder(
+      body: PopScope(
+        canPop: false,
+        onPopInvoked: (didPop)  {
+          if (widget.userType == "Non-Executive") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SettingsPageNon(
+                  userType: widget.userType.toString(),
+                  userId: widget.userId.toString(),
+                ),
+              ),
+            );
+          } else {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SettingsPageExecutive(
+                  userType: widget.userType.toString(),
+                  userId: widget.userId.toString(),
+                ),
+              ),
+            );
+          }          },
+      child: data.isNotEmpty ? ListView.builder(
           itemCount: data.length,
           itemBuilder: (context, i) {
             String imageUrl = 'http://mybudgetbook.in/GIBAPI/${data[i]['profile_image']}';
@@ -324,7 +369,7 @@ class _ActivityState extends State<Activity> {
                   ),
                 );
               })
-          : const Center(child: Text('No data available')),
+          : const Center(child: Text('No data available')),)
     );
   }
 }

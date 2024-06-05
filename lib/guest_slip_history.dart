@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import 'business.dart';
+
 class GuestHistory extends StatefulWidget {
   final String userId;
 
@@ -66,8 +68,21 @@ class _GuestHistoryState extends State<GuestHistory> {
               .displayLarge,
         ),
         iconTheme: IconThemeData(color: Colors.white),
+        leading: IconButton(
+          icon: Icon(Icons.navigate_before),
+          onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BusinessPage(
+                    userId: widget.userId, userType: '',
+                  ),
+                ),
+              );
+              },
+        ),
       ),
-      body: ListView.builder(
+      body: groupedVisitors.isEmpty ? Center(child: Text("No Record Found")) : ListView.builder(
         itemCount: groupedVisitors.length,
         itemBuilder: (context, index) {
           String date = groupedVisitors.keys.elementAt(index);

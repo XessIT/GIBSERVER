@@ -17,6 +17,7 @@ import '../gib_gallery.dart';
 import '../gib_members.dart';
 import '../login.dart';
 import '../meeting.dart';
+import '../my_activity.dart';
 import '../profile.dart';
 import 'non_exe_home.dart';
 
@@ -34,7 +35,6 @@ class SettingsPageNon extends StatelessWidget {
           ? Colors.white
           : Colors.black,
       appBar: AppBar(
-        centerTitle: true,
         title:
         Text(
           "",
@@ -78,6 +78,26 @@ class SettingsPageNon extends StatelessWidget {
                     icons: CupertinoIcons.profile_circled,
                     iconStyle: IconStyle(),
                     title: 'Profile',
+                    titleStyle: Theme.of(context).textTheme.bodyMedium,
+                    // subtitle:'Profile Image, Name, Income',
+                    titleMaxLine: 1,
+                    subtitleMaxLine: 1,
+                  ),
+                  SettingsItem(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Activity( userType: userType.toString(), userId: userId.toString(),
+                        )),
+                      );
+                    },
+                    icons: Icons.supervisor_account,
+                    iconStyle: IconStyle(
+                      iconsColor: Colors.white,
+                      withBackground: true,
+                      backgroundColor: Colors.blue,
+                    ),
+                    title: 'Reference',
                     titleStyle: Theme.of(context).textTheme.bodyMedium,
                     // subtitle:'Profile Image, Name, Income',
                     titleMaxLine: 1,
@@ -200,26 +220,6 @@ class SettingsPageNon extends StatelessWidget {
               ),
               SettingsGroup(
                 items: [
-                  /*SettingsItem(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => GibMembers( userType: userType.toString(), userId: userId.toString(),
-                        )),
-                      );
-                    },
-                    icons: Icons.supervisor_account,
-                    iconStyle: IconStyle(
-                      iconsColor: Colors.white,
-                      withBackground: true,
-                      backgroundColor: Colors.blue,
-                    ),
-                    title: 'Gib Members',
-                    titleStyle: Theme.of(context).textTheme.bodyMedium,
-                    // subtitle:'Profile Image, Name, Income',
-                    titleMaxLine: 1,
-                    subtitleMaxLine: 1,
-                  ),*/
                  /* SettingsItem(
                     onTap: () {
                       Navigator.push(

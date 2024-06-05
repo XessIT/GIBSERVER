@@ -11,9 +11,9 @@ import 'g2g_slip_history.dart';
 class GtoG extends StatefulWidget {
   final String? userType;
   final String? userId;
-   GtoG({
-     super.key, required this.userType, required this.userId
-   });
+  GtoG({
+    super.key, required this.userType, required this.userId
+  });
   @override
   State<GtoG> createState() => _GtoGState();
 }
@@ -226,17 +226,22 @@ class _GtoGPageState extends State<GtoGPage> {
       appBar: AppBar(
         title: (Text('G2G',  style: Theme.of(context).textTheme.displayLarge,)
         ),
+
         actions: [
           IconButton(
               onPressed:(){
                 Navigator.push(context, MaterialPageRoute(builder: (context) =>  G2GHistory(userType: widget.userType, userId: widget.userId))); },
-              icon: const Icon(Icons.more_vert,color: Colors.white,)),
+              icon: const Icon(Icons.history,color: Colors.white,)),
 
         ],
+        iconTheme: const IconThemeData(color: Colors.white),
+
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.navigate_before),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.push(context, MaterialPageRoute(
+                builder: (context) => BusinessPage(userType: widget.userType, userId: widget.userId)
+            ));
           },
         ),
       ),
@@ -288,14 +293,14 @@ class _GtoGPageState extends State<GtoGPage> {
                     ),/// search controller
                     const SizedBox(height: 10,),
                     Container(
-        
+
                       child: Column(
                           children: [
                             const SizedBox(height: 20,),
-        
+
                             SizedBox(
-                            width: 320,
-                            height: 50,
+                              width: 320,
+                              height: 50,
                               child: TextFormField(
                                 controller: metwith,
                                 validator: (value) {
@@ -306,7 +311,7 @@ class _GtoGPageState extends State<GtoGPage> {
                                   }
                                 },
                                 onChanged: (value) {
-        
+
                                   String capitalizedValue = capitalizeFirstLetter(value);
                                   metwith.value = metwith.value.copyWith(
                                     text: capitalizedValue,
@@ -317,7 +322,7 @@ class _GtoGPageState extends State<GtoGPage> {
                                   hintText: 'Met with:',
                                   suffixIcon: Icon(Icons.account_circle,color: Colors.green,),
                                   contentPadding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 3.0),
-        
+
                                 ),
                                 inputFormatters: <TextInputFormatter>[
                                   LengthLimitingTextInputFormatter(20),
@@ -326,19 +331,19 @@ class _GtoGPageState extends State<GtoGPage> {
                               ),
                             ),
                             const SizedBox(height: 20,),
-        
+
                             SizedBox(
                               width: 320,
                               height: 50,
                               child: TextFormField(
-                                controller: metcompanyname,
-                                validator: (value) {
-                                  if(value!.isEmpty){
-                                    return "* Enter the Company name";
-                                  }else{
-                                    return null;
-                                  }
-                                },
+                                  controller: metcompanyname,
+                                  validator: (value) {
+                                    if(value!.isEmpty){
+                                      return "* Enter the Company name";
+                                    }else{
+                                      return null;
+                                    }
+                                  },
                                   onChanged: (value) {
                                     String capitalizedValue = capitalizeFirstLetter(value);
                                     metcompanyname.value = metcompanyname.value.copyWith(
@@ -346,17 +351,17 @@ class _GtoGPageState extends State<GtoGPage> {
                                       selection: TextSelection.collapsed(offset: capitalizedValue.length),
                                     );
                                   },
-                                decoration: const InputDecoration(
-                                    hintText: 'Company name',
-                                    suffixIcon: Icon(Icons.business,color: Colors.green,)
-                                ),
-                                inputFormatters: [
-                                  LengthLimitingTextInputFormatter(30)
-                                ]
+                                  decoration: const InputDecoration(
+                                      hintText: 'Company name',
+                                      suffixIcon: Icon(Icons.business,color: Colors.green,)
+                                  ),
+                                  inputFormatters: [
+                                    LengthLimitingTextInputFormatter(30)
+                                  ]
                               ),
                             ),  /// Company name
                             const SizedBox(height: 20,),
-        
+
                             //Company name TextFormField starts
                             SizedBox(
                               width: 320,
@@ -407,7 +412,7 @@ class _GtoGPageState extends State<GtoGPage> {
                                 },
                                 decoration: const InputDecoration(
                                   hintText: 'Location',
-        
+
                                   suffixIcon: Icon(
                                     Icons.location_on,
                                     color: Colors.green,
@@ -457,7 +462,7 @@ class _GtoGPageState extends State<GtoGPage> {
                               ),
                             ),
                             const SizedBox(height: 20,),
-        
+
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
@@ -531,11 +536,11 @@ class _GtoGPageState extends State<GtoGPage> {
                                         totime.text = formattedTime;
                                       });
                                     },style: const TextStyle(fontSize: 12,
-                                        fontWeight: FontWeight.bold),
+                                      fontWeight: FontWeight.bold),
                                     decoration: InputDecoration(
                                       hintText: 'To Time',
                                       suffixIcon: const Icon(
-                                            Icons.watch_later_outlined,
+                                        Icons.watch_later_outlined,
                                         color: Colors.green,),
                                     ),
                                   ),

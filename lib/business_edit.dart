@@ -52,7 +52,6 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
   @override
   void  initState() {
     image = 'http://mybudgetbook.in/GIBAPI/${widget.imageUrl}';
-
     companynamecontroller = TextEditingController(text: widget.currentcompanyname,);
     businesskeywordcontroller = TextEditingController(text: widget.currentbusinesskeywords,);
     mobilecontroller = TextEditingController(text: widget.currentmobile,);
@@ -185,7 +184,6 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
     }
   }
 
-
   Future<File?> CropImage({required File imageFile}) async{
     CroppedFile? croppedImage = await ImageCropper().cropImage(sourcePath: imageFile.path);
     if(croppedImage == null) return null;
@@ -281,6 +279,9 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
                     const SizedBox(height: 20,),
                     InkWell(
                       child: ClipOval(
+                          child: Container(
+                            width: 150,
+                            height: 150,
                         child: CachedNetworkImage(
                           imageUrl: image, // Your network image URL
                           placeholder: (context, url) => Center(child: CircularProgressIndicator()),
@@ -289,7 +290,7 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
                           fadeOutDuration: Duration(milliseconds: 200), // Smooth fade-out
                           fadeInDuration: Duration(milliseconds: 200), // Smooth fade-in
                           filterQuality: FilterQuality.high, // Maintain image quality
-                        ),
+                        ),),
                       ),
                       onTap: () {
                         showModalBottomSheet(
@@ -541,7 +542,7 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
                               }
 
                             },
-                            child: const Text('SAVE',
+                            child: const Text('UPDATE',
                               style: TextStyle(color: Colors.white),)),
                         // Save button ends
                         // Cancel button starts
