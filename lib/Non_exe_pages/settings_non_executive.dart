@@ -61,11 +61,6 @@ class SettingsPageNon extends StatelessWidget {
           padding: const EdgeInsets.all(10),
           child: ListView(
             children: [
-              // user card
-              // SimpleUserCard(
-              //   userName: "Nom de l'utilisateur",
-              //   userProfilePic: AssetImage("assets/profilpic.png"),
-              // ),
               SettingsGroup(
                 items: [
                   SettingsItem(
@@ -139,35 +134,12 @@ class SettingsPageNon extends StatelessWidget {
                     titleStyle: Theme.of(context).textTheme.bodyMedium,
                     //subtitle: "Lock Ziar'App to improve your privacy",
                   ),
-/*
-                  SettingsItem(
-                    onTap: () {},
-                    icons: Icons.dark_mode_rounded,
-                    iconStyle: IconStyle(
-                      iconsColor: Colors.white,
-                      withBackground: true,
-                      backgroundColor: Colors.red,
-                    ),
-                    title: 'Dark mode',
-                    //subtitle: "Automatic",
-                    trailing: Switch.adaptive(
-                      value: Theme.of(context).brightness == Brightness.dark,
-                      onChanged: (value) {
-
-                      },
-                    ),
-                  ),
-*/
-                ],
-              ),
-              SettingsGroup(
-                items: [
                   SettingsItem(
                     onTap: () {
-                         Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) =>   ViewPhotosPage( userType: userType.toString(), userID: userId.toString(),)),
-                          );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) =>   ViewPhotosPage( userType: userType.toString(), userID: userId.toString(),)),
+                      );
                     },
                     icons: CupertinoIcons.photo_on_rectangle,
                     iconStyle: IconStyle(
@@ -200,10 +172,6 @@ class SettingsPageNon extends StatelessWidget {
                     titleMaxLine: 1,
                     subtitleMaxLine: 1,
                   ),
-                ],
-              ),
-              SettingsGroup(
-                items: [
                   SettingsItem(
                     onTap: () {
                       Navigator.push(
@@ -283,38 +251,6 @@ class SettingsPageNon extends StatelessWidget {
                     titleMaxLine: 1,
                     subtitleMaxLine: 1,
                   ),
-                ],
-              ),
-             /* SettingsGroup(
-                items: [
-                  SettingsItem(
-                    onTap: () {
-
-                    },
-                    icons: Icons.question_mark_outlined,
-                    iconStyle: IconStyle(
-                      backgroundColor: Colors.purple,
-                    ),
-                    title: 'FAQ',
-                    //subtitle: "Learn more about Ziar'App",
-                  ),
-                  SettingsItem(
-                    onTap: () {
-
-                    },
-                    icons: Icons.star_rate_rounded,
-                    iconStyle: IconStyle(
-                      backgroundColor: Colors.teal,
-                    ),
-                    title: 'Feedback',
-                    //  subtitle: "Learn more about Ziar'App",
-                  ),
-                ],
-              ),*/
-              // You can add a settings title
-              SettingsGroup(
-               // settingsGroupTitle: "Account",
-                items: [
                   SettingsItem(
                     onTap: () {
                       AwesomeDialog(
@@ -373,20 +309,6 @@ class SettingsPageNon extends StatelessWidget {
                     title: "Log Out",
                     titleStyle: Theme.of(context).textTheme.bodyMedium,
                   ),
-                  /* SettingsItem(
-                    onTap: () {},
-                    icons: CupertinoIcons.repeat,
-                    title: "Change email",
-                  ),
-                  SettingsItem(
-                    onTap: () {},
-                    icons: CupertinoIcons.delete_solid,
-                    title: "Delete account",
-                    titleStyle: TextStyle(
-                      color: Colors.red,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),*/
                 ],
               ),
             ],

@@ -293,7 +293,8 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
                         ) : Image.memory(selectedImage!)),
                       ),
                       onTap: () {
-                        showModalBottomSheet(
+                        pickImageFromGallery();
+                        /*showModalBottomSheet(
                           context: context,
                           builder: (ctx) {
                             return Column(
@@ -310,7 +311,7 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
                               ],
                             );
                           },
-                        );
+                        );*/
                       },
                     ),
                     const SizedBox(height: 10,),
