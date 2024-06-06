@@ -155,27 +155,6 @@ class _CompletedState extends State<Completed> {
   }
 
 
-  Future<void> updateBusinessSlip(String id, String status, String reason) async {
-    final url = Uri.parse('http://mybudgetbook.in/GIBAPI/business_slip.php');
-    print('url123$url');
-    final response = await http.put(
-      url,
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, dynamic>{
-        'id': id,
-        'status': status,
-        'reason': reason,
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      print('Business slip updated successfully');
-    } else {
-      throw Exception('Failed to update business slip');
-    }
-  }
 
   bool isLoading = true;
   @override
@@ -232,8 +211,8 @@ class _CompletedState extends State<Completed> {
                                     ? Icon(Icons.call_received, color: Colors.green[800])
                                     : Icon(Icons.call_made, color: Colors.red),
                               ),
-                              if (data[i]["Tomobile"] == fetchMobile && isExpanded)
-                                IconButton(
+                             // if (data[i]["Tomobile"] == fetchMobile && isExpanded)
+                                /*IconButton(
                                   onPressed: () {
                                     if (data[i]['id']!= null) {
                                       showDialog(
@@ -321,7 +300,7 @@ class _CompletedState extends State<Completed> {
                                     }
                                   },
                                   icon: Icon(Icons.edit, color: Colors.blue),
-                                ),
+                                ),*/
                             ],
                           ),
                         ),
@@ -549,181 +528,8 @@ class _PendingState extends State<Pending> {
                                     ? Icon(Icons.call_received, color: Colors.green[800])
                                     : Icon(Icons.call_made, color: Colors.red),
                               ),
-                              if (data[i]["Tomobile"] == fetchMobile && isExpanded)
-                                IconButton(
-                                  onPressed: () {
-                                    if (data[i]['id']!= null) {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return StatefulBuilder(
-                                            builder: (context, setState) {
-                                              return AlertDialog(
-                                                title: Text('Edit Status'),
-                                                content: Column(
-                                                  mainAxisSize: MainAxisSize.min,
-                                                  children: [
-                                                    // Radio buttons for status selection
-                                                    ListTile(
-                                                      title: Text('Pending'),
-                                                      leading: Radio(
-                                                        value: 'Pending',
-                                                        groupValue: selectedStatus,
-                                                        onChanged: (value) {
-                                                          setState(() {
-                                                            isReason = true;
-                                                            isAmount = false;
-                                                            selectedStatus = value.toString();
-                                                          });
-                                                        },
-                                                      ),
-                                                    ),
-                                                    ListTile(
-                                                      title: Text('Successful'),
-                                                      leading: Radio(
-                                                        value: 'Successful',
-                                                        groupValue: selectedStatus,
-                                                        onChanged: (value) {
-                                                          setState(() {
-                                                            isAmount = true;
-                                                            isReason = false;
-                                                            selectedStatus = value.toString();
-                                                          });
-                                                        },
-                                                      ),
-                                                    ),
-                                                    ListTile(
-                                                      title: const Text('Unsuccessful'),
-                                                      leading: Radio(
-                                                        value: 'Unsuccessful',
-                                                        groupValue: selectedStatus,
-                                                        onChanged: (value) {
-                                                          setState(() {
-                                                            isReason = true;
-                                                            isAmount = false;
-                                                            selectedStatus = value.toString();
-                                                          });
-                                                        },
-                                                      ),
-                                                    ),
-                                                    // Text form field for additional input
-                                                    Visibility(
-                                                      visible: isReason,
-                                                      child: Form(
-                                                        key: _formKey,
-                                                        child: TextFormField(
-                                                          controller: reasonController,
-                                                          validator: (value){
-                                                            if(value!.isEmpty){
-                                                              return "* Enter the Reason";
-                                                            }else{
-                                                              return null;
-                                                            }
-                                                          },
-                                                          decoration: const InputDecoration(
-                                                            labelText: 'Reason',
-                                                            border: OutlineInputBorder(),
-                                                          ),
-                                                          // Add controller if you need to capture the input
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Visibility(
-                                                      visible: isAmount,
-                                                      child: Form(
-                                                        key: _formKey,
-                                                        child: TextFormField(
-                                                          controller: amountController,
-                                                          validator: (value){
-                                                            if(value!.isEmpty){
-                                                              return "* Enter the Amount";
-                                                            } else if(value == "0"){
-                                                              return "* Amount cannot be zero";
-                                                            }else{
-                                                              return null;
-                                                            }
-                                                          },
-                                                          decoration: const InputDecoration(
-                                                            labelText: 'Amount',
-                                                            prefixIcon: Icon(
-                                                              Icons.currency_rupee_rounded,
-                                                              color: Colors.green,),
-                                                            border: OutlineInputBorder(),
-                                                          ),
-                                                          keyboardType: TextInputType.number,
-                                                          inputFormatters: <TextInputFormatter>[
-                                                            FilteringTextInputFormatter.digitsOnly,
-                                                          ],
-                                                          // Add controller if you need to capture the input
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                actions: <Widget>[
-                                                  TextButton(
-                                                    onPressed: ()async {
-                                                      if (_formKey.currentState!.validate()) {
-                                                      if(selectedStatus == 'Successful') {
-                                                          updateBusinessSlip(data[i]['id'], selectedStatus, amountController.text);
-                                                          try {
-                                                            final url = Uri.parse('http://mybudgetbook.in/GIBAPI/honor_slip.php');
-                                                            final response = await http.post(url,
-                                                              body: jsonEncode({
-                                                                "Toname": data[i]["referrer_name"],
-                                                                "Tomobile": data[i]["referrer_mobile"],
-                                                                "Tocompanyname": data[i]["referrer_company"],
-                                                                "purpose": data[i]["purpose"],
-                                                                "business_name": data[i]["referree_name"],
-                                                                "business_mobile": data[i]["referree_mobile"],
-                                                                "name": data[i]["Toname"],
-                                                                "mobile": data[i]["Tomobile"],
-                                                                "company": data[i]["Tocompanyname"],
-                                                                "amount": amountController.text.trim(),
-                                                                "district": data[i]["district"],
-                                                                "chapter": data[i]["chapter"],
-                                                              }),
-                                                            );
-                                                            print(url);
-                                                            print("ResponseStatus: ${response.statusCode}");
-                                                            if (response.statusCode == 200) {
-                                                              print("Offers response: ${response.body}");
-                                                            } else {
-                                                              print("Error: ${response.statusCode}");
-                                                            }
-                                                          } catch (e) {
-                                                            print("Error during signup: $e");
-                                                            // Handle error as needed
-                                                          }
-                                                        }
-                                                        else {
-                                                          // Implement save functionality here
-                                                          updateBusinessSlip(data[i]['id'], selectedStatus, reasonController.text);
-                                                        }
-                                                        Navigator.of(context).pop();
-                                                      }
-                                                    },
-                                                    child: Text('Save'),
-                                                  ),
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.of(context).pop();
-                                                    },
-                                                    child: Text('Cancel'),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
-                                        },
-                                      );
-                                    }
-                                    else {
-                                      print('ID is null');
-                                    }
-                                  },
-                                  icon: Icon(Icons.edit, color: Colors.blue),
-                                ),
+
+
                             ],
                           ),
                         ),
@@ -758,6 +564,240 @@ class _PendingState extends State<Pending> {
                           data[i]["reason"].isNotEmpty ? ListTile(
                             title: Text('Reason: ${data[i]["reason"]}'),
                           ) : Container(),
+                          if (data[i]["Tomobile"] == fetchMobile )
+                          Row(
+                           // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  if (data[i]['id']!= null) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return StatefulBuilder(
+                                          builder: (context, setState) {
+                                            return AlertDialog(
+                                              title: Text('Edit Status'),
+                                              content: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Form(
+                                                    key: _formKey,
+                                                    child: TextFormField(
+                                                      controller: amountController,
+                                                      validator: (value){
+                                                        if(value!.isEmpty){
+                                                          return "* Enter the Amount";
+                                                        } else if(value == "0"){
+                                                          return "* Amount cannot be zero";
+                                                        }else{
+                                                          return null;
+                                                        }
+                                                      },
+                                                      decoration: const InputDecoration(
+                                                        labelText: 'Amount',
+                                                        prefixIcon: Icon(
+                                                          Icons.currency_rupee_rounded,
+                                                          color: Colors.green,),
+                                                        border: OutlineInputBorder(),
+                                                      ),
+                                                      keyboardType: TextInputType.number,
+                                                      inputFormatters: <TextInputFormatter>[
+                                                        FilteringTextInputFormatter.digitsOnly,
+                                                      ],
+                                                      // Add controller if you need to capture the input
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  onPressed: ()async {
+                                                    if (_formKey.currentState!.validate()) {
+                                                      updateBusinessSlip(data[i]['id'], "Successful", amountController.text);
+                                                      try {
+                                                        final url = Uri.parse('http://mybudgetbook.in/GIBAPI/honor_slip.php');
+                                                        final response = await http.post(url,
+                                                          body: jsonEncode({
+                                                            "Toname": data[i]["referrer_name"],
+                                                            "Tomobile": data[i]["referrer_mobile"],
+                                                            "Tocompanyname": data[i]["referrer_company"],
+                                                            "purpose": data[i]["purpose"],
+                                                            "business_name": data[i]["referree_name"],
+                                                            "business_mobile": data[i]["referree_mobile"],
+                                                            "name": data[i]["Toname"],
+                                                            "mobile": data[i]["Tomobile"],
+                                                            "company": data[i]["Tocompanyname"],
+                                                            "amount": amountController.text.trim(),
+                                                            "district": data[i]["district"],
+                                                            "chapter": data[i]["chapter"],
+                                                          }),
+                                                        );
+                                                        print(url);
+                                                        print("ResponseStatus: ${response.statusCode}");
+                                                        if (response.statusCode == 200) {
+                                                          print("Offers response: ${response.body}");
+                                                        } else {
+                                                          print("Error: ${response.statusCode}");
+                                                        }
+                                                      } catch (e) {
+                                                        print("Error during signup: $e");
+                                                        // Handle error as needed
+                                                      }
+                                                      Navigator.of(context).pop();
+                                                    }
+                                                  },
+                                                  child: Text('Save'),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Text('Cancel'),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                    );
+                                  }
+                                  else {
+                                    print('ID is null');
+                                  }
+                                },
+                                icon: Icon(Icons.check, color: Colors.green),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  if (data[i]['id']!= null) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return StatefulBuilder(
+                                          builder: (context, setState) {
+                                            return AlertDialog(
+                                              title: Text('Edit Status'),
+                                              content: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+
+                                                  Form(
+                                                    key: _formKey,
+                                                    child: TextFormField(
+                                                      controller: reasonController,
+                                                      validator: (value){
+                                                        if(value!.isEmpty){
+                                                          return "* Enter the Reason";
+                                                        }else{
+                                                          return null;
+                                                        }
+                                                      },
+                                                      decoration: const InputDecoration(
+                                                        labelText: 'Reason',
+                                                        border: OutlineInputBorder(),
+                                                      ),
+                                                      // Add controller if you need to capture the input
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  onPressed: ()async {
+                                                    if (_formKey.currentState!.validate()) {
+                                                      updateBusinessSlip(data[i]['id'], "Pending", reasonController.text);
+
+                                                      Navigator.of(context).pop();
+                                                    }
+                                                  },
+                                                  child: Text('Save'),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Text('Cancel'),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                    );
+                                  }
+                                  else {
+                                    print('ID is null');
+                                  }
+                                },
+                                icon: Icon(Icons.assignment_late_outlined, color: Colors.orange),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  if (data[i]['id']!= null) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return StatefulBuilder(
+                                          builder: (context, setState) {
+                                            return AlertDialog(
+                                              title: Text('Edit Status'),
+                                              content: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Form(
+                                                    key: _formKey,
+                                                    child: TextFormField(
+                                                      controller: reasonController,
+                                                      validator: (value){
+                                                        if(value!.isEmpty){
+                                                          return "* Enter the Reason";
+                                                        }else{
+                                                          return null;
+                                                        }
+                                                      },
+                                                      decoration: const InputDecoration(
+                                                        labelText: 'Reason',
+                                                        border: OutlineInputBorder(),
+                                                      ),
+                                                      // Add controller if you need to capture the input
+                                                    ),
+                                                  ),
+
+                                                ],
+                                              ),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  onPressed: ()async {
+                                                    if (_formKey.currentState!.validate()) {
+                                                      updateBusinessSlip(data[i]['id'], "Rejected", reasonController.text);
+
+                                                      Navigator.of(context).pop();
+                                                    }
+                                                  },
+                                                  child: Text('Save'),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Text('Cancel'),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                    );
+                                  }
+                                  else {
+                                    print('ID is null');
+                                  }
+                                },
+                                icon: Icon(Icons.cancel, color: Colors.red),
+                              ),
+                            ],
+                          )
                         ],
                       ),
                     ),
@@ -861,27 +901,6 @@ class _UnsuccessfulState extends State<Unsuccessful> {
   }
 
 
-  Future<void> updateBusinessSlip(String id, String status, String reason) async {
-    final url = Uri.parse('http://mybudgetbook.in/GIBAPI/business_slip.php');
-    print('url123$url');
-    final response = await http.put(
-      url,
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, dynamic>{
-        'id': id,
-        'status': status,
-        'reason': reason,
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      print('Business slip updated successfully');
-    } else {
-      throw Exception('Failed to update business slip');
-    }
-  }
   bool isLoading = true;
   @override
   void initState() {
@@ -937,7 +956,7 @@ class _UnsuccessfulState extends State<Unsuccessful> {
                                     ? Icon(Icons.call_received, color: Colors.green[800])
                                     : Icon(Icons.call_made, color: Colors.red),
                               ),
-                              if (data[i]["Tomobile"] == fetchMobile && isExpanded)
+                             /* if (data[i]["Tomobile"] == fetchMobile && isExpanded)
                                 IconButton(
                                   onPressed: () {
                                     if (data[i]['id']!= null) {
@@ -1026,7 +1045,7 @@ class _UnsuccessfulState extends State<Unsuccessful> {
                                     }
                                   },
                                   icon: Icon(Icons.edit, color: Colors.blue),
-                                ),
+                                ),*/
                             ],
                           ),
                         ),
