@@ -1257,9 +1257,9 @@ class _NavigationBarExeState extends State<NavigationBarExe> {
           ),
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.person,
+              Icons.more_horiz,
             ),
-            label: 'Account',
+            label: 'More',
           ),
         ],
         type:
