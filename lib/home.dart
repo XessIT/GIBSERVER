@@ -1198,7 +1198,7 @@ class _NavigationBarExeState extends State<NavigationBarExe> {
     _pages = [
       Homepage(userId: widget.userId, userType: widget.userType),
       BusinessPage(userId: widget.userId, userType: widget.userType),
-      MeetingUpdateDate(userId: widget.userId, userType: widget.userType),
+      MeetingUpcoming(userId: widget.userId, userType: widget.userType),
       GibMembers(userId: widget.userId, userType: widget.userType.toString()),
       SettingsPageExecutive(userId: widget.userId, userType: widget.userType),
     ];
