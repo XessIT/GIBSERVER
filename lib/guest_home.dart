@@ -36,8 +36,8 @@ class _GuestHomeState extends State<GuestHome> {
     _pages = [
       GuestHomePage(userId: widget.userId, userType: widget.userType),
       OffersPage(userId: widget.userId, userType: widget.userType),
-      BloodGroup(userId: widget.userId, userType: widget.userType),
       Doctors(userId: widget.userId, userType: widget.userType),
+      BloodGroup(userId: widget.userId, userType: widget.userType),
       GuestSettings(userId: widget.userId, userType: widget.userType),
     ];
     super.initState();
@@ -51,7 +51,7 @@ class _GuestHomeState extends State<GuestHome> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.home_outlined,
+              Icons.home,
             ),
             label: 'Home',
           ),
@@ -60,18 +60,16 @@ class _GuestHomeState extends State<GuestHome> {
               Icons.local_offer,
             ),
             label: 'Offers',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.bloodtype,
-            ),
-            label: 'Blood',
-          ),
-          BottomNavigationBarItem(
+          ),BottomNavigationBarItem(
             icon: Icon(
               Icons.add_circle,
             ),
-            label: 'Doctors',
+            label: "Doctors",
+          ),BottomNavigationBarItem(
+            icon: Icon(
+              Icons.bloodtype,
+            ),
+            label: 'Blood Group',
           ),
           BottomNavigationBarItem(
             icon: Icon(

@@ -20,6 +20,7 @@ import '../meeting.dart';
 import '../my_activity.dart';
 import '../profile.dart';
 import 'non_exe_home.dart';
+import 'non_exe_meeting.dart';
 
 
 
@@ -107,7 +108,7 @@ class SettingsPageNon extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => MeetingUpcoming(userType: userType.toString(), userId: userId.toString(),)),
+                        MaterialPageRoute(builder: (context) => NonExeMeeting(userType: userType.toString(), userId: userId.toString(),)),
                       );
                     },
                     icons: CupertinoIcons.calendar,
@@ -121,23 +122,6 @@ class SettingsPageNon extends StatelessWidget {
                     // subtitle:'Profile Image, Name, Income',
                     titleMaxLine: 1,
                     subtitleMaxLine: 1,
-                  ),
-                  SettingsItem(
-                    onTap: () {
-                        Navigator.push(
-                        context,
-                      MaterialPageRoute(builder: (context) =>   AttendancePage( userType: userType.toString(), userID: userId.toString(),)),
-                      );
-                    },
-                    icons: Icons.fingerprint_outlined,
-                    iconStyle: IconStyle(
-                      iconsColor: Colors.white,
-                      withBackground: true,
-                      backgroundColor: Colors.red,
-                    ),
-                    title: 'Attendance',
-                    titleStyle: Theme.of(context).textTheme.bodyMedium,
-                    //subtitle: "Lock Ziar'App to improve your privacy",
                   ),
                   SettingsItem(
                     onTap: () {
@@ -220,29 +204,6 @@ class SettingsPageNon extends StatelessWidget {
               ),
               SettingsGroup(
                 items: [
-                 /* SettingsItem(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) =>   OffersPage( userType: userType.toString(), userId: userId.toString(),)),
-                      );
-                    },
-                    icons: Icons.local_offer,
-                    iconStyle: IconStyle(
-                      iconsColor: Colors.white,
-                      withBackground: true,
-                      backgroundColor: Colors.orange,
-                    ),
-                    title: 'Offers',
-                    titleStyle: Theme.of(context).textTheme.bodyMedium,
-                    // subtitle:'Profile Image, Name, Income',
-                    titleMaxLine: 1,
-                    subtitleMaxLine: 1,
-                  ),*/
-                ],
-              ),
-              SettingsGroup(
-                items: [
                   SettingsItem(
                     onTap: () {
                       Navigator.push(
@@ -266,7 +227,7 @@ class SettingsPageNon extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) =>   Blood( userType: userType.toString(), userId: userId.toString(),)),
+                        MaterialPageRoute(builder: (context) =>   BloodGroup( userType: userType.toString(), userId: userId.toString(),)),
                       );
                     },
                     icons: Icons.bloodtype,

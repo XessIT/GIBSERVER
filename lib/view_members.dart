@@ -8,40 +8,19 @@ import 'business_edit.dart';
 import 'Non_exe_pages/non_exe_home.dart';
 import 'package:http/http.dart'as http;
 import 'edit_profile.dart';
+import 'gib_members.dart';
 import 'guest_home.dart';
 import 'home.dart';
 
-class ProfileMembers extends StatelessWidget {
+
+class ProfileMembers extends StatefulWidget {
+
   final String userType;
-  final String? userID;
   final String memberId;
+
+  final String? userID;
+
   const ProfileMembers({
-    super.key,
-    required this.userType,
-    required this. userID,
-    required this. memberId,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-
-    return  Scaffold(
-      body: View(
-          userType : userType,
-          memberId: memberId,
-          userID:userID),
-    );
-  }
-}
-
-class View extends StatefulWidget {
-
-  final String userType;
-  final String memberId;
-
-  final String? userID;
-
-  const View({
     super.key,
     required this.userType,
     required this.memberId,
@@ -49,9 +28,9 @@ class View extends StatefulWidget {
   });
 
   @override
-  State<View> createState() => _ViewState();
+  State<ProfileMembers> createState() => _ProfileMembersState();
 }
-class _ViewState extends State<View> {
+class _ProfileMembersState extends State<ProfileMembers> {
 
   @override
   Widget build(BuildContext context) {
@@ -69,28 +48,15 @@ class _ViewState extends State<View> {
          // centerTitle: true,
           leading: IconButton(
             onPressed: () {
-              if (widget.userType == "Non-Executive") {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => NavigationBarNon(
-                      userType: widget.userType.toString(),
-                      userId: widget.userID.toString(),
-                    ),
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => GibMembers(
+                    userType: widget.userType.toString(),
+                    userId: widget.userID.toString(),
                   ),
-                );
-              }
-              else{
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => NavigationBarExe(
-                      userType: widget.userType.toString(),
-                      userId: widget.userID.toString(),
-                    ),
-                  ),
-                );
-              }
+                ),
+              );
             },
             icon: const Icon(Icons.navigate_before),
           ),
@@ -98,28 +64,15 @@ class _ViewState extends State<View> {
         body: PopScope(
           canPop: false,
           onPopInvoked: (didPop)  {
-            if (widget.userType == "Non-Executive") {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => NavigationBarNon(
-                    userType: widget.userType.toString(),
-                    userId: widget.userID.toString(),
-                  ),
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => GibMembers(
+                  userType: widget.userType.toString(),
+                  userId: widget.userID.toString(),
                 ),
-              );
-            }
-            else{
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => NavigationBarExe(
-                    userType: widget.userType.toString(),
-                    userId: widget.userID.toString(),
-                  ),
-                ),
-              );
-            }
+              ),
+            );
           },
           child: Column(
             children:  [
@@ -128,26 +81,19 @@ class _ViewState extends State<View> {
                   labelColor: Colors.green,
                   unselectedLabelColor: Colors.black,
                   tabs: [
-                   // Tab(text: 'Personal',),
                     Tab(text: 'Business',),
-
-                    // Tab(text: 'Reward',)
+                    Tab(text: 'Gallery',)
                   ]),
               Expanded(
                 child: TabBarView(
                   children: [
-                    // Personal(
-                    //   userType:widget.userType,
-                    //   userID:widget.userID,
-                    //
-                    // ),
-                    BusinessTabPage(
+                    BusinessInfo(
                       userType:widget.userType,
                       userID:widget.userID,
                       memberId: widget.memberId,
                     ),
 
-                    // Reward(),
+                    ImageView(memberId: widget.memberId),
                   ],
                 ),
               ),
@@ -155,582 +101,6 @@ class _ViewState extends State<View> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class Personal extends StatefulWidget {
-  final String userType;
-  final String? userID;
-  final String memberId;
-
-  const Personal({
-    super.key,
-    required this.userType,
-    required this. userID,
-    required this. memberId,
-  });
-
-
-  @override
-  State<Personal> createState() => _PersonalState();
-}
-class _PersonalState extends State<Personal> {
-
-  String? fname = "";
-  String? lname = "";
-  String? image = "";
-  String? district = "";
-  String? chapter = "";
-  String? location = "";
-  String? dob = "";
-  String? wad = "";
-  String? koottam = "";
-  String? kovil = "";
-  String? member = "";
-  String? bloodgroup = "";
-  String? spousename = "";
-  String? spousebloodgroup = "";
-  String? spousenative = "";
-  String? spousekoottam = "";
-  String? spousekovil = "";
-  String? mobile = "";
-  String? email = "";
-  String docId = "";
-  String? education = "";
-  String? pastexperience = "";
-  String? userID = "";
-  List dynamicdata=[];
-  String profileImage="";
-  String marital_status="";
-  String imageUrl = "";
-  String imageParameter = "";
-
-
-  Future<void> fetchData(String userId) async {
-    try {
-      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=$userId');
-      final response = await http.get(url);
-      if (response.statusCode == 200) {
-        print("response S: ${response.statusCode}");
-        print("response B: ${response.body}");
-        final responseData = json.decode(response.body);
-        if (responseData is List<dynamic>) {
-          setState(() {
-            dynamicdata = responseData.cast<Map<String, dynamic>>();
-            if (dynamicdata.isNotEmpty) {
-              setState(() {
-                fname = dynamicdata[0]["first_name"];
-                lname= dynamicdata[0]['last_name'];
-                location=dynamicdata[0]["place"];
-                dob=dynamicdata[0]["dob"];
-                district=dynamicdata[0]["district"];
-                mobile=dynamicdata[0]["mobile"];
-                chapter=dynamicdata[0]["chapter"];
-                kovil=dynamicdata[0]["kovil"];
-                email=dynamicdata[0]["email"];
-                spousename=dynamicdata[0]["s_name"];
-                wad=dynamicdata[0]["WAD"];
-                spousekovil=dynamicdata[0]["s_father_kovil"];
-                education=dynamicdata[0]["education"];
-                pastexperience=dynamicdata[0]["past_experience"];
-                member = dynamicdata[0]["member_type"];
-                koottam = dynamicdata[0]["koottam"];
-                spousekoottam = dynamicdata[0]["s_father_koottam"];
-                bloodgroup = dynamicdata[0]["blood_group"];
-                spousenative = dynamicdata[0]["native"];
-                spousename=dynamicdata[0]["s_name"];
-                spousename=dynamicdata[0]["s_name"];
-                spousebloodgroup = dynamicdata[0]["s_blood"];
-                spousekovil=dynamicdata[0]["s_father_kovil"];
-                profileImage=dynamicdata[0]["profile_image"];
-                marital_status=dynamicdata[0]["marital_status"];
-                imageUrl = 'http://mybudgetbook.in/GIBAPI/${dynamicdata[0]["profile_image"]}';
-                imageParameter = dynamicdata[0]["profile_image"];
-              });
-              print("Image Parameter: $imageParameter");
-              print("Image Url: $imageUrl");
-            }
-          });
-        } else {
-          print('Invalid response data format');
-        }
-      } else {
-        print('Error: ${response.statusCode}');
-      }
-    } catch (error) {
-      // Handle other errors
-      print('Error: $error');
-    }
-  }
-
-  @override
-  void initState() {
-    fetchData(widget.memberId.toString());
-    print("User ID: ${widget.memberId}");
-    userID=widget.userID;
-    // TODO: implement initState
-    super.initState();
-  }
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            children: [
-              SizedBox(
-                width: double.infinity,
-                height: 250,
-                child: Image.network(imageUrl, fit: BoxFit.fill,),
-              ),
-              Align(
-                alignment: Alignment.topRight,
-                child: IconButton(
-                  onPressed: () {
-                    print("Pas:n$imageParameter");
-                    print("image URL:n$imageUrl");
-                    // Ensure that imageUrl is not empty before navigating
-                    if (imageUrl.isNotEmpty) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PersonalEdit(
-                            currentID: userID.toString(),
-                            currentFname: fname!,
-                            currentLname: lname!,
-                            currentEmail: email!,
-                            currentMobile: mobile!,
-                            currentSpouseName: spousename!,
-                            currentEducation: education!,
-                            currentPastExperience: pastexperience!,
-                            currentWad: wad!,
-                            currentKoottam: koottam!,
-                            currentKovil: kovil!,
-                            currentBloodgroup: bloodgroup!,
-                            currentSpouseKoottam: spousekoottam!,
-                            currentSpouseKovil: spousekovil!,
-                            currentSpouseBloodGroup: spousebloodgroup!,
-                            currentSpouseNative: spousenative!,
-                            currentLocation: location!,
-                            currentMaritalStatus: marital_status!,
-                            currentDistrict: district!,
-                            currentChapter: chapter!,
-                            currentDob: dob!,
-                            userId: widget.userID.toString(),
-                            imageUrl: imageParameter,
-                              userType: widget.userType.toString(),
-                          ),
-                        ),
-                      );
-                    } else {
-                      // Handle the case when imageUrl is empty
-                      print('Image URL is empty');
-                    }
-                  },
-                  icon: Icon(Icons.edit, color: Colors.green[800]),
-                ),
-
-              ),
-              ExpansionTile(
-                leading: const Icon(Icons.info),
-                title: const Text('Basic Information'),
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Name'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(fname!),
-                      ),
-
-                    ],
-                  ),
-                  if(widget.userType != "Guest")
-                    const Divider(),
-                  if(widget.userType != "Guest")
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children:  [
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text('District'),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(district!),
-                        )
-                      ],
-                    ),
-                  if(widget.userType != "Guest")
-
-                    const Divider(),
-                  if(widget.userType != "Guest")
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children:  [
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text('Chapter'),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(chapter!),
-                        )
-                      ],
-                    ),
-
-                  const Divider(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Native'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(location!),
-                      )
-                    ],
-                  ),
-                  if(widget.userType != "Guest")
-
-                    const Divider(),
-                  if(widget.userType != "Guest")
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text('DOB'),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(dob!),
-                        )
-                      ],
-                    ), if(widget.userType != "Guest")
-                    const Divider(),
-                  if(widget.userType != "Guest")
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text('Koottam'),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(koottam!),
-                        )
-                      ],
-                    ),
-                  if(widget.userType != "Guest")
-
-                    const Divider(),
-                  if(widget.userType != "Guest")
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children:  [
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text('Kovil'),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(kovil!),
-                        )
-                      ],
-                    ),
-                  const Divider(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children:  [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Member'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(widget.userType),
-                      )
-                    ],
-                  ),
-                  const Divider(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Blood Group'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(bloodgroup!),
-                      )
-                    ],
-                  ),
-                ],
-              ),
-              if(widget.userType != "Guest" && marital_status=="Married")
-
-                ExpansionTile(
-                  leading: const Icon(Icons.group),
-                  title: const Text('Dependents'),
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children:  [
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text('Spouse Name'),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child:spousename == null ? const Text("Nil")
-                              : Text(spousename!),
-                        )
-                      ],
-                    ),
-                    const Divider(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children:  [
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text('WAD'),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(wad!),
-                        )
-                      ],
-                    ),
-                    const Divider(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text('Spouse Blood Group'),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(spousebloodgroup!),
-                        )
-                      ],
-                    ),
-                    const Divider(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children:  [
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text('Spouse Native'),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child:spousenative == null ? const Text("Nil")
-                              : Text(spousenative!),
-                        )
-                      ],
-                    ),
-                    const Divider(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text('Spouse Father Koottam'),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: spousekoottam == null ? const Text("Nil")
-                              : Text(spousekoottam!),
-                        )
-
-                      ],),
-                    const Divider(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text('Spouse Father Kovil'),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: spousekovil== null ? const Text("Nil")
-                              : Text(spousekovil!),
-                        )
-
-                      ],),
-                  ],),
-
-              ExpansionTile(
-                leading: const Icon(Icons.call),
-                title: const Text('Contact'),
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Mobile Number'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text("+91${mobile!}"),
-                      )
-
-                    ],),
-                  const SizedBox(height: 10,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Email'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(email!),
-                      )
-
-                    ],),
-                ],
-              ),
-              if(widget.userType != "Guest")
-                ExpansionTile(
-                  leading: const Icon(Icons.cast_for_education),
-                  title: const Text('Education Details'),
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text('Education'),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(education!),)
-                      ],
-                    )
-                  ],
-                ),
-              if(widget.userType != "Guest")
-                ExpansionTile(
-                  leading: const Icon(Icons.man),
-                  title: const Text('Past Experience'),
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children:  [
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text('Past Experience'),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(pastexperience!),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-
-class BusinessTabPage extends StatefulWidget {
-  final String userType;
-  final String? userID;
-  final String memberId;
-  BusinessTabPage({Key? key, required this.userType, required this. userID, required this.memberId}) : super(key: key);
-
-  @override
-  State<BusinessTabPage> createState() => _BusinessTabPageState();
-}
-class _BusinessTabPageState extends State<BusinessTabPage> {
-
-
-
-  @override
-  Widget build(BuildContext context) {
-    return widget.userType == "Executive" ? DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        body: Column(
-          children: [
-            const SizedBox(
-              height: 10,width: 100,
-            ),
-
-            //MAIN CONTAINER STARTS
-            Container(
-              height: 25,
-              width: 240,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(0),
-              ),
-
-              //TABBAR STARTS
-              child: TabBar(
-                /*indicator: const BoxDecoration(
-                 // color: Colors.green,
-                ),*/
-                //TABS STARTS
-                labelColor: Colors.green,
-                unselectedLabelColor: Colors.black,
-                tabs: [
-                  const Tab(text: ('BusinessInfo')),
-                  InkWell(
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) =>  ImageAndVideo(userID: widget.userID,)));
-                      },
-                      child: const Tab(text: ('Gallery'))),
-                ],
-              ) ,
-            ),
-
-            //TABBAR VIEW STARTS
-            Expanded(
-              child: TabBarView(children: [
-                BusinessInfo(
-                  userType:widget.userType,
-                  userID:widget.userID,
-                  memberId:widget.memberId,
-                ),
-                ImageAndVideo(
-                  userID:widget.userID,
-                ),
-
-              ]),
-            )
-          ],
-        ),
-      ),
-    )
-        : BusinessInfo(
-      userType:widget.userType,
-      userID:widget.userID,
-      memberId:widget.memberId,
     );
   }
 }
@@ -1038,78 +408,10 @@ class _BusinessInfoState extends State<BusinessInfo> {
   }
 }
 
-
-
-
-
-class ImageAndVideo extends StatefulWidget {
-  final String? userID;
-  const ImageAndVideo({Key? key, required this.userID}) : super(key: key);
-
-  @override
-  State<ImageAndVideo> createState() => _ImageAndVideoState();
-}
-class _ImageAndVideoState extends State<ImageAndVideo> {
-  @override
-  Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text("Gallery",style: Theme.of(context).textTheme.displayLarge),
-          centerTitle: true,
-          iconTheme: IconThemeData(color: Colors.white),
-          leading: IconButton(
-            icon: Icon(Icons.navigate_before),
-            onPressed: () => Navigator.pop(context),
-          ),
-        ),
-        body: Column(
-          children: [
-            const SizedBox(
-              height: 15,width: 100,
-            ),
-
-            //MAIN CONTAINER STARTS
-            Container(
-              height: 30,
-              width: 170,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(0),
-              ),
-
-              //TABBAR STARTS
-              child: const TabBar(
-                labelColor: Colors.green,
-                //TABS STARTS
-                unselectedLabelColor: Colors.black,
-                tabs: [
-                  Tab(text: ('Image')),
-                  Tab(text: ('Video')),
-                ],
-              ) ,
-            ),
-
-            //TABBAR VIEW STARTS
-            Expanded(
-              child: TabBarView(children: [
-                ImageView(userId: widget.userID,),
-                VideoView(userID: widget.userID),
-              ]),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-
 class ImageView extends StatefulWidget {
-  final String? userId;
+  final String? memberId;
 
-  const ImageView({Key? key, required this.userId}) : super(key: key);
+  const ImageView({Key? key, required this.memberId}) : super(key: key);
 
 
   @override
@@ -1121,7 +423,7 @@ class _ImageViewState extends State<ImageView> {
 
   Future<void> _fetchImages() async {
     final url =
-        'http://mybudgetbook.in/GIBAPI/mygalleryfetch.php?userId=${widget.userId}';
+        'http://mybudgetbook.in/GIBAPI/mygalleryfetch.php?userId=${widget.memberId}';
 
     final response = await http.get(Uri.parse(url));
 
@@ -1162,8 +464,8 @@ class _ImageViewState extends State<ImageView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:  GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      body:  _imageBytesList.isEmpty ? const Center(child: Text("No Images")) : GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           mainAxisSpacing: 10.0,
           crossAxisSpacing: 10.0,
@@ -1182,152 +484,9 @@ class _ImageViewState extends State<ImageView> {
 }
 
 
-class VideoView extends StatefulWidget {
-  final String? userID;
-  const VideoView({super.key,
-    required this.userID
-  });
-
-  @override
-  State<VideoView> createState() => _VideoViewState();
-}
-class _VideoViewState extends State<VideoView> {
-  List<dynamic> _videos = [];
-  @override
-  void initState() {
-    super.initState();
-    _fetchVideos();
-  }
-
-  Future<void> _fetchVideos() async {
-    final url = 'http://mybudgetbook.in/GIBAPI/fetchvideos.php?userId=${widget.userID}';
-
-    final response = await http.get(Uri.parse(url));
-    if (response.statusCode == 200) {
-      setState(() {
-        _videos = jsonDecode(response.body);
-      });
-    } else {
-      // Handle error
-      print('Failed to fetch videos');
-    }
-  }
 
 
 
-
-
-
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListView.builder(
-        itemCount: _videos.length,
-        itemBuilder: (context, index) {
-          final videoId = _videos[index]['id'];
-          final videoPath = _videos[index]['video_path'];
-          return Stack(
-            children: [
-              Column(
-                children: [
-                  VideoPlayerWidget(videoUrl: videoPath),
-                ],
-              ),
-
-            ],
-          );
-        },
-      ),
-    );
-  }
-}
-
-class VideoPlayerScreen extends StatelessWidget {
-  final String videoPath;
-
-  const VideoPlayerScreen({Key? key, required this.videoPath}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Video Player'),
-      ),
-      body: Center(
-        child: AspectRatio(
-          aspectRatio: 16 / 9, // Adjust aspect ratio as per your video dimensions
-          child: VideoPlayerWidget(videoUrl: videoPath),
-        ),
-      ),
-    );
-  }
-}
-
-class VideoPlayerWidget extends StatefulWidget {
-  final String videoUrl;
-
-  const VideoPlayerWidget({Key? key, required this.videoUrl}) : super(key: key);
-
-  @override
-  _VideoPlayerWidgetState createState() => _VideoPlayerWidgetState();
-}
-
-class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
-  late VideoPlayerController _controller;
-  bool _isPlaying = false;
-  String? _errorMessage;
-
-  @override
-  void initState() {
-    super.initState();
-    _initializeVideoPlayer();
-  }
-
-  Future<void> _initializeVideoPlayer() async {
-    try {
-      _controller = VideoPlayerController.network(widget.videoUrl);
-
-      await _controller.initialize();
-
-      if (mounted) {
-        setState(() {
-          _isPlaying = true;
-        });
-      }
-    } catch (error) {
-      setState(() {
-        _errorMessage = 'Error initializing video player: $error';
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_errorMessage != null) {
-      return Text(_errorMessage!);
-    }
-
-    if (!_isPlaying) {
-      return CircularProgressIndicator();
-    }
-
-    return AspectRatio(
-      aspectRatio: _controller.value.aspectRatio,
-      child: VideoPlayer(_controller),
-    );
-  }
-}
-
-
-
-/// Reward
 
 
 

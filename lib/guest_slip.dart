@@ -7,10 +7,7 @@ import 'Non_exe_pages/non_exe_home.dart';
 import 'guest_slip_history.dart';
 import 'home.dart';
 
-
-
 enum SelectedItem { male, female }
-
 
 class VisitorsSlip extends StatefulWidget {
   final String? guestcount;

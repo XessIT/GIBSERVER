@@ -146,7 +146,9 @@ class _HonorHistoryState extends State<HonorHistory> {
                                   title : data[i]["Tomobile"] != fetchMobile ? Text(
                                        "${data[i]["Toname"]}") :
                                   Text(" ${data[i]["name"]}"),
-
+                                trailing: data[i]["Tomobile"] != fetchMobile
+                                    ? Icon(Icons.call_received, color: Colors.green[800])
+                                    : Icon(Icons.call_made, color: Colors.red),
                                   children:[ Column(
                                     // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                     children:  [
@@ -161,18 +163,7 @@ class _HonorHistoryState extends State<HonorHistory> {
                                       const SizedBox(height: 10,),
                                       data[i]['businessName'].isNotEmpty
                                           ? ListTile(
-                                        title: Text("   Referee Name : ${data[i]["businessName"]}",style: TextStyle(fontWeight: FontWeight.bold),),
-                                        trailing: IconButton(
-                                          onPressed: () async {
-                                            final call = Uri.parse("tel://${data[i]["businessMobile"]}");
-                                            if (await canLaunchUrl(call)) {
-                                              launchUrl(call);
-                                            } else {
-                                              throw 'Could not launch $call';
-                                            }
-                                          },
-                                          icon: Icon(Icons.call, color: Colors.green),
-                                        ),
+                                        title: Text("   Customer Name : ${data[i]["businessName"]}",style: TextStyle(fontWeight: FontWeight.bold),),
                                       ) : Container(),
                                       const SizedBox(height: 5,),
                                       Row(
@@ -215,7 +206,7 @@ class _HonorHistoryState extends State<HonorHistory> {
                                           ]
                                       ),
                                     ],
-                                  ),]
+                                  ),],
                               ),
                             ),
                           ],
