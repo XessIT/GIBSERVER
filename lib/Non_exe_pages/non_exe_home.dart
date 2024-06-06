@@ -547,7 +547,8 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                                                             TextButton(
                                                                                 onPressed: () {
                                                                                   if (tempKey.currentState!.validate()) {
-                                                                                    Navigator.push(context, MaterialPageRoute(builder: (context) => VisitorsSlip(userId: widget.userID, meetingId: id, guestcount: guestcount.text.trim(), userType: widget.userType, meeting_date: meetingDate,
+                                                                                    Navigator.push(context, MaterialPageRoute(builder: (context) => VisitorsSlip(userId: widget.userID, meetingId: id, guestcount: guestcount.text.trim(), userType: widget.userType, meeting_date: meetingDate,   meeting_place: meetingPlace,
+                                                                                      meeting_type: meetingType,
                                                                                       user_mobile: fetchMobile.toString(), user_name: '', member_id: '',)));                                                                                      print("UserID:-${widget.userID}${widget.userType}");
                                                                                   }
                                                                                 },

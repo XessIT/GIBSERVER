@@ -18,6 +18,8 @@ class VisitorsSlip extends StatefulWidget {
   final String? user_mobile;
   final String? user_name;
   final String? member_id;
+  final String? meeting_place;
+  final String? meeting_type;
 
   VisitorsSlip(
       {Key? key,
@@ -29,6 +31,8 @@ class VisitorsSlip extends StatefulWidget {
         required this.user_mobile,
         required this.user_name,
         required this.member_id,
+        required this.meeting_place,
+        required this.meeting_type,
       }
       )
       : super(key: key);
@@ -54,6 +58,7 @@ class _VisitorsSlipState extends State<VisitorsSlip> {
   String? getMeetingDate = "";
   String koottam = "Koottam";
   int count = 0;
+  int count1 = 10;
 
   ///capital letter starts code
   String capitalizeFirstLetter(String text) {
@@ -67,14 +72,13 @@ class _VisitorsSlipState extends State<VisitorsSlip> {
       getMeetingDate = DateFormat('yyyy-MM-dd').format(meetingDate!);
     });
     print("MDate:- $getMeetingDate");
-
     try {
       final uri = Uri.parse("http://mybudgetbook.in/GIBAPI/visiters_slip.php");
       var res = await http.post(uri,
           body: jsonEncode({
             "guest_name": guestName.text,
             "company_name": companyName.text,
-            "location":location.text,
+            "location": location.text,
             "koottam": koottam,
             "kovil": kovil.text,
             "gender": gender.toString(),
@@ -83,11 +87,11 @@ class _VisitorsSlipState extends State<VisitorsSlip> {
             "user_id": widget.userId,
             "member_mobile": widget.user_mobile,
             "meeting_date": getMeetingDate,
-            'member_name':widget.user_name,
-            'member_id':widget.member_id
+            'member_name': widget.user_name,
+            'member_id': widget.member_id,
+           // 'guest_count': count1 // Add this line
           }));
       print("guestSlip -${widget.userId}");
-
       if (res.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Guest Added Successfully")));
@@ -104,7 +108,6 @@ class _VisitorsSlipState extends State<VisitorsSlip> {
       print("Error Guest Add: $e");
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
