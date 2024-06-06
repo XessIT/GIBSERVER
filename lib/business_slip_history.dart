@@ -127,6 +127,7 @@ class _CompletedState extends State<Completed> {
     }
   }
   String status = "Successful";
+  String filter = "All";
   List<Map<String, dynamic>> data=[];
   Future<void> getData() async {
     print('Attempting to make HTTP request...');
@@ -171,11 +172,38 @@ class _CompletedState extends State<Completed> {
   @override
   Widget build(BuildContext context) {
 
-
+    List<Map<String, dynamic>> filteredData = data;
+    if (filter == "In") {
+      filteredData = data.where((item) => item["Tomobile"] == fetchMobile).toList();
+    } else if (filter == "Out") {
+      filteredData = data.where((item) => item["Tomobile"] != fetchMobile).toList();
+    }
     return Scaffold(
-        body: isLoading ? const Center(child: CircularProgressIndicator(),)
-            :  data.isNotEmpty ? ListView.builder(
-            itemCount: data.length,
+        body: Column(
+          children: [
+            Align(
+              alignment: Alignment.topRight,
+              child: DropdownButton<String>(
+                value: filter,
+                icon: Icon(Icons.filter_list, color: Colors.black),
+                //style: TextStyle(color: Colors.white), // Text style for the selected item
+                items: <String>['All', 'In', 'Out'].map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    filter = newValue!;
+                  });
+                },
+              ),
+            ),
+        Expanded(
+        child:isLoading ? const Center(child: CircularProgressIndicator(),)
+            :  filteredData.isNotEmpty ? ListView.builder(
+            itemCount: filteredData.length,
             itemBuilder: (context, i) {
               return Center(
                 child: Column(
@@ -185,19 +213,19 @@ class _CompletedState extends State<Completed> {
                         leading: CircleAvatar(
                           backgroundColor: ColorGenerator.getRandomColor(),
                           child: Text(
-                            data[i]["Toname"][0].toUpperCase(),
+                            filteredData[i]["Toname"][0].toUpperCase(),
                             style: TextStyle(color: Colors.white),
                           ),
                         ),
                         title: ListTile(
                           contentPadding: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                          title: Text('${data[i]["Toname"]}'),
+                          title: Text('${filteredData[i]["Toname"]}'),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton(
                                 onPressed: () async {
-                                  final call = Uri.parse("tel://${data[i]["Tomobile"]}");
+                                  final call = Uri.parse("tel://${filteredData[i]["Tomobile"]}");
                                   if (await canLaunchUrl(call)) {
                                     launchUrl(call);
                                   } else {
@@ -207,7 +235,7 @@ class _CompletedState extends State<Completed> {
                                 icon: Icon(Icons.call, color: Colors.green),
                               ),
                               Card(
-                                child: data[i]["Tomobile"] == fetchMobile
+                                child: filteredData[i]["Tomobile"] == fetchMobile
                                     ? Icon(Icons.call_received, color: Colors.green[800])
                                     : Icon(Icons.call_made, color: Colors.red),
                               ),
@@ -310,12 +338,12 @@ class _CompletedState extends State<Completed> {
                           });
                         },
                         children: [
-                          data[i]['type'] != 'Self'
+                          filteredData[i]['type'] != 'Self'
                               ? ListTile(
-                            title: Text("Referee Name: ${data[i]["referree_name"]}"),
+                            title: Text("Referee Name: ${filteredData[i]["referree_name"]}"),
                             trailing: IconButton(
                               onPressed: () async {
-                                final call = Uri.parse("tel://${data[i]["referree_mobile"]}");
+                                final call = Uri.parse("tel://${filteredData[i]["referree_mobile"]}");
                                 if (await canLaunchUrl(call)) {
                                   launchUrl(call);
                                 } else {
@@ -327,13 +355,13 @@ class _CompletedState extends State<Completed> {
                           )
                               : Container(),
                           ListTile(
-                            title: Text("Purpose: ${data[i]["purpose"]}"),
+                            title: Text("Purpose: ${filteredData[i]["purpose"]}"),
                           ),
                           ListTile(
-                            title: Text('Date: ${data[i]["createdOn"]}'),
+                            title: Text('Date: ${filteredData[i]["createdOn"]}'),
                           ),
                           ListTile(
-                            title: Text('Reason: ${data[i]["reason"]}'),
+                            title: Text('Reason: ${filteredData[i]["reason"]}'),
                           ),
                         ],
                       ),
@@ -345,7 +373,7 @@ class _CompletedState extends State<Completed> {
               return Container();
             }
         )
-    : Center(child: Text("No data found", style: Theme.of(context).textTheme.bodyLarge,)));
+    : Center(child: Text("No data found", style: Theme.of(context).textTheme.bodyLarge,)))]));
 
   }
 }
@@ -412,6 +440,7 @@ class _PendingState extends State<Pending> {
     }
   }
   String status = "Pending";
+  String filter = "All";
   List<Map<String, dynamic>> data=[];
   Future<void> getData() async {
     print('Attempting to make HTTP request...');
@@ -477,11 +506,38 @@ class _PendingState extends State<Pending> {
   @override
   Widget build(BuildContext context) {
 
-
+    List<Map<String, dynamic>> filteredData = data;
+    if (filter == "In") {
+      filteredData = data.where((item) => item["Tomobile"] == fetchMobile).toList();
+    } else if (filter == "Out") {
+      filteredData = data.where((item) => item["Tomobile"] != fetchMobile).toList();
+    }
     return Scaffold(
-        body: isLoading ? const Center(child: CircularProgressIndicator(),)
-            : data.isNotEmpty ? ListView.builder(
-            itemCount: data.length,
+        body: Column(
+          children: [
+            Align(
+              alignment: Alignment.topRight,
+              child: DropdownButton<String>(
+                value: filter,
+                icon: Icon(Icons.filter_list, color: Colors.black),
+               // style: TextStyle(color: Colors.white), // Text style for the selected item
+                items: <String>['All', 'In', 'Out'].map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    filter = newValue!;
+                  });
+                },
+              ),
+            ),
+            Expanded(
+           child: isLoading ? const Center(child: CircularProgressIndicator(),)
+            : filteredData.isNotEmpty ? ListView.builder(
+            itemCount: filteredData.length,
             itemBuilder: (context, i) {
               DateTime createdOn = DateTime.parse(data[i]["createdOn"]);
               String formattedDate = DateFormat('dd-MM-yyyy').format(createdOn);
@@ -493,28 +549,28 @@ class _PendingState extends State<Pending> {
                         leading: CircleAvatar(
                           backgroundColor: ColorGenerator.getRandomColor(),
                           child: Text(
-                            data[i]["Toname"][0].toUpperCase(),
+                            filteredData[i]["Toname"][0].toUpperCase(),
                             style: TextStyle(color: Colors.white),
                           ),
                         ),
                         title: ListTile(
                           contentPadding: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                          title: data[i]["Tomobile"] == fetchMobile
-                              ? Text('${data[i]["referrer_name"]}') : Text('${data[i]["Toname"]}'),
+                          title: filteredData[i]["Tomobile"] == fetchMobile
+                              ? Text('${filteredData[i]["referrer_name"]}') : Text('${filteredData[i]["Toname"]}'),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton(
-                                onPressed: data[i]["Tomobile"] == fetchMobile
+                                onPressed: filteredData[i]["Tomobile"] == fetchMobile
                                     ? () async {
-                                  final call = Uri.parse("tel:// ${data[i]["referrer_mobile"]}");
+                                  final call = Uri.parse("tel:// ${filteredData[i]["referrer_mobile"]}");
                                   if (await canLaunchUrl(call)) {
                                     launchUrl(call);
                                   } else {
                                     throw 'Could not launch $call';
                                   }
                                 } : () async {
-                                  final call = Uri.parse("tel:// ${data[i]["Tomobile"]}");
+                                  final call = Uri.parse("tel:// ${filteredData[i]["Tomobile"]}");
                                   if (await canLaunchUrl(call)) {
                                     launchUrl(call);
                                   } else {
@@ -524,7 +580,7 @@ class _PendingState extends State<Pending> {
                                 icon: Icon(Icons.call, color: Colors.green),
                               ),
                               Card(
-                                child: data[i]["Tomobile"] == fetchMobile
+                                child: filteredData[i]["Tomobile"] == fetchMobile
                                     ? Icon(Icons.call_received, color: Colors.green[800])
                                     : Icon(Icons.call_made, color: Colors.red),
                               ),
@@ -539,7 +595,7 @@ class _PendingState extends State<Pending> {
                           });
                         },
                         children: [
-                          data[i]['type'] != 'Self'
+                          filteredData[i]['type'] != 'Self'
                               ? ListTile(
                             title: Text("Referee Name: ${data[i]["referree_name"]}"),
                             trailing: IconButton(
@@ -556,15 +612,15 @@ class _PendingState extends State<Pending> {
                           )
                               : Container(),
                           ListTile(
-                            title: Text("Purpose: ${data[i]["purpose"]}"),
+                            title: Text("Purpose: ${filteredData[i]["purpose"]}"),
                           ),
                           ListTile(
                             title: Text('Date: $formattedDate'),
                           ),
-                          data[i]["reason"].isNotEmpty ? ListTile(
-                            title: Text('Reason: ${data[i]["reason"]}'),
+                          filteredData[i]["reason"].isNotEmpty ? ListTile(
+                            title: Text('Reason: ${filteredData[i]["reason"]}'),
                           ) : Container(),
-                          if (data[i]["Tomobile"] == fetchMobile )
+                          if (filteredData[i]["Tomobile"] == fetchMobile )
                           Row(
                            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -808,7 +864,8 @@ class _PendingState extends State<Pending> {
               return Container();
             }
         )
-            : Center(child: Text("No data found", style: Theme.of(context).textTheme.bodyLarge,),)
+            : Center(child: Text("No data found", style: Theme.of(context).textTheme.bodyLarge,),))
+          ])
     );
 
   }
@@ -873,6 +930,7 @@ class _UnsuccessfulState extends State<Unsuccessful> {
     }
   }
   String status = "Unsuccessful";
+  String filter = "All";
   List<Map<String, dynamic>> data=[];
   Future<void> getData() async {
     print('Attempting to make HTTP request...');
@@ -915,12 +973,39 @@ class _UnsuccessfulState extends State<Unsuccessful> {
 
   @override
   Widget build(BuildContext context) {
-
+    List<Map<String, dynamic>> filteredData = data;
+    if (filter == "In") {
+      filteredData = data.where((item) => item["Tomobile"] == fetchMobile).toList();
+    } else if (filter == "Out") {
+      filteredData = data.where((item) => item["Tomobile"] != fetchMobile).toList();
+    }
 
     return Scaffold(
-        body: isLoading ? const Center(child: CircularProgressIndicator(),)
-            : data.isNotEmpty ? ListView.builder(
-            itemCount: data.length,
+        body:
+        Column(
+          children: [
+            Align(
+              alignment: Alignment.topRight,
+              child: DropdownButton<String>(
+                value: filter,
+                icon: Icon(Icons.filter_list, color: Colors.black),
+                //style: TextStyle(color: Colors.white), // Text style for the selected item
+                items: <String>['All', 'In', 'Out'].map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    filter = newValue!;
+                  });
+                },
+              ),
+            ),
+        Expanded(child: isLoading ? const Center(child: CircularProgressIndicator(),)
+            : filteredData.isNotEmpty ? ListView.builder(
+            itemCount: filteredData.length,
             itemBuilder: (context, i) {
               return Center(
                 child: Column(
@@ -930,19 +1015,19 @@ class _UnsuccessfulState extends State<Unsuccessful> {
                         leading: CircleAvatar(
                           backgroundColor: ColorGenerator.getRandomColor(),
                           child: Text(
-                            data[i]["Toname"][0].toUpperCase(),
+                            filteredData[i]["Toname"][0].toUpperCase(),
                             style: TextStyle(color: Colors.white),
                           ),
                         ),
                         title: ListTile(
                           contentPadding: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                          title: Text('${data[i]["Toname"]}'),
+                          title: Text('${filteredData[i]["Toname"]}'),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton(
                                 onPressed: () async {
-                                  final call = Uri.parse("tel://${data[i]["Tomobile"]}");
+                                  final call = Uri.parse("tel://${filteredData[i]["Tomobile"]}");
                                   if (await canLaunchUrl(call)) {
                                     launchUrl(call);
                                   } else {
@@ -952,100 +1037,11 @@ class _UnsuccessfulState extends State<Unsuccessful> {
                                 icon: Icon(Icons.call, color: Colors.green),
                               ),
                               Card(
-                                child: data[i]["Tomobile"] == fetchMobile
+                                child: filteredData[i]["Tomobile"] == fetchMobile
                                     ? Icon(Icons.call_received, color: Colors.green[800])
                                     : Icon(Icons.call_made, color: Colors.red),
                               ),
-                             /* if (data[i]["Tomobile"] == fetchMobile && isExpanded)
-                                IconButton(
-                                  onPressed: () {
-                                    if (data[i]['id']!= null) {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return StatefulBuilder(
-                                            builder: (context, setState) {
-                                              return AlertDialog(
-                                                title: Text('Edit Status'),
-                                                content: Column(
-                                                  mainAxisSize: MainAxisSize.min,
-                                                  children: [
-                                                    // Radio buttons for status selection
-                                                    ListTile(
-                                                      title: Text('Pending'),
-                                                      leading: Radio(
-                                                        value: 'Pending',
-                                                        groupValue: selectedStatus,
-                                                        onChanged: (value) {
-                                                          setState(() {
-                                                            selectedStatus = value.toString();
-                                                          });
-                                                        },
-                                                      ),
-                                                    ),
-                                                    ListTile(
-                                                      title: Text('Successful'),
-                                                      leading: Radio(
-                                                        value: 'Successful',
-                                                        groupValue: selectedStatus,
-                                                        onChanged: (value) {
-                                                          setState(() {
-                                                            selectedStatus = value.toString();
-                                                          });
-                                                        },
-                                                      ),
-                                                    ),
-                                                    ListTile(
-                                                      title: Text('Unsuccessful'),
-                                                      leading: Radio(
-                                                        value: 'Unsuccessful',
-                                                        groupValue: selectedStatus,
-                                                        onChanged: (value) {
-                                                          setState(() {
-                                                            selectedStatus = value.toString();
-                                                          });
-                                                        },
-                                                      ),
-                                                    ),
-                                                    // Text form field for additional input
-                                                    TextFormField(
-                                                      controller: reasonController,
-                                                      decoration: InputDecoration(
-                                                        labelText: 'Additional Information',
-                                                        border: OutlineInputBorder(),
-                                                      ),
-                                                      // Add controller if you need to capture the input
-                                                    ),
-                                                  ],
-                                                ),
-                                                actions: <Widget>[
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      // Implement save functionality here
-                                                      updateBusinessSlip(data[i]['id'], selectedStatus, reasonController.text);
-                                                      Navigator.of(context).pop();
-                                                    },
-                                                    child: Text('Save'),
-                                                  ),
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.of(context).pop();
-                                                    },
-                                                    child: Text('Cancel'),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
-                                        },
-                                      );
-                                    }
-                                    else {
-                                      print('ID is null');
-                                    }
-                                  },
-                                  icon: Icon(Icons.edit, color: Colors.blue),
-                                ),*/
+
                             ],
                           ),
                         ),
@@ -1055,12 +1051,12 @@ class _UnsuccessfulState extends State<Unsuccessful> {
                           });
                         },
                         children: [
-                          data[i]['type'] != 'Self'
+                          filteredData[i]['type'] != 'Self'
                               ? ListTile(
-                            title: Text("Referee Name: ${data[i]["referree_name"]}"),
+                            title: Text("Referee Name: ${filteredData[i]["referree_name"]}"),
                             trailing: IconButton(
                               onPressed: () async {
-                                final call = Uri.parse("tel://${data[i]["referree_mobile"]}");
+                                final call = Uri.parse("tel://${filteredData[i]["referree_mobile"]}");
                                 if (await canLaunchUrl(call)) {
                                   launchUrl(call);
                                 } else {
@@ -1072,13 +1068,13 @@ class _UnsuccessfulState extends State<Unsuccessful> {
                           )
                               : Container(),
                           ListTile(
-                            title: Text("Purpose: ${data[i]["purpose"]}"),
+                            title: Text("Purpose: ${filteredData[i]["purpose"]}"),
                           ),
                           ListTile(
-                            title: Text('Date: ${data[i]["createdOn"]}'),
+                            title: Text('Date: ${filteredData[i]["createdOn"]}'),
                           ),
                           ListTile(
-                            title: Text('Reason: ${data[i]["reason"]}'),
+                            title: Text('Reason: ${filteredData[i]["reason"]}'),
                           ),
                         ],
                       ),
@@ -1090,7 +1086,7 @@ class _UnsuccessfulState extends State<Unsuccessful> {
               return Container();
             }
         )
-    : Center(child: Text("No data found", style: Theme.of(context).textTheme.bodyLarge,),));
+    : Center(child: Text("No data found", style: Theme.of(context).textTheme.bodyLarge,),))]));
 
   }
 }

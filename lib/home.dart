@@ -210,6 +210,8 @@ class _HomepageState extends State<Homepage> {
   }
 
   String imageUrl = "";
+  String? district = "";
+  String? chapter = "";
   Uint8List? _imageBytes;
 
   List<Map<String, dynamic>> userdata = [];
@@ -228,6 +230,9 @@ class _HomepageState extends State<Homepage> {
               imageUrl =
               'http://mybudgetbook.in/GIBAPI/${userdata[0]["profile_image"]}';
               _imageBytes = base64Decode(userdata[0]['profile_image']);
+               district = userdata[0]['district'] ?? '';
+               chapter = userdata[0]['chapter'] ?? '';
+              print('District: $district, Chapter: $chapter');
             }
           });
         } else {
@@ -439,12 +444,12 @@ class _HomepageState extends State<Homepage> {
   final GlobalKey<FormState> tempKey = GlobalKey<FormState>();
 
   List<Map<String, dynamic>> data = [];
-  String type = "Executive";
+ // String type = "Executive";
   Future<void> getData() async {
     print('Attempting to make HTTP request...');
     try {
       final url = Uri.parse(
-          'http://mybudgetbook.in/GIBAPI/non_exe_meeting.php?member_type=$type');
+          'http://mybudgetbook.in/GIBAPI/non_exe_meeting.php?member_type=${widget.userType}');
       print('URL: $url');
       final response = await http.get(url);
       if (response.statusCode == 200) {
@@ -927,11 +932,25 @@ class _HomepageState extends State<Homepage> {
                                         Stack(
                                           children: [
                                             ListTile(
-                                              leading: CircleAvatar(
-                                                radius: 30.0,
-                                                backgroundColor: Colors.cyan,
-                                                backgroundImage: CachedNetworkImageProvider(
-                                                    'http://mybudgetbook.in/GIBAPI/${data1[i]["offer_image"]}'
+                                              leading:
+                                              InkWell(
+                                                onTap: () {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (BuildContext context) {
+                                                      return AlertDialog(
+                                                        content: Image.network(
+                                                            'http://mybudgetbook.in/GIBAPI/${data1[i]["offer_image"]}'),
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                                child: CircleAvatar(
+                                                  radius: 40.0,
+                                                  backgroundColor: Colors.cyan,
+                                                  backgroundImage: CachedNetworkImageProvider(
+                                                      'http://mybudgetbook.in/GIBAPI/${data1[i]["offer_image"]}'
+                                                  ),
                                                 ),
                                               ),
                                               title: Text(
