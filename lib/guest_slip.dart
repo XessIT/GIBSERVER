@@ -89,7 +89,7 @@ class _VisitorsSlipState extends State<VisitorsSlip> {
       print("guestSlip -${widget.userId}");
 
       if (res.statusCode == 200) {
-           ScaffoldMessenger.of(context).showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Guest Added Successfully")));
         // Navigator.push(
         //     context,
@@ -221,9 +221,9 @@ class _VisitorsSlipState extends State<VisitorsSlip> {
                                     Padding(
                                       padding: const EdgeInsets.only(right: 160),
                                       child: Text(
-                                        'Basic Information',
-                                        style:
-                                       TextStyle(fontSize: 18)
+                                          'Basic Information',
+                                          style:
+                                          TextStyle(fontSize: 18)
                                       ),
                                     ),
                                     //TextFormField Visitor name starts

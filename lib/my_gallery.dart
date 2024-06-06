@@ -62,7 +62,6 @@ class _MyGalleryState extends State<MyGallery> {
               Expanded(
                 child: TabBarView(
                   children: [
-                //   Gallery(userId: widget.userId,),
                     Video(userId: widget.userId),
                   ],
                 ),

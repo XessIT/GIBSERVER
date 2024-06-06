@@ -551,7 +551,7 @@ class _AddOfferPageState extends State<AddOfferPage> {
   }
 }
 
-class RunningPage extends StatefulWidget {
+class    RunningPage extends StatefulWidget {
   final String? userId;
   final String? userType;
   const RunningPage({Key? key, required this.userId, required this.userType}) : super(key: key);
@@ -764,11 +764,25 @@ class _RunningPageState extends State<RunningPage> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                       children:  [
-                                        CircleAvatar(
-                                          radius: 30.0,
-                                          backgroundColor: Colors.cyan,
-                                          backgroundImage: CachedNetworkImageProvider(imageUrl),
-          
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: InkWell(
+                                            onTap: () {
+                                              showDialog(
+                                                context: context,
+                                                builder: (BuildContext context) {
+                                                  return AlertDialog(
+                                                    content: Image.network(imageUrl),
+                                                  );
+                                                },
+                                              );
+                                            },
+                                            child: CircleAvatar(
+                                              radius: 30.0,
+                                              backgroundColor: Colors.cyan,
+                                              backgroundImage: CachedNetworkImageProvider(imageUrl),
+                                            ),
+                                          ),
                                         ),
                                         Column(
                                           children: [
@@ -1073,12 +1087,25 @@ class _CompletedPageState extends State<CompletedPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children:  [
-                                CircleAvatar(
-                                  radius: 30.0,
-                                  backgroundColor: Colors.cyan,
-                                  backgroundImage:
-                                  //IMAGE STARTS CIRCLEAVATAR
-                                  CachedNetworkImageProvider(imageUrl),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: InkWell(
+                                    onTap: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            content: Image.network(imageUrl),
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: CircleAvatar(
+                                      radius: 30.0,
+                                      backgroundColor: Colors.cyan,
+                                      backgroundImage: CachedNetworkImageProvider(imageUrl),
+                                    ),
+                                  ),
                                 ),
                                 Column(
                                   children: [
@@ -1320,140 +1347,170 @@ class _BlockPageState extends State<BlockPage> {
               String imageUrl = 'http://mybudgetbook.in/GIBAPI/${data[i]['offer_image']}';
               return Center(
                 child: Card(
-                  child: Column(
-                    children: [
-                      //MAIN ROW STARTS
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children:  [
-                          //CIRCLEAVATAR STARTS
-                          CircleAvatar(
-                            radius: 40,
-                            backgroundColor: Colors.cyan,
-                             backgroundImage: CachedNetworkImageProvider(imageUrl),
-                            child: Stack(
+                  child: Stack(
+                      children: [
+                        //MAIN ROW STARTS
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children:  [
+                            //CIRCLEAVATAR STARTS
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: InkWell(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        content: Image.network(imageUrl),
+                                      );
+                                    },
+                                  );
+                                },
+                                child: CircleAvatar(
+                                  radius: 30.0,
+                                  backgroundColor: Colors.cyan,
+                                  backgroundImage: CachedNetworkImageProvider(imageUrl),
+                                ),
+                              ),
+                            ),
+                            //END CIRCLEAVATAR
+
+                            Column(
                               children: [
-                                Align(
-                                  alignment: Alignment.bottomLeft,
-                                  //STARTS CIRCLE AVATAR OFFER
-                                  child: CircleAvatar(
-                                      radius: 20,
-                                      backgroundColor: Colors.green[900],
-                                      child: Text('${data[i]['discount']}%',
-                                          style: Theme.of(context).textTheme.titleLarge)),
+                                //START TEXTS
+                                /* Text('${data[i]['company_name']}',
+                                  //Text style starts
+                                  style: const TextStyle(
+                                      color: Colors.green,
+                                      fontSize: 15),),*/
+                                const SizedBox(height: 10,),
+                                //start texts
+                                Text('${data[i]['offer_type']} - ${data[i]['name']}',
+                                  //Text style starts
+                                  style: const TextStyle(fontSize: 11,
+                                      fontWeight: FontWeight.bold
+                                  ),),
+                                //Text starts
+                                Text(DateFormat('dd-MM-yyyy').format(dateTime)),
+                              ],
+                            ),
+                            //IconButton starts
+
+                            //IconButton starts
+                            Row(
+                              children: [
+                                IconButton(onPressed: (){
+                                  showDialog(
+                                      context: context,
+                                      builder: (context)=>
+                                          AlertDialog(
+                                            backgroundColor: Colors.white,
+                                            title: const Text(
+                                              "Confirmation!",
+                                              style: TextStyle(color:Colors.black),
+                                            ),
+                                            content: const Text("Do you want to Unblock this offer?",
+                                              style: TextStyle(color: Colors.black),),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                child: const Text("Yes"),
+                                                onPressed: (){
+                                                  unblock(int.parse(data[i]["ID"]));
+                                                  /*Navigator.push(context, MaterialPageRoute(builder: (context)=> EditOffer(
+                                                    Id: data[i]['ID'],
+                                                    // currentimage: thisitem['Image'],
+                                                    currenttype: data[i]['offer_type'],
+                                                    currentproductname: data[i]['name'],
+                                                    currentDiscount: data[i]['discount'],
+                                                    currentvalidity: data[i]['validity'],
+                                                    user_id: data[i]['user_id'],
+                                                  ))
+                                                  );*/
+                                                  // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Your offer Unblocked Successfully")));
+                                                   Navigator.push(context, MaterialPageRoute(builder: (context)=> OfferList(userId: widget.userId, userType: widget.userType,)));
+                                                }, ),
+                                              TextButton(
+                                                  onPressed: (){
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: const Text("No"))
+                                            ],
+                                          )
+                                  );
+                                },
+                                    icon: Icon(Icons.check_circle,
+                                      color: Colors.green[900],)),
+
+                                IconButton(
+                                    onPressed: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context)=>
+                                              AlertDialog(
+                                                backgroundColor: Colors.white,
+                                                title: const Text(
+                                                  "Confirmation!",
+                                                  style: TextStyle(color:Colors.black),
+                                                ),
+                                                content: const Text("Do you want to Delete this Offer?",
+                                                  style: TextStyle(color: Colors.black),),
+                                                actions: <Widget>[
+                                                  TextButton(
+                                                    child: const Text("Yes"),
+                                                    onPressed: (){
+                                                      delete(data[i]['ID']);
+                                                      Navigator.push(context, MaterialPageRoute(builder: (context)=> OfferList(userId: widget.userId, userType: widget.userType,)));
+                                                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                                          content: Text("You have Successfully Deleted a Offer Item")));
+                                                      Navigator.pop(context);
+                                                    },
+                                                  ),
+                                                  TextButton(
+                                                      onPressed: (){
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: const Text("No"))
+                                                ],
+                                              )
+                                      );
+
+                                    },
+                                    icon: Icon(Icons.delete,color: Colors.green[900],))
+                              ],
+                            ),
+                          ],
+                        ),
+                        data[i]['discount'].toString().isEmpty ? Container() :
+                        Positioned(
+                          top: 5,
+                          left: 5, // Adjust position if needed
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              color: Colors.red, // Change the color here
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(10.0),
+                                bottomRight: Radius.circular(10.0),
+                              ),
+                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
+                            child: Row(
+                              children: [
+                                Text(
+                                  '${data[i]['discount']}% off', // Text for your banner
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontStyle: FontStyle.italic,
+                                    fontSize: 12.0, // Adjust font size as needed
+                                  ),
                                 ),
                               ],
                             ),
                           ),
-                          //END CIRCLEAVATAR
+                        ),
 
-                          Column(
-                            children: [
-                              //START TEXTS
-                              /* Text('${data[i]['company_name']}',
-                                //Text style starts
-                                style: const TextStyle(
-                                    color: Colors.green,
-                                    fontSize: 15),),*/
-                              const SizedBox(height: 10,),
-                              //start texts
-                              Text('${data[i]['offer_type']} - ${data[i]['name']}',
-                                //Text style starts
-                                style: const TextStyle(fontSize: 11,
-                                    fontWeight: FontWeight.bold
-                                ),),
-                              //Text starts
-                              Text(DateFormat('dd-MM-yyyy').format(dateTime)),
-                            ],
-                          ),
-                          //IconButton starts
-
-                          //IconButton starts
-                          Row(
-                            children: [
-                              IconButton(onPressed: (){
-                                showDialog(
-                                    context: context,
-                                    builder: (context)=>
-                                        AlertDialog(
-                                          backgroundColor: Colors.white,
-                                          title: const Text(
-                                            "Confirmation!",
-                                            style: TextStyle(color:Colors.black),
-                                          ),
-                                          content: const Text("Do you want to Unblock this offer?",
-                                            style: TextStyle(color: Colors.black),),
-                                          actions: <Widget>[
-                                            TextButton(
-                                              child: const Text("Yes"),
-                                              onPressed: (){
-                                                unblock(int.parse(data[i]["ID"]));
-                                                /*Navigator.push(context, MaterialPageRoute(builder: (context)=> EditOffer(
-                                                  Id: data[i]['ID'],
-                                                  // currentimage: thisitem['Image'],
-                                                  currenttype: data[i]['offer_type'],
-                                                  currentproductname: data[i]['name'],
-                                                  currentDiscount: data[i]['discount'],
-                                                  currentvalidity: data[i]['validity'],
-                                                  user_id: data[i]['user_id'],
-                                                ))
-                                                );*/
-                                                // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Your offer Unblocked Successfully")));
-                                                 Navigator.push(context, MaterialPageRoute(builder: (context)=> OfferList(userId: widget.userId, userType: widget.userType,)));
-                                              }, ),
-                                            TextButton(
-                                                onPressed: (){
-                                                  Navigator.pop(context);
-                                                },
-                                                child: const Text("No"))
-                                          ],
-                                        )
-                                );
-                              },
-                                  icon: Icon(Icons.check_circle,
-                                    color: Colors.green[900],)),
-
-                              IconButton(
-                                  onPressed: () {
-                                    showDialog(
-                                        context: context,
-                                        builder: (context)=>
-                                            AlertDialog(
-                                              backgroundColor: Colors.white,
-                                              title: const Text(
-                                                "Confirmation!",
-                                                style: TextStyle(color:Colors.black),
-                                              ),
-                                              content: const Text("Do you want to Delete this Offer?",
-                                                style: TextStyle(color: Colors.black),),
-                                              actions: <Widget>[
-                                                TextButton(
-                                                  child: const Text("Yes"),
-                                                  onPressed: (){
-                                                    delete(data[i]['ID']);
-                                                    Navigator.push(context, MaterialPageRoute(builder: (context)=> OfferList(userId: widget.userId, userType: widget.userType,)));
-                                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                                        content: Text("You have Successfully Deleted a Offer Item")));
-                                                    Navigator.pop(context);
-                                                  },
-                                                ),
-                                                TextButton(
-                                                    onPressed: (){
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: const Text("No"))
-                                              ],
-                                            )
-                                    );
-
-                                  },
-                                  icon: Icon(Icons.delete,color: Colors.green[900],))
-                            ],
-                          ),
-                        ],
-                      ),
-
-                    ],
+                      ],
                   ),
                 ),
               );

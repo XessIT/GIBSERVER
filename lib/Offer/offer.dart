@@ -231,7 +231,7 @@ class _OffersPageState extends State<OffersPage> {
                 return Card(
                   child: Column(
                     children: [
-                      Row(
+                      Row (
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
@@ -269,38 +269,52 @@ class _OffersPageState extends State<OffersPage> {
                           ),
                         ],
                       ),
-                      CircleAvatar(
-                        radius: 36,
-                        backgroundImage: CachedNetworkImageProvider(imageUrl),
-                        child: const Stack(
-                          children: [
-                          ],
+                      InkWell(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                content: Image.network(imageUrl),
+                              );
+                            },
+                          );
+                        },
+                        child: CircleAvatar(
+                          radius: 30.0,
+                          backgroundColor: Colors.cyan,
+                          backgroundImage: CachedNetworkImageProvider(imageUrl),
                         ),
                       ),
                      // const SizedBox(height: 5,),
-                      Text('${data[i]['company_name']}',
-                        style: const TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold),),
-                      Text("Contact: ${data[i]['mobile']}",
-                        style: const TextStyle(fontSize: 10,
-                            fontWeight: FontWeight.bold),),
-                      // const SizedBox(height: 15,),
-                      Text('${data[i]['offer_type']} - ${data[i]['name']}',
-                        style: const TextStyle(fontSize: 10,
-                            fontWeight: FontWeight.bold),),
-                      //  const SizedBox(height: 5,),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      Column(
                         children: [
-                          const Text('Validity -',
-                            style: TextStyle(fontSize: 10,
+                          Text('${data[i]['company_name']}',
+                            style: const TextStyle(
+                                fontSize: 10,
                                 fontWeight: FontWeight.bold),),
-                          Text(DateFormat('dd-MM-yyyy').format(dateTime),
+                          Text("Contact: ${data[i]['mobile']}",
                             style: const TextStyle(fontSize: 10,
                                 fontWeight: FontWeight.bold),),
+                          // const SizedBox(height: 15,),
+                          Text('${data[i]['offer_type']} - ${data[i]['name']}',
+                            style: const TextStyle(fontSize: 10,
+                                fontWeight: FontWeight.bold),),
+                          //  const SizedBox(height: 5,),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text('Validity -',
+                                style: TextStyle(fontSize: 10,
+                                    fontWeight: FontWeight.bold),),
+                              Text(DateFormat('dd-MM-yyyy').format(dateTime),
+                                style: const TextStyle(fontSize: 10,
+                                    fontWeight: FontWeight.bold),),
+                            ],
+                          ),
                         ],
                       ),
+
                       // Text(DateFormat('dd/MM/yyyy').format(DateTime.now()))
                     ],
                   ),

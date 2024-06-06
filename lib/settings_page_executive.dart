@@ -43,7 +43,7 @@ class SettingsPageExecutive extends StatelessWidget {
           ),
         ),
         title: Text(
-          "Account",
+          "",
           style: Theme.of(context).textTheme.displayLarge,
         ),
         leading: IconButton(
@@ -56,9 +56,9 @@ class SettingsPageExecutive extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                     builder: (context) => NavigationBarExe(
-                          userType: userType.toString(),
-                          userId: userId.toString(),
-                        )));
+                      userType: userType.toString(),
+                      userId: userId.toString(),
+                    )));
           },
         ),
       ),
@@ -69,9 +69,9 @@ class SettingsPageExecutive extends StatelessWidget {
               context,
               MaterialPageRoute(
                   builder: (context) => NavigationBarExe(
-                        userType: userType.toString(),
-                        userId: userId.toString(),
-                      )));
+                    userType: userType.toString(),
+                    userId: userId.toString(),
+                  )));
         },
         child: Padding(
           padding: const EdgeInsets.all(10),
@@ -85,9 +85,9 @@ class SettingsPageExecutive extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                             builder: (context) => Profile(
-                                  userType: userType.toString(),
-                                  userID: userId.toString(),
-                                )),
+                              userType: userType.toString(),
+                              userID: userId.toString(),
+                            )),
                       );
                     },
                     icons: CupertinoIcons.profile_circled,
@@ -104,9 +104,9 @@ class SettingsPageExecutive extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                             builder: (context) => Activity(
-                                  userType: userType.toString(),
-                                  userId: userId.toString(),
-                                )),
+                              userType: userType.toString(),
+                              userId: userId.toString(),
+                            )),
                       );
                     },
                     icons: CupertinoIcons.person_2,
@@ -121,7 +121,7 @@ class SettingsPageExecutive extends StatelessWidget {
                     titleMaxLine: 1,
                     subtitleMaxLine: 1,
                   ),
-                 /* SettingsItem(
+                  /* SettingsItem(
                     onTap: () {
                       Navigator.push(
                         context,
@@ -150,9 +150,9 @@ class SettingsPageExecutive extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                             builder: (context) => Gallery(
-                                  userId: userId.toString(),
-                                  userType: userType.toString(),
-                                )),
+                              userId: userId.toString(),
+                              userType: userType.toString(),
+                            )),
                       );
                     },
                     icons: CupertinoIcons.photo,
@@ -173,9 +173,9 @@ class SettingsPageExecutive extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                             builder: (context) => AttendancePage(
-                                  userType: userType.toString(),
-                                  userID: userId.toString(),
-                                )),
+                              userType: userType.toString(),
+                              userID: userId.toString(),
+                            )),
                       );
                     },
                     icons: Icons.fingerprint_outlined,
@@ -194,9 +194,9 @@ class SettingsPageExecutive extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                             builder: (context) => AttendanceScannerPage(
-                                  userType: userType.toString(),
-                                  userID: userId.toString(),
-                                )),
+                              userType: userType.toString(),
+                              userID: userId.toString(),
+                            )),
                       );
                     },
                     icons: Icons.scanner_outlined,
@@ -219,9 +219,9 @@ class SettingsPageExecutive extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                             builder: (context) => ViewPhotosPage(
-                                  userType: userType.toString(),
-                                  userID: userId.toString(),
-                                )),
+                              userType: userType.toString(),
+                              userID: userId.toString(),
+                            )),
                       );
                     },
                     icons: CupertinoIcons.photo_on_rectangle,
@@ -242,9 +242,9 @@ class SettingsPageExecutive extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                             builder: (context) => Achievements(
-                                  userType: userType.toString(),
-                                  userID: userId.toString(),
-                                )),
+                              userType: userType.toString(),
+                              userID: userId.toString(),
+                            )),
                       );
                     },
                     icons: Icons.emoji_events,
@@ -269,9 +269,9 @@ class SettingsPageExecutive extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                             builder: (context) => GibMembers(
-                                  userType: userType.toString(),
-                                  userId: userId.toString(),
-                                )),
+                              userType: userType.toString(),
+                              userId: userId.toString(),
+                            )),
                       );
                     },
                     icons: Icons.supervisor_account,
@@ -292,9 +292,9 @@ class SettingsPageExecutive extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                             builder: (context) => OffersPage(
-                                  userType: userType.toString(),
-                                  userId: userId.toString(),
-                                )),
+                              userType: userType.toString(),
+                              userId: userId.toString(),
+                            )),
                       );
                     },
                     icons: Icons.local_offer,
@@ -319,9 +319,9 @@ class SettingsPageExecutive extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                             builder: (context) => Doctors(
-                                  userType: userType.toString(),
-                                  userId: userId.toString(),
-                                )),
+                              userType: userType.toString(),
+                              userId: userId.toString(),
+                            )),
                       );
                     },
                     icons: Icons.add_circle,
@@ -342,9 +342,9 @@ class SettingsPageExecutive extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                             builder: (context) => BloodGroup(
-                                  userType: userType.toString(),
-                                  userId: userId.toString(),
-                                )),
+                              userType: userType.toString(),
+                              userId: userId.toString(),
+                            )),
                       );
                     },
                     icons: Icons.bloodtype,
@@ -365,9 +365,9 @@ class SettingsPageExecutive extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                             builder: (context) => AboutTab(
-                                  userId: userId.toString(),
-                                  userType: userType.toString(),
-                                )),
+                              userId: userId.toString(),
+                              userType: userType.toString(),
+                            )),
                       )
                     },
                     icons: CupertinoIcons.photo_on_rectangle,

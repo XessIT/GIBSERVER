@@ -191,7 +191,7 @@ class _MembersState extends State<Members> {
     }).catchError((error) {
       print("Error in fetchData: $error");
     });
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(Duration(seconds: 2), () {
       setState(() {
         isLoading = false; // Hide the loading indicator after 4 seconds
       });
@@ -276,7 +276,7 @@ class _MembersState extends State<Members> {
                       },
                       controller: fieldText,
                       decoration: InputDecoration(
-                          /*suffixIcon: IconButton(
+                        /*suffixIcon: IconButton(
                             icon: const Icon(Icons.clear),
                             onPressed: clearText,
                           ),*/
@@ -444,7 +444,7 @@ class _MembersState extends State<Members> {
                           child: Center(
                             child: InkWell(
                               onTap: () {
-                               Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileMembers(memberId: data[i]['id'], userType: widget.userType, userID: widget.userId,)));
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileMembers(memberId: data[i]['id'], userType: widget.userType, userID: widget.userId,)));
                                 // Add your onTap functionality here
                               },
                               child: Card(

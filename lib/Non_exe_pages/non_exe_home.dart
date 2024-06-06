@@ -14,6 +14,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 import '../Offer/offer.dart';
 import '../about_view.dart';
 import '../attendance.dart';
@@ -441,7 +442,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                   data.isEmpty
                       ? SizedBox.shrink()
                       :
-                   SizedBox(height: 180),
+                  SizedBox(height: 180),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Card(
@@ -479,8 +480,8 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                         MainAxisAlignment.center,
                                         children: [
                                           Text(
-                                            '${meeting['meeting_type']}',
-                                            style: Theme.of(context).textTheme.headlineMedium
+                                              '${meeting['meeting_type']}',
+                                              style: Theme.of(context).textTheme.headlineMedium
                                           ),
                                           IconButton(
                                               onPressed: () {
@@ -680,13 +681,23 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                           children: [
                                             // CIRCLEAVATAR STARTS
                                             Padding(
-                                              padding:
-                                              const EdgeInsets.all(8.0),
-                                              child: CircleAvatar(
-                                                radius: 30.0,
-                                                backgroundColor: Colors.cyan,
-                                                backgroundImage:
-                                                NetworkImage(imageUrl),
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: InkWell(
+                                                onTap: () {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (BuildContext context) {
+                                                      return AlertDialog(
+                                                        content: Image.network(imageUrl),
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                                child: CircleAvatar(
+                                                  radius: 30.0,
+                                                  backgroundColor: Colors.cyan,
+                                                  backgroundImage: NetworkImage(imageUrl),
+                                                ),
                                               ),
                                             ),
                                             SizedBox(width: 20),
@@ -773,6 +784,17 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                             ),
                                           ),
                                         ),
+                                        Positioned(top: 25, right: 8, // Adjust position if needed
+                                          child: IconButton(
+                                            onPressed: () {
+                                              launchUrl(Uri.parse("tel://${data[i]['mobile']}"));
+                                            },
+                                            icon: Icon(
+                                              Icons.call_outlined,
+                                              color: Colors.green[900],
+                                            ),
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ],
@@ -810,6 +832,16 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                               fontWeight: FontWeight.bold),
                         ),
                       ),
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: CircleAvatar(
+                          radius: 25,
+                          backgroundImage: AssetImage(
+                            'assets/logo.png',
+                          ),
+                          backgroundColor: Colors.green,
+                        ),
+                      ),
                       /* Padding(
                       padding: EdgeInsets.only(right: 20),
                       child: IconButton(
@@ -837,19 +869,25 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Padding(
-                          padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(8.0),
+                        child: InkWell(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  content: Image.network(imageUrl),
+                                );
+                              },
+                            );
+                          },
                           child: CircleAvatar(
+                            radius: 30.0,
                             backgroundColor: Colors.cyan,
-                            radius:
-                            30.0, // This will give you a 60.0 diameter circle
-                            backgroundImage: profileImage.isNotEmpty
-                                ? NetworkImage(profileImage)
-                                : null,
-                            child: profileImage.isEmpty
-                                ? const Icon(Icons.person,
-                                size: 30.0, color: Colors.white)
-                                : null,
-                          )),
+                            backgroundImage: NetworkImage(imageUrl),
+                          ),
+                        ),
+                      ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Column(
@@ -965,12 +1003,12 @@ class _NavigationBarNonState extends State<NavigationBarNon> {
           ),
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.settings,
+              Icons.more_horiz,
               color: Theme.of(context).brightness == Brightness.light
                   ? Colors.black45
                   : Colors.white,
             ),
-            label: 'Settings',
+            label: 'More',
           ),
         ],
         type:

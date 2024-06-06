@@ -38,7 +38,7 @@ class SettingsPageNon extends StatelessWidget {
       appBar: AppBar(
         title:
         Text(
-          "Settings",
+          "",
           style: Theme.of(context).textTheme.displayLarge,
         ),
         leading: IconButton(

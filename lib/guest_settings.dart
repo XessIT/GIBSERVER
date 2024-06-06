@@ -40,7 +40,7 @@ class GuestSettings extends StatelessWidget {
           ),
         ),
         title: Text(
-          "Account",
+          "",
           style: Theme.of(context).textTheme.displayLarge,
         ),
         leading: IconButton(
