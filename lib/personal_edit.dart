@@ -404,7 +404,8 @@ class _PersonalEditState extends State<PersonalEdit> {
                       ),
                     ),
                     onTap: () {
-                      showModalBottomSheet(
+                      pickImageFromGallery();
+                     /* showModalBottomSheet(
                         context: context,
                         builder: (ctx) {
                           return Column(
@@ -421,7 +422,7 @@ class _PersonalEditState extends State<PersonalEdit> {
                             ],
                           );
                         },
-                      );
+                      );*/
                     },
                   ),
                   SizedBox(

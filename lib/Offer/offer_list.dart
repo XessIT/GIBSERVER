@@ -73,7 +73,7 @@ class _OfferListState extends State<OfferList> {
                     labelColor: Colors.green,
                     unselectedLabelColor: Colors.black,
                     tabs:[
-                      Tab(text: 'New Offer',),
+                      Tab(text: 'Add New Offer',),
                       Tab(text: 'Running',),
                       Tab(text: 'Completed',),
                       Tab(text: 'Block')
@@ -349,18 +349,19 @@ class _AddOfferPageState extends State<AddOfferPage> {
                       ),
                    ),
                     onTap: () {
-                      showModalBottomSheet(context: context, builder: (ctx){
+                      pickImageFromGallery();
+                     /* showModalBottomSheet(context: context, builder: (ctx){
                         return Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                          /*  ListTile(
+                          *//*  ListTile(
                               leading: const Icon(Icons.camera_alt),
                               title: const Text("With Camera"),
                               onTap: () async {
                                 pickImageFromCamera();
                                 Navigator.of(context).pop();
                               },
-                            ),*/
+                            ),*//*
                             ListTile(
                               leading: const Icon(Icons.storage),
                               title: const Text("From Gallery"),
@@ -372,7 +373,7 @@ class _AddOfferPageState extends State<AddOfferPage> {
                             )
                           ],
                         );
-                      });
+                      });*/
                     },
                   ),
                   const SizedBox(height: 10,),

@@ -267,7 +267,8 @@ class _EditOfferState extends State<EditOffer> {
                   radius: 75,
                 ),
                 onTap: () {
-                  showModalBottomSheet(context: context, builder: (ctx){
+                  pickImageFromGallery();
+                  /*showModalBottomSheet(context: context, builder: (ctx){
                     return Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -290,7 +291,7 @@ class _EditOfferState extends State<EditOffer> {
                         )
                       ],
                     );
-                  });
+                  });*/
                 },
               ),
               const SizedBox(height: 10,),
