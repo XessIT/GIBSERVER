@@ -209,10 +209,6 @@ class SettingsPageExecutive extends StatelessWidget {
                     titleStyle: Theme.of(context).textTheme.bodyMedium,
                     //subtitle: "Lock Ziar'App to improve your privacy",
                   ),
-                ],
-              ),
-              SettingsGroup(
-                items: [
                   SettingsItem(
                     onTap: () {
                       Navigator.push(
@@ -259,10 +255,6 @@ class SettingsPageExecutive extends StatelessWidget {
                     titleMaxLine: 1,
                     subtitleMaxLine: 1,
                   ),
-                ],
-              ),
-              SettingsGroup(
-                items: [
                   SettingsItem(
                     onTap: () {
                       Navigator.push(
@@ -309,10 +301,6 @@ class SettingsPageExecutive extends StatelessWidget {
                     titleMaxLine: 1,
                     subtitleMaxLine: 1,
                   ),
-                ],
-              ),
-              SettingsGroup(
-                items: [
                   SettingsItem(
                     onTap: () {
                       Navigator.push(
@@ -404,12 +392,6 @@ class SettingsPageExecutive extends StatelessWidget {
                     titleMaxLine: 1,
                     subtitleMaxLine: 1,
                   ),
-                ],
-              ),
-              // You can add a settings title
-              SettingsGroup(
-                // settingsGroupTitle: "Account",
-                items: [
                   SettingsItem(
                     onTap: () {
                       AwesomeDialog(
@@ -426,7 +408,7 @@ class SettingsPageExecutive extends StatelessWidget {
                         btnOk: ElevatedButton(
                           onPressed: () async {
                             SharedPreferences prefs =
-                                await SharedPreferences.getInstance();
+                            await SharedPreferences.getInstance();
                             await prefs.setBool('isLoggedIn', false);
                             Navigator.pushReplacement(
                               context,
@@ -437,7 +419,7 @@ class SettingsPageExecutive extends StatelessWidget {
                           },
                           style: ButtonStyle(
                             backgroundColor:
-                                MaterialStateProperty.all<Color>(Colors.green),
+                            MaterialStateProperty.all<Color>(Colors.green),
                           ),
                           child: const Text(
                             'Yes',
@@ -450,7 +432,7 @@ class SettingsPageExecutive extends StatelessWidget {
                           },
                           style: ButtonStyle(
                             backgroundColor:
-                                MaterialStateProperty.all<Color>(Colors.red),
+                            MaterialStateProperty.all<Color>(Colors.red),
                           ),
                           child: Text(
                             'No',
@@ -468,20 +450,6 @@ class SettingsPageExecutive extends StatelessWidget {
                     title: "Log Out",
                     titleStyle: Theme.of(context).textTheme.bodyMedium,
                   ),
-                  /* SettingsItem(
-                    onTap: () {},
-                    icons: CupertinoIcons.repeat,
-                    title: "Change email",
-                  ),
-                  SettingsItem(
-                    onTap: () {},
-                    icons: CupertinoIcons.delete_solid,
-                    title: "Delete account",
-                    titleStyle: TextStyle(
-                      color: Colors.red,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),*/
                 ],
               ),
             ],
