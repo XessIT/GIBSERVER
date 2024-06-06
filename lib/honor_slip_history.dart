@@ -147,6 +147,9 @@ class _HonorHistoryState extends State<HonorHistory> {
                                        "${data[i]["Toname"]}") :
                                   Text(" ${data[i]["name"]}"),
 
+
+
+
                                   children:[ Column(
                                     // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                     children:  [
@@ -162,17 +165,16 @@ class _HonorHistoryState extends State<HonorHistory> {
                                       data[i]['businessName'].isNotEmpty
                                           ? ListTile(
                                         title: Text("   Referee Name : ${data[i]["businessName"]}",style: TextStyle(fontWeight: FontWeight.bold),),
-                                        trailing: IconButton(
-                                          onPressed: () async {
-                                            final call = Uri.parse("tel://${data[i]["businessMobile"]}");
-                                            if (await canLaunchUrl(call)) {
-                                              launchUrl(call);
-                                            } else {
-                                              throw 'Could not launch $call';
-                                            }
-                                          },
-                                          icon: Icon(Icons.call, color: Colors.green),
-                                        ),
+                                        trailing: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Card(
+                                              child: data[i]["Tomobile"] == fetchMobile
+                                                  ? Icon(Icons.call_received, color: Colors.green[800])
+                                                  : Icon(Icons.call_made, color: Colors.red),
+                                            ),
+                                          ],
+                                        )
                                       ) : Container(),
                                       const SizedBox(height: 5,),
                                       Row(

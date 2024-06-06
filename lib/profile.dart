@@ -448,20 +448,6 @@ class _PersonalState extends State<Personal> {
                   const Divider(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children:  [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Member'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(widget.userType),
-                      )
-                    ],
-                  ),
-                  const Divider(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Padding(
                         padding: EdgeInsets.all(8.0),
@@ -490,7 +476,7 @@ class _PersonalState extends State<Personal> {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child:spousename == null ? const Text("Nil")
+                        child:spousename!.isEmpty ? const Text("-")
                             : Text(spousename!),
                       )
                     ],
@@ -501,7 +487,7 @@ class _PersonalState extends State<Personal> {
                     children:  [
                       const Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: Text('WAD'),
+                        child: Text('Wedding Date'),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -519,7 +505,8 @@ class _PersonalState extends State<Personal> {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(spousebloodgroup!),
+                        child: spousebloodgroup!.isEmpty ? const Text("-")
+                            : Text(spousebloodgroup!),
                       )
                     ],
                   ),

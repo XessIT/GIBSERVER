@@ -258,22 +258,10 @@ class _GalleryState extends State<Gallery> {
                   );
                 });
           } else {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Text('Upload Limit Reached'),
-                  content: Text('You already have 5 images uploaded.'),
-                  actions: <Widget>[
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Text('OK'),
-                    ),
-                  ],
-                );
-              },
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Limit Exceeded'),
+              ),
             );
           }
         },

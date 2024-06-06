@@ -104,7 +104,7 @@ class _MeetingUpcomingPageState extends State<MeetingUpcomingPage> {
                     Tab(text: ('Network Meeting'),),
                     Tab(text: ('Team Meeting'),),
                     Tab(text: ('Training Program'),),
-                    Tab(text: ("GIB Meeting"),),
+                    Tab(text: ("Industrial Visit"),),
                     //  Tab(text: ('API'),)
                   ],
                 ),
@@ -1144,7 +1144,7 @@ class UpComingGIBMeeting extends StatefulWidget {
 }
 
 class _UpComingGIBMeetingState extends State<UpComingGIBMeeting> {
-  String type = "GIB Meeting";
+  String type = "Industrial Visit";
   List<Map<String, dynamic>> data=[];
   Future<void> getData() async {
     print('Attempting to make HTTP request...');
@@ -1274,7 +1274,7 @@ class CompletedGIBMeeting extends StatefulWidget {
 }
 
 class _CompletedGIBMeetingState extends State<CompletedGIBMeeting> {
-  String type = "GIB Meeting";
+  String type = "Industrial Visit";
   List<Map<String, dynamic>> data=[];
   Future<void> getData() async {
     print('Attempting to make HTTP request...');

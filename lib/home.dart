@@ -657,9 +657,7 @@ class _HomepageState extends State<Homepage> {
                                     builder: (BuildContext context) {
                                       return Container(
                                         // Wrap Card with Container
-                                        width: MediaQuery.of(context)
-                                            .size
-                                            .width, // Set width to full width of the screen
+                                        width: MediaQuery.of(context).size.width, // Set width to full width of the screen
                                         child: Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: ClayContainer(

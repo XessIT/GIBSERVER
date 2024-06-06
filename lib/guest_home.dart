@@ -9,6 +9,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'Offer/offer.dart';
+import 'blood_group.dart';
+import 'gib_doctors.dart';
 import 'guest_settings.dart';
 
 class GuestHome extends StatefulWidget {
@@ -34,6 +36,8 @@ class _GuestHomeState extends State<GuestHome> {
     _pages = [
       GuestHomePage(userId: widget.userId, userType: widget.userType),
       OffersPage(userId: widget.userId, userType: widget.userType),
+      Doctors(userId: widget.userId, userType: widget.userType),
+      BloodGroup(userId: widget.userId, userType: widget.userType),
       GuestSettings(userId: widget.userId, userType: widget.userType),
     ];
     super.initState();
@@ -44,10 +48,10 @@ class _GuestHomeState extends State<GuestHome> {
     return Scaffold(
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
+        items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.home_outlined,
+              Icons.home,
             ),
             label: 'Home',
           ),
@@ -56,12 +60,22 @@ class _GuestHomeState extends State<GuestHome> {
               Icons.local_offer,
             ),
             label: 'Offers',
+          ),BottomNavigationBarItem(
+            icon: Icon(
+              Icons.local_hospital,
+            ),
+            label: "Doctor's",
+          ),BottomNavigationBarItem(
+            icon: Icon(
+              Icons.bloodtype,
+            ),
+            label: 'Blood Group',
           ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.settings,
             ),
-            label: 'Account',
+            label: 'More',
           ),
         ],
         type: BottomNavigationBarType.fixed,

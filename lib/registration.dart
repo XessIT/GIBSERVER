@@ -499,7 +499,7 @@ class _GuestState extends State<Guest> {
                                 controller: referreridcotroller,
                                 validator: (value) {
                                   if (value!.isEmpty) {
-                                    return '* Enter Referrer Executive GiB Member ID';
+                                    return '* Enter Referrer GiB Member ID';
                                   } else if (nameRegExp.hasMatch(value)) {
                                     return null;
                                   }
@@ -513,7 +513,7 @@ class _GuestState extends State<Guest> {
                                 },
                                 decoration: const InputDecoration(
 
-                                  hintText: "Referrer Executive GiB Member ID",
+                                  hintText: "Referrer GiB Member ID",
                                   suffixIcon: Icon(Icons.confirmation_num),
                                 ),
                               ),

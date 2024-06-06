@@ -282,7 +282,7 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
                           child: Container(
                             width: 150,
                             height: 150,
-                        child: CachedNetworkImage(
+                        child: selectedImage == null ? CachedNetworkImage(
                           imageUrl: image, // Your network image URL
                           placeholder: (context, url) => Center(child: CircularProgressIndicator()),
                           errorWidget: (context, url, error) => Icon(Icons.error),
@@ -290,7 +290,7 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
                           fadeOutDuration: Duration(milliseconds: 200), // Smooth fade-out
                           fadeInDuration: Duration(milliseconds: 200), // Smooth fade-in
                           filterQuality: FilterQuality.high, // Maintain image quality
-                        ),),
+                        ) : Image.memory(selectedImage!)),
                       ),
                       onTap: () {
                         showModalBottomSheet(
