@@ -598,6 +598,7 @@ class _VisitorsSlipState extends State<VisitorsSlip> {
                                     const SizedBox(
                                       height: 20,
                                     ),
+
                                     Row(
                                       mainAxisAlignment:
                                       MainAxisAlignment.center,
@@ -673,6 +674,18 @@ class _VisitorsSlipState extends State<VisitorsSlip> {
                                         // Cancel button ends
                                       ],
                                     ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+
+                                    Column(
+                                      children: [
+                                        Text('Total Guests: ${widget.guestcount}'),
+
+                                        Text('Remaining Guests: ${int.parse(widget.guestcount!) - count}/${widget.guestcount}'),
+                                      ],
+                                    ),
+
                                     const SizedBox(
                                       height: 10,
                                     ),
