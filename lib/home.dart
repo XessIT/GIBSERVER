@@ -291,8 +291,7 @@ class _HomepageState extends State<Homepage> {
             "meeting_place": meetingPlace,
             "status": registerStatus,
             "user_id": widget.userId,
-            "member_type": widget.userType,
-            "guestcount": guestcount.text.trim()
+            "member_type": widget.userType
           }));
       if (res.statusCode == 200) {
         if (res.body.isNotEmpty) {
@@ -337,6 +336,7 @@ class _HomepageState extends State<Homepage> {
     }
   }
 
+
   void _showGuestDialog(String meetingId, String meetingType,
       String meetingDate, String meetingPlace) {
     showDialog(
@@ -377,7 +377,9 @@ class _HomepageState extends State<Homepage> {
                           meeting_date: meetingDate,
                           user_mobile: userdata[0]["mobile"],
                           user_name: '${userdata[0]["first_name"] ?? ""} ${userdata[0]["last_name"] ?? ""}',
-                          member_id:userdata[0]["member_id"] // Replace this with the actual mobile fetching logic if needed
+                          member_id:userdata[0]["member_id"] ,
+                          meeting_place: meetingPlace,
+                          meeting_type: meetingType // Replace this with the actual mobile fetching logic if needed
                       ),
                     ),
                   );
@@ -758,8 +760,14 @@ class _HomepageState extends State<Homepage> {
                                                                                           meetingId: id, guestcount: guestcount.text.trim(), userType: widget.userType, meeting_date: meetingDate,
                                                                                           user_mobile: userdata[0]["mobile"],
                                                                                           user_name: '${userdata[0]["first_name"] ?? ""} ${userdata[0]["last_name"] ?? ""}',
-                                                                                          member_id:userdata[0]["member_id"]
+                                                                                          member_id:userdata[0]["member_id"],
+                                                                                          meeting_place: meetingPlace,
+                                                                                          meeting_type: meetingType,
                                                                                       )));
+                                                                                      print('1234567890');
+                                                                                      print("meeting_place${meetingPlace}");
+                                                                                      print("meeting_type${meetingType}");
+                                                                                      print("");
                                                                                       print("UserID:-${widget.userId}${widget.userType}");
                                                                                       registerDateStoreDatabase(id, meetingType, meetingDate, meetingPlace);
                                                                                     }
