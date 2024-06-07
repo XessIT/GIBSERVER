@@ -12,6 +12,7 @@ import 'package:flutter/widgets.dart';
 import 'package:gipapp/Non_exe_pages/settings_non_executive.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
@@ -688,8 +689,17 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                                   showDialog(
                                                     context: context,
                                                     builder: (BuildContext context) {
-                                                      return AlertDialog(
-                                                        content: Image.network(imageUrl),
+                                                      return SizedBox(
+                                                        child: Dialog(
+                                                          child: Container(
+                                                            width: 300.0, // Set the width of the dialog
+                                                            height: 400.0, // Set the height of the dialog
+
+                                                            child: PhotoView(
+                                                              imageProvider: NetworkImage(imageUrl),
+                                                            ),
+                                                          ),
+                                                        ),
                                                       );
                                                     },
                                                   );
@@ -876,8 +886,17 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                             showDialog(
                               context: context,
                               builder: (BuildContext context) {
-                                return AlertDialog(
-                                  content: Image.network(imageUrl),
+                                return SizedBox(
+                                  child: Dialog(
+                                    child: Container(
+                                      width: 300.0, // Set the width of the dialog
+                                      height: 400.0, // Set the height of the dialog
+
+                                      child: PhotoView(
+                                        imageProvider: NetworkImage(imageUrl),
+                                      ),
+                                    ),
+                                  ),
                                 );
                               },
                             );
