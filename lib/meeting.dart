@@ -29,6 +29,41 @@ class MeetingUpcomingPage extends StatefulWidget {
 }
 
 class _MeetingUpcomingPageState extends State<MeetingUpcomingPage> {
+
+  @override
+  initState() {
+    super.initState();
+    fetchData(widget.userId);
+  }
+  String district = "";
+  String chapter = "";
+  List<Map<String, dynamic>> userdata = [];
+  Future<void> fetchData(String? userId) async {
+    try {
+      final url = Uri.parse(
+          'http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=$userId');
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        if (responseData is List<dynamic>) {
+          setState(() {
+            userdata = responseData.cast<Map<String, dynamic>>();
+            if (userdata.isNotEmpty) {
+              district = userdata[0]['district'];
+              chapter = userdata[0]['chapter'];
+            }
+          });
+        } else {
+          print('Invalid response data format');
+        }
+      } else {
+        //  print('Error: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error: $error');
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -93,10 +128,10 @@ class _MeetingUpcomingPageState extends State<MeetingUpcomingPage> {
               );
             }
           },
-          child: const Column(
+          child:  Column(
               children: [
                 //TABBAR STARTS
-                TabBar(
+                const TabBar(
                   isScrollable: true,
                   labelColor: Colors.green,
                   unselectedLabelColor: Colors.black,
@@ -111,10 +146,10 @@ class _MeetingUpcomingPageState extends State<MeetingUpcomingPage> {
                 //TABBAR VIEW STARTS
                 Expanded(
                   child: TabBarView(children: <Widget>[
-                    NetworkMeeting(),
-                    TeamMeeting(),
-                    TrainingProgram(),
-                    GIBMeeting(),
+                    NetworkMeeting(district: district,chapter: chapter, userType: widget.userType),
+                    TeamMeeting(district: district,chapter: chapter, userType: widget.userType),
+                    TrainingProgram(district: district,chapter: chapter, userType: widget.userType),
+                    GIBMeeting(district: district,chapter: chapter, userType: widget.userType),
                     //  MyHomePage(title: '',),
                   ],
                   ),
@@ -126,10 +161,16 @@ class _MeetingUpcomingPageState extends State<MeetingUpcomingPage> {
   }
 }
 
-class NetworkMeeting extends StatelessWidget {
-  const NetworkMeeting({Key? key}) : super(key: key);
+class NetworkMeeting extends StatefulWidget {
+   final String? district;
+   final String? chapter;
+   final String? userType;
+  const NetworkMeeting({super.key, required this.district, required this.chapter, required this.userType});
 
-
+  @override
+  State<NetworkMeeting> createState() => _NetworkMeetingState();
+}
+class _NetworkMeetingState extends State<NetworkMeeting> {
   @override
   Widget build(BuildContext context) {
     return  DefaultTabController(
@@ -166,24 +207,27 @@ class NetworkMeeting extends StatelessWidget {
             //TABBAR VIEW STARTS
             Expanded(
               child: TabBarView(children: [
-                UpComingNetworkMeeting(),
-                CompletedNetworkMeeting(),
+                UpComingNetworkMeeting(district: widget.district,chapter: widget.chapter, userType: widget.userType),
+                CompletedNetworkMeeting(district: widget.district,chapter: widget.chapter, userType: widget.userType),
               ]),
             ),
-            SizedBox(height: 30,),
+            const SizedBox(height: 30,),
           ],
         ),
       ),
     );
   }
 }
+
 class  UpComingNetworkMeeting extends StatefulWidget {
-  UpComingNetworkMeeting({Key? key}) : super(key: key);
+  final String? district;
+  final String? chapter;
+  final String? userType;
+  const UpComingNetworkMeeting({Key? key, required this.district, required this.chapter, required this.userType}) : super(key: key);
 
   @override
   State<UpComingNetworkMeeting> createState() => _UpComingNetworkMeetingState();
 }
-
 class _UpComingNetworkMeetingState extends State<UpComingNetworkMeeting> {
   String type = "Network Meeting";
 
@@ -196,9 +240,10 @@ class _UpComingNetworkMeetingState extends State<UpComingNetworkMeeting> {
   Future<void> getData() async {
     print('Attempting to make HTTP request...');
     try {
-      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type');
+      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type&district=${widget.district}&chapter=${widget.chapter}&member_type=${widget.userType}');
       final response = await http.get(url);
       if (response.statusCode == 200) {
+        print("fetch unm: ${response.body}");
         final responseData = json.decode(response.body);
         final List<dynamic> itemGroups = responseData;
         // No need to call setState here because we're not updating the UI at this point
@@ -238,7 +283,7 @@ class _UpComingNetworkMeetingState extends State<UpComingNetworkMeeting> {
   void initState() {
     super.initState();
     getData();
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(Duration(seconds: 3), () {
       setState(() {
         isLoading = false; // Hide the loading indicator after 4 seconds
       });
@@ -269,9 +314,6 @@ class _UpComingNetworkMeetingState extends State<UpComingNetworkMeeting> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            //DATE TEXT STARTS
-                            //   const SizedBox(width: 23,),
-                            //  SizedBox(height: 30,),
                             Align(
                               alignment: Alignment.topLeft,
                               child: Text('${data[i]['meeting_date']}',
@@ -318,16 +360,15 @@ class _UpComingNetworkMeetingState extends State<UpComingNetworkMeeting> {
   }
 }
 
-
-
-
 class CompletedNetworkMeeting extends StatefulWidget {
-  CompletedNetworkMeeting({Key? key}) : super(key: key);
+  final String? district;
+  final String? chapter;
+  final String? userType;
+  const CompletedNetworkMeeting({Key? key, required this.district, required this.chapter, required this.userType}) : super(key: key);
 
   @override
   State<CompletedNetworkMeeting> createState() => _CompletedNetworkMeetingState();
 }
-
 class _CompletedNetworkMeetingState extends State<CompletedNetworkMeeting> {
   String type = "Network Meeting";
 
@@ -336,7 +377,7 @@ class _CompletedNetworkMeetingState extends State<CompletedNetworkMeeting> {
   Future<void> getData() async {
     print('Attempting to make HTTP request...');
     try {
-      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type');
+      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type&district=${widget.district}&chapter=${widget.chapter}&member_type=${widget.userType}');
       final response = await http.get(url);
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
@@ -444,9 +485,17 @@ class _CompletedNetworkMeetingState extends State<CompletedNetworkMeeting> {
     );
   }
 }
-class TeamMeeting  extends StatelessWidget {
-  const TeamMeeting({Key? key}) : super(key: key);
-  //final CollectionReference meeting = FirebaseFirestore.instance.collection("Meeting");
+
+class TeamMeeting  extends StatefulWidget {
+  final String? district;
+  final String? chapter;
+  final String? userType;
+  const TeamMeeting({super.key, required this.district, required this.chapter, required this.userType});
+
+  @override
+  State<TeamMeeting> createState() => _TeamMeetingState();
+}
+class _TeamMeetingState extends State<TeamMeeting> {
   @override
   Widget build(BuildContext context) {
     return  DefaultTabController(
@@ -483,8 +532,8 @@ class TeamMeeting  extends StatelessWidget {
             //TABBAR VIEW STARTS
             Expanded(
               child: TabBarView(children: [
-                UpcomingTeamMeeting(),
-                CompletedTeamMeeting(),
+                UpcomingTeamMeeting(district: widget.district,chapter: widget.chapter, userType: widget.userType),
+                CompletedTeamMeeting(district: widget.district,chapter: widget.chapter, userType: widget.userType),
               ]),
             ),
 
@@ -493,13 +542,16 @@ class TeamMeeting  extends StatelessWidget {
         )
     );}
 }
+
 class UpcomingTeamMeeting extends StatefulWidget {
-  UpcomingTeamMeeting({Key? key}) : super(key: key);
+  final String? district;
+  final String? chapter;
+  final String? userType;
+  const UpcomingTeamMeeting({Key? key, required this.district, required this.chapter, required this.userType}) : super(key: key);
 
   @override
   State<UpcomingTeamMeeting> createState() => _UpcomingTeamMeetingState();
 }
-
 class _UpcomingTeamMeetingState extends State<UpcomingTeamMeeting> {
   String type = "Team Meeting";
 
@@ -508,7 +560,7 @@ class _UpcomingTeamMeetingState extends State<UpcomingTeamMeeting> {
   Future<void> getData() async {
     print('Attempting to make HTTP request...');
     try {
-      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type');
+      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type&district=${widget.district}&chapter=${widget.chapter}&member_type=${widget.userType}');
       final response = await http.get(url);
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
@@ -644,20 +696,21 @@ class _UpcomingTeamMeetingState extends State<UpcomingTeamMeeting> {
 }
 
 class CompletedTeamMeeting extends StatefulWidget {
-
-  CompletedTeamMeeting({Key? key}) : super(key: key);
+  final String? district;
+  final String? chapter;
+  final String? userType;
+  const CompletedTeamMeeting({super.key, required this.district, required this.chapter, required this.userType});
 
   @override
   State<CompletedTeamMeeting> createState() => _CompletedTeamMeetingState();
 }
-
 class _CompletedTeamMeetingState extends State<CompletedTeamMeeting> {
   String type = "Team Meeting";
   List<Map<String, dynamic>> data=[];
   Future<void> getData() async {
     print('Attempting to make HTTP request...');
     try {
-      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type');
+      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type&district=${widget.district}&chapter=${widget.chapter}&member_type=${widget.userType}');
       final response = await http.get(url);
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
@@ -776,8 +829,16 @@ class _CompletedTeamMeetingState extends State<CompletedTeamMeeting> {
   }
 }
 
-class TrainingProgram extends StatelessWidget {
-  const TrainingProgram({Key? key}) : super(key: key);
+class TrainingProgram extends StatefulWidget {
+  final String? district;
+  final String? chapter;
+  final String? userType;
+  const TrainingProgram({super.key, required this.district, required this.chapter, required this.userType});
+
+  @override
+  State<TrainingProgram> createState() => _TrainingProgramState();
+}
+class _TrainingProgramState extends State<TrainingProgram> {
   @override
   Widget build(BuildContext context) {
     return  DefaultTabController(
@@ -813,8 +874,8 @@ class TrainingProgram extends StatelessWidget {
             //TABBAR VIEW STARTS
             Expanded(
               child: TabBarView(children: [
-                UpComingTrainingProgram(),
-                CompletedTrainingProgram(),
+                UpComingTrainingProgram(district: widget.district,chapter: widget.chapter, userType: widget.userType),
+                CompletedTrainingProgram(district: widget.district,chapter: widget.chapter, userType: widget.userType),
               ]),
             )
           ],
@@ -823,13 +884,16 @@ class TrainingProgram extends StatelessWidget {
     );
   }
 }
+
 class UpComingTrainingProgram extends StatefulWidget {
-  UpComingTrainingProgram({Key? key}) : super(key: key);
+  final String? district;
+  final String? chapter;
+  final String? userType;
+  const UpComingTrainingProgram({super.key, required this.district, required this.chapter, required this.userType});
 
   @override
   State<UpComingTrainingProgram> createState() => _UpComingTrainingProgramState();
 }
-
 class _UpComingTrainingProgramState extends State<UpComingTrainingProgram> {
   String type ="Training Program";
   List<Map<String, dynamic>> data=[];
@@ -837,7 +901,7 @@ class _UpComingTrainingProgramState extends State<UpComingTrainingProgram> {
   Future<void> getData() async {
     print('Attempting to make HTTP request...');
     try {
-      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type');
+      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type&district=${widget.district}&chapter=${widget.chapter}&member_type=${widget.userType}');
       final response = await http.get(url);
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
@@ -957,20 +1021,23 @@ class _UpComingTrainingProgramState extends State<UpComingTrainingProgram> {
     );
   }
 }
+
 class CompletedTrainingProgram extends StatefulWidget {
-  CompletedTrainingProgram({Key? key}) : super(key: key);
+  final String? district;
+  final String? chapter;
+  final String? userType;
+  const CompletedTrainingProgram({super.key, required this.district, required this.chapter, required this.userType});
 
   @override
   State<CompletedTrainingProgram> createState() => _CompletedTrainingProgramState();
 }
-
 class _CompletedTrainingProgramState extends State<CompletedTrainingProgram> {
   String type = "Training Program";
   List<Map<String, dynamic>> data=[];
   Future<void> getData() async {
     print('Attempting to make HTTP request...');
     try {
-      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type');
+      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type&district=${widget.district}&chapter=${widget.chapter}&member_type=${widget.userType}');
       final response = await http.get(url);
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
@@ -1087,10 +1154,17 @@ class _CompletedTrainingProgramState extends State<CompletedTrainingProgram> {
     );
   }
 }
-class GIBMeeting extends StatelessWidget {
-  const GIBMeeting ({Key? key}) : super(key: key);
 
+class GIBMeeting extends StatefulWidget {
+  final String? district;
+  final String? chapter;
+  final String? userType;
+  const GIBMeeting ({super.key, required this.district, required this.chapter, required this.userType});
 
+  @override
+  State<GIBMeeting> createState() => _GIBMeetingState();
+}
+class _GIBMeetingState extends State<GIBMeeting> {
   @override
   Widget build(BuildContext context) {
     return  DefaultTabController(
@@ -1126,8 +1200,8 @@ class GIBMeeting extends StatelessWidget {
             //TABBAR VIEW STARTS
             Expanded(
               child: TabBarView(children: [
-                UpComingGIBMeeting(),
-                CompletedGIBMeeting(),
+                UpComingGIBMeeting(district: widget.district,chapter: widget.chapter, userType: widget.userType),
+                CompletedGIBMeeting(district: widget.district,chapter: widget.chapter, userType: widget.userType),
               ]),
             )
           ],
@@ -1136,20 +1210,23 @@ class GIBMeeting extends StatelessWidget {
     );
   }
 }
+
 class UpComingGIBMeeting extends StatefulWidget {
-  UpComingGIBMeeting ({Key? key}) : super(key: key);
+  final String? district;
+  final String? chapter;
+  final String? userType;
+  UpComingGIBMeeting ({Key? key, required this.district, required this.chapter, required this.userType}) : super(key: key);
 
   @override
   State<UpComingGIBMeeting> createState() => _UpComingGIBMeetingState();
 }
-
 class _UpComingGIBMeetingState extends State<UpComingGIBMeeting> {
   String type = "Industrial Visit";
   List<Map<String, dynamic>> data=[];
   Future<void> getData() async {
     print('Attempting to make HTTP request...');
     try {
-      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type');
+      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type&district=${widget.district}&chapter=${widget.chapter}&member_type=${widget.userType}');
       final response = await http.get(url);
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
@@ -1266,20 +1343,23 @@ class _UpComingGIBMeetingState extends State<UpComingGIBMeeting> {
     );
   }
 }
+
 class CompletedGIBMeeting extends StatefulWidget {
-  CompletedGIBMeeting({Key? key}) : super(key: key);
+  final String? district;
+  final String? chapter;
+  final String? userType;
+  const CompletedGIBMeeting({super.key, required this.district, required this.chapter, required this.userType});
 
   @override
   State<CompletedGIBMeeting> createState() => _CompletedGIBMeetingState();
 }
-
 class _CompletedGIBMeetingState extends State<CompletedGIBMeeting> {
   String type = "Industrial Visit";
   List<Map<String, dynamic>> data=[];
   Future<void> getData() async {
     print('Attempting to make HTTP request...');
     try {
-      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type');
+      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type&district=${widget.district}&chapter=${widget.chapter}&member_type=${widget.userType}');
       final response = await http.get(url);
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);

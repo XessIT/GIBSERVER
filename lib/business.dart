@@ -804,6 +804,30 @@ class _MyTransactionState extends State<MyTransaction> {
       print('Error: $error');
     }
   }
+
+  String determineAccountingYear(DateTime now) {
+    // Check if current month is before April
+    if (now.month < DateTime.april) {
+      // Show previous year - current year
+      return '${now.year - 1} - ${now.year}';
+    } else {
+      // Show current year - next year
+      return '${now.year} - ${now.year + 1}';
+    }
+  }
+  String formatAccountingYear(String yearRange) {
+    // Split the year range into individual years
+    final years = yearRange.split(' - ');
+    final startYear = int.parse(years[0]);
+    final endYear = int.parse(years[1]);
+
+    // Format month strings (April and March)
+    final startMonth = DateFormat('MMM').format(DateTime(startYear, DateTime.april));
+    final endMonth = DateFormat('MMM').format(DateTime(endYear, DateTime.march));
+
+    // Return formatted string with month names
+    return '$startMonth $startYear - $endMonth $endYear';
+  }
   @override
   void initState() {
     // TODO: implement initStat
@@ -834,23 +858,29 @@ class _MyTransactionState extends State<MyTransaction> {
                   margin: EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
                     children: [
-                      const Padding(
+                       Padding(
                         padding: EdgeInsets.all(10),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            CircleAvatar(
+                              radius: 20,
+                              backgroundImage: AssetImage('assets/letter-b.png'),
+                            ),
 
                             Text(
                               'Business',
                               style: TextStyle(
                                 fontSize: 20,
                                 color: Colors.white,
-
                               ),
                             ),
-                            CircleAvatar(
-                              radius: 20,
-                              backgroundImage: AssetImage('assets/letter-b.png'),
+                            Text(
+                              formatAccountingYear(determineAccountingYear(DateTime.now())),
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.white,
+                              ),
                             ),
                           ],
                         ),
