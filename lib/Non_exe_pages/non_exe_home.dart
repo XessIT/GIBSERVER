@@ -69,7 +69,9 @@ class _NonExecutiveHomeNavState extends State<NonExecutiveHomeNav> {
       });
     });
   }
+
   bool isLoading = true;
+
   ///refresh
   List<String> items = List.generate(20, (index) => 'Item $index');
   Future<void> _refresh() async {
@@ -84,6 +86,7 @@ class _NonExecutiveHomeNavState extends State<NonExecutiveHomeNav> {
       ];
     });
   }
+
   var _connectivityResult = ConnectivityResult.none;
   Future<void> _checkConnectivityAndGetData() async {
     var connectivityResult = await Connectivity().checkConnectivity();
@@ -94,6 +97,7 @@ class _NonExecutiveHomeNavState extends State<NonExecutiveHomeNav> {
       _getInternet();
     }
   }
+
   Future<void> _getInternet() async {
     // Replace the URL with your PHP backend URL
     var url = 'http://mybudgetbook.in/BUDGETAPI/internet.php';
@@ -129,10 +133,7 @@ class _NonExecutiveHomeNavState extends State<NonExecutiveHomeNav> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-      body: RefreshIndicator(
-          onRefresh: _refresh,
-          child: _pages[_currentIndex]),
+      body: RefreshIndicator(onRefresh: _refresh, child: _pages[_currentIndex]),
     );
   }
 }
@@ -195,8 +196,13 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
         // print("Register Response Status: ${res.statusCode}");
         //print("Register Response Body: ${res.body}");
         var response = jsonDecode(res.body);
-        Navigator.push(context, MaterialPageRoute(builder: (context)=> Homepage(userType: widget.userID, userId: widget.userType)));
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Registration Successfully")));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => Homepage(
+                    userType: widget.userID, userId: widget.userType)));
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Registration Successfully")));
       } else {
         print(
             "Failed to upload image. Server returned status code: ${res.statusCode}");
@@ -219,15 +225,22 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
             userdata = responseData.cast<Map<String, dynamic>>();
             if (userdata.isNotEmpty) {
               profileImage =
-              'http://mybudgetbook.in/GIBAPI/${userdata[0]["profile_image"]}';
+                  'http://mybudgetbook.in/GIBAPI/${userdata[0]["profile_image"]}';
               _imageBytes = base64Decode(userdata[0]['profile_image']);
+
+              print(
+                  'subscribe_status: ${userdata[0]['subscribe_status']}'); // Debug: print subscribe_status
+
+              if (userdata[0]['subscribe_status'] == "Subscribed") {
+                print('Showing alert'); // Debug: indicate alert is being shown
+              }
             }
           });
         } else {
           print('Invalid response data format');
         }
       } else {
-        //  print('Error: ${response.statusCode}');
+        print('Error: ${response.statusCode}');
       }
     } catch (error) {
       print('Error: $error');
@@ -264,11 +277,11 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
 
           // Check if the registration opening date is before the current date
           bool isOpenForRegistration =
-          registrationOpeningDate.isBefore(DateTime.now());
+              registrationOpeningDate.isBefore(DateTime.now());
 
           // Check if the registration closing date is after the current date
           bool isRegistrationOpen =
-          registrationClosingDate.isAfter(DateTime.now());
+              registrationClosingDate.isAfter(DateTime.now());
 
           print('Is Open for Registration: $isOpenForRegistration');
           print('Is Registration Open: $isRegistrationOpen');
@@ -429,461 +442,543 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
           ).show();
           return false;
         },
-        child: Stack(
-          fit: StackFit.expand,
-          clipBehavior: Clip.antiAliasWithSaveLayer,
-          children: [
-            // Your existing Column
-            SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: userdata[0]['subscribe_status'] == "Subscribed"
+            ? Center(
+                child: Container(
+                    height: 200,
+                    // Your container properties like width, height, etc.
+                    child: Center(
+                      child: Column(
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                                "You are now a Executive member. \n          Please log in newly. !!!"),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          ElevatedButton(
+                            onPressed: () async {
+                              SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
+                              await prefs.setBool('isLoggedIn', false);
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Login()),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors
+                                  .green, // Set the button's background color to green
+                              elevation: 5, // Set the elevation to 5
+                            ),
+                            child: const Text(
+                              "Login",
+                              style:
+                                  TextStyle(fontSize: 15, color: Colors.black),
+                            ),
+                          )
+                        ],
+                      ),
+                    )),
+              )
+            : Stack(
+                fit: StackFit.expand,
+                clipBehavior: Clip.antiAliasWithSaveLayer,
                 children: [
-                  data.isEmpty
-                      ? SizedBox.shrink()
-                      :
-                   SizedBox(height: 180),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Card(
-                      elevation: 0,
-                      child: Container(
-                        child: Text(
-                          'Upcoming Meetings',
-                          style: Theme.of(context).textTheme.headlineMedium,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    child: CarouselSlider(
-                      items: data.map((meeting) {
-                        String meetingDate = meeting['meeting_date'];
-                        String meetingPlace = meeting['place'];
-                        String meetingType = meeting['meeting_type'];
-                        String id = meeting['id'];
-                        return Builder(
-                          builder: (BuildContext context) {
-                            return Container(
-                              // Wrap Card with Container
-                              width: MediaQuery.of(context)
-                                  .size
-                                  .width, // Set width to full width of the screen
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Card(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            '${meeting['meeting_type']}',
-                                            style: Theme.of(context).textTheme.headlineMedium
-                                          ),
-                                          IconButton(
-                                              onPressed: () {
-                                                print('press icon');
-                                                showDialog(
-                                                    context: context,
-                                                    builder: (ctx) =>
-                                                    // Dialog box for register meeting and add guest
-                                                    AlertDialog(
-                                                      backgroundColor:
-                                                      Colors
-                                                          .grey[800],
-                                                      title: const Text(
-                                                          'Meeting',
-                                                          style: TextStyle(
-                                                              color: Colors
-                                                                  .white)),
-                                                      content: const Text(
-                                                          "Do You Want to Register the Meeting?",
-                                                          style: TextStyle(
-                                                              color: Colors
-                                                                  .white)),
-                                                      actions: [
-                                                        TextButton(
-                                                            onPressed:
-                                                                () {
-                                                              GlobalKey<
-                                                                  FormState>
-                                                              tempKey =
-                                                              GlobalKey<
-                                                                  FormState>();
-
-                                                              //store purpose..
-                                                              registerDateStoreDatabase(
-                                                                  id,
-                                                                  meetingType,
-                                                                  meetingDate,
-                                                                  meetingPlace);
-                                                              showDialog(
-                                                                  context:
-                                                                  context,
-                                                                  builder: (ctx) =>
-                                                                      Form(
-                                                                        key: tempKey,
-                                                                        child: AlertDialog(
-                                                                          backgroundColor: Colors.grey[800],
-                                                                          title: const Text('Do you wish to add Guest?', style: TextStyle(color: Colors.white)),
-                                                                          content: TextFormField(
-                                                                            controller: guestcount,
-                                                                            validator: (value) {
-                                                                              if (value!.isEmpty) {
-                                                                                return "* Enter a Guest Count";
-                                                                              }
-                                                                              return null;
-                                                                            },
-                                                                            decoration: const InputDecoration(
-                                                                              labelText: "Guest Count",
-                                                                              labelStyle: TextStyle(color: Colors.white),
-                                                                              hintText: "Ex:5",
-                                                                            ),
-                                                                          ),
-                                                                          actions: [
-                                                                            TextButton(
-                                                                                onPressed: () {
-                                                                                  if (tempKey.currentState!.validate()) {
-                                                                                    Navigator.push(context, MaterialPageRoute(builder: (context) => VisitorsSlip(userId: widget.userID, meetingId: id, guestcount: guestcount.text.trim(), userType: widget.userType, meeting_date: meetingDate,
-                                                                                      user_mobile: fetchMobile.toString(), user_name: '', member_id: '',)));                                                                                      print("UserID:-${widget.userID}${widget.userType}");
-                                                                                  }
-                                                                                },
-                                                                                child: const Text('Yes')),
-                                                                            TextButton(onPressed: () {}, child: const Text('No'))
-                                                                          ],
-                                                                        ),
-                                                                      ));
-                                                            },
-                                                            child:
-                                                            const Text(
-                                                                'OK')),
-                                                        TextButton(
-                                                            onPressed:
-                                                                () {
-                                                              Navigator.pop(
-                                                                  context);
-                                                            },
-                                                            child: const Text(
-                                                                'Cancel'))
-                                                      ],
-                                                    ));
-                                              },
-                                              icon: const Icon(
-                                                Icons.person_add_alt_1,
-                                                color: Colors.green,
-                                              ))
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              '${meeting['meeting_date']}',
-                                              style: Theme.of(context).textTheme.bodyMedium,
-                                            ),
-                                            Text(
-                                              '${meeting['meeting_name']}',
-                                              style: Theme.of(context).textTheme.bodyMedium,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              '${_formatTimeString(meeting['from_time'])} to ${_formatTimeString(meeting['to_time'])}',
-                                              style: Theme.of(context).textTheme.bodyMedium,
-                                            ),
-                                            SizedBox(
-                                                width:
-                                                20), // Space between icon and text
-                                            Icon(
-                                              Icons.location_on,
-                                              color: Colors.green,
-                                            ), // Location icon
-                                            Text(meeting['place'],
-                                              style: Theme.of(context).textTheme.bodyMedium,),
-                                            SizedBox(
-                                              width: 20,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                  // Your existing Column
+                  SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        data.isEmpty
+                            ? SizedBox.shrink()
+                            : SizedBox(height: 180),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Card(
+                            elevation: 0,
+                            child: Container(
+                              child: Text(
+                                'Upcoming Meetings',
+                                style:
+                                    Theme.of(context).textTheme.headlineMedium,
                               ),
-                            );
-                          },
-                        );
-                      }).toList(),
-                      options: CarouselOptions(
-                        height: 170.0,
-                        enlargeCenterPage: true,
-                        autoPlay: true,
-                        aspectRatio: 16 / 9,
-                        autoPlayCurve: Curves.fastOutSlowIn,
-                        enableInfiniteScroll: false,
-                        autoPlayAnimationDuration: Duration(milliseconds: 800),
-                        viewportFraction: 1,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      'Offers',
-                      style: GoogleFonts.aBeeZee(
-                        fontSize: 16,
-                        color: Colors.green,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    height: MediaQuery.of(context).size.height *
-                        0.6, // Adjust the height as needed
-                    child: ListView.builder(
-                        itemCount: data1.length,
-                        itemBuilder: (context, i) {
-                          String imageUrl =
-                              'http://mybudgetbook.in/GIBAPI/${data1[i]["offer_image"]}';
-
-                          String dateString = data1[i][
-                          'validity']; // This will print the properly encoded URL
-                          DateTime dateTime =
-                          DateFormat('yyyy-MM-dd').parse(dateString);
-                          return Center(
-                            child: Card(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  children: [
-                                    // MAIN ROW STARTS
-                                    Stack(
-                                      children: [
-                                        Row(
+                            ),
+                          ),
+                        ),
+                        Container(
+                          child: CarouselSlider(
+                            items: data.map((meeting) {
+                              String meetingDate = meeting['meeting_date'];
+                              String meetingPlace = meeting['place'];
+                              String meetingType = meeting['meeting_type'];
+                              String id = meeting['id'];
+                              return Builder(
+                                builder: (BuildContext context) {
+                                  return Container(
+                                    // Wrap Card with Container
+                                    width: MediaQuery.of(context)
+                                        .size
+                                        .width, // Set width to full width of the screen
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Card(
+                                        child: Column(
                                           mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                              MainAxisAlignment.start,
                                           children: [
-                                            // CIRCLEAVATAR STARTS
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                    '${meeting['meeting_type']}',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineMedium),
+                                                IconButton(
+                                                    onPressed: () {
+                                                      print('press icon');
+                                                      showDialog(
+                                                          context: context,
+                                                          builder: (ctx) =>
+                                                              // Dialog box for register meeting and add guest
+                                                              AlertDialog(
+                                                                backgroundColor:
+                                                                    Colors.grey[
+                                                                        800],
+                                                                title: const Text(
+                                                                    'Meeting',
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .white)),
+                                                                content: const Text(
+                                                                    "Do You Want to Register the Meeting?",
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .white)),
+                                                                actions: [
+                                                                  TextButton(
+                                                                      onPressed:
+                                                                          () {
+                                                                        GlobalKey<FormState>
+                                                                            tempKey =
+                                                                            GlobalKey<FormState>();
+
+                                                                        //store purpose..
+                                                                        registerDateStoreDatabase(
+                                                                            id,
+                                                                            meetingType,
+                                                                            meetingDate,
+                                                                            meetingPlace);
+                                                                        showDialog(
+                                                                            context:
+                                                                                context,
+                                                                            builder: (ctx) =>
+                                                                                Form(
+                                                                                  key: tempKey,
+                                                                                  child: AlertDialog(
+                                                                                    backgroundColor: Colors.grey[800],
+                                                                                    title: const Text('Do you wish to add Guest?', style: TextStyle(color: Colors.white)),
+                                                                                    content: TextFormField(
+                                                                                      controller: guestcount,
+                                                                                      validator: (value) {
+                                                                                        if (value!.isEmpty) {
+                                                                                          return "* Enter a Guest Count";
+                                                                                        }
+                                                                                        return null;
+                                                                                      },
+                                                                                      decoration: const InputDecoration(
+                                                                                        labelText: "Guest Count",
+                                                                                        labelStyle: TextStyle(color: Colors.white),
+                                                                                        hintText: "Ex:5",
+                                                                                      ),
+                                                                                    ),
+                                                                                    actions: [
+                                                                                      TextButton(
+                                                                                          onPressed: () {
+                                                                                            if (tempKey.currentState!.validate()) {
+                                                                                              Navigator.push(
+                                                                                                  context,
+                                                                                                  MaterialPageRoute(
+                                                                                                      builder: (context) => VisitorsSlip(
+                                                                                                            userId: widget.userID,
+                                                                                                            meetingId: id,
+                                                                                                            guestcount: guestcount.text.trim(),
+                                                                                                            userType: widget.userType,
+                                                                                                            meeting_date: meetingDate,
+                                                                                                            user_mobile: fetchMobile.toString(),
+                                                                                                            user_name: '',
+                                                                                                            member_id: '',
+                                                                                                          )));
+                                                                                              print("UserID:-${widget.userID}${widget.userType}");
+                                                                                            }
+                                                                                          },
+                                                                                          child: const Text('Yes')),
+                                                                                      TextButton(onPressed: () {}, child: const Text('No'))
+                                                                                    ],
+                                                                                  ),
+                                                                                ));
+                                                                      },
+                                                                      child: const Text(
+                                                                          'OK')),
+                                                                  TextButton(
+                                                                      onPressed:
+                                                                          () {
+                                                                        Navigator.pop(
+                                                                            context);
+                                                                      },
+                                                                      child: const Text(
+                                                                          'Cancel'))
+                                                                ],
+                                                              ));
+                                                    },
+                                                    icon: const Icon(
+                                                      Icons.person_add_alt_1,
+                                                      color: Colors.green,
+                                                    ))
+                                              ],
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
                                             Padding(
                                               padding:
-                                              const EdgeInsets.all(8.0),
-                                              child: CircleAvatar(
-                                                radius: 30.0,
-                                                backgroundColor: Colors.cyan,
-                                                backgroundImage:
-                                                NetworkImage(imageUrl),
+                                                  const EdgeInsets.all(8.0),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    '${meeting['meeting_date']}',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyMedium,
+                                                  ),
+                                                  Text(
+                                                    '${meeting['meeting_name']}',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyMedium,
+                                                  ),
+                                                ],
                                               ),
                                             ),
-                                            SizedBox(width: 20),
-                                            // END CIRCLEAVATAR
-                                            Column(
-                                              crossAxisAlignment: CrossAxisAlignment
-                                                  .start, // Align texts to the start
-                                              children: [
-                                                // START TEXTS
-                                                Text(
-                                                  '${data1[i]['company_name']}',
-                                                  // Text style starts
-                                                  style: const TextStyle(
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    '${_formatTimeString(meeting['from_time'])} to ${_formatTimeString(meeting['to_time'])}',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyMedium,
+                                                  ),
+                                                  SizedBox(
+                                                      width:
+                                                          20), // Space between icon and text
+                                                  Icon(
+                                                    Icons.location_on,
                                                     color: Colors.green,
-                                                    fontSize: 15,
+                                                  ), // Location icon
+                                                  Text(
+                                                    meeting['place'],
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyMedium,
                                                   ),
-                                                ),
-                                                // start texts
-                                                Text(
-                                                  '${data1[i]['offer_type']} - ${data1[i]['name']}',
-                                                  // Text style starts
-                                                  style: const TextStyle(
-                                                    fontSize: 11,
-                                                    fontWeight: FontWeight.bold,
+                                                  SizedBox(
+                                                    width: 20,
                                                   ),
-                                                ),
-                                                Text(
-                                                  "Mobile - ${data1[i]['mobile']}",
-                                                  // New date format
-                                                  style: const TextStyle(
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                                // Text starts
-                                                Text(
-                                                  "Validity - ${DateFormat('d MMMM yyyy').format(dateTime)}",
-                                                  // New date format
-                                                  style: const TextStyle(
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                              ],
+                                                ],
+                                              ),
                                             ),
                                           ],
                                         ),
-                                        // Banner in the top right side
-                                        data1[i]['discount'].toString().isEmpty
-                                            ? Container()
-                                            : Positioned(
-                                          top: 8,
-                                          right:
-                                          8, // Adjust position if needed
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              color: Colors
-                                                  .red, // Change the color here
-                                              borderRadius:
-                                              BorderRadius.only(
-                                                topLeft:
-                                                Radius.circular(10.0),
-                                                bottomRight:
-                                                Radius.circular(10.0),
-                                              ),
-                                            ),
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 6.0,
-                                                vertical: 2.0),
-                                            child: Row(
-                                              children: [
-                                                Text(
-                                                  '${data1[i]['discount']}% off', // Text for your banner
-                                                  style: TextStyle(
-                                                    color: Colors
-                                                        .white, // Change the text color here
-                                                    fontWeight:
-                                                    FontWeight.bold,
-                                                    fontStyle: FontStyle
-                                                        .italic, // Add any additional styles here
-                                                    fontSize:
-                                                    12.0, // Adjust font size as needed
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
+                                      ),
                                     ),
-                                  ],
-                                ),
-                              ),
+                                  );
+                                },
+                              );
+                            }).toList(),
+                            options: CarouselOptions(
+                              height: 170.0,
+                              enlargeCenterPage: true,
+                              autoPlay: true,
+                              aspectRatio: 16 / 9,
+                              autoPlayCurve: Curves.fastOutSlowIn,
+                              enableInfiniteScroll: false,
+                              autoPlayAnimationDuration:
+                                  Duration(milliseconds: 800),
+                              viewportFraction: 1,
                             ),
-                          );
-                        }),
-                  ),
-                ],
-              ),
-            ),
-
-            /// meeting date. meeting type , place , time,  Additional Stack
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: ClipPath(
-                clipper: CurveClipper(),
-                child: Container(
-                  height: 100,
-                  width: MediaQuery.of(context).size.width,
-                  color: Colors.green,
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: 20),
-                        child: Text(
-                          'GIB',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold),
+                          ),
                         ),
-                      ),
-                      /* Padding(
-                      padding: EdgeInsets.only(right: 20),
-                      child: IconButton(
-                        icon: Icon(Icons.menu, color: Colors.white),
-                        onPressed: () {
-                          print('press nav drawer');
-                          _scaffoldKey.currentState!.openDrawer();
-                        },
-                      ),
-                    ),*/
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              top: 80,
-              left: 1,
-              right: 1,
-              child: Card(
-                child: SizedBox(
-                  height: 80,
-                  width: MediaQuery.of(context).size.width,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Padding(
+                        SizedBox(height: 10),
+                        Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: CircleAvatar(
-                            backgroundColor: Colors.cyan,
-                            radius:
-                            30.0, // This will give you a 60.0 diameter circle
-                            backgroundImage: profileImage.isNotEmpty
-                                ? NetworkImage(profileImage)
-                                : null,
-                            child: profileImage.isEmpty
-                                ? const Icon(Icons.person,
-                                size: 30.0, color: Colors.white)
-                                : null,
-                          )),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.end,
+                          child: Text(
+                            'Offers',
+                            style: GoogleFonts.aBeeZee(
+                              fontSize: 16,
+                              color: Colors.green,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          height: MediaQuery.of(context).size.height *
+                              0.6, // Adjust the height as needed
+                          child: ListView.builder(
+                              itemCount: data1.length,
+                              itemBuilder: (context, i) {
+                                String imageUrl =
+                                    'http://mybudgetbook.in/GIBAPI/${data1[i]["offer_image"]}';
+
+                                String dateString = data1[i][
+                                    'validity']; // This will print the properly encoded URL
+                                DateTime dateTime =
+                                    DateFormat('yyyy-MM-dd').parse(dateString);
+                                return Center(
+                                  child: Card(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        children: [
+                                          // MAIN ROW STARTS
+                                          Stack(
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  // CIRCLEAVATAR STARTS
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: CircleAvatar(
+                                                      radius: 30.0,
+                                                      backgroundColor:
+                                                          Colors.cyan,
+                                                      backgroundImage:
+                                                          NetworkImage(
+                                                              imageUrl),
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 20),
+                                                  // END CIRCLEAVATAR
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start, // Align texts to the start
+                                                    children: [
+                                                      // START TEXTS
+                                                      Text(
+                                                        '${data1[i]['company_name']}',
+                                                        // Text style starts
+                                                        style: const TextStyle(
+                                                          color: Colors.green,
+                                                          fontSize: 15,
+                                                        ),
+                                                      ),
+                                                      // start texts
+                                                      Text(
+                                                        '${data1[i]['offer_type']} - ${data1[i]['name']}',
+                                                        // Text style starts
+                                                        style: const TextStyle(
+                                                          fontSize: 11,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        "Mobile - ${data1[i]['mobile']}",
+                                                        // New date format
+                                                        style: const TextStyle(
+                                                          fontSize: 12,
+                                                        ),
+                                                      ),
+                                                      // Text starts
+                                                      Text(
+                                                        "Validity - ${DateFormat('d MMMM yyyy').format(dateTime)}",
+                                                        // New date format
+                                                        style: const TextStyle(
+                                                          fontSize: 12,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                              // Banner in the top right side
+                                              data1[i]['discount']
+                                                      .toString()
+                                                      .isEmpty
+                                                  ? Container()
+                                                  : Positioned(
+                                                      top: 8,
+                                                      right:
+                                                          8, // Adjust position if needed
+                                                      child: Container(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Colors
+                                                              .red, // Change the color here
+                                                          borderRadius:
+                                                              BorderRadius.only(
+                                                            topLeft:
+                                                                Radius.circular(
+                                                                    10.0),
+                                                            bottomRight:
+                                                                Radius.circular(
+                                                                    10.0),
+                                                          ),
+                                                        ),
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                horizontal: 6.0,
+                                                                vertical: 2.0),
+                                                        child: Row(
+                                                          children: [
+                                                            Text(
+                                                              '${data1[i]['discount']}% off', // Text for your banner
+                                                              style: TextStyle(
+                                                                color: Colors
+                                                                    .white, // Change the text color here
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontStyle: FontStyle
+                                                                    .italic, // Add any additional styles here
+                                                                fontSize:
+                                                                    12.0, // Adjust font size as needed
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                            ],
+                                          ),
+                                          // Display the status
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  /// meeting date. meeting type , place , time,  Additional Stack
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    child: ClipPath(
+                      clipper: CurveClipper(),
+                      child: Container(
+                        height: 100,
+                        width: MediaQuery.of(context).size.width,
+                        color: Colors.green,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              userdata.isNotEmpty
-                                  ? userdata[0]["first_name"]
-                                  : "",
-                              style: GoogleFonts.aBeeZee(
-                                fontSize: 20,
-                                color: Colors.indigo,
-                                fontWeight: FontWeight.bold,
+                            Padding(
+                              padding: EdgeInsets.only(left: 20),
+                              child: Text(
+                                'GIB',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.bold),
                               ),
                             ),
-                            Text(
-                              'Non-Executive Member',
-                              style: GoogleFonts.aBeeZee(
-                                fontSize: 10,
-                                color: Colors.indigo,
-                                fontWeight: FontWeight.bold,
+                            Padding(
+                              padding: EdgeInsets.only(right: 20),
+                              child: IconButton(
+                                icon: Icon(Icons.menu, color: Colors.white),
+                                onPressed: () {
+                                  fetchData(widget
+                                      .userID); // Replace 'someUserId' with the actual user ID
+                                },
                               ),
                             ),
                           ],
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                ),
+                  Positioned(
+                    top: 80,
+                    left: 1,
+                    right: 1,
+                    child: Card(
+                      child: SizedBox(
+                        height: 80,
+                        width: MediaQuery.of(context).size.width,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.cyan,
+                                  radius:
+                                      30.0, // This will give you a 60.0 diameter circle
+                                  backgroundImage: profileImage.isNotEmpty
+                                      ? NetworkImage(profileImage)
+                                      : null,
+                                  child: profileImage.isEmpty
+                                      ? const Icon(Icons.person,
+                                          size: 30.0, color: Colors.white)
+                                      : null,
+                                )),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    userdata.isNotEmpty
+                                        ? userdata[0]["first_name"]
+                                        : "",
+                                    style: GoogleFonts.aBeeZee(
+                                      fontSize: 20,
+                                      color: Colors.indigo,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Non-Executive Member',
+                                    style: GoogleFonts.aBeeZee(
+                                      fontSize: 10,
+                                      color: Colors.indigo,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -974,7 +1069,7 @@ class _NavigationBarNonState extends State<NavigationBarNon> {
           ),
         ],
         type:
-        BottomNavigationBarType.fixed, // Set type to fixed for text labels
+            BottomNavigationBarType.fixed, // Set type to fixed for text labels
         currentIndex: _currentIndex,
         // selectedItemColor: Theme.of(context).brightness == Brightness.light
         //     ? Colors.black45
@@ -993,7 +1088,7 @@ class _NavigationBarNonState extends State<NavigationBarNon> {
         selectedLabelStyle: TextStyle(color: Colors.white),
         unselectedLabelStyle: TextStyle(color: Colors.white),
         selectedIconTheme:
-        IconThemeData(color: Colors.green), // Set selected icon color
+            IconThemeData(color: Colors.green), // Set selected icon color
       ),
     );
   }
