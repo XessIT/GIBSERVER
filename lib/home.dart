@@ -567,16 +567,33 @@ class _HomepageState extends State<Homepage> {
     }
   }
 
+
+  /// get
+  Future<bool> isUserRegistered(String meetingId) async {
+    try {
+      final uri = Uri.parse("http://mybudgetbook.in/GIBAPI/register_meeting.php?user_id=${widget.userId}&meeting_id=$meetingId");
+      final res = await http.get(uri);
+
+      if (res.statusCode == 200) {
+        List<dynamic> responseBody = jsonDecode(res.body);
+        return responseBody.isNotEmpty;
+      } else {
+        print("Failed to check registration. Server returned status code: ${res.statusCode}");
+        return false;
+      }
+    } catch (e) {
+      print("Error checking registration: $e");
+      return false;
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
-    //  fetchMeetingData();
-    //fetchData(widget.userId.toString());
+
     var w = MediaQuery.of(context).size.width;
     return Scaffold(
       key: _scaffoldKey,
-      /*floatingActionButton: FloatingActionButton(onPressed: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>const MeetingUpdateDate()));
-      },child: const Icon(Icons.calendar_month_outlined),),*/
       body: RefreshIndicator(
         onRefresh: _refresh,
         child: WillPopScope(
@@ -628,9 +645,7 @@ class _HomepageState extends State<Homepage> {
                       : Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      data.isEmpty
-                          ? SizedBox.shrink()
-                          : const SizedBox(
+                      data.isEmpty ? SizedBox.shrink() : const SizedBox(
                         height: 190,
                       ),
                       Padding(
@@ -654,7 +669,6 @@ class _HomepageState extends State<Homepage> {
                             String meetingPlace = meeting['place'];
                             String meetingType = meeting['meeting_type'];
                             String id = meeting['id'];
-
                             ///DateTime dateTime = DateFormat('yyyy-MM-dd').parse(dateString);
                             return Builder(
                               builder: (BuildContext context) {
@@ -687,15 +701,85 @@ class _HomepageState extends State<Homepage> {
                                                       .textTheme
                                                       .headlineSmall,
                                                 ),
-                                                SizedBox(
-                                                  width: 20,
-                                                ),
-                                                IconButton(
-                                                    onPressed: () {
-                                                      showDialog(
-                                                          context:
-                                                          context,
-                                                          builder: (ctx) =>
+                                                SizedBox(width: 20,),
+                                                IconButton(onPressed: () async {
+                                                  bool isRegistered = await isUserRegistered(id);
+
+                                                  if (isRegistered) {
+                                                    // Directly show the guest addition dialog
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (ctx) => Form(
+                                                        key: tempKey,
+                                                        child: AlertDialog(
+                                                          backgroundColor: Colors.grey[800],
+                                                          title: Text(
+                                                            'Do you wish to add Guest?',
+                                                            style: Theme.of(context).textTheme.displaySmall,
+                                                          ),
+                                                          content: TextFormField(
+                                                            controller: guestcount,
+                                                            validator: (value) {
+                                                              if (value!.isEmpty) {
+                                                                return "* Enter a Guest Count";
+                                                              }
+                                                              return null;
+                                                            },
+                                                            decoration: InputDecoration(
+                                                              labelText: "Guest Count",
+                                                              labelStyle: Theme.of(context).textTheme.displaySmall,
+                                                              hintText: "Ex:5",
+                                                            ),
+                                                            keyboardType: TextInputType.number,
+                                                            inputFormatters: <TextInputFormatter>[
+                                                              FilteringTextInputFormatter.digitsOnly,
+                                                              LengthLimitingTextInputFormatter(3)
+                                                            ],
+                                                          ),
+                                                          actions: [
+                                                            TextButton(
+                                                              onPressed: () {
+                                                                if (tempKey.currentState!.validate()) {
+                                                                  Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                      builder: (context) => VisitorsSlip(
+                                                                        userId: widget.userId,
+                                                                        meetingId: id,
+                                                                        guestcount: guestcount.text.trim(),
+                                                                        userType: widget.userType,
+                                                                        meeting_date: meetingDate,
+                                                                        user_mobile: userdata[0]["mobile"],
+                                                                        user_name: '${userdata[0]["first_name"] ?? ""} ${userdata[0]["last_name"] ?? ""}',
+                                                                        member_id: userdata[0]["member_id"],
+                                                                        meeting_place: meetingPlace,
+                                                                        meeting_type: meetingType,
+                                                                      ),
+                                                                    ),
+                                                                  );
+                                                                  registerDateStoreDatabase(id, meetingType, meetingDate, meetingPlace);
+                                                                }
+                                                              },
+                                                              child: Text(
+                                                                'Yes',
+                                                                style: Theme.of(context).textTheme.displaySmall,
+                                                              ),
+                                                            ),
+                                                            TextButton(
+                                                              onPressed: () {
+                                                                Navigator.pop(context);
+                                                              },
+                                                              child: Text(
+                                                                'No',
+                                                                style: Theme.of(context).textTheme.displaySmall,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }
+                                                  else {showDialog(context: context, builder: (ctx) =>
                                                           // Dialog box for register meeting and add guest
                                                           AlertDialog(
                                                             backgroundColor:
@@ -719,9 +803,7 @@ class _HomepageState extends State<Homepage> {
                                                               TextButton(
                                                                   onPressed:
                                                                       () {
-                                                                    //store purpose..
-                                                                    //registerDateStoreDatabase(id, meetingType, meetingDate, meetingPlace);
-                                                                    Navigator.pop(context);
+                                                                       Navigator.pop(context);
                                                                     showDialog(
                                                                         context: context,
                                                                         builder: (ctx) => Form(
@@ -804,14 +886,7 @@ class _HomepageState extends State<Homepage> {
                                                                     style: Theme.of(context).textTheme.displaySmall,
                                                                   ))
                                                             ],
-                                                          ));
-                                                    },
-                                                    icon: const Icon(
-                                                      Icons
-                                                          .person_add_alt_1_rounded,
-                                                      color: Colors.green,
-                                                    )
-                                                )
+                                                          ));}}, icon: const Icon(Icons.person_add_alt_1_rounded, color: Colors.green,))
                                               ],
                                             ),
                                           ),
@@ -908,7 +983,6 @@ class _HomepageState extends State<Homepage> {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      const SizedBox(height: 10),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
@@ -920,7 +994,6 @@ class _HomepageState extends State<Homepage> {
                           ),
                         ),
                       ),
-
                       /// offer
                       Container(// Adjust the height as needed
                         child: Column(
