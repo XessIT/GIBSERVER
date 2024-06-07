@@ -573,16 +573,33 @@ class _HomepageState extends State<Homepage> {
     }
   }
 
+
+  /// get check meeting
+  Future<bool> isUserRegistered(String meetingId) async {
+    try {
+      final uri = Uri.parse("http://mybudgetbook.in/GIBAPI/register_meeting.php?user_id=${widget.userId}&meeting_id=$meetingId");
+      final res = await http.get(uri);
+
+      if (res.statusCode == 200) {
+        List<dynamic> responseBody = jsonDecode(res.body);
+        return responseBody.isNotEmpty;
+      } else {
+        print("Failed to check registration. Server returned status code: ${res.statusCode}");
+        return false;
+      }
+    } catch (e) {
+      print("Error checking registration: $e");
+      return false;
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
-    //  fetchMeetingData();
-    //fetchData(widget.userId.toString());
+
     var w = MediaQuery.of(context).size.width;
     return Scaffold(
       key: _scaffoldKey,
-      /*floatingActionButton: FloatingActionButton(onPressed: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>const MeetingUpdateDate()));
-      },child: const Icon(Icons.calendar_month_outlined),),*/
       body: RefreshIndicator(
         onRefresh: _refresh,
         child: WillPopScope(
@@ -634,9 +651,7 @@ class _HomepageState extends State<Homepage> {
                       : Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      data.isEmpty
-                          ? SizedBox.shrink()
-                          : const SizedBox(
+                      data.isEmpty ? SizedBox.shrink() : const SizedBox(
                         height: 190,
                       ),
                       Padding(
@@ -660,7 +675,6 @@ class _HomepageState extends State<Homepage> {
                             String meetingPlace = meeting['place'];
                             String meetingType = meeting['meeting_type'];
                             String id = meeting['id'];
-
                             ///DateTime dateTime = DateFormat('yyyy-MM-dd').parse(dateString);
                             return Builder(
                               builder: (BuildContext context) {
@@ -811,6 +825,7 @@ class _HomepageState extends State<Homepage> {
                                                   )
                                               )
                                             ],
+
                                           ),
                                         ),
                                         SizedBox(
@@ -905,7 +920,6 @@ class _HomepageState extends State<Homepage> {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      const SizedBox(height: 10),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
@@ -962,6 +976,7 @@ class _HomepageState extends State<Homepage> {
                                                                 ),
                                                               ),
                                                             ),
+
                                                           );
                                                         },
                                                       );

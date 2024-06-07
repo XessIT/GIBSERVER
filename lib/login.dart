@@ -30,7 +30,6 @@ class _LoginState extends State<Login> {
     setState(() {
       isLoading = true;
     });
-
     try {
       var response = await http.get(
         Uri.parse("http://mybudgetbook.in/GIBAPI/user.php?mobile=${mobileController.text.trim()}&password=${passwordController.text.trim()}"),

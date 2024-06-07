@@ -463,80 +463,80 @@ class _PersonalState extends State<Personal> {
               ),
               if(widget.userType != "Guest" && marital_status=="Married")
                 ExpansionTile(
-                leading: const Icon(Icons.group),
-                title: const Text('Dependents'),
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children:  [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Spouse Name'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child:spousename!.isEmpty ? const Text("-")
-                            : Text(spousename!),
-                      )
-                    ],
-                  ),
-                  const Divider(),
-                  Row(
-                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children:  [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Wedding Date'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(wad!),
-                      )
-                    ],
-                  ),
-                  const Divider(),
-                  Row(
-                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Spouse Blood Group'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: spousebloodgroup!.isEmpty ? const Text("-")
-                            : Text(spousebloodgroup!),
-                      )
-                    ],
-                  ),
-                  const Divider(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children:  [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Spouse Native'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child:spousenative == null ? const Text("Nil")
-                            : Text(spousenative!),
-                      )
-                    ],
-                  ),
-                  const Divider(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Spouse Father Koottam'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: spousekoottam == null ? const Text("Nil")
-                            : Text(spousekoottam!),
-                      )
+                  leading: const Icon(Icons.group),
+                  title: const Text('Dependents'),
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children:  [
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text('Spouse Name'),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child:spousename!.isEmpty ? const Text("-")
+                              : Text(spousename!),
+                        )
+                      ],
+                    ),
+                    const Divider(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children:  [
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text('Wedding Date'),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(wad!),
+                        )
+                      ],
+                    ),
+                    const Divider(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text('Spouse Blood Group'),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: spousebloodgroup!.isEmpty ? const Text("-")
+                              : Text(spousebloodgroup!),
+                        )
+                      ],
+                    ),
+                    const Divider(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children:  [
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text('Spouse Native'),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child:spousenative == null ? const Text("Nil")
+                              : Text(spousenative!),
+                        )
+                      ],
+                    ),
+                    const Divider(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text('Spouse Father Koottam'),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: spousekoottam == null ? const Text("Nil")
+                              : Text(spousekoottam!),
+                        )
 
                       ],),
                     const Divider(),
