@@ -14,7 +14,6 @@ import 'package:gipapp/settings_page_executive.dart';
 import 'package:gipapp/year_meeting_details.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:photo_view/photo_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'Non_exe_pages/non_exe_home.dart';
@@ -1045,7 +1044,7 @@ class _HomepageState extends State<Homepage> {
                                               MainAxisAlignment.start,
                                               children: [
                                                 // CIRCLEAVATAR STARTS
-                                                Padding(
+                                                /*Padding(
                                                   padding: const EdgeInsets.all(8.0),
                                                   child: InkWell(
                                                     onTap: () {
@@ -1074,7 +1073,7 @@ class _HomepageState extends State<Homepage> {
                                                       backgroundImage: NetworkImage(imageUrl),
                                                     ),
                                                   ),
-                                                ),
+                                                ),*/
                                                 SizedBox(width: 20),
                                                 // END CIRCLEAVATAR
                                                 Column(
@@ -1233,7 +1232,7 @@ class _HomepageState extends State<Homepage> {
                         //height: 80,
                         child: Row(
                           children: [
-                            Padding(
+                           /* Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: InkWell(
                                 onTap: () {
@@ -1261,7 +1260,7 @@ class _HomepageState extends State<Homepage> {
                                   backgroundImage: NetworkImage(imageUrl),
                                 ),
                               ),
-                            ),
+                            ),*/
                             Padding(
                               padding: const EdgeInsets.only(left: 8.0),
                               child: Column(
