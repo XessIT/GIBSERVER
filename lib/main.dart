@@ -211,23 +211,6 @@ class MyApp extends StatelessWidget {
           }
         },
       ),
-
-      ///
-      ///
-
-/*
-        home: FutureBuilder<bool>(
-        future: isLoggedIn(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return snapshot.data! ? Homepage() : Login();
-          } else {
-            return CircularProgressIndicator();
-          }
-        },
-
-      ),
-*/
     );
   }
 }

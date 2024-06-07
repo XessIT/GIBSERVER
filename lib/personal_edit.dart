@@ -361,19 +361,19 @@ class _PersonalEditState extends State<PersonalEdit> {
     getDistrict();
     return Scaffold(
       appBar: AppBar(
-        title:  Text('Edit Profile',style: Theme.of(context).textTheme.displayLarge,),
-        iconTheme:  const IconThemeData(
-          color: Colors.white, // Set the color for the drawer icon
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.navigate_before),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Profile(userID: widget.userId, userType: widget.userType.toString(),)),
-            );
-          },
-        )
+          title:  Text('Edit Profile',style: Theme.of(context).textTheme.displayLarge,),
+          iconTheme:  const IconThemeData(
+            color: Colors.white, // Set the color for the drawer icon
+          ),
+          leading: IconButton(
+            icon: const Icon(Icons.navigate_before),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Profile(userID: widget.userId, userType: widget.userType.toString(),)),
+              );
+            },
+          )
       ),
 
       body: PopScope(
@@ -405,7 +405,7 @@ class _PersonalEditState extends State<PersonalEdit> {
                     ),
                     onTap: () {
                       pickImageFromGallery();
-                     /* showModalBottomSheet(
+                      /* showModalBottomSheet(
                         context: context,
                         builder: (ctx) {
                           return Column(
@@ -512,7 +512,7 @@ class _PersonalEditState extends State<PersonalEdit> {
                       textFieldConfiguration: TextFieldConfiguration(
                         controller: chapterController,
                         decoration: const InputDecoration(
-                            hintText: "Chapter",
+                          hintText: "Chapter",
                           suffixIcon: Icon(Icons.business_outlined,color: Colors.green,),
                         ),
                       ),
@@ -572,7 +572,7 @@ class _PersonalEditState extends State<PersonalEdit> {
                       onTap: () async {
                         DateTime currentDate = DateTime.now();
                         DateTime? pickedDate = await showDatePicker(
-                          context: context,
+                            context: context,
                             initialDate: date,
                             firstDate: DateTime(1900),
                             lastDate: DateTime(2100)
@@ -589,8 +589,8 @@ class _PersonalEditState extends State<PersonalEdit> {
                         hintText: "DOB",
                         // hintText:dob!,
                         suffixIcon:
-                       Icon(
-                            Icons.calendar_today_outlined,color: Colors.green,),
+                        Icon(
+                          Icons.calendar_today_outlined,color: Colors.green,),
                       ),
                       keyboardType: TextInputType.number,
                       inputFormatters: <TextInputFormatter>[
@@ -880,7 +880,7 @@ class _PersonalEditState extends State<PersonalEdit> {
                             },
                             decoration: const InputDecoration(
 
-                             // labelText: "WAD",
+                              // labelText: "WAD",
                               hintText: "Wedding Aniversery Date",
                               suffixIcon:Icon(Icons.calendar_today_outlined,color: Colors.green,),
                             ),
@@ -1093,8 +1093,8 @@ class _PersonalEditState extends State<PersonalEdit> {
                           onPressed: ()  {
 
                             if (_formKey.currentState!.validate()) {
-                            selectedImage == null ? Edit() : Update();
-                            // updatedetails();
+                              selectedImage == null ? Edit() : Update();
+                              // updatedetails();
                               print("${firstnamecontroller.text}${mobilecontroller.text}");
 
                             }

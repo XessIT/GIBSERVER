@@ -703,22 +703,19 @@ class _HomepageState extends State<Homepage> {
                                                           builder: (ctx) =>
                                                           // Dialog box for register meeting and add guest
                                                           AlertDialog(
-                                                            backgroundColor:
-                                                            Colors
-                                                                .grey[800],
                                                             title:
                                                             Text(
                                                               'Meeting',
                                                               style: Theme.of(context)
                                                                   .textTheme
-                                                                  .displaySmall,
+                                                                  .bodySmall,
                                                             ),
                                                             content:
                                                             Text(
                                                               "Do You Want to Register the Meeting?",
                                                               style: Theme.of(context)
                                                                   .textTheme
-                                                                  .displaySmall,
+                                                                  .bodySmall,
                                                             ),
                                                             actions: [
                                                               TextButton(
@@ -732,10 +729,10 @@ class _HomepageState extends State<Homepage> {
                                                                         builder: (ctx) => Form(
                                                                           key: tempKey,
                                                                           child: AlertDialog(
-                                                                            backgroundColor: Colors.grey[800],
+                                                                          //  backgroundColor: Colors.grey[800],
                                                                             title: Text(
                                                                               'Do you wish to add Guest?',
-                                                                              style: Theme.of(context).textTheme.displaySmall,
+                                                                              style: Theme.of(context).textTheme.bodySmall,
                                                                             ),
                                                                             content: TextFormField(
                                                                               controller: guestcount,
@@ -747,7 +744,7 @@ class _HomepageState extends State<Homepage> {
                                                                               },
                                                                               decoration: InputDecoration(
                                                                                 labelText: "Guest Count",
-                                                                                labelStyle: Theme.of(context).textTheme.displaySmall,
+                                                                                labelStyle: Theme.of(context).textTheme.bodySmall,
                                                                                 hintText: "Ex:5",
                                                                               ),
                                                                               keyboardType: TextInputType.number,
@@ -779,7 +776,7 @@ class _HomepageState extends State<Homepage> {
                                                                                   },
                                                                                   child: Text(
                                                                                     'Yes',
-                                                                                    style: Theme.of(context).textTheme.displaySmall,
+                                                                                    style: Theme.of(context).textTheme.bodySmall,
                                                                                   )),
                                                                               TextButton(
                                                                                   onPressed: () {
@@ -787,7 +784,7 @@ class _HomepageState extends State<Homepage> {
                                                                                   },
                                                                                   child: Text(
                                                                                     'No',
-                                                                                    style: Theme.of(context).textTheme.displaySmall,
+                                                                                    style: Theme.of(context).textTheme.bodySmall,
                                                                                   ))
                                                                             ],
                                                                           ),
@@ -796,7 +793,7 @@ class _HomepageState extends State<Homepage> {
                                                                   child:
                                                                   Text(
                                                                     'OK',
-                                                                    style: Theme.of(context).textTheme.displaySmall,
+                                                                    style: Theme.of(context).textTheme.bodySmall,
                                                                   )),
                                                               TextButton(
                                                                   onPressed:
@@ -806,7 +803,7 @@ class _HomepageState extends State<Homepage> {
                                                                   child:
                                                                   Text(
                                                                     'Cancel',
-                                                                    style: Theme.of(context).textTheme.displaySmall,
+                                                                    style: Theme.of(context).textTheme.bodySmall,
                                                                   ))
                                                             ],
                                                           ));
@@ -925,121 +922,147 @@ class _HomepageState extends State<Homepage> {
                           ),
                         ),
                       ),
+                      Container(
+                        height: MediaQuery.of(context).size.height *
+                            0.6, // Adjust the height as needed
+                        child: ListView.builder(
+                            itemCount: data1.length,
+                            itemBuilder: (context, i) {
+                              String imageUrl =
+                                  'http://mybudgetbook.in/GIBAPI/${data1[i]["offer_image"]}';
 
-                      /// offer
-                      Container(// Adjust the height as needed
-                        child: Column(
-                          children: [
-                            for (int i = 0; i < data1.length; i++)
-                              Center(
+                              String dateString = data1[i][
+                              'validity']; // This will print the properly encoded URL
+                              DateTime dateTime =
+                              DateFormat('yyyy-MM-dd').parse(dateString);
+                              return Center(
                                 child: Card(
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Column(
                                       children: [
+                                        // MAIN ROW STARTS
                                         Stack(
                                           children: [
-                                            ListTile(
-                                              leading:
-                                              InkWell(
-                                                onTap: () {
-                                                  showDialog(
-                                                    context: context,
-                                                    builder: (BuildContext context) {
-                                                      return AlertDialog(
-                                                        content: Image.network(
-                                                            'http://mybudgetbook.in/GIBAPI/${data1[i]["offer_image"]}'),
+                                            Row(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                              children: [
+                                                // CIRCLEAVATAR STARTS
+                                                Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext context) {
+                                                          return AlertDialog(
+                                                            content: Image.network(imageUrl),
+                                                          );
+                                                        },
                                                       );
                                                     },
-                                                  );
-                                                },
-                                                child: CircleAvatar(
-                                                  radius: 40.0,
-                                                  backgroundColor: Colors.cyan,
-                                                  backgroundImage: CachedNetworkImageProvider(
-                                                      'http://mybudgetbook.in/GIBAPI/${data1[i]["offer_image"]}'
+                                                    child: CircleAvatar(
+                                                      radius: 30.0,
+                                                      backgroundColor: Colors.cyan,
+                                                      backgroundImage: NetworkImage(imageUrl),
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                              title: Text(
-                                                '${data1[i]['company_name']}',
-                                                style: const TextStyle(
-                                                  color: Colors.green,
-                                                  fontSize: 15,
-                                                ),
-                                              ),
-                                              subtitle: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    '${data1[i]['offer_type']} - ${data1[i]['name']}',
-                                                    style: const TextStyle(
-                                                      fontSize: 12,
-                                                      fontWeight: FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    "Mobile - ${data1[i]['mobile']}",
-                                                    style: const TextStyle(
-                                                      fontSize: 12,
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    "Validity - ${DateFormat('d MMMM yyyy').format(DateFormat('yyyy-MM-dd').parse(data1[i]['validity']))}",
-                                                    style: const TextStyle(
-                                                      fontSize: 12,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-
-                                            ),
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.end,
-                                              children: [
-                                                data1[i]['discount'].toString().isEmpty
-                                                    ? Container()
-                                                    : Positioned(
-                                                  top: 8,
-                                                  right: 8, // Adjust position if needed
-                                                  child: Container(
-                                                    decoration: const BoxDecoration(
-                                                      color: Colors.red,
-                                                      borderRadius: BorderRadius.only(
-                                                        topLeft: Radius.circular(10.0),
-                                                        bottomRight: Radius.circular(10.0),
+                                                SizedBox(width: 20),
+                                                // END CIRCLEAVATAR
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment
+                                                      .start, // Align texts to the start
+                                                  children: [
+                                                    // START TEXTS
+                                                    Text(
+                                                      '${data1[i]['company_name']}',
+                                                      // Text style starts
+                                                      style: const TextStyle(
+                                                        color: Colors.green,
+                                                        fontSize: 15,
                                                       ),
                                                     ),
-                                                    padding: const EdgeInsets.symmetric(
-                                                        horizontal: 6.0,
-                                                        vertical: 2.0),
-                                                    child: Row(
-                                                      children: [
-                                                        Text(
-                                                          '${data1[i]['discount']}% off', // Text for your banner
-                                                          style: const TextStyle(
-                                                            color: Colors.white,
-                                                            fontWeight: FontWeight.bold,
-                                                            fontStyle: FontStyle.italic,
-                                                            fontSize: 12.0,
-                                                          ),
-                                                        ),
-                                                      ],
+                                                    // start texts
+                                                    Text(
+                                                      '${data1[i]['offer_type']} - ${data1[i]['name']}',
+                                                      // Text style starts
+                                                      style: const TextStyle(
+                                                        fontSize: 11,
+                                                        fontWeight: FontWeight.bold,
+                                                      ),
                                                     ),
-                                                  ),
-                                                ),
-                                                Positioned(top: 25, right: 8, // Adjust position if needed
-                                                  child: IconButton(
-                                                    onPressed: () {
-                                                      launchUrl(Uri.parse("tel://${data[i]['mobile']}"));
-                                                    },
-                                                    icon: Icon(
-                                                      Icons.call_outlined,
-                                                      color: Colors.green[900],
+                                                    Text(
+                                                      "Mobile - ${data1[i]['mobile']}",
+                                                      // New date format
+                                                      style: const TextStyle(
+                                                        fontSize: 12,
+                                                      ),
                                                     ),
-                                                  ),
+                                                    // Text starts
+                                                    Text(
+                                                      "Validity - ${DateFormat('d MMMM yyyy').format(dateTime)}",
+                                                      // New date format
+                                                      style: const TextStyle(
+                                                        fontSize: 12,
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ],
+                                            ),
+                                            // Banner in the top right side
+                                            data1[i]['discount'].toString().isEmpty
+                                                ? Container()
+                                                : Positioned(
+                                              top: 8,
+                                              right:
+                                              8, // Adjust position if needed
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors
+                                                      .red, // Change the color here
+                                                  borderRadius:
+                                                  BorderRadius.only(
+                                                    topLeft:
+                                                    Radius.circular(10.0),
+                                                    bottomRight:
+                                                    Radius.circular(10.0),
+                                                  ),
+                                                ),
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 6.0,
+                                                    vertical: 2.0),
+                                                child: Row(
+                                                  children: [
+                                                    Text(
+                                                      '${data1[i]['discount']}% off', // Text for your banner
+                                                      style: TextStyle(
+                                                        color: Colors
+                                                            .white, // Change the text color here
+                                                        fontWeight:
+                                                        FontWeight.bold,
+                                                        fontStyle: FontStyle
+                                                            .italic, // Add any additional styles here
+                                                        fontSize:
+                                                        12.0, // Adjust font size as needed
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            Positioned(top: 25, right: 8, // Adjust position if needed
+                                              child: IconButton(
+                                                onPressed: () {
+                                                  launchUrl(Uri.parse("tel://${data[i]['mobile']}"));
+                                                },
+                                                icon: Icon(
+                                                  Icons.call_outlined,
+                                                  color: Colors.green[900],
+                                                ),
+                                              ),
                                             ),
                                           ],
                                         ),
@@ -1047,9 +1070,8 @@ class _HomepageState extends State<Homepage> {
                                     ),
                                   ),
                                 ),
-                              ),
-                          ],
-                        ),
+                              );
+                            }),
                       ),
                     ],
                   ),
