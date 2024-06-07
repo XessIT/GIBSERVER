@@ -361,19 +361,19 @@ class _PersonalEditState extends State<PersonalEdit> {
     getDistrict();
     return Scaffold(
       appBar: AppBar(
-        title:  Text('Edit Profile',style: Theme.of(context).textTheme.displayLarge,),
-        iconTheme:  const IconThemeData(
-          color: Colors.white, // Set the color for the drawer icon
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.navigate_before),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Profile(userID: widget.userId, userType: widget.userType.toString(),)),
-            );
-          },
-        )
+          title:  Text('Edit Profile',style: Theme.of(context).textTheme.displayLarge,),
+          iconTheme:  const IconThemeData(
+            color: Colors.white, // Set the color for the drawer icon
+          ),
+          leading: IconButton(
+            icon: const Icon(Icons.navigate_before),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Profile(userID: widget.userId, userType: widget.userType.toString(),)),
+              );
+            },
+          )
       ),
 
       body: PopScope(
@@ -404,7 +404,8 @@ class _PersonalEditState extends State<PersonalEdit> {
                       ),
                     ),
                     onTap: () {
-                      showModalBottomSheet(
+                      pickImageFromGallery();
+                      /* showModalBottomSheet(
                         context: context,
                         builder: (ctx) {
                           return Column(
@@ -421,7 +422,7 @@ class _PersonalEditState extends State<PersonalEdit> {
                             ],
                           );
                         },
-                      );
+                      );*/
                     },
                   ),
                   SizedBox(
@@ -511,7 +512,7 @@ class _PersonalEditState extends State<PersonalEdit> {
                       textFieldConfiguration: TextFieldConfiguration(
                         controller: chapterController,
                         decoration: const InputDecoration(
-                            hintText: "Chapter",
+                          hintText: "Chapter",
                           suffixIcon: Icon(Icons.business_outlined,color: Colors.green,),
                         ),
                       ),
@@ -571,7 +572,7 @@ class _PersonalEditState extends State<PersonalEdit> {
                       onTap: () async {
                         DateTime currentDate = DateTime.now();
                         DateTime? pickedDate = await showDatePicker(
-                          context: context,
+                            context: context,
                             initialDate: date,
                             firstDate: DateTime(1900),
                             lastDate: DateTime(2100)
@@ -588,8 +589,8 @@ class _PersonalEditState extends State<PersonalEdit> {
                         hintText: "DOB",
                         // hintText:dob!,
                         suffixIcon:
-                       Icon(
-                            Icons.calendar_today_outlined,color: Colors.green,),
+                        Icon(
+                          Icons.calendar_today_outlined,color: Colors.green,),
                       ),
                       keyboardType: TextInputType.number,
                       inputFormatters: <TextInputFormatter>[
@@ -879,7 +880,7 @@ class _PersonalEditState extends State<PersonalEdit> {
                             },
                             decoration: const InputDecoration(
 
-                             // labelText: "WAD",
+                              // labelText: "WAD",
                               hintText: "Wedding Aniversery Date",
                               suffixIcon:Icon(Icons.calendar_today_outlined,color: Colors.green,),
                             ),
@@ -1032,6 +1033,13 @@ class _PersonalEditState extends State<PersonalEdit> {
                     width: 300,
                     child: TextFormField(
                       controller: educationcontroller,
+                      onChanged: (value) {
+                        String capitalizedValue = capitalizeFirstLetter(value);
+                        educationcontroller.value = educationcontroller.value.copyWith(
+                          text: capitalizedValue,
+                          selection: TextSelection.collapsed(offset: capitalizedValue.length),
+                        );
+                      },
                       validator: (value){
                         if (value!.isEmpty) {
                           return '* Enter your qualification';
@@ -1046,196 +1054,6 @@ class _PersonalEditState extends State<PersonalEdit> {
                         suffixIcon: Icon(Icons.cast_for_education_outlined,color: Colors.green,),
                       ),),
                   ),
-
-
-                  /*Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 170, 0),
-                    child: Text('Business Details',
-                      style: Theme
-                          .of(context)
-                          .textTheme
-                          .headlineSmall,),
-                  ),*/
-
-
-                 /* SizedBox(
-                    width: 300,
-                    child: DropdownButtonFormField<String>(
-                      value: businesstype,
-                      icon: const Icon(Icons.arrow_drop_down),
-                      isExpanded: true,
-                      items: <String>[
-                        "Business Type",
-                        "Manufacturer",
-                        "Whole Sale",
-                        "Ditributor",
-                        "Service",
-                        "Retail",
-                        "Teacher"
-                      ]
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value));
-                      }
-                      ).toList(),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          businesstype = newValue!;
-                        });
-                      },
-                      validator: (value) {
-                        if (businesstype == 'Business Type') {
-                          return '* Select Business Type';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),*/
-                  // Company Address textfield starts
-
-                 /* SizedBox(
-                    width: 300,
-                    child: TextFormField(
-                      minLines: 1,
-                      maxLines: 5,
-                      maxLength: 100,
-                      controller: companyaddresscontroller,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return '* Enter your Company Address';
-                        } else if (nameRegExp.hasMatch(value)) {
-                          return null;
-                        }
-                        return null;
-                      },
-                      onChanged: (value) {
-                        String capitalizedValue = capitalizeFirstLetter(value);
-                        companyaddresscontroller.value = companyaddresscontroller.value.copyWith(
-                          text: capitalizedValue,
-                          selection: TextSelection.collapsed(offset: capitalizedValue.length),
-                        );
-                      },
-                      decoration: const InputDecoration(
-                        labelText: "Company Address",
-                        hintText: "Company Address",
-                        suffixIcon: Icon(Icons.business),
-                      ),
-                    ),
-                  ),*/
-                  // Company Address textfield ends
-
-
-                  /*SizedBox(
-                    width: 300,
-                    child: TextFormField(
-                      controller: businesskeywordscontroller,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return '* Enter your Business Keywords';
-                        } else if (nameRegExp.hasMatch(value)) {
-                          return null;
-                        }
-                        return null;
-                      },
-                      onChanged: (value) {
-                        String capitalizedValue = capitalizeFirstLetter(value);
-                        businesskeywordscontroller.value = businesskeywordscontroller.value.copyWith(
-                          text: capitalizedValue,
-                          selection: TextSelection.collapsed(offset: capitalizedValue.length),
-                        );
-                      },
-                      decoration: const InputDecoration(
-                        labelText: "Business keywords",
-                        hintText: "Business keywords",
-                        suffixIcon: Icon(Icons.business),
-                      ),
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(30),
-                      ],
-                    ),
-                  ),*/
-
-                  // Website  textfield starts
-
-                  /*SizedBox(
-                    width: 300,
-                    child: TextFormField(
-                      controller: websitecontroller,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return '* Enter your Website';
-                        }else if (value.length<5) {
-                          return '* Enter a valid Website';
-                        }
-                        else if (nameRegExp.hasMatch(value)) {
-                          return null;
-                        }
-                        return null;
-                      },
-                      decoration: const InputDecoration(
-                        labelText: "Website",
-                        hintText: "Website",
-                        suffixIcon: Icon(Icons.web),
-                      ),
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(30),
-                      ],
-                    ),
-                  ),*/
-                  // Website textfield ends
-
-                  // Year of business established textfield starts
-
-                  /*SizedBox(
-                    width: 300,
-                    child: TextFormField(
-                      controller: yearcontroller,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return '* Enter your year of business established';
-                        } else if (nameRegExp.hasMatch(value)) {
-                          return null;
-                        }
-                        else if(value.length<4){
-                          return "* Enter a correct year";
-                        }
-                        return null;
-                      },
-                      *//*onTap: () async {
-                                  DateTime currentDate = DateTime.now();
-                                  DateTime firstSelectableYear = DateTime(1900);
-                                  DateTime lastSelectableYear = DateTime(currentDate.year, 12, 31);
-                                  DateTime? pickedDate = await showDatePicker(
-                                    context: context,
-                                    initialDate: firstSelectableYear,
-                                    firstDate: firstSelectableYear,
-                                    lastDate: lastSelectableYear,
-                                    initialDatePickerMode: DatePickerMode.year,
-                                  );
-
-                                  if (pickedDate != null) {
-                                    setState(() {
-                                      yearcontroller.text = DateFormat('yyyy').format(pickedDate);
-                                    });
-                                  }
-
-                                },*//*
-
-                      decoration: const InputDecoration(
-                        labelText: "business established year",
-                        hintText: "yyyy",
-                        suffixIcon:
-                        Icon(Icons.calendar_today_outlined),
-                      ),
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                        LengthLimitingTextInputFormatter(4),
-                      ],
-
-                    ),
-                  ),*/
                   const SizedBox(height: 5,),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(0, 0, 210, 0),
@@ -1275,8 +1093,8 @@ class _PersonalEditState extends State<PersonalEdit> {
                           onPressed: ()  {
 
                             if (_formKey.currentState!.validate()) {
-                            selectedImage == null ? Edit() : Update();
-                            // updatedetails();
+                              selectedImage == null ? Edit() : Update();
+                              // updatedetails();
                               print("${firstnamecontroller.text}${mobilecontroller.text}");
 
                             }

@@ -62,7 +62,6 @@ class _MyGalleryState extends State<MyGallery> {
               Expanded(
                 child: TabBarView(
                   children: [
-                //   Gallery(userId: widget.userId,),
                     Video(userId: widget.userId),
                   ],
                 ),
@@ -89,6 +88,8 @@ class Gallery extends StatefulWidget {
 }
 
 class _GalleryState extends State<Gallery> {
+  bool _isLoading = false;
+
   final ImagePicker _imagePicker = ImagePicker();
   List<String> _imageUrlsList = [];
   List<Map<String, dynamic>> _imageDataList = [];
@@ -102,6 +103,9 @@ class _GalleryState extends State<Gallery> {
     );
 
     if (pickedImage != null) {
+      setState(() {
+        _isLoading = true;  // Set loading to true
+      });
       final bytes = await pickedImage.readAsBytes();
       await _uploadImage(bytes);
     }
@@ -119,21 +123,19 @@ class _GalleryState extends State<Gallery> {
     );
 
     if (response.statusCode == 200) {
-      final responseData = jsonDecode(response.body);
-      final imageUrl = responseData['image_url'];
-      Navigator.push(context, MaterialPageRoute(builder: (context) =>  Gallery(userType: widget.userType, userId: widget.userId,)));
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Image uploaded successfully.')),
       );
-      setState(() {
-        _imageUrlsList.add(imageUrl);
-      });
 
       // Refresh the gallery after successful upload
-      _fetchImages();
+      await _fetchImages();
     } else {
       print('Failed to upload image.');
     }
+
+    setState(() {
+      _isLoading = false;  // Set loading to false after the entire process
+    });
   }
 
   Future<void> _fetchImages() async {
@@ -159,6 +161,11 @@ class _GalleryState extends State<Gallery> {
     }
   }
 
+  @override
+  void initState() {
+    super.initState();
+    _fetchImages();
+  }
   Future<void> _deleteImage(int imageIndex) async {
     String imageId = _imageDataList[imageIndex]['id'];
     final url =
@@ -212,11 +219,6 @@ class _GalleryState extends State<Gallery> {
     );
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _fetchImages();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -224,16 +226,13 @@ class _GalleryState extends State<Gallery> {
       appBar: AppBar(
         // Appbar title
         title: Text('My Gallery', style: Theme.of(context).textTheme.displayLarge),
-
-        //  centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
         leading: IconButton(
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) =>  SettingsPageExecutive(userType: widget.userType, userId: widget.userId,)));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPageExecutive(userType: widget.userType, userId: widget.userId,)));
             },
             icon: const Icon(Icons.navigate_before)),
       ),
-
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.green,
@@ -258,65 +257,53 @@ class _GalleryState extends State<Gallery> {
                   );
                 });
           } else {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Text('Upload Limit Reached'),
-                  content: Text('You already have 5 images uploaded.'),
-                  actions: <Widget>[
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Text('OK'),
-                    ),
-                  ],
-                );
-              },
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Limit Exceeded'),
+              ),
             );
           }
         },
         child: const Icon(Icons.add),
       ),
-      body: PopScope(
-        canPop: false,
-        onPopInvoked: (didPop)  {
-          Navigator.push(context, MaterialPageRoute(builder: (context) =>  SettingsPageExecutive(userType: widget.userType, userId: widget.userId,)));
-        },
-        child: _imageUrlsList.isEmpty ? const Center(child: Text("No Images")) : GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 10.0,
-            crossAxisSpacing: 10.0,
-          ),
-          itemCount: _imageUrlsList.length,
-          itemBuilder: (BuildContext context, i) {
-            return Stack(
-              children: [
-                CachedNetworkImage(
-                  imageUrl: _imageUrlsList[i],
-                  placeholder: (context, url) => CircularProgressIndicator(),
-                  errorWidget: (context, url, error) => Icon(Icons.error),
-                  fit: BoxFit.cover,
-                ),
-                Positioned(
-                  top: 5,
-                  right: 5,
-                  child: IconButton(
-                    icon: Icon(Icons.cancel),
-                    onPressed: () {
-                      _showDeleteConfirmationDialog(i);
-                    },
-                  ),
-                ),
-              ],
-            );
-          },
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())  // Show loading indicator
+          : _imageUrlsList.isEmpty
+          ? const Center(child: Text("No Images"))
+          : GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisSpacing: 10.0,
+          crossAxisSpacing: 10.0,
         ),
+        itemCount: _imageUrlsList.length,
+        itemBuilder: (BuildContext context, i) {
+          return Stack(
+            children: [
+              CachedNetworkImage(
+                imageUrl: _imageUrlsList[i],
+                placeholder: (context, url) => CircularProgressIndicator(),
+                errorWidget: (context, url, error) => Icon(Icons.error),
+                fit: BoxFit.cover,
+              ),
+              Positioned(
+                top: 5,
+                right: 5,
+                child: IconButton(
+                  icon: Icon(Icons.cancel),
+                  onPressed: () {
+                    _showDeleteConfirmationDialog(i);
+                  },
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
+
+
 }
 
 

@@ -9,6 +9,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'Offer/offer.dart';
+import 'blood_group.dart';
+import 'gib_doctors.dart';
 import 'guest_settings.dart';
 
 class GuestHome extends StatefulWidget {
@@ -34,6 +36,8 @@ class _GuestHomeState extends State<GuestHome> {
     _pages = [
       GuestHomePage(userId: widget.userId, userType: widget.userType),
       OffersPage(userId: widget.userId, userType: widget.userType),
+      Doctors(userId: widget.userId, userType: widget.userType),
+      BloodGroup(userId: widget.userId, userType: widget.userType),
       GuestSettings(userId: widget.userId, userType: widget.userType),
     ];
     super.initState();
@@ -44,10 +48,10 @@ class _GuestHomeState extends State<GuestHome> {
     return Scaffold(
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
+        items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.home_outlined,
+              Icons.home,
             ),
             label: 'Home',
           ),
@@ -56,12 +60,22 @@ class _GuestHomeState extends State<GuestHome> {
               Icons.local_offer,
             ),
             label: 'Offers',
+          ),BottomNavigationBarItem(
+            icon: Icon(
+              Icons.add_circle,
+            ),
+            label: "Doctors",
+          ),BottomNavigationBarItem(
+            icon: Icon(
+              Icons.bloodtype,
+            ),
+            label: 'Blood Group',
           ),
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.settings,
+              Icons.more_horiz,
             ),
-            label: 'Account',
+            label: 'More',
           ),
         ],
         type: BottomNavigationBarType.fixed,
@@ -290,15 +304,26 @@ class _GuestHomePageState extends State<GuestHomePage> {
                                   ),
                                 ),
                               ),
+                              Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: CircleAvatar(
+                                  radius: 25,
+                                  backgroundImage: AssetImage(
+                                    'assets/logo.png',
+                                  ),
+                                  backgroundColor: Colors.green,
+                                ),
+                              ),
+
                             ],
                           ),
                         ),
                       ),
-                      SizedBox(height: 80),
+                      const SizedBox(height: 80),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          'Offers',
+                          'New Offers',
                           style: GoogleFonts.aBeeZee(
                             fontSize: 16,
                             color: Colors.green,
@@ -312,13 +337,9 @@ class _GuestHomePageState extends State<GuestHomePage> {
                         child: ListView.builder(
                             itemCount: data.length,
                             itemBuilder: (context, i) {
-                              String imageUrl =
-                                  'http://mybudgetbook.in/GIBAPI/${data[i]["offer_image"]}';
-
-                              String dateString = data[i][
-                              'validity']; // This will print the properly encoded URL
-                              DateTime dateTime =
-                              DateFormat('yyyy-MM-dd').parse(dateString);
+                              String imageUrl = 'http://mybudgetbook.in/GIBAPI/${data[i]["offer_image"]}';
+                              String dateString = data[i]['validity']; // This will print the properly encoded URL
+                              DateTime dateTime = DateFormat('yyyy-MM-dd').parse(dateString);
                               return Center(
                                 child: Card(
                                   child: Padding(
@@ -334,13 +355,23 @@ class _GuestHomePageState extends State<GuestHomePage> {
                                               children: [
                                                 // CIRCLEAVATAR STARTS
                                                 Padding(
-                                                  padding:
-                                                  const EdgeInsets.all(8.0),
-                                                  child: CircleAvatar(
-                                                    radius: 30.0,
-                                                    backgroundColor: Colors.cyan,
-                                                    backgroundImage:
-                                                    NetworkImage(imageUrl),
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext context) {
+                                                          return AlertDialog(
+                                                            content: Image.network(imageUrl),
+                                                          );
+                                                        },
+                                                      );
+                                                    },
+                                                    child: CircleAvatar(
+                                                      radius: 30.0,
+                                                      backgroundColor: Colors.cyan,
+                                                      backgroundImage: NetworkImage(imageUrl),
+                                                    ),
                                                   ),
                                                 ),
                                                 SizedBox(width: 20),
@@ -427,6 +458,17 @@ class _GuestHomePageState extends State<GuestHomePage> {
                                                 ),
                                               ),
                                             ),
+                                            Positioned(top: 25, right: 8, // Adjust position if needed
+                                              child: IconButton(
+                                                onPressed: () {
+                                                  launchUrl(Uri.parse("tel://${data[i]['mobile']}"));
+                                                },
+                                                icon: Icon(
+                                                  Icons.call_outlined,
+                                                  color: Colors.green[900],
+                                                ),
+                                              ),
+                                            ),
                                           ],
                                         ),
                                       ],
@@ -441,26 +483,33 @@ class _GuestHomePageState extends State<GuestHomePage> {
                 ),
                 Positioned(
                   top: 80,
-                  left: 20,
-                  right: 20,
+                  left: 1,
+                  right:1,
                   child: Card(
                     child: SizedBox(
                       height: 80,
                       child: Row(
                         children: [
                           Padding(
-                              padding: const EdgeInsets.all(8.0),
+                            padding: const EdgeInsets.all(8.0),
+                            child: InkWell(
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      content: Image.network(imageUrl),
+                                    );
+                                  },
+                                );
+                              },
                               child: CircleAvatar(
-                                backgroundColor: Colors.cyan,
                                 radius: 30.0,
-                                backgroundImage: imageUrl.isNotEmpty
-                                    ? CachedNetworkImageProvider(imageUrl)
-                                    : null,
-                                child: imageUrl.isEmpty
-                                    ? const Icon(Icons.person,
-                                    size: 30.0, color: Colors.white)
-                                    : null,
-                              )),
+                                backgroundColor: Colors.cyan,
+                                backgroundImage: CachedNetworkImageProvider(imageUrl),
+                              ),
+                            ),
+                          ),
                           Padding(
                             padding: const EdgeInsets.only(left: 8.0),
                             child: Column(

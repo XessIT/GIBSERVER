@@ -17,8 +17,10 @@ import '../gib_gallery.dart';
 import '../gib_members.dart';
 import '../login.dart';
 import '../meeting.dart';
+import '../my_activity.dart';
 import '../profile.dart';
 import 'non_exe_home.dart';
+import 'non_exe_meeting.dart';
 
 
 
@@ -34,10 +36,9 @@ class SettingsPageNon extends StatelessWidget {
           ? Colors.white
           : Colors.black,
       appBar: AppBar(
-        centerTitle: true,
         title:
         Text(
-          "Settings",
+          "",
           style: Theme.of(context).textTheme.displayLarge,
         ),
         leading: IconButton(
@@ -60,11 +61,6 @@ class SettingsPageNon extends StatelessWidget {
           padding: const EdgeInsets.all(10),
           child: ListView(
             children: [
-              // user card
-              // SimpleUserCard(
-              //   userName: "Nom de l'utilisateur",
-              //   userProfilePic: AssetImage("assets/profilpic.png"),
-              // ),
               SettingsGroup(
                 items: [
                   SettingsItem(
@@ -87,7 +83,27 @@ class SettingsPageNon extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => MeetingUpcoming(userType: userType.toString(), userId: userId.toString(),)),
+                        MaterialPageRoute(builder: (context) => Activity( userType: userType.toString(), userId: userId.toString(),
+                        )),
+                      );
+                    },
+                    icons: Icons.supervisor_account,
+                    iconStyle: IconStyle(
+                      iconsColor: Colors.white,
+                      withBackground: true,
+                      backgroundColor: Colors.blue,
+                    ),
+                    title: 'Reference',
+                    titleStyle: Theme.of(context).textTheme.bodyMedium,
+                    // subtitle:'Profile Image, Name, Income',
+                    titleMaxLine: 1,
+                    subtitleMaxLine: 1,
+                  ),
+                  SettingsItem(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => NonExeMeeting(userType: userType.toString(), userId: userId.toString(),)),
                       );
                     },
                     icons: CupertinoIcons.calendar,
@@ -101,23 +117,6 @@ class SettingsPageNon extends StatelessWidget {
                     // subtitle:'Profile Image, Name, Income',
                     titleMaxLine: 1,
                     subtitleMaxLine: 1,
-                  ),
-                  SettingsItem(
-                    onTap: () {
-                        Navigator.push(
-                        context,
-                      MaterialPageRoute(builder: (context) =>   AttendancePage( userType: userType.toString(), userID: userId.toString(),)),
-                      );
-                    },
-                    icons: Icons.fingerprint_outlined,
-                    iconStyle: IconStyle(
-                      iconsColor: Colors.white,
-                      withBackground: true,
-                      backgroundColor: Colors.red,
-                    ),
-                    title: 'Attendance',
-                    titleStyle: Theme.of(context).textTheme.bodyMedium,
-                    //subtitle: "Lock Ziar'App to improve your privacy",
                   ),
                   SettingsItem(
                     onTap: () {
@@ -135,35 +134,12 @@ class SettingsPageNon extends StatelessWidget {
                     titleStyle: Theme.of(context).textTheme.bodyMedium,
                     //subtitle: "Lock Ziar'App to improve your privacy",
                   ),
-/*
-                  SettingsItem(
-                    onTap: () {},
-                    icons: Icons.dark_mode_rounded,
-                    iconStyle: IconStyle(
-                      iconsColor: Colors.white,
-                      withBackground: true,
-                      backgroundColor: Colors.red,
-                    ),
-                    title: 'Dark mode',
-                    //subtitle: "Automatic",
-                    trailing: Switch.adaptive(
-                      value: Theme.of(context).brightness == Brightness.dark,
-                      onChanged: (value) {
-
-                      },
-                    ),
-                  ),
-*/
-                ],
-              ),
-              SettingsGroup(
-                items: [
                   SettingsItem(
                     onTap: () {
-                         Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) =>   ViewPhotosPage( userType: userType.toString(), userID: userId.toString(),)),
-                          );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) =>   ViewPhotosPage( userType: userType.toString(), userID: userId.toString(),)),
+                      );
                     },
                     icons: CupertinoIcons.photo_on_rectangle,
                     iconStyle: IconStyle(
@@ -196,53 +172,6 @@ class SettingsPageNon extends StatelessWidget {
                     titleMaxLine: 1,
                     subtitleMaxLine: 1,
                   ),
-                ],
-              ),
-              SettingsGroup(
-                items: [
-                  /*SettingsItem(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => GibMembers( userType: userType.toString(), userId: userId.toString(),
-                        )),
-                      );
-                    },
-                    icons: Icons.supervisor_account,
-                    iconStyle: IconStyle(
-                      iconsColor: Colors.white,
-                      withBackground: true,
-                      backgroundColor: Colors.blue,
-                    ),
-                    title: 'Gib Members',
-                    titleStyle: Theme.of(context).textTheme.bodyMedium,
-                    // subtitle:'Profile Image, Name, Income',
-                    titleMaxLine: 1,
-                    subtitleMaxLine: 1,
-                  ),*/
-                 /* SettingsItem(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) =>   OffersPage( userType: userType.toString(), userId: userId.toString(),)),
-                      );
-                    },
-                    icons: Icons.local_offer,
-                    iconStyle: IconStyle(
-                      iconsColor: Colors.white,
-                      withBackground: true,
-                      backgroundColor: Colors.orange,
-                    ),
-                    title: 'Offers',
-                    titleStyle: Theme.of(context).textTheme.bodyMedium,
-                    // subtitle:'Profile Image, Name, Income',
-                    titleMaxLine: 1,
-                    subtitleMaxLine: 1,
-                  ),*/
-                ],
-              ),
-              SettingsGroup(
-                items: [
                   SettingsItem(
                     onTap: () {
                       Navigator.push(
@@ -266,7 +195,7 @@ class SettingsPageNon extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) =>   Blood( userType: userType.toString(), userId: userId.toString(),)),
+                        MaterialPageRoute(builder: (context) =>   BloodGroup( userType: userType.toString(), userId: userId.toString(),)),
                       );
                     },
                     icons: Icons.bloodtype,
@@ -322,38 +251,6 @@ class SettingsPageNon extends StatelessWidget {
                     titleMaxLine: 1,
                     subtitleMaxLine: 1,
                   ),
-                ],
-              ),
-             /* SettingsGroup(
-                items: [
-                  SettingsItem(
-                    onTap: () {
-
-                    },
-                    icons: Icons.question_mark_outlined,
-                    iconStyle: IconStyle(
-                      backgroundColor: Colors.purple,
-                    ),
-                    title: 'FAQ',
-                    //subtitle: "Learn more about Ziar'App",
-                  ),
-                  SettingsItem(
-                    onTap: () {
-
-                    },
-                    icons: Icons.star_rate_rounded,
-                    iconStyle: IconStyle(
-                      backgroundColor: Colors.teal,
-                    ),
-                    title: 'Feedback',
-                    //  subtitle: "Learn more about Ziar'App",
-                  ),
-                ],
-              ),*/
-              // You can add a settings title
-              SettingsGroup(
-               // settingsGroupTitle: "Account",
-                items: [
                   SettingsItem(
                     onTap: () {
                       AwesomeDialog(
@@ -412,20 +309,6 @@ class SettingsPageNon extends StatelessWidget {
                     title: "Log Out",
                     titleStyle: Theme.of(context).textTheme.bodyMedium,
                   ),
-                  /* SettingsItem(
-                    onTap: () {},
-                    icons: CupertinoIcons.repeat,
-                    title: "Change email",
-                  ),
-                  SettingsItem(
-                    onTap: () {},
-                    icons: CupertinoIcons.delete_solid,
-                    title: "Delete account",
-                    titleStyle: TextStyle(
-                      color: Colors.red,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),*/
                 ],
               ),
             ],

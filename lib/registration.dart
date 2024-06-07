@@ -10,6 +10,7 @@ import'package:http/http.dart'as http;
 import 'guest_home.dart';
 import 'login.dart';
 
+
 class Registration extends StatelessWidget {
   const Registration({Key? key}) : super(key: key);
 
@@ -240,7 +241,8 @@ class _GuestState extends State<Guest> {
       print("ImageName: $imagename");
       var res = await http.post(Uri.parse(uri),
           body: jsonEncode({
-            "image": base64Encode(imageBytes),
+            "imagename": imagename,
+            "imagedata": imagedata,
             "mobile": mobilecontroller.text.trim(),
             "password": confirmpasswordcontroller.text.trim(),
             "member_type": membertype,
@@ -327,10 +329,10 @@ class _GuestState extends State<Guest> {
       setState(() {
         selectedImage = imageBytes;
         print('Image pick: $selectedImage');
-        /*imagename = pickedImage!.name;
+        imagename = pickedImage!.name;
         print('Image Name: $imagename');
         imagedata = base64Encode(imageBytes);
-        print('Image Data: $imagedata');*/
+        print('Image Data: $imagedata');
       });
     }
   }
@@ -392,7 +394,7 @@ class _GuestState extends State<Guest> {
       // Appbar starts
       appBar: AppBar(
         // Appbar title
-        title:  Text('REGISTRATION',style: Theme.of(context).textTheme.displayLarge),
+        title:  Text('Registration',style: Theme.of(context).textTheme.displayLarge),
         iconTheme:  const IconThemeData(
           color: Colors.white, // Set the color for the drawer icon
         ),
@@ -469,7 +471,8 @@ class _GuestState extends State<Guest> {
                         ),
                       ),
                       onTap: () {
-                        showModalBottomSheet(context: context, builder: (ctx) {
+                        pickImageFromGallery();
+                        /*showModalBottomSheet(context: context, builder: (ctx) {
                           return Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -477,14 +480,14 @@ class _GuestState extends State<Guest> {
                                 leading: const Icon(Icons.storage),
                                 title: const Text("From Gallery"),
                                 onTap: () {
-                                  pickImageFromGallery();
+                                //  pickImageFromGallery();
                                   //  getImage();
                                   Navigator.of(context).pop();
                                 },
                               )
                             ],
                           );
-                        });
+                        });*/
                       },
                     ),
                     Visibility(
@@ -498,7 +501,7 @@ class _GuestState extends State<Guest> {
                                 controller: referreridcotroller,
                                 validator: (value) {
                                   if (value!.isEmpty) {
-                                    return '* Enter Referrer Executive GiB Member ID';
+                                    return '* Enter Referrer GiB Member ID';
                                   } else if (nameRegExp.hasMatch(value)) {
                                     return null;
                                   }
@@ -512,7 +515,7 @@ class _GuestState extends State<Guest> {
                                 },
                                 decoration: const InputDecoration(
 
-                                  hintText: "Referrer Executive GiB Member ID",
+                                  hintText: "Referrer GiB Member ID",
                                   suffixIcon: Icon(Icons.confirmation_num),
                                 ),
                               ),
