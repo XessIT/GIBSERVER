@@ -12,36 +12,17 @@ import 'guest_home.dart';
 import 'home.dart';
 import 'member_details.dart';
 
-
-class GibMembers extends StatelessWidget {
+class GibMembers extends StatefulWidget {
   final String userType;
   final String? userId;
-
   GibMembers({Key? key, required this.userType, required this.userId}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Members(
-        userId: userId,
-        userType: userType,
-      ),
-    );
-  }
+  State<GibMembers> createState() => _GibMembersState();
 }
 
 
-class Members extends StatefulWidget {
-  final String userType;
-  final String? userId;
-  Members({Key? key, required this.userType, required this.userId}) : super(key: key);
-
-  @override
-  State<Members> createState() => _MembersState();
-}
-
-
-class _MembersState extends State<Members> {
+class _GibMembersState extends State<GibMembers> {
 
   String? chapter = "";
   String? district = "";
