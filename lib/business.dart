@@ -1148,7 +1148,7 @@ class _MyTransactionState extends State<MyTransaction> {
                   ),
                 ),
               ),///guest
-
+              SizedBox(height: 20,),
             ]
           ),
         ),

@@ -3,6 +3,8 @@ import 'dart:core';
 import 'dart:typed_data';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:clay_containers/constants.dart';
+import 'package:clay_containers/widgets/clay_container.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -70,7 +72,9 @@ class _NonExecutiveHomeNavState extends State<NonExecutiveHomeNav> {
       });
     });
   }
+
   bool isLoading = true;
+
   ///refresh
   List<String> items = List.generate(20, (index) => 'Item $index');
   Future<void> _refresh() async {
@@ -85,6 +89,7 @@ class _NonExecutiveHomeNavState extends State<NonExecutiveHomeNav> {
       ];
     });
   }
+
   var _connectivityResult = ConnectivityResult.none;
   Future<void> _checkConnectivityAndGetData() async {
     var connectivityResult = await Connectivity().checkConnectivity();
@@ -95,6 +100,7 @@ class _NonExecutiveHomeNavState extends State<NonExecutiveHomeNav> {
       _getInternet();
     }
   }
+
   Future<void> _getInternet() async {
     // Replace the URL with your PHP backend URL
     var url = 'http://mybudgetbook.in/BUDGETAPI/internet.php';
@@ -130,10 +136,7 @@ class _NonExecutiveHomeNavState extends State<NonExecutiveHomeNav> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-      body: RefreshIndicator(
-          onRefresh: _refresh,
-          child: _pages[_currentIndex]),
+      body: RefreshIndicator(onRefresh: _refresh, child: _pages[_currentIndex]),
     );
   }
 }
@@ -164,15 +167,13 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
   String profileImage = "";
   String? fetchMobile = "";
 
+  final GlobalKey<FormState> tempKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     fetchData(widget.userID);
-    print('--------------------');
-    print('getdata:$getData()');
     getData();
     getData1();
-    print('--------------------');
-
     super.initState();
   }
 
@@ -188,7 +189,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
             "meeting_place": meetingPlace,
             "status": registerStatus,
             "user_id": widget.userID,
-            "user_type": widget.userType,
+            "member_type": widget.userType,
           }));
 
       if (res.statusCode == 200) {
@@ -196,8 +197,13 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
         // print("Register Response Status: ${res.statusCode}");
         //print("Register Response Body: ${res.body}");
         var response = jsonDecode(res.body);
-        Navigator.push(context, MaterialPageRoute(builder: (context)=> Homepage(userType: widget.userID, userId: widget.userType)));
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Registration Successfully")));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => Homepage(
+                    userType: widget.userID, userId: widget.userType)));
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Registration Successfully")));
       } else {
         print(
             "Failed to upload image. Server returned status code: ${res.statusCode}");
@@ -220,7 +226,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
             userdata = responseData.cast<Map<String, dynamic>>();
             if (userdata.isNotEmpty) {
               profileImage =
-              'http://mybudgetbook.in/GIBAPI/${userdata[0]["profile_image"]}';
+                  'http://mybudgetbook.in/GIBAPI/${userdata[0]["profile_image"]}';
               _imageBytes = base64Decode(userdata[0]['profile_image']);
             }
           });
@@ -265,11 +271,11 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
 
           // Check if the registration opening date is before the current date
           bool isOpenForRegistration =
-          registrationOpeningDate.isBefore(DateTime.now());
+              registrationOpeningDate.isBefore(DateTime.now());
 
           // Check if the registration closing date is after the current date
           bool isRegistrationOpen =
-          registrationClosingDate.isAfter(DateTime.now());
+              registrationClosingDate.isAfter(DateTime.now());
 
           print('Is Open for Registration: $isOpenForRegistration');
           print('Is Registration Open: $isRegistrationOpen');
@@ -385,6 +391,27 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
     }
   }
 
+  /// get check meeting
+  Future<bool> isUserRegistered(String meetingId) async {
+    try {
+      final uri = Uri.parse(
+          "http://mybudgetbook.in/GIBAPI/register_meeting.php?user_id=${widget.userID}&meeting_id=$meetingId");
+      final res = await http.get(uri);
+
+      if (res.statusCode == 200) {
+        List<dynamic> responseBody = jsonDecode(res.body);
+        return responseBody.isNotEmpty;
+      } else {
+        print(
+            "Failed to check registration. Server returned status code: ${res.statusCode}");
+        return false;
+      }
+    } catch (e) {
+      print("Error checking registration: $e");
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -439,10 +466,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  data.isEmpty
-                      ? SizedBox.shrink()
-                      :
-                  SizedBox(height: 180),
+                  data.isEmpty ? SizedBox.shrink() : SizedBox(height: 180),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Card(
@@ -462,6 +486,8 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                         String meetingPlace = meeting['place'];
                         String meetingType = meeting['meeting_type'];
                         String id = meeting['id'];
+
+                        ///DateTime dateTime = DateFormat('yyyy-MM-dd').parse(dateString);
                         return Builder(
                           builder: (BuildContext context) {
                             return Container(
@@ -471,129 +497,303 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                   .width, // Set width to full width of the screen
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Card(
+                                child: ClayContainer(
+                                  height: 60,
+                                  width: 100,
+                                  curveType: CurveType.concave,
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.center,
-                                        children: [
-                                          Text(
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
                                               '${meeting['meeting_type']}',
-                                              style: Theme.of(context).textTheme.headlineMedium
-                                          ),
-                                          IconButton(
-                                              onPressed: () {
-                                                print('press icon');
-                                                showDialog(
-                                                    context: context,
-                                                    builder: (ctx) =>
-                                                    // Dialog box for register meeting and add guest
-                                                    AlertDialog(
-                                                      backgroundColor:
-                                                      Colors
-                                                          .grey[800],
-                                                      title: const Text(
-                                                          'Meeting',
-                                                          style: TextStyle(
-                                                              color: Colors
-                                                                  .white)),
-                                                      content: const Text(
-                                                          "Do You Want to Register the Meeting?",
-                                                          style: TextStyle(
-                                                              color: Colors
-                                                                  .white)),
-                                                      actions: [
-                                                        TextButton(
-                                                            onPressed:
-                                                                () {
-                                                              GlobalKey<
-                                                                  FormState>
-                                                              tempKey =
-                                                              GlobalKey<
-                                                                  FormState>();
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headlineSmall,
+                                            ),
+                                            SizedBox(
+                                              width: 20,
+                                            ),
+                                            IconButton(
+                                                onPressed: () async {
+                                                  bool isRegistered =
+                                                      await isUserRegistered(
+                                                          id);
 
-                                                              //store purpose..
-                                                              registerDateStoreDatabase(
-                                                                  id,
-                                                                  meetingType,
-                                                                  meetingDate,
-                                                                  meetingPlace);
-                                                              showDialog(
-                                                                  context:
-                                                                  context,
-                                                                  builder: (ctx) =>
-                                                                      Form(
-                                                                        key: tempKey,
-                                                                        child: AlertDialog(
-                                                                          backgroundColor: Colors.grey[800],
-                                                                          title: const Text('Do you wish to add Guest?', style: TextStyle(color: Colors.white)),
-                                                                          content: TextFormField(
-                                                                            controller: guestcount,
-                                                                            validator: (value) {
-                                                                              if (value!.isEmpty) {
-                                                                                return "* Enter a Guest Count";
-                                                                              }
-                                                                              return null;
-                                                                            },
-                                                                            decoration: const InputDecoration(
-                                                                              labelText: "Guest Count",
-                                                                              labelStyle: TextStyle(color: Colors.white),
-                                                                              hintText: "Ex:5",
-                                                                            ),
-                                                                          ),
-                                                                          actions: [
-                                                                            TextButton(
-                                                                                onPressed: () {
-                                                                                  if (tempKey.currentState!.validate()) {
-                                                                                    Navigator.push(context, MaterialPageRoute(builder: (context) => VisitorsSlip(userId: widget.userID, meetingId: id, guestcount: guestcount.text.trim(), userType: widget.userType, meeting_date: meetingDate,   meeting_place: meetingPlace,
-                                                                                      meeting_type: meetingType,
-                                                                                      user_mobile: fetchMobile.toString(), user_name: '', member_id: '',)));                                                                                      print("UserID:-${widget.userID}${widget.userType}");
-                                                                                  }
-                                                                                },
-                                                                                child: const Text('Yes')),
-                                                                            TextButton(onPressed: () {}, child: const Text('No'))
-                                                                          ],
-                                                                        ),
-                                                                      ));
+                                                  if (isRegistered) {
+                                                    // Directly show the guest addition dialog
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (ctx) => Form(
+                                                        key: tempKey,
+                                                        child: AlertDialog(
+                                                          backgroundColor:
+                                                              Colors.grey[800],
+                                                          title: Text(
+                                                            'Do you wish to add Guest?',
+                                                            style: Theme.of(
+                                                                    context)
+                                                                .textTheme
+                                                                .displaySmall,
+                                                          ),
+                                                          content:
+                                                              TextFormField(
+                                                            controller:
+                                                                guestcount,
+                                                            validator: (value) {
+                                                              if (value!
+                                                                  .isEmpty) {
+                                                                return "* Enter a Guest Count";
+                                                              }
+                                                              return null;
                                                             },
-                                                            child:
-                                                            const Text(
-                                                                'OK')),
-                                                        TextButton(
-                                                            onPressed:
-                                                                () {
-                                                              Navigator.pop(
-                                                                  context);
-                                                            },
-                                                            child: const Text(
-                                                                'Cancel'))
-                                                      ],
-                                                    ));
-                                              },
-                                              icon: const Icon(
-                                                Icons.person_add_alt_1,
-                                                color: Colors.green,
-                                              ))
-                                        ],
+                                                            decoration:
+                                                                InputDecoration(
+                                                              labelText:
+                                                                  "Guest Count",
+                                                              labelStyle: Theme
+                                                                      .of(context)
+                                                                  .textTheme
+                                                                  .displaySmall,
+                                                              hintText: "Ex:5",
+                                                            ),
+                                                            keyboardType:
+                                                                TextInputType
+                                                                    .number,
+                                                            inputFormatters: <TextInputFormatter>[
+                                                              FilteringTextInputFormatter
+                                                                  .digitsOnly,
+                                                              LengthLimitingTextInputFormatter(
+                                                                  3)
+                                                            ],
+                                                          ),
+                                                          actions: [
+                                                            TextButton(
+                                                              onPressed: () {
+                                                                if (tempKey
+                                                                    .currentState!
+                                                                    .validate()) {
+                                                                  Navigator
+                                                                      .push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                      builder:
+                                                                          (context) =>
+                                                                              VisitorsSlip(
+                                                                        userId:
+                                                                            widget.userID,
+                                                                        meetingId:
+                                                                            id,
+                                                                        guestcount: guestcount
+                                                                            .text
+                                                                            .trim(),
+                                                                        userType:
+                                                                            widget.userType,
+                                                                        meeting_date:
+                                                                            meetingDate,
+                                                                        user_mobile:
+                                                                            userdata[0]["mobile"],
+                                                                        user_name:
+                                                                            '${userdata[0]["first_name"] ?? ""} ${userdata[0]["last_name"] ?? ""}',
+                                                                        member_id:
+                                                                            userdata[0]["member_id"],
+                                                                        meeting_place:
+                                                                            meetingPlace,
+                                                                        meeting_type:
+                                                                            meetingType,
+                                                                      ),
+                                                                    ),
+                                                                  );
+                                                                  registerDateStoreDatabase(
+                                                                      id,
+                                                                      meetingType,
+                                                                      meetingDate,
+                                                                      meetingPlace);
+                                                                }
+                                                              },
+                                                              child: Text(
+                                                                'Yes',
+                                                                style: Theme.of(
+                                                                        context)
+                                                                    .textTheme
+                                                                    .displaySmall,
+                                                              ),
+                                                            ),
+                                                            TextButton(
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                              child: Text(
+                                                                'No',
+                                                                style: Theme.of(
+                                                                        context)
+                                                                    .textTheme
+                                                                    .displaySmall,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  } else {
+                                                    showDialog(
+                                                        context: context,
+                                                        builder: (ctx) =>
+                                                            // Dialog box for register meeting and add guest
+                                                            AlertDialog(
+                                                              title: Text(
+                                                                'Meeting',
+                                                                style: Theme.of(
+                                                                        context)
+                                                                    .textTheme
+                                                                    .bodySmall,
+                                                              ),
+                                                              content: Text(
+                                                                "Do You Want to Register the Meeting?",
+                                                                style: Theme.of(
+                                                                        context)
+                                                                    .textTheme
+                                                                    .bodySmall,
+                                                              ),
+                                                              actions: [
+                                                                TextButton(
+                                                                    onPressed:
+                                                                        () {
+                                                                      Navigator.pop(
+                                                                          context);
+                                                                      showDialog(
+                                                                          context:
+                                                                              context,
+                                                                          builder: (ctx) =>
+                                                                              Form(
+                                                                                key: tempKey,
+                                                                                child: AlertDialog(
+                                                                                  //  backgroundColor: Colors.grey[800],
+                                                                                  title: Text(
+                                                                                    'Do you wish to add Guest?',
+                                                                                    style: Theme.of(context).textTheme.bodySmall,
+                                                                                  ),
+                                                                                  content: TextFormField(
+                                                                                    controller: guestcount,
+                                                                                    validator: (value) {
+                                                                                      if (value!.isEmpty) {
+                                                                                        return "* Enter a Guest Count";
+                                                                                      }
+                                                                                      return null;
+                                                                                    },
+                                                                                    decoration: InputDecoration(
+                                                                                      labelText: "Guest Count",
+                                                                                      labelStyle: Theme.of(context).textTheme.bodySmall,
+                                                                                      hintText: "Ex:5",
+                                                                                    ),
+                                                                                    keyboardType: TextInputType.number,
+                                                                                    inputFormatters: <TextInputFormatter>[
+                                                                                      FilteringTextInputFormatter.digitsOnly,
+                                                                                      LengthLimitingTextInputFormatter(3)
+                                                                                    ],
+                                                                                  ),
+                                                                                  actions: [
+                                                                                    TextButton(
+                                                                                        onPressed: () {
+                                                                                          if (tempKey.currentState!.validate()) {
+                                                                                            print("Guest Count: ${guestcount.text.trim()}");
+                                                                                            Navigator.push(
+                                                                                                context,
+                                                                                                MaterialPageRoute(
+                                                                                                    builder: (context) => VisitorsSlip(
+                                                                                                          userId: widget.userID,
+                                                                                                          meetingId: id,
+                                                                                                          guestcount: guestcount.text.trim(),
+                                                                                                          userType: widget.userType,
+                                                                                                          meeting_date: meetingDate,
+                                                                                                          user_mobile: userdata[0]["mobile"],
+                                                                                                          user_name: '${userdata[0]["first_name"] ?? ""} ${userdata[0]["last_name"] ?? ""}',
+                                                                                                          member_id: userdata[0]["member_id"],
+                                                                                                          meeting_place: meetingPlace,
+                                                                                                          meeting_type: meetingType,
+                                                                                                        )));
+                                                                                            print('1234567890');
+                                                                                            print("meeting_place${meetingPlace}");
+                                                                                            print("meeting_type${meetingType}");
+                                                                                            print("");
+                                                                                            print("UserID:-${widget.userID}${widget.userType}");
+                                                                                            registerDateStoreDatabase(id, meetingType, meetingDate, meetingPlace);
+                                                                                          }
+                                                                                        },
+                                                                                        child: Text(
+                                                                                          'Yes',
+                                                                                          style: Theme.of(context).textTheme.bodySmall,
+                                                                                        )),
+                                                                                    TextButton(
+                                                                                        onPressed: () {
+                                                                                          Navigator.pop(context);
+                                                                                        },
+                                                                                        child: Text(
+                                                                                          'No',
+                                                                                          style: Theme.of(context).textTheme.bodySmall,
+                                                                                        ))
+                                                                                  ],
+                                                                                ),
+                                                                              ));
+                                                                    },
+                                                                    child: Text(
+                                                                      'OK',
+                                                                      style: Theme.of(
+                                                                              context)
+                                                                          .textTheme
+                                                                          .bodySmall,
+                                                                    )),
+                                                                TextButton(
+                                                                    onPressed:
+                                                                        () {
+                                                                      Navigator.pop(
+                                                                          context);
+                                                                    },
+                                                                    child: Text(
+                                                                      'Cancel',
+                                                                      style: Theme.of(
+                                                                              context)
+                                                                          .textTheme
+                                                                          .bodySmall,
+                                                                    ))
+                                                              ],
+                                                            ));
+                                                  }
+                                                },
+                                                icon: const Icon(
+                                                  Icons
+                                                      .person_add_alt_1_rounded,
+                                                  color: Colors.green,
+                                                ))
+                                          ],
+                                        ),
                                       ),
                                       SizedBox(
-                                        height: 10,
+                                        height: 5,
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Row(
                                           mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
                                               '${meeting['meeting_date']}',
-                                              style: Theme.of(context).textTheme.bodyMedium,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall,
                                             ),
                                             Text(
                                               '${meeting['meeting_name']}',
-                                              style: Theme.of(context).textTheme.bodyMedium,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall,
                                             ),
                                           ],
                                         ),
@@ -601,23 +801,37 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
                                               '${_formatTimeString(meeting['from_time'])} to ${_formatTimeString(meeting['to_time'])}',
-                                              style: Theme.of(context).textTheme.bodyMedium,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall,
                                             ),
-                                            SizedBox(
-                                                width:
-                                                20), // Space between icon and text
-                                            Icon(
-                                              Icons.location_on,
-                                              color: Colors.green,
-                                            ), // Location icon
-                                            Text(meeting['place'],
-                                              style: Theme.of(context).textTheme.bodyMedium,),
-                                            SizedBox(
-                                              width: 20,
+                                            // Space between icon and text
+                                            RichText(
+                                              text: TextSpan(
+                                                children: [
+                                                  const WidgetSpan(
+                                                    child: Padding(
+                                                      padding: EdgeInsets.only(
+                                                          right:
+                                                              5.0), // Adjust the spacing as needed
+                                                      child: Icon(
+                                                          Icons.location_on,
+                                                          color: Colors.green),
+                                                    ),
+                                                  ),
+                                                  TextSpan(
+                                                    text: meeting['place'],
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall,
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ],
                                         ),
@@ -637,7 +851,8 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                         aspectRatio: 16 / 9,
                         autoPlayCurve: Curves.fastOutSlowIn,
                         enableInfiniteScroll: false,
-                        autoPlayAnimationDuration: Duration(milliseconds: 800),
+                        autoPlayAnimationDuration:
+                            const Duration(milliseconds: 800),
                         viewportFraction: 1,
                       ),
                     ),
@@ -664,9 +879,9 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                               'http://mybudgetbook.in/GIBAPI/${data1[i]["offer_image"]}';
 
                           String dateString = data1[i][
-                          'validity']; // This will print the properly encoded URL
+                              'validity']; // This will print the properly encoded URL
                           DateTime dateTime =
-                          DateFormat('yyyy-MM-dd').parse(dateString);
+                              DateFormat('yyyy-MM-dd').parse(dateString);
                           return Center(
                             child: Card(
                               child: Padding(
@@ -678,18 +893,21 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                       children: [
                                         Row(
                                           mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                              MainAxisAlignment.start,
                                           children: [
                                             // CIRCLEAVATAR STARTS
                                             Padding(
-                                              padding: const EdgeInsets.all(8.0),
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
                                               child: InkWell(
                                                 onTap: () {
                                                   showDialog(
                                                     context: context,
-                                                    builder: (BuildContext context) {
+                                                    builder:
+                                                        (BuildContext context) {
                                                       return AlertDialog(
-                                                        content: Image.network(imageUrl),
+                                                        content: Image.network(
+                                                            imageUrl),
                                                       );
                                                     },
                                                   );
@@ -697,7 +915,8 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                                 child: CircleAvatar(
                                                   radius: 30.0,
                                                   backgroundColor: Colors.cyan,
-                                                  backgroundImage: NetworkImage(imageUrl),
+                                                  backgroundImage:
+                                                      NetworkImage(imageUrl),
                                                 ),
                                               ),
                                             ),
@@ -748,47 +967,50 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                         data1[i]['discount'].toString().isEmpty
                                             ? Container()
                                             : Positioned(
-                                          top: 8,
-                                          right:
-                                          8, // Adjust position if needed
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              color: Colors
-                                                  .red, // Change the color here
-                                              borderRadius:
-                                              BorderRadius.only(
-                                                topLeft:
-                                                Radius.circular(10.0),
-                                                bottomRight:
-                                                Radius.circular(10.0),
-                                              ),
-                                            ),
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 6.0,
-                                                vertical: 2.0),
-                                            child: Row(
-                                              children: [
-                                                Text(
-                                                  '${data1[i]['discount']}% off', // Text for your banner
-                                                  style: TextStyle(
+                                                top: 8,
+                                                right:
+                                                    8, // Adjust position if needed
+                                                child: Container(
+                                                  decoration: BoxDecoration(
                                                     color: Colors
-                                                        .white, // Change the text color here
-                                                    fontWeight:
-                                                    FontWeight.bold,
-                                                    fontStyle: FontStyle
-                                                        .italic, // Add any additional styles here
-                                                    fontSize:
-                                                    12.0, // Adjust font size as needed
+                                                        .red, // Change the color here
+                                                    borderRadius:
+                                                        BorderRadius.only(
+                                                      topLeft:
+                                                          Radius.circular(10.0),
+                                                      bottomRight:
+                                                          Radius.circular(10.0),
+                                                    ),
+                                                  ),
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 6.0,
+                                                      vertical: 2.0),
+                                                  child: Row(
+                                                    children: [
+                                                      Text(
+                                                        '${data1[i]['discount']}% off', // Text for your banner
+                                                        style: TextStyle(
+                                                          color: Colors
+                                                              .white, // Change the text color here
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontStyle: FontStyle
+                                                              .italic, // Add any additional styles here
+                                                          fontSize:
+                                                              12.0, // Adjust font size as needed
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        Positioned(top: 25, right: 8, // Adjust position if needed
+                                              ),
+                                        Positioned(
+                                          top: 25,
+                                          right: 8, // Adjust position if needed
                                           child: IconButton(
                                             onPressed: () {
-                                              launchUrl(Uri.parse("tel://${data[i]['mobile']}"));
+                                              launchUrl(Uri.parse(
+                                                  "tel://${data[i]['mobile']}"));
                                             },
                                             icon: Icon(
                                               Icons.call_outlined,
@@ -1013,7 +1235,7 @@ class _NavigationBarNonState extends State<NavigationBarNon> {
           ),
         ],
         type:
-        BottomNavigationBarType.fixed, // Set type to fixed for text labels
+            BottomNavigationBarType.fixed, // Set type to fixed for text labels
         currentIndex: _currentIndex,
         // selectedItemColor: Theme.of(context).brightness == Brightness.light
         //     ? Colors.black45
@@ -1032,7 +1254,7 @@ class _NavigationBarNonState extends State<NavigationBarNon> {
         selectedLabelStyle: TextStyle(color: Colors.white),
         unselectedLabelStyle: TextStyle(color: Colors.white),
         selectedIconTheme:
-        IconThemeData(color: Colors.green), // Set selected icon color
+            IconThemeData(color: Colors.green), // Set selected icon color
       ),
     );
   }
