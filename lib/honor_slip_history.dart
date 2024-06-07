@@ -106,7 +106,7 @@ class _HonorHistoryState extends State<HonorHistory> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Honoring History", style: Theme.of(context).textTheme.displayLarge,),
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
         leading: IconButton(
           icon: Icon(Icons.navigate_before),
           onPressed: () {
@@ -119,7 +119,7 @@ class _HonorHistoryState extends State<HonorHistory> {
           DropdownButton<String>(
             value: filter,
             icon: Icon(Icons.filter_list, color: Colors.white),
-            style: TextStyle(color: Colors.white), // Text style for the selected item
+            style: TextStyle(color: Colors.black), // Text style for the selected item
             items: <String>['All', 'In', 'Out'].map((String value) {
               return DropdownMenuItem<String>(
                 value: value,

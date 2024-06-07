@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:photo_view/photo_view.dart';
 import 'edit_offer.dart';
 import 'package:http/http.dart' as http;
 
@@ -772,8 +773,17 @@ class _RunningPageState extends State<RunningPage> {
                                               showDialog(
                                                 context: context,
                                                 builder: (BuildContext context) {
-                                                  return AlertDialog(
-                                                    content: Image.network(imageUrl),
+                                                  return SizedBox(
+                                                    child: Dialog(
+                                                      child: Container(
+                                                        width: 300.0, // Set the width of the dialog
+                                                        height: 400.0, // Set the height of the dialog
+
+                                                        child: PhotoView(
+                                                          imageProvider: NetworkImage(imageUrl),
+                                                        ),
+                                                      ),
+                                                    ),
                                                   );
                                                 },
                                               );
@@ -1095,8 +1105,17 @@ class _CompletedPageState extends State<CompletedPage> {
                                       showDialog(
                                         context: context,
                                         builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            content: Image.network(imageUrl),
+                                          return SizedBox(
+                                            child: Dialog(
+                                              child: Container(
+                                                width: 300.0, // Set the width of the dialog
+                                                height: 400.0, // Set the height of the dialog
+
+                                                child: PhotoView(
+                                                  imageProvider: NetworkImage(imageUrl),
+                                                ),
+                                              ),
+                                            ),
                                           );
                                         },
                                       );
@@ -1362,8 +1381,17 @@ class _BlockPageState extends State<BlockPage> {
                                   showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        content: Image.network(imageUrl),
+                                      return SizedBox(
+                                        child: Dialog(
+                                          child: Container(
+                                            width: 300.0, // Set the width of the dialog
+                                            height: 400.0, // Set the height of the dialog
+
+                                            child: PhotoView(
+                                              imageProvider: NetworkImage(imageUrl),
+                                            ),
+                                          ),
+                                        ),
                                       );
                                     },
                                   );
@@ -1388,17 +1416,12 @@ class _BlockPageState extends State<BlockPage> {
                                 const SizedBox(height: 10,),
                                 //start texts
                                 Text('${data[i]['offer_type']} - ${data[i]['name']}',
-                                  //Text style starts
                                   style: const TextStyle(fontSize: 11,
                                       fontWeight: FontWeight.bold
                                   ),),
-                                //Text starts
                                 Text(DateFormat('dd-MM-yyyy').format(dateTime)),
                               ],
                             ),
-                            //IconButton starts
-
-                            //IconButton starts
                             Row(
                               children: [
                                 IconButton(onPressed: (){
@@ -1431,6 +1454,7 @@ class _BlockPageState extends State<BlockPage> {
                                                   // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Your offer Unblocked Successfully")));
                                                    Navigator.push(context, MaterialPageRoute(builder: (context)=> OfferList(userId: widget.userId, userType: widget.userType,)));
                                                 }, ),
+
                                               TextButton(
                                                   onPressed: (){
                                                     Navigator.pop(context);
@@ -1440,9 +1464,7 @@ class _BlockPageState extends State<BlockPage> {
                                           )
                                   );
                                 },
-                                    icon: Icon(Icons.check_circle,
-                                      color: Colors.green[900],)),
-
+                                    icon: Icon(Icons.check_circle, color: Colors.green[900],)),
                                 IconButton(
                                     onPressed: () {
                                       showDialog(

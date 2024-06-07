@@ -5,6 +5,7 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'package:photo_view/photo_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../Non_exe_pages/non_exe_home.dart';
 import '../guest_home.dart';
@@ -274,8 +275,17 @@ class _OffersPageState extends State<OffersPage> {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
-                              return AlertDialog(
-                                content: Image.network(imageUrl),
+                              return SizedBox(
+                                child: Dialog(
+                                  child: Container(
+                                    width: 300.0, // Set the width of the dialog
+                                    height: 400.0, // Set the height of the dialog
+
+                                    child: PhotoView(
+                                      imageProvider: NetworkImage(imageUrl),
+                                    ),
+                                  ),
+                                ),
                               );
                             },
                           );
