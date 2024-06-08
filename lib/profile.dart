@@ -13,6 +13,8 @@ import 'package:http/http.dart'as http;
 import 'edit_profile.dart';
 import 'guest_home.dart';
 import 'home.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class Profile extends StatelessWidget {
   final String userType;
@@ -195,10 +197,10 @@ class _PersonalState extends State<Personal> {
   String? pastexperience = "";
   String? userID = "";
   List dynamicdata=[];
-  String profileImage="";
-  String marital_status="";
+  String? profileImage="";
+  String? marital_status="";
   String imageUrl = "";
-  String imageParameter = "";
+  String? imageParameter = "";
 
 
   Future<void> fetchData(String userId) async {
@@ -206,67 +208,121 @@ class _PersonalState extends State<Personal> {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=$userId');
       final response = await http.get(url);
       if (response.statusCode == 200) {
-        print("response S: ${response.statusCode}");
-        print("response B: ${response.body}");
         final responseData = json.decode(response.body);
         if (responseData is List<dynamic>) {
           setState(() {
             dynamicdata = responseData.cast<Map<String, dynamic>>();
             if (dynamicdata.isNotEmpty) {
-              setState(() {
-                fname = dynamicdata[0]["first_name"];
-                lname= dynamicdata[0]['last_name'];
-                location=dynamicdata[0]["place"];
-                dob=dynamicdata[0]["dob"];
-                district=dynamicdata[0]["district"];
-                mobile=dynamicdata[0]["mobile"];
-                chapter=dynamicdata[0]["chapter"];
-                kovil=dynamicdata[0]["kovil"];
-                email=dynamicdata[0]["email"];
-                spousename=dynamicdata[0]["s_name"];
-                wad=dynamicdata[0]["WAD"];
-                spousekovil=dynamicdata[0]["s_father_kovil"];
-                education=dynamicdata[0]["education"];
-                pastexperience=dynamicdata[0]["past_experience"];
-                member = dynamicdata[0]["member_type"];
-                koottam = dynamicdata[0]["koottam"];
-                spousekoottam = dynamicdata[0]["s_father_koottam"];
-                bloodgroup = dynamicdata[0]["blood_group"];
-                spousenative = dynamicdata[0]["native"];
-                spousename=dynamicdata[0]["s_name"];
-                spousename=dynamicdata[0]["s_name"];
-                spousebloodgroup = dynamicdata[0]["s_blood"];
-                spousekovil=dynamicdata[0]["s_father_kovil"];
-                profileImage=dynamicdata[0]["profile_image"];
-                marital_status=dynamicdata[0]["marital_status"];
-                imageUrl = 'http://mybudgetbook.in/GIBAPI/${dynamicdata[0]["profile_image"]}';
-                imageParameter = dynamicdata[0]["profile_image"];
-              });
-              print("Image Parameter: $imageParameter");
-              print("Image Url: $imageUrl");
+              fname = dynamicdata[0]["first_name"];
+              lname = dynamicdata[0]['last_name'];
+              location = dynamicdata[0]["place"];
+              dob = dynamicdata[0]["dob"];
+              district = dynamicdata[0]["district"];
+              mobile = dynamicdata[0]["mobile"];
+              chapter = dynamicdata[0]["chapter"];
+              kovil = dynamicdata[0]["kovil"];
+              email = dynamicdata[0]["email"];
+              spousename = dynamicdata[0]["s_name"];
+              wad = dynamicdata[0]["WAD"];
+              spousekovil = dynamicdata[0]["s_father_kovil"];
+              education = dynamicdata[0]["education"];
+              pastexperience = dynamicdata[0]["past_experience"];
+              member = dynamicdata[0]["member_type"];
+              koottam = dynamicdata[0]["koottam"];
+              spousekoottam = dynamicdata[0]["s_father_koottam"];
+              bloodgroup = dynamicdata[0]["blood_group"];
+              spousenative = dynamicdata[0]["native"];
+              spousename = dynamicdata[0]["s_name"];
+              spousename = dynamicdata[0]["s_name"];
+              spousebloodgroup = dynamicdata[0]["s_blood"];
+              spousekovil = dynamicdata[0]["s_father_kovil"];
+              profileImage = dynamicdata[0]["profile_image"];
+              marital_status = dynamicdata[0]["marital_status"];
+              imageUrl = 'http://mybudgetbook.in/GIBAPI/${dynamicdata[0]["profile_image"]}';
+              imageParameter = dynamicdata[0]["profile_image"];
+              _saveToSharedPreferences();
             }
           });
         } else {
-          // Handle invalid response data (not a List)
           print('Invalid response data format');
         }
       } else {
-        // Handle non-200 status code
         print('Error: ${response.statusCode}');
       }
     } catch (error) {
-      // Handle other errors
       print('Error: $error');
     }
   }
 
+  Future<void> _saveToSharedPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('fname', fname ?? '');
+    await prefs.setString('lname', lname ?? '');
+    await prefs.setString('location', location ?? '');
+    await prefs.setString('dob', dob ?? '');
+    await prefs.setString('district', district ?? '');
+    await prefs.setString('mobile', mobile ?? '');
+    await prefs.setString('chapter', chapter ?? '');
+    await prefs.setString('kovil', kovil ?? '');
+    await prefs.setString('email', email ?? '');
+    await prefs.setString('spousename', spousename ?? '');
+    await prefs.setString('wad', wad ?? '');
+    await prefs.setString('spousekovil', spousekovil ?? '');
+    await prefs.setString('education', education ?? '');
+    await prefs.setString('pastexperience', pastexperience ?? '');
+    await prefs.setString('member', member ?? '');
+    await prefs.setString('koottam', koottam ?? '');
+    await prefs.setString('spousekoottam', spousekoottam ?? '');
+    await prefs.setString('bloodgroup', bloodgroup ?? '');
+    await prefs.setString('spousenative', spousenative ?? '');
+    await prefs.setString('spousebloodgroup', spousebloodgroup ?? '');
+    await prefs.setString('profileImage', profileImage ?? '');
+    await prefs.setString('marital_status', marital_status ?? '');
+    await prefs.setString('imageUrl', imageUrl ?? '');
+    await prefs.setString('imageParameter', imageParameter ?? '');
+  }
+
+
   @override
   void initState() {
-    fetchData(widget.userID.toString());
-    userID=widget.userID;
-    // TODO: implement initState
     super.initState();
+    _loadFromSharedPreferences();
   }
+
+  Future<void> _loadFromSharedPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      fname = prefs.getString('fname') ?? "";
+      lname = prefs.getString('lname') ?? "";
+      location = prefs.getString('location') ?? "";
+      dob = prefs.getString('dob') ?? "";
+      district = prefs.getString('district') ?? "";
+      mobile = prefs.getString('mobile') ?? "";
+      chapter = prefs.getString('chapter') ?? "";
+      kovil = prefs.getString('kovil') ?? "";
+      email = prefs.getString('email') ?? "";
+      spousename = prefs.getString('spousename') ?? "";
+      wad = prefs.getString('wad') ?? "";
+      spousekovil = prefs.getString('spousekovil') ?? "";
+      education = prefs.getString('education') ?? "";
+      pastexperience = prefs.getString('pastexperience') ?? "";
+      member = prefs.getString('member') ?? "";
+      koottam = prefs.getString('koottam') ?? "";
+      spousekoottam = prefs.getString('spousekoottam') ?? "";
+      bloodgroup = prefs.getString('bloodgroup') ?? "";
+      spousenative = prefs.getString('spousenative') ?? "";
+      spousebloodgroup = prefs.getString('spousebloodgroup') ?? "";
+      profileImage = prefs.getString('profileImage') ?? "";
+      marital_status = prefs.getString('marital_status') ?? "";
+      imageUrl = prefs.getString('imageUrl') ?? "";
+      imageParameter = prefs.getString('imageParameter') ?? "";
+      userID = widget.userID;
+      if (dynamicdata.isEmpty) {
+        fetchData(widget.userID.toString());
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -716,32 +772,70 @@ class _BusinessTabPageState extends State<BusinessTabPage> {
 class BusinessInfo extends StatefulWidget {
   final String userType;
   final String? userID;
+
   const BusinessInfo({Key? key, required this.userType, this.userID}) : super(key: key);
 
   @override
   State<BusinessInfo> createState() => _BusinessInfoState();
 }
+
 class _BusinessInfoState extends State<BusinessInfo> {
-
-
-  String? businesstype="";
-  String? companyname ="";
+  String? businesstype = "";
+  String? companyname = "";
   String? businessimage = "";
-  String? businesskeywords ="";
-  //String? service="";
-  String? address="";
-  String? mobile="";
-  String? email="";
-  String? website ="";
-  String? ybe="";
-  String documentid="";
-  List dynamicdata=[];
+  String? businesskeywords = "";
+  String? address = "";
+  String? mobile = "";
+  String? email = "";
+  String? website = "";
+  String? ybe = "";
+  String documentid = "";
+  List<dynamic> dynamicdata = [];
   String? userID = "";
   String imageUrl = "";
   String imageParameter = "";
 
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
 
+  Future<void> saveData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('businesstype', businesstype ?? "");
+    await prefs.setString('companyname', companyname ?? "");
+    await prefs.setString('businessimage', businessimage ?? "");
+    await prefs.setString('businesskeywords', businesskeywords ?? "");
+    await prefs.setString('address', address ?? "");
+    await prefs.setString('mobile', mobile ?? "");
+    await prefs.setString('email', email ?? "");
+    await prefs.setString('website', website ?? "");
+    await prefs.setString('ybe', ybe ?? "");
+    await prefs.setString('businessimageUrl', imageUrl);
+    await prefs.setString('businessimageParameter', imageParameter);
+  }
 
+  Future<void> loadData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      businesstype = prefs.getString('businesstype') ?? "";
+      companyname = prefs.getString('companyname') ?? "";
+      businessimage = prefs.getString('businessimage') ?? "";
+      businesskeywords = prefs.getString('businesskeywords') ?? "";
+      address = prefs.getString('address') ?? "";
+      mobile = prefs.getString('mobile') ?? "";
+      email = prefs.getString('email') ?? "";
+      website = prefs.getString('website') ?? "";
+      ybe = prefs.getString('ybe') ?? "";
+      imageUrl = prefs.getString('businessimageUrl') ?? "";
+      imageParameter = prefs.getString('businessimageParameter') ?? "";
+    });
+
+    if (businesstype!.isEmpty) {
+      fetchData(widget.userID.toString());
+    }
+  }
 
   Future<void> fetchData(String userId) async {
     try {
@@ -754,41 +848,30 @@ class _BusinessInfoState extends State<BusinessInfo> {
           setState(() {
             dynamicdata = responseData.cast<Map<String, dynamic>>();
             if (dynamicdata.isNotEmpty) {
-              setState(() {
-                businesstype = dynamicdata[0]["business_type"];
-                companyname = dynamicdata[0]["company_name"];
-                businesskeywords = dynamicdata[0]["business_keywords"];
-                address = dynamicdata[0]["company_address"];
-                mobile = dynamicdata[0]["mobile"];
-                email = dynamicdata[0]["email"];
-                website = dynamicdata[0]["website"];
-                ybe = dynamicdata[0]["b_year"];
-                imageUrl = 'http://mybudgetbook.in/GIBAPI/${dynamicdata[0]["business_image"]}';
-                imageParameter = dynamicdata[0]["business_image"];
-              });
+              businesstype = dynamicdata[0]["business_type"] ?? "";
+              companyname = dynamicdata[0]["company_name"] ?? "";
+              businesskeywords = dynamicdata[0]["business_keywords"] ?? "";
+              address = dynamicdata[0]["company_address"] ?? "";
+              mobile = dynamicdata[0]["mobile"] ?? "";
+              email = dynamicdata[0]["email"] ?? "";
+              website = dynamicdata[0]["website"] ?? "";
+              ybe = dynamicdata[0]["b_year"] ?? "";
+              imageUrl = 'http://mybudgetbook.in/GIBAPI/${dynamicdata[0]["business_image"]}' ?? "";
+              imageParameter = dynamicdata[0]["business_image"] ?? "";
             }
           });
+          saveData();
         } else {
-          // Handle invalid response data (not a List)
           print('Invalid response data format');
         }
       } else {
-        // Handle non-200 status code
         print('Error: ${response.statusCode}');
       }
     } catch (error) {
-      // Handle other errors
       print('Error: $error');
     }
   }
 
-
-  @override
-  void initState() {
-    super.initState();
-    fetchData(widget.userID.toString());
-
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -801,13 +884,16 @@ class _BusinessInfoState extends State<BusinessInfo> {
                 height: 300,
                 child: imageUrl.isEmpty
                     ? Image.asset('assets/logo.png', fit: BoxFit.cover)
-                    : CachedNetworkImage( fit: BoxFit.fill, imageUrl: imageUrl,),
+                    : CachedNetworkImage(
+                  fit: BoxFit.fill,
+                  imageUrl: imageUrl,
+                ),
               ),
               Align(
                 alignment: Alignment.topRight,
                 child: IconButton(
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=> BusinessEditPage(
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => BusinessEditPage(
                       currentbusinessimage: businessimage,
                       currentcompanyname: companyname,
                       currentmobile: mobile,
@@ -815,16 +901,14 @@ class _BusinessInfoState extends State<BusinessInfo> {
                       currentaddress: address,
                       currentwebsite: website,
                       currentybe: ybe,
-                      // documentid: documentid,
                       currentbusinesskeywords: businesskeywords,
                       currentbusinesstype: businesstype,
                       userId: widget.userID,
                       userType: widget.userType.toString(),
                       imageUrl: imageParameter,
-
                     )));
                   },
-                  icon: const Icon(Icons.edit,color: Colors.green,),
+                  icon: const Icon(Icons.edit, color: Colors.green,),
                 ),
               ),
               ExpansionTile(
@@ -833,7 +917,6 @@ class _BusinessInfoState extends State<BusinessInfo> {
                 children: [
                   const SizedBox(height: 10,),
                   Row(
-                    // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       const Padding(
                         padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
@@ -841,13 +924,12 @@ class _BusinessInfoState extends State<BusinessInfo> {
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(108, 0, 0, 0),
-                        child: Text(businesstype!),
+                        child: Text(businesstype ?? ""),
                       )
                     ],
                   ),
                   const SizedBox(height: 10,),
                   Row(
-                    // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       const Padding(
                         padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
@@ -855,17 +937,15 @@ class _BusinessInfoState extends State<BusinessInfo> {
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(94, 0, 0, 0),
-                        child: Text(companyname!),
+                        child: Text(companyname ?? ""),
                       )
                     ],
                   ),
-
                   const Divider(color: Colors.grey,),
                   SizedBox(
                     height: 50,
                     child: Row(
-                      // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children:  [
+                      children: [
                         Column(
                           children: [
                             const Padding(
@@ -874,14 +954,13 @@ class _BusinessInfoState extends State<BusinessInfo> {
                             ),
                             Padding(
                               padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
-                              child: Text(businesskeywords!,
+                              child: Text(businesskeywords ?? "",
                                 textAlign: TextAlign.justify,
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 3,),
                             )
                           ],
                         ),
-
                       ],
                     ),
                   ),
@@ -894,8 +973,7 @@ class _BusinessInfoState extends State<BusinessInfo> {
                   SizedBox(
                     height: 100,
                     child: Row(
-                      // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children:  [
+                      children: [
                         const Padding(
                           padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
                           child: Align(
@@ -904,16 +982,14 @@ class _BusinessInfoState extends State<BusinessInfo> {
                         ),
                         Padding(
                           padding: const EdgeInsets.fromLTRB(124, 0, 0, 0),
-                          child: Text(address!,
-                            //  textAlign: TextAlign.justify,
-                          ),
+                          child: Text(address ?? ""),
                         )
                       ],
                     ),
                   ),
                   const SizedBox(height: 20,),
                   Row(
-                    children:  [
+                    children: [
                       const Padding(
                         padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
                         child: Align(
@@ -922,7 +998,7 @@ class _BusinessInfoState extends State<BusinessInfo> {
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(130, 0, 0, 0),
-                        child: Text(mobile!,
+                        child: Text(mobile ?? "",
                           textAlign: TextAlign.justify,
                         ),
                       )
@@ -939,13 +1015,12 @@ class _BusinessInfoState extends State<BusinessInfo> {
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(140, 0, 0, 2),
-                        child: Text(email!,
+                        child: Text(email ?? "",
                           textAlign: TextAlign.justify,
                         ),
                       )
                     ],
                   )
-
                 ],
               ),
               ExpansionTile(
@@ -953,7 +1028,6 @@ class _BusinessInfoState extends State<BusinessInfo> {
                 title: const Text('Company History'),
                 children: [
                   Row(
-                    // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Column(
                         children: [
@@ -970,7 +1044,7 @@ class _BusinessInfoState extends State<BusinessInfo> {
                                   color: Colors.green,
                                 ),
                                 SizedBox(width: 5),  // Add some space between the icon and the text
-                                Text(website!),
+                                Text(website ?? ""),
                               ],
                             ),
                           ),
@@ -980,7 +1054,6 @@ class _BusinessInfoState extends State<BusinessInfo> {
                   ),
                   const Divider(color: Colors.grey,),
                   Row(
-                    // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       const Padding(
                         padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
@@ -988,14 +1061,13 @@ class _BusinessInfoState extends State<BusinessInfo> {
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(88, 0, 0, 0),
-                        child: Text(ybe!),
+                        child: Text(ybe ?? ""),
                       )
                     ],
                   ),
                 ],
               ),
             ],
-
           ),
         ),
       ),

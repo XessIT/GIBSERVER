@@ -14,7 +14,6 @@ import 'package:gipapp/settings_page_executive.dart';
 import 'package:gipapp/year_meeting_details.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:photo_view/photo_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'Non_exe_pages/non_exe_home.dart';
@@ -104,6 +103,8 @@ class _HomepageState extends State<Homepage> {
 
   @override
   void initState() {
+    _fetchImages(widget.userType.toString());
+
     fetchData(widget.userId);
     getData();
     getData1();
@@ -134,6 +135,8 @@ class _HomepageState extends State<Homepage> {
     await Future.delayed(const Duration(seconds: 1));
     setState(() {
       fetchData(widget.userId);
+      _fetchImages(widget.userType.toString());
+
       getData();
       getData1();
       _checkConnectivityAndGetData();
@@ -592,6 +595,28 @@ class _HomepageState extends State<Homepage> {
       return false;
     }
   }
+  /// fetch image
+  List<String> _imagePaths = [];
+
+  Future<void> _fetchImages(String userType) async {
+    final url = Uri.parse('http://mybudgetbook.in/GIBAPI/adsdisplay.php?memberType=$userType');
+    final response = await http.get(url);
+    print("gowthm testing");
+    print("$url");
+
+    if (response.statusCode == 200) {
+      List<dynamic> imageData = jsonDecode(response.body);
+      setState(() {
+        _imagePaths = imageData
+            .expand((data) => List<String>.from(data['imagepaths']))
+            .toList();
+        isLoading = false;
+      });
+    } else {
+      print('Failed to fetch images.');
+    }
+  }
+
 
 
   @override
@@ -651,9 +676,70 @@ class _HomepageState extends State<Homepage> {
                       : Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      data.isEmpty ? SizedBox.shrink() : const SizedBox(
-                        height: 190,
+                      data.isEmpty ? SizedBox.shrink() : const SizedBox(height: 190,),
+                      if (_imagePaths.isNotEmpty)... [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Card(
+                          elevation: 0,
+                          child: Container(
+                            child: Text(
+                              'Ads',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headlineMedium,
+                            ),
+                          ),
+                        ),
                       ),
+                      SizedBox(height: 10,),
+                      Container(
+                        child: CarouselSlider(
+                          items: _imagePaths.map((imagePath) {
+                            return Builder(
+                              builder: (BuildContext context) {
+                                return FutureBuilder(
+                                  future: http.get(Uri.parse('http://mybudgetbook.in/GIBADMINAPI/$imagePath')),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                                      final imageResponse = snapshot.data as http.Response;
+                                      if (imageResponse.statusCode == 200) {
+                                        return Container(
+                                          margin: EdgeInsets.symmetric(horizontal: 5.0),
+                                          child: CachedNetworkImage(
+                                            imageUrl: 'http://mybudgetbook.in/GIBADMINAPI/$imagePath',
+                                            placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                                            errorWidget: (context, url, error) => Text('Error loading image'),
+                                            fit: BoxFit.cover,
+                                            width: double.infinity,
+                                          ),
+                                        );
+                                      } else {
+                                        return Text('Error loading image');
+                                      }
+                                    } else if (snapshot.connectionState == ConnectionState.waiting) {
+                                      return Center(child: CircularProgressIndicator());
+                                    } else {
+                                      return Text('Error loading image');
+                                    }
+                                  },
+                                );
+                              },
+                            );
+                          }).toList(),
+                          options: CarouselOptions(
+                            height: 200.0,
+                            enlargeCenterPage: true,
+                            autoPlay: true,
+                            aspectRatio: 16 / 9,
+                            autoPlayCurve: Curves.fastOutSlowIn,
+                            enableInfiniteScroll: true,
+                            autoPlayAnimationDuration: const Duration(milliseconds: 800),
+                            viewportFraction:0.8,
+                          ),
+                        )
+                      ),],
+                      SizedBox(height: 10,),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Card(
@@ -958,7 +1044,7 @@ class _HomepageState extends State<Homepage> {
                                               MainAxisAlignment.start,
                                               children: [
                                                 // CIRCLEAVATAR STARTS
-                                                Padding(
+                                                /*Padding(
                                                   padding: const EdgeInsets.all(8.0),
                                                   child: InkWell(
                                                     onTap: () {
@@ -987,7 +1073,7 @@ class _HomepageState extends State<Homepage> {
                                                       backgroundImage: NetworkImage(imageUrl),
                                                     ),
                                                   ),
-                                                ),
+                                                ),*/
                                                 SizedBox(width: 20),
                                                 // END CIRCLEAVATAR
                                                 Column(
@@ -1146,7 +1232,7 @@ class _HomepageState extends State<Homepage> {
                         //height: 80,
                         child: Row(
                           children: [
-                            Padding(
+                           /* Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: InkWell(
                                 onTap: () {
@@ -1174,7 +1260,7 @@ class _HomepageState extends State<Homepage> {
                                   backgroundImage: NetworkImage(imageUrl),
                                 ),
                               ),
-                            ),
+                            ),*/
                             Padding(
                               padding: const EdgeInsets.only(left: 8.0),
                               child: Column(
