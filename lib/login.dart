@@ -30,7 +30,6 @@ class _LoginState extends State<Login> {
     setState(() {
       isLoading = true;
     });
-
     try {
       var response = await http.get(
         Uri.parse("http://mybudgetbook.in/GIBAPI/user.php?mobile=${mobileController.text.trim()}&password=${passwordController.text.trim()}"),
@@ -223,7 +222,7 @@ class _LoginState extends State<Login> {
                     const SizedBox(height: 30),
                     const Text(
                       'Developed By KAN INFOTECH',
-                      style: TextStyle(fontSize: 16, color: Colors.orangeAccent, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 12, color: Colors.orangeAccent, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 5),
                   ],

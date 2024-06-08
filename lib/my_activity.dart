@@ -230,10 +230,25 @@ class _ActivityState extends State<Activity> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              CircleAvatar(
-                                radius:
-                                    35, // adjust the radius as per your requirement
-                                backgroundImage: CachedNetworkImageProvider(imageUrl),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: InkWell(
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          content: Image.network(imageUrl),
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: CircleAvatar(
+                                    radius: 30.0,
+                                    backgroundColor: Colors.cyan,
+                                    backgroundImage: CachedNetworkImageProvider(imageUrl),
+                                  ),
+                                ),
                               ),
                               Expanded(
                                 child: Column(

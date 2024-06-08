@@ -40,7 +40,7 @@ class GuestSettings extends StatelessWidget {
           ),
         ),
         title: Text(
-          "Account",
+          "",
           style: Theme.of(context).textTheme.displayLarge,
         ),
         leading: IconButton(
@@ -96,27 +96,6 @@ class GuestSettings extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => OffersPage(
-                              userType: userType.toString(),
-                              userId: userId.toString(),
-                            )),
-                      );
-                    },
-                    icons: Icons.local_offer,
-                    iconStyle: IconStyle(
-                      iconsColor: Colors.white,
-                      withBackground: true,
-                      backgroundColor: Colors.green,
-                    ),
-                    title: 'Offers',
-                    titleStyle: Theme.of(context).textTheme.bodyMedium,
-                    //subtitle: "Lock Ziar'App to improve your privacy",
-                  ),*/
-                  SettingsItem(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
                             builder: (context) => Doctors(
                               userType: userType.toString(),
                               userId: userId.toString(),
@@ -157,7 +136,7 @@ class GuestSettings extends StatelessWidget {
                     // subtitle:'Profile Image, Name, Income',
                     titleMaxLine: 1,
                     subtitleMaxLine: 1,
-                  ),
+                  ),*/
                   SettingsItem(
                     onTap: () => {
                                  Navigator.push(

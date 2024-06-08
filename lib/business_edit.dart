@@ -7,6 +7,7 @@ import 'package:gipapp/profile.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart'as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class BusinessEditPage extends StatefulWidget {
   final String? currentbusinesstype;
@@ -63,6 +64,7 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
     uid = widget.userId!;
     print('uid: $uid');
     // TODO: implement build
+    loadData();
     super.initState();
   }
 
@@ -76,25 +78,41 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
   TextEditingController websitecontroller = TextEditingController();
   TextEditingController ybecontroller = TextEditingController();
 
+  Future<void> saveData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('companyname', companynamecontroller.text);
+    await prefs.setString('mobile', mobilecontroller.text);
+    await prefs.setString('email', emailcontroller.text);
+    await prefs.setString('address', addresscontroller.text);
+    await prefs.setString('website', websitecontroller.text);
+    await prefs.setString('ybe', ybecontroller.text);
+    await prefs.setString('businesskeywords', businesskeywordcontroller.text);
+    await prefs.setString('businesstype', businesstype ?? "");
+    await prefs.setString('businessimageUrl', image); // Save image URL
+    await prefs.setString('businessimageParameter', imageUrl);
+  }
+
+
+  Future<void> loadData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      companynamecontroller.text = prefs.getString('companyname') ?? widget.currentcompanyname ?? "";
+      mobilecontroller.text = prefs.getString('mobile') ?? widget.currentmobile ?? "";
+      emailcontroller.text = prefs.getString('email') ?? widget.currentemail ?? "";
+      addresscontroller.text = prefs.getString('address') ?? widget.currentaddress ?? "";
+      websitecontroller.text = prefs.getString('website') ?? widget.currentwebsite ?? "";
+      ybecontroller.text = prefs.getString('ybe') ?? widget.currentybe ?? "";
+      businesskeywordcontroller.text = prefs.getString('businesskeywords') ?? widget.currentbusinesskeywords ?? "";
+      businesstype = prefs.getString('businesstype') ?? widget.currentbusinesstype ?? "";
+      image = prefs.getString('businessimageUrl') ?? image ?? "";
+    });
+  }
+
   Future<void> Edit() async {
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/business_edit.php');
       print('url: $url');
       print('id: ${widget.userId}');
-      final requestBody = jsonEncode({
-        'business_image': widget.imageUrl,
-        "company_name": companynamecontroller.text,
-        "mobile": mobilecontroller.text,
-        "email": emailcontroller.text,
-        "company_address": addresscontroller.text,
-        "website": websitecontroller.text,
-        "b_year": ybecontroller.text,
-        "business_keywords": businesskeywordcontroller.text,
-        "business_type": businesstype,
-        "id": widget.userId
-      });
-
-      print("Request Body: $requestBody");
       final response = await http.put(
         url,
         body: jsonEncode({
@@ -116,6 +134,7 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
         final responseData = jsonDecode(utf8.decode(response.bodyBytes));
         print("Raw response body: ${response.body}");
         print("Message: ${responseData['message']}");
+        saveData();
         Navigator.push(context, MaterialPageRoute(builder: (context) => Profile(userID: widget.userId, userType: widget.userType.toString(),)));
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text("Profile Successfully Updated")));
@@ -133,21 +152,6 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/business_edit.php');
       print('url: $url');
       print('id: ${widget.userId}');
-      final requestBody = jsonEncode({
-        'imagename': imageName,
-        'imagedata': imageData,
-        "company_name": companynamecontroller.text,
-        "mobile": mobilecontroller.text,
-        "email": emailcontroller.text,
-        "company_address": addresscontroller.text,
-        "website": websitecontroller.text,
-        "b_year": ybecontroller.text,
-        "business_keywords": businesskeywordcontroller.text,
-        "business_type": businesstype,
-        "id": widget.userId
-      });
-
-      print("Request Body: $requestBody");
       final response = await http.put(
         url,
         body: jsonEncode({
@@ -170,6 +174,7 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
         final responseData = jsonDecode(utf8.decode(response.bodyBytes));
         print("Raw response body: ${response.body}");
         print("Message: ${responseData['message']}");
+        saveData();
         Navigator.push(context, MaterialPageRoute(builder: (context) => Profile(userID: widget.userId, userType: widget.userType.toString(),)));
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text("Profile Successfully Updated"))
@@ -282,7 +287,7 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
                           child: Container(
                             width: 150,
                             height: 150,
-                        child: CachedNetworkImage(
+                        child: selectedImage == null ? CachedNetworkImage(
                           imageUrl: image, // Your network image URL
                           placeholder: (context, url) => Center(child: CircularProgressIndicator()),
                           errorWidget: (context, url, error) => Icon(Icons.error),
@@ -290,27 +295,10 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
                           fadeOutDuration: Duration(milliseconds: 200), // Smooth fade-out
                           fadeInDuration: Duration(milliseconds: 200), // Smooth fade-in
                           filterQuality: FilterQuality.high, // Maintain image quality
-                        ),),
+                        ) : Image.memory(selectedImage!)),
                       ),
                       onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          builder: (ctx) {
-                            return Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                ListTile(
-                                  leading: Icon(Icons.storage),
-                                  title: Text("From Gallery"),
-                                  onTap: () {
-                                    pickImageFromGallery();
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ],
-                            );
-                          },
-                        );
+                        pickImageFromGallery();
                       },
                     ),
                     const SizedBox(height: 10,),

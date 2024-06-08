@@ -7,33 +7,19 @@ import 'guest_home.dart';
 import 'guest_settings.dart';
 import 'home.dart';
 
-class BloodGroup extends StatelessWidget {
+class BloodGroup extends StatefulWidget {
   final String? userType;
   final String? userId;
   const BloodGroup({super.key, required this.userType, required this.userId});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      // Main calling function. This function coding will appear below
-      body: Blood(userType: userType.toString(), userId: userId),
-    );
-  }
-}
-
-class Blood extends StatefulWidget {
-  final String userType;
-  final String? userId;
-  const Blood({super.key, required this.userType, required this.userId});
-
-  @override
-  State<Blood> createState() => _BloodState();
+  State<BloodGroup> createState() => _BloodGroupState();
 }
 
 
 
 
-class _BloodState extends State<Blood> {
+class _BloodGroupState extends State<BloodGroup> {
   @override
   Widget build(BuildContext context) {
 

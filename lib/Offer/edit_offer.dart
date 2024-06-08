@@ -53,8 +53,11 @@ class _EditOfferState extends State<EditOffer> {
     discountcontroller = TextEditingController(
       text: widget.currentDiscount,
     );
+    DateTime parsedDate = DateFormat('yyyy-MM-dd').parse("${widget.currentvalidity}");
+    String formattedDate = DateFormat('dd/MM/yyyy').format(parsedDate);
+
     _date = TextEditingController(
-      text: widget.currentvalidity,
+      text: formattedDate,
     );
     type = widget.currenttype;
     image = widget.currentimage!;
@@ -142,6 +145,10 @@ class _EditOfferState extends State<EditOffer> {
 
       if (response.statusCode == 200) {
         print("Offers response: ${response.body}");
+        Navigator.push(context,
+          MaterialPageRoute(builder: (context)=> OfferList(userId: widget.user_id, userType: widget.userType,)),);
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text("Successfully Updated")));
 
       } else {
         print("Error: ${response.statusCode}");
@@ -174,6 +181,10 @@ class _EditOfferState extends State<EditOffer> {
 
       if (response.statusCode == 200) {
         print("Offers response: ${response.body}");
+        Navigator.push(context,
+          MaterialPageRoute(builder: (context)=> OfferList(userId: widget.user_id, userType: widget.userType,)),);
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text("Successfully Updated a Offer")));
 
       } else {
         print("Error: ${response.statusCode}");
@@ -256,7 +267,8 @@ class _EditOfferState extends State<EditOffer> {
                   radius: 75,
                 ),
                 onTap: () {
-                  showModalBottomSheet(context: context, builder: (ctx){
+                  pickImageFromGallery();
+                  /*showModalBottomSheet(context: context, builder: (ctx){
                     return Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -279,7 +291,7 @@ class _EditOfferState extends State<EditOffer> {
                         )
                       ],
                     );
-                  });
+                  });*/
                 },
               ),
               const SizedBox(height: 10,),
@@ -366,7 +378,7 @@ class _EditOfferState extends State<EditOffer> {
                       suffixIcon: IconButton(onPressed: ()async{
                         DateTime? pickDate = await showDatePicker(
                             context: context,
-                            initialDate: date,
+                            initialDate: DateFormat('dd/MM/yyyy').parse(_date.text),
                             firstDate: DateTime(1900),
                             lastDate: DateTime(2100));
                         if(pickDate==null) return;{
@@ -414,10 +426,7 @@ class _EditOfferState extends State<EditOffer> {
                         }
                         else if (_formKey.currentState!.validate()) {
                           selectedImage != null ? Editoffers() : UpdateOffers();
-                          Navigator.push(context,
-                            MaterialPageRoute(builder: (context)=> OfferList(userId: widget.user_id, userType: widget.userType,)),);
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                              content: Text("Successfully Updated a Offer")));
+
                         }
                       },
                       child: const Text('Update',

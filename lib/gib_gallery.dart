@@ -133,7 +133,6 @@ class _GibGalleryState extends State<GibGallery> {
                 height: 1100,
                 child: Expanded(
                     child: TabBarView(children: [
-                     // ViewPhotosPage(),
                       ViewVideosPage(),
                     ]
                     )),

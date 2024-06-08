@@ -5,6 +5,7 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'package:photo_view/photo_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../Non_exe_pages/non_exe_home.dart';
 import '../guest_home.dart';
@@ -231,7 +232,7 @@ class _OffersPageState extends State<OffersPage> {
                 return Card(
                   child: Column(
                     children: [
-                      Row(
+                      Row (
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
@@ -269,38 +270,61 @@ class _OffersPageState extends State<OffersPage> {
                           ),
                         ],
                       ),
-                      CircleAvatar(
-                        radius: 36,
-                        backgroundImage: CachedNetworkImageProvider(imageUrl),
-                        child: const Stack(
-                          children: [
-                          ],
+                      InkWell(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return SizedBox(
+                                child: Dialog(
+                                  child: Container(
+                                    width: 300.0, // Set the width of the dialog
+                                    height: 400.0, // Set the height of the dialog
+
+                                    child: PhotoView(
+                                      imageProvider: NetworkImage(imageUrl),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        child: CircleAvatar(
+                          radius: 30.0,
+                          backgroundColor: Colors.cyan,
+                          backgroundImage: CachedNetworkImageProvider(imageUrl),
                         ),
                       ),
                      // const SizedBox(height: 5,),
-                      Text('${data[i]['company_name']}',
-                        style: const TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold),),
-                      Text("Contact: ${data[i]['mobile']}",
-                        style: const TextStyle(fontSize: 10,
-                            fontWeight: FontWeight.bold),),
-                      // const SizedBox(height: 15,),
-                      Text('${data[i]['offer_type']} - ${data[i]['name']}',
-                        style: const TextStyle(fontSize: 10,
-                            fontWeight: FontWeight.bold),),
-                      //  const SizedBox(height: 5,),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      Column(
                         children: [
-                          const Text('Validity -',
-                            style: TextStyle(fontSize: 10,
+                          Text('${data[i]['company_name']}',
+                            style: const TextStyle(
+                                fontSize: 10,
                                 fontWeight: FontWeight.bold),),
-                          Text(DateFormat('dd-MM-yyyy').format(dateTime),
+                          Text("Contact: ${data[i]['mobile']}",
                             style: const TextStyle(fontSize: 10,
                                 fontWeight: FontWeight.bold),),
+                          // const SizedBox(height: 15,),
+                          Text('${data[i]['offer_type']} - ${data[i]['name']}',
+                            style: const TextStyle(fontSize: 10,
+                                fontWeight: FontWeight.bold),),
+                          //  const SizedBox(height: 5,),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text('Validity -',
+                                style: TextStyle(fontSize: 10,
+                                    fontWeight: FontWeight.bold),),
+                              Text(DateFormat('dd-MM-yyyy').format(dateTime),
+                                style: const TextStyle(fontSize: 10,
+                                    fontWeight: FontWeight.bold),),
+                            ],
+                          ),
                         ],
                       ),
+
                       // Text(DateFormat('dd/MM/yyyy').format(DateTime.now()))
                     ],
                   ),

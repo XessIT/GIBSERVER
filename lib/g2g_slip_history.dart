@@ -147,11 +147,11 @@ class _G2GHistoryState extends State<G2GHistory> {
                               },
                               icon: Icon(Icons.call, color: Colors.green),
                             ),
-                            Card(
+                            /*Card(
                               child: data[i]["met_number"] == fetchMobile
                                   ? Icon(Icons.call_received, color: Colors.green[800])
                                   : Icon(Icons.call_made, color: Colors.red),
-                            ),
+                            ),*/
 
                           ],
                         ),

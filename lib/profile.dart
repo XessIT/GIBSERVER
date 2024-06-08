@@ -13,11 +13,13 @@ import 'package:http/http.dart'as http;
 import 'edit_profile.dart';
 import 'guest_home.dart';
 import 'home.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class Profile extends StatelessWidget {
   final String userType;
   final String? userID;
-   const Profile({
+  const Profile({
     super.key,
     required this.userType,
     required this. userID,
@@ -28,8 +30,8 @@ class Profile extends StatelessWidget {
 
     return  Scaffold(
       body: View(
-        userType : userType,
-      userID:userID),
+          userType : userType,
+          userID:userID),
     );
   }
 }
@@ -38,9 +40,9 @@ class View extends StatefulWidget {
 
   final String userType;
 
- final String? userID;
+  final String? userID;
 
-      const View({
+  const View({
     super.key,
     required this.userType,
     required this. userID,
@@ -92,33 +94,33 @@ class _ViewState extends State<View> {
             icon: const Icon(Icons.navigate_before),
           ),
         ),
-          body: PopScope(
-            canPop: false,
-            onPopInvoked: (didPop)  {
-              if (widget.userType == "Non-Executive") {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SettingsPageNon(
-                      userType: widget.userType.toString(),
-                      userId: widget.userID.toString(),
-                    ),
+        body: PopScope(
+          canPop: false,
+          onPopInvoked: (didPop)  {
+            if (widget.userType == "Non-Executive") {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SettingsPageNon(
+                    userType: widget.userType.toString(),
+                    userId: widget.userID.toString(),
                   ),
-                );
-              }
-              else{
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SettingsPageExecutive(
-                      userType: widget.userType.toString(),
-                      userId: widget.userID.toString(),
-                    ),
+                ),
+              );
+            }
+            else{
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SettingsPageExecutive(
+                    userType: widget.userType.toString(),
+                    userId: widget.userID.toString(),
                   ),
-                );
-              }
-            },
-            child: Column(
+                ),
+              );
+            }
+          },
+          child: Column(
             children:  [
               const TabBar(
                   isScrollable: true,
@@ -127,8 +129,8 @@ class _ViewState extends State<View> {
                   tabs: [
                     Tab(text: 'Personal',),
                     Tab(text: 'Business',),
-            
-                   // Tab(text: 'Reward',)
+
+                    // Tab(text: 'Reward',)
                   ]),
               Expanded(
                 child: TabBarView(
@@ -136,33 +138,33 @@ class _ViewState extends State<View> {
                     Personal(
                       userType:widget.userType,
                       userID:widget.userID,
-            
+
                     ),
                     BusinessTabPage(
                       userType:widget.userType,
                       userID:widget.userID,
                     ),
-            
-                   // Reward(),
+
+                    // Reward(),
                   ],
                 ),
               ),
             ],
-                    ),
           ),
+        ),
       ),
     );
   }
 }
 
 class Personal extends StatefulWidget {
- final String userType;
+  final String userType;
   final String? userID;
 
-   const Personal({
+  const Personal({
     super.key,
     required this.userType,
-     required this. userID,
+    required this. userID,
   });
 
 
@@ -195,10 +197,10 @@ class _PersonalState extends State<Personal> {
   String? pastexperience = "";
   String? userID = "";
   List dynamicdata=[];
-  String profileImage="";
-  String marital_status="";
+  String? profileImage="";
+  String? marital_status="";
   String imageUrl = "";
-  String imageParameter = "";
+  String? imageParameter = "";
 
 
   Future<void> fetchData(String userId) async {
@@ -206,67 +208,121 @@ class _PersonalState extends State<Personal> {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=$userId');
       final response = await http.get(url);
       if (response.statusCode == 200) {
-        print("response S: ${response.statusCode}");
-        print("response B: ${response.body}");
         final responseData = json.decode(response.body);
         if (responseData is List<dynamic>) {
           setState(() {
             dynamicdata = responseData.cast<Map<String, dynamic>>();
             if (dynamicdata.isNotEmpty) {
-              setState(() {
-                fname = dynamicdata[0]["first_name"];
-                lname= dynamicdata[0]['last_name'];
-                location=dynamicdata[0]["place"];
-                dob=dynamicdata[0]["dob"];
-                district=dynamicdata[0]["district"];
-                mobile=dynamicdata[0]["mobile"];
-                chapter=dynamicdata[0]["chapter"];
-                kovil=dynamicdata[0]["kovil"];
-                email=dynamicdata[0]["email"];
-                spousename=dynamicdata[0]["s_name"];
-                wad=dynamicdata[0]["WAD"];
-                spousekovil=dynamicdata[0]["s_father_kovil"];
-                education=dynamicdata[0]["education"];
-                pastexperience=dynamicdata[0]["past_experience"];
-                member = dynamicdata[0]["member_type"];
-                koottam = dynamicdata[0]["koottam"];
-                spousekoottam = dynamicdata[0]["s_father_koottam"];
-                bloodgroup = dynamicdata[0]["blood_group"];
-                spousenative = dynamicdata[0]["native"];
-                spousename=dynamicdata[0]["s_name"];
-                spousename=dynamicdata[0]["s_name"];
-                spousebloodgroup = dynamicdata[0]["s_blood"];
-                spousekovil=dynamicdata[0]["s_father_kovil"];
-                profileImage=dynamicdata[0]["profile_image"];
-                marital_status=dynamicdata[0]["marital_status"];
-                imageUrl = 'http://mybudgetbook.in/GIBAPI/${dynamicdata[0]["profile_image"]}';
-                imageParameter = dynamicdata[0]["profile_image"];
-              });
-              print("Image Parameter: $imageParameter");
-              print("Image Url: $imageUrl");
+              fname = dynamicdata[0]["first_name"];
+              lname = dynamicdata[0]['last_name'];
+              location = dynamicdata[0]["place"];
+              dob = dynamicdata[0]["dob"];
+              district = dynamicdata[0]["district"];
+              mobile = dynamicdata[0]["mobile"];
+              chapter = dynamicdata[0]["chapter"];
+              kovil = dynamicdata[0]["kovil"];
+              email = dynamicdata[0]["email"];
+              spousename = dynamicdata[0]["s_name"];
+              wad = dynamicdata[0]["WAD"];
+              spousekovil = dynamicdata[0]["s_father_kovil"];
+              education = dynamicdata[0]["education"];
+              pastexperience = dynamicdata[0]["past_experience"];
+              member = dynamicdata[0]["member_type"];
+              koottam = dynamicdata[0]["koottam"];
+              spousekoottam = dynamicdata[0]["s_father_koottam"];
+              bloodgroup = dynamicdata[0]["blood_group"];
+              spousenative = dynamicdata[0]["native"];
+              spousename = dynamicdata[0]["s_name"];
+              spousename = dynamicdata[0]["s_name"];
+              spousebloodgroup = dynamicdata[0]["s_blood"];
+              spousekovil = dynamicdata[0]["s_father_kovil"];
+              profileImage = dynamicdata[0]["profile_image"];
+              marital_status = dynamicdata[0]["marital_status"];
+              imageUrl = 'http://mybudgetbook.in/GIBAPI/${dynamicdata[0]["profile_image"]}';
+              imageParameter = dynamicdata[0]["profile_image"];
+              _saveToSharedPreferences();
             }
           });
         } else {
-          // Handle invalid response data (not a List)
           print('Invalid response data format');
         }
       } else {
-        // Handle non-200 status code
         print('Error: ${response.statusCode}');
       }
     } catch (error) {
-      // Handle other errors
       print('Error: $error');
     }
   }
 
+  Future<void> _saveToSharedPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('fname', fname ?? '');
+    await prefs.setString('lname', lname ?? '');
+    await prefs.setString('location', location ?? '');
+    await prefs.setString('dob', dob ?? '');
+    await prefs.setString('district', district ?? '');
+    await prefs.setString('mobile', mobile ?? '');
+    await prefs.setString('chapter', chapter ?? '');
+    await prefs.setString('kovil', kovil ?? '');
+    await prefs.setString('email', email ?? '');
+    await prefs.setString('spousename', spousename ?? '');
+    await prefs.setString('wad', wad ?? '');
+    await prefs.setString('spousekovil', spousekovil ?? '');
+    await prefs.setString('education', education ?? '');
+    await prefs.setString('pastexperience', pastexperience ?? '');
+    await prefs.setString('member', member ?? '');
+    await prefs.setString('koottam', koottam ?? '');
+    await prefs.setString('spousekoottam', spousekoottam ?? '');
+    await prefs.setString('bloodgroup', bloodgroup ?? '');
+    await prefs.setString('spousenative', spousenative ?? '');
+    await prefs.setString('spousebloodgroup', spousebloodgroup ?? '');
+    await prefs.setString('profileImage', profileImage ?? '');
+    await prefs.setString('marital_status', marital_status ?? '');
+    await prefs.setString('imageUrl', imageUrl ?? '');
+    await prefs.setString('imageParameter', imageParameter ?? '');
+  }
+
+
   @override
   void initState() {
-    fetchData(widget.userID.toString());
-    userID=widget.userID;
-    // TODO: implement initState
     super.initState();
+    _loadFromSharedPreferences();
   }
+
+  Future<void> _loadFromSharedPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      fname = prefs.getString('fname') ?? "";
+      lname = prefs.getString('lname') ?? "";
+      location = prefs.getString('location') ?? "";
+      dob = prefs.getString('dob') ?? "";
+      district = prefs.getString('district') ?? "";
+      mobile = prefs.getString('mobile') ?? "";
+      chapter = prefs.getString('chapter') ?? "";
+      kovil = prefs.getString('kovil') ?? "";
+      email = prefs.getString('email') ?? "";
+      spousename = prefs.getString('spousename') ?? "";
+      wad = prefs.getString('wad') ?? "";
+      spousekovil = prefs.getString('spousekovil') ?? "";
+      education = prefs.getString('education') ?? "";
+      pastexperience = prefs.getString('pastexperience') ?? "";
+      member = prefs.getString('member') ?? "";
+      koottam = prefs.getString('koottam') ?? "";
+      spousekoottam = prefs.getString('spousekoottam') ?? "";
+      bloodgroup = prefs.getString('bloodgroup') ?? "";
+      spousenative = prefs.getString('spousenative') ?? "";
+      spousebloodgroup = prefs.getString('spousebloodgroup') ?? "";
+      profileImage = prefs.getString('profileImage') ?? "";
+      marital_status = prefs.getString('marital_status') ?? "";
+      imageUrl = prefs.getString('imageUrl') ?? "";
+      imageParameter = prefs.getString('imageParameter') ?? "";
+      userID = widget.userID;
+      if (dynamicdata.isEmpty) {
+        fetchData(widget.userID.toString());
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -279,7 +335,7 @@ class _PersonalState extends State<Personal> {
                 height: 250,
                 child: Image.network(imageUrl, fit: BoxFit.fill,),
               ),
-             Align(
+              Align(
                 alignment: Alignment.topRight,
                 child: IconButton(
                   onPressed: () {
@@ -332,7 +388,7 @@ class _PersonalState extends State<Personal> {
                 title: const Text('Basic Information'),
                 children: [
                   Row(
-                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Padding(
                         padding: EdgeInsets.all(8.0),
@@ -346,44 +402,44 @@ class _PersonalState extends State<Personal> {
                     ],
                   ),
                   if(widget.userType != "Guest")
+                    const Divider(),
+                  if(widget.userType != "Guest")
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children:  [
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text('District'),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(district!),
+                        )
+                      ],
+                    ),
+                  if(widget.userType != "Guest")
+
+                    const Divider(),
+                  if(widget.userType != "Guest")
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children:  [
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text('Chapter'),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(chapter!),
+                        )
+                      ],
+                    ),
+
                   const Divider(),
-                  if(widget.userType != "Guest")
-
-                    Row(
-                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children:  [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('District'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(district!),
-                      )
-                    ],
-                  ),
-                  if(widget.userType != "Guest")
-
-                    const Divider(),
-                  if(widget.userType != "Guest")
-
-                    Row(
-                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children:  [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Chapter'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(chapter!),
-                      )
-                    ],
-                  ),
-
-                    const Divider(),
                   Row(
-                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Padding(
                         padding: EdgeInsets.all(8.0),
@@ -401,64 +457,50 @@ class _PersonalState extends State<Personal> {
                   if(widget.userType != "Guest")
 
                     Row(
-                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('DOB'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(dob!),
-                      )
-                    ],
-                  ), if(widget.userType != "Guest")
-                  const Divider(),
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text('DOB'),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(dob!),
+                        )
+                      ],
+                    ), if(widget.userType != "Guest")
+                    const Divider(),
                   if(widget.userType != "Guest")
-                  Row(
-                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Koottam'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(koottam!),
-                      )
-                    ],
-                  ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text('Koottam'),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(koottam!),
+                        )
+                      ],
+                    ),
                   if(widget.userType != "Guest")
 
                     const Divider(),
                   if(widget.userType != "Guest")
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children:  [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Kovil'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(kovil!),
-                      )
-                    ],
-                  ),
-                  const Divider(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children:  [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Member'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(widget.userType),
-                      )
-                    ],
-                  ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children:  [
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text('Kovil'),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(kovil!),
+                        )
+                      ],
+                    ),
                   const Divider(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -476,99 +518,99 @@ class _PersonalState extends State<Personal> {
                 ],
               ),
               if(widget.userType != "Guest" && marital_status=="Married")
+                ExpansionTile(
+                  leading: const Icon(Icons.group),
+                  title: const Text('Dependents'),
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children:  [
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text('Spouse Name'),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child:spousename!.isEmpty ? const Text("-")
+                              : Text(spousename!),
+                        )
+                      ],
+                    ),
+                    const Divider(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children:  [
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text('Wedding Date'),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(wad!),
+                        )
+                      ],
+                    ),
+                    const Divider(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text('Spouse Blood Group'),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: spousebloodgroup!.isEmpty ? const Text("-")
+                              : Text(spousebloodgroup!),
+                        )
+                      ],
+                    ),
+                    const Divider(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children:  [
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text('Spouse Native'),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child:spousenative == null ? const Text("Nil")
+                              : Text(spousenative!),
+                        )
+                      ],
+                    ),
+                    const Divider(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text('Spouse Father Koottam'),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: spousekoottam == null ? const Text("Nil")
+                              : Text(spousekoottam!),
+                        )
 
-              ExpansionTile(
-                leading: const Icon(Icons.group),
-                title: const Text('Dependents'),
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children:  [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Spouse Name'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child:spousename == null ? const Text("Nil")
-                            : Text(spousename!),
-                      )
-                    ],
-                  ),
-                  const Divider(),
-                  Row(
-                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children:  [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('WAD'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(wad!),
-                      )
-                    ],
-                  ),
-                  const Divider(),
-                  Row(
-                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Spouse Blood Group'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(spousebloodgroup!),
-                      )
-                    ],
-                  ),
-                  const Divider(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children:  [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Spouse Native'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child:spousenative == null ? const Text("Nil")
-                            : Text(spousenative!),
-                      )
-                    ],
-                  ),
-                  const Divider(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Spouse Father Koottam'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: spousekoottam == null ? const Text("Nil")
-                            : Text(spousekoottam!),
-                      )
+                      ],),
+                    const Divider(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text('Spouse Father Kovil'),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: spousekovil== null ? const Text("Nil")
+                              : Text(spousekovil!),
+                        )
 
-                    ],),
-                  const Divider(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Spouse Father Kovil'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: spousekovil== null ? const Text("Nil")
-                            : Text(spousekovil!),
-                      )
-
-                    ],),
-                ],),
+                      ],),
+                  ],),
 
               ExpansionTile(
                 leading: const Icon(Icons.call),
@@ -604,45 +646,45 @@ class _PersonalState extends State<Personal> {
                 ],
               ),
               if(widget.userType != "Guest")
-              ExpansionTile(
-                leading: const Icon(Icons.cast_for_education),
-                title: const Text('Education Details'),
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                ExpansionTile(
+                  leading: const Icon(Icons.cast_for_education),
+                  title: const Text('Education Details'),
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Education'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(education!),)
-                    ],
-                  )
-                ],
-              ),
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text('Education'),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(education!),)
+                      ],
+                    )
+                  ],
+                ),
               if(widget.userType != "Guest")
-              ExpansionTile(
-                leading: const Icon(Icons.man),
-                title: const Text('Past Experience'),
-                children: [
-                  Row(
-                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children:  [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Past Experience'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(pastexperience!),
-                      )
-                    ],
-                  ),
-                ],
-              ),
+                ExpansionTile(
+                  leading: const Icon(Icons.man),
+                  title: const Text('Past Experience'),
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children:  [
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text('Past Experience'),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(pastexperience!),
+                        )
+                      ],
+                    ),
+                  ],
+                ),
             ],
           ),
         ),
@@ -704,15 +746,15 @@ class _BusinessTabPageState extends State<BusinessTabPage> {
             ),
 
             //TABBAR VIEW STARTS
-             Expanded(
+            Expanded(
               child: TabBarView(children: [
                 BusinessInfo(
                   userType:widget.userType,
                   userID:widget.userID,
                 ),
-                 ImageAndVideo(
-                   userID:widget.userID,
-                 ),
+                ImageAndVideo(
+                  userID:widget.userID,
+                ),
 
               ]),
             )
@@ -720,7 +762,7 @@ class _BusinessTabPageState extends State<BusinessTabPage> {
         ),
       ),
     )
-    : BusinessInfo(
+        : BusinessInfo(
       userType:widget.userType,
       userID:widget.userID,
     );
@@ -730,32 +772,70 @@ class _BusinessTabPageState extends State<BusinessTabPage> {
 class BusinessInfo extends StatefulWidget {
   final String userType;
   final String? userID;
+
   const BusinessInfo({Key? key, required this.userType, this.userID}) : super(key: key);
 
   @override
   State<BusinessInfo> createState() => _BusinessInfoState();
 }
+
 class _BusinessInfoState extends State<BusinessInfo> {
-
-
-  String? businesstype="";
-  String? companyname ="";
+  String? businesstype = "";
+  String? companyname = "";
   String? businessimage = "";
-  String? businesskeywords ="";
-  //String? service="";
-  String? address="";
-  String? mobile="";
-  String? email="";
-  String? website ="";
-  String? ybe="";
-  String documentid="";
-  List dynamicdata=[];
+  String? businesskeywords = "";
+  String? address = "";
+  String? mobile = "";
+  String? email = "";
+  String? website = "";
+  String? ybe = "";
+  String documentid = "";
+  List<dynamic> dynamicdata = [];
   String? userID = "";
   String imageUrl = "";
   String imageParameter = "";
 
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
 
+  Future<void> saveData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('businesstype', businesstype ?? "");
+    await prefs.setString('companyname', companyname ?? "");
+    await prefs.setString('businessimage', businessimage ?? "");
+    await prefs.setString('businesskeywords', businesskeywords ?? "");
+    await prefs.setString('address', address ?? "");
+    await prefs.setString('mobile', mobile ?? "");
+    await prefs.setString('email', email ?? "");
+    await prefs.setString('website', website ?? "");
+    await prefs.setString('ybe', ybe ?? "");
+    await prefs.setString('businessimageUrl', imageUrl);
+    await prefs.setString('businessimageParameter', imageParameter);
+  }
 
+  Future<void> loadData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      businesstype = prefs.getString('businesstype') ?? "";
+      companyname = prefs.getString('companyname') ?? "";
+      businessimage = prefs.getString('businessimage') ?? "";
+      businesskeywords = prefs.getString('businesskeywords') ?? "";
+      address = prefs.getString('address') ?? "";
+      mobile = prefs.getString('mobile') ?? "";
+      email = prefs.getString('email') ?? "";
+      website = prefs.getString('website') ?? "";
+      ybe = prefs.getString('ybe') ?? "";
+      imageUrl = prefs.getString('businessimageUrl') ?? "";
+      imageParameter = prefs.getString('businessimageParameter') ?? "";
+    });
+
+    if (businesstype!.isEmpty) {
+      fetchData(widget.userID.toString());
+    }
+  }
 
   Future<void> fetchData(String userId) async {
     try {
@@ -768,43 +848,32 @@ class _BusinessInfoState extends State<BusinessInfo> {
           setState(() {
             dynamicdata = responseData.cast<Map<String, dynamic>>();
             if (dynamicdata.isNotEmpty) {
-              setState(() {
-                businesstype = dynamicdata[0]["business_type"];
-                companyname = dynamicdata[0]["company_name"];
-                businesskeywords = dynamicdata[0]["business_keywords"];
-                address = dynamicdata[0]["company_address"];
-                mobile = dynamicdata[0]["mobile"];
-                email = dynamicdata[0]["email"];
-                website = dynamicdata[0]["website"];
-                ybe = dynamicdata[0]["b_year"];
-                imageUrl = 'http://mybudgetbook.in/GIBAPI/${dynamicdata[0]["business_image"]}';
-                imageParameter = dynamicdata[0]["business_image"];
-              });
+              businesstype = dynamicdata[0]["business_type"] ?? "";
+              companyname = dynamicdata[0]["company_name"] ?? "";
+              businesskeywords = dynamicdata[0]["business_keywords"] ?? "";
+              address = dynamicdata[0]["company_address"] ?? "";
+              mobile = dynamicdata[0]["mobile"] ?? "";
+              email = dynamicdata[0]["email"] ?? "";
+              website = dynamicdata[0]["website"] ?? "";
+              ybe = dynamicdata[0]["b_year"] ?? "";
+              imageUrl = 'http://mybudgetbook.in/GIBAPI/${dynamicdata[0]["business_image"]}' ?? "";
+              imageParameter = dynamicdata[0]["business_image"] ?? "";
             }
           });
+          saveData();
         } else {
-          // Handle invalid response data (not a List)
           print('Invalid response data format');
         }
       } else {
-        // Handle non-200 status code
         print('Error: ${response.statusCode}');
       }
     } catch (error) {
-      // Handle other errors
       print('Error: $error');
     }
   }
 
-
   @override
-    void initState() {
-      super.initState();
-      fetchData(widget.userID.toString());
-
-  }
-    @override
-    Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
         child: Center(
@@ -815,13 +884,16 @@ class _BusinessInfoState extends State<BusinessInfo> {
                 height: 300,
                 child: imageUrl.isEmpty
                     ? Image.asset('assets/logo.png', fit: BoxFit.cover)
-                    : CachedNetworkImage( fit: BoxFit.fill, imageUrl: imageUrl,),
+                    : CachedNetworkImage(
+                  fit: BoxFit.fill,
+                  imageUrl: imageUrl,
+                ),
               ),
               Align(
                 alignment: Alignment.topRight,
                 child: IconButton(
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=> BusinessEditPage(
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => BusinessEditPage(
                       currentbusinessimage: businessimage,
                       currentcompanyname: companyname,
                       currentmobile: mobile,
@@ -829,16 +901,14 @@ class _BusinessInfoState extends State<BusinessInfo> {
                       currentaddress: address,
                       currentwebsite: website,
                       currentybe: ybe,
-                      // documentid: documentid,
                       currentbusinesskeywords: businesskeywords,
                       currentbusinesstype: businesstype,
                       userId: widget.userID,
                       userType: widget.userType.toString(),
                       imageUrl: imageParameter,
-
                     )));
                   },
-                  icon: const Icon(Icons.edit,color: Colors.green,),
+                  icon: const Icon(Icons.edit, color: Colors.green,),
                 ),
               ),
               ExpansionTile(
@@ -847,7 +917,6 @@ class _BusinessInfoState extends State<BusinessInfo> {
                 children: [
                   const SizedBox(height: 10,),
                   Row(
-                    // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       const Padding(
                         padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
@@ -855,13 +924,12 @@ class _BusinessInfoState extends State<BusinessInfo> {
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(108, 0, 0, 0),
-                        child: Text(businesstype!),
+                        child: Text(businesstype ?? ""),
                       )
                     ],
                   ),
                   const SizedBox(height: 10,),
                   Row(
-                    // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       const Padding(
                         padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
@@ -869,17 +937,15 @@ class _BusinessInfoState extends State<BusinessInfo> {
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(94, 0, 0, 0),
-                        child: Text(companyname!),
+                        child: Text(companyname ?? ""),
                       )
                     ],
                   ),
-
                   const Divider(color: Colors.grey,),
                   SizedBox(
                     height: 50,
                     child: Row(
-                      // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children:  [
+                      children: [
                         Column(
                           children: [
                             const Padding(
@@ -888,14 +954,13 @@ class _BusinessInfoState extends State<BusinessInfo> {
                             ),
                             Padding(
                               padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
-                              child: Text(businesskeywords!,
+                              child: Text(businesskeywords ?? "",
                                 textAlign: TextAlign.justify,
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 3,),
                             )
                           ],
                         ),
-
                       ],
                     ),
                   ),
@@ -908,8 +973,7 @@ class _BusinessInfoState extends State<BusinessInfo> {
                   SizedBox(
                     height: 100,
                     child: Row(
-                      // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children:  [
+                      children: [
                         const Padding(
                           padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
                           child: Align(
@@ -918,16 +982,14 @@ class _BusinessInfoState extends State<BusinessInfo> {
                         ),
                         Padding(
                           padding: const EdgeInsets.fromLTRB(124, 0, 0, 0),
-                          child: Text(address!,
-                            //  textAlign: TextAlign.justify,
-                          ),
+                          child: Text(address ?? ""),
                         )
                       ],
                     ),
                   ),
                   const SizedBox(height: 20,),
                   Row(
-                    children:  [
+                    children: [
                       const Padding(
                         padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
                         child: Align(
@@ -936,7 +998,7 @@ class _BusinessInfoState extends State<BusinessInfo> {
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(130, 0, 0, 0),
-                        child: Text(mobile!,
+                        child: Text(mobile ?? "",
                           textAlign: TextAlign.justify,
                         ),
                       )
@@ -953,13 +1015,12 @@ class _BusinessInfoState extends State<BusinessInfo> {
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(140, 0, 0, 2),
-                        child: Text(email!,
+                        child: Text(email ?? "",
                           textAlign: TextAlign.justify,
                         ),
                       )
                     ],
                   )
-
                 ],
               ),
               ExpansionTile(
@@ -967,7 +1028,6 @@ class _BusinessInfoState extends State<BusinessInfo> {
                 title: const Text('Company History'),
                 children: [
                   Row(
-                    // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Column(
                         children: [
@@ -984,7 +1044,7 @@ class _BusinessInfoState extends State<BusinessInfo> {
                                   color: Colors.green,
                                 ),
                                 SizedBox(width: 5),  // Add some space between the icon and the text
-                                Text(website!),
+                                Text(website ?? ""),
                               ],
                             ),
                           ),
@@ -994,7 +1054,6 @@ class _BusinessInfoState extends State<BusinessInfo> {
                   ),
                   const Divider(color: Colors.grey,),
                   Row(
-                    // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       const Padding(
                         padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
@@ -1002,14 +1061,13 @@ class _BusinessInfoState extends State<BusinessInfo> {
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(88, 0, 0, 0),
-                        child: Text(ybe!),
+                        child: Text(ybe ?? ""),
                       )
                     ],
                   ),
                 ],
               ),
             ],
-
           ),
         ),
       ),
@@ -1071,7 +1129,7 @@ class _ImageAndVideoState extends State<ImageAndVideo> {
             ),
 
             //TABBAR VIEW STARTS
-             Expanded(
+            Expanded(
               child: TabBarView(children: [
                 ImageView(userId: widget.userID,),
                 VideoView(userID: widget.userID),
@@ -1306,7 +1364,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
 
 
-  /// Reward
+/// Reward
 
 
 

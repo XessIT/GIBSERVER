@@ -25,7 +25,6 @@ class AttendanceScannerPage extends StatefulWidget {
   @override
   State<AttendanceScannerPage> createState() => _AttendanceScannerPageState();
 }
-
 class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
   List<Map<String, dynamic>> meetings = [];
   var _connectivityResult = ConnectivityResult.none;
@@ -226,7 +225,6 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
       }
     } catch (e) {
       print('Error inserting attendance: $e');
-      // Handle error here (e.g., retry insertion, display error message, etc.)
     }
   }
 

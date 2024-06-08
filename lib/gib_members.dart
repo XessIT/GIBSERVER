@@ -12,36 +12,17 @@ import 'guest_home.dart';
 import 'home.dart';
 import 'member_details.dart';
 
-
-class GibMembers extends StatelessWidget {
+class GibMembers extends StatefulWidget {
   final String userType;
   final String? userId;
-
   GibMembers({Key? key, required this.userType, required this.userId}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Members(
-        userId: userId,
-        userType: userType,
-      ),
-    );
-  }
+  State<GibMembers> createState() => _GibMembersState();
 }
 
 
-class Members extends StatefulWidget {
-  final String userType;
-  final String? userId;
-  Members({Key? key, required this.userType, required this.userId}) : super(key: key);
-
-  @override
-  State<Members> createState() => _MembersState();
-}
-
-
-class _MembersState extends State<Members> {
+class _GibMembersState extends State<GibMembers> {
 
   String? chapter = "";
   String? district = "";
@@ -191,7 +172,7 @@ class _MembersState extends State<Members> {
     }).catchError((error) {
       print("Error in fetchData: $error");
     });
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(Duration(seconds: 2), () {
       setState(() {
         isLoading = false; // Hide the loading indicator after 4 seconds
       });
@@ -276,7 +257,7 @@ class _MembersState extends State<Members> {
                       },
                       controller: fieldText,
                       decoration: InputDecoration(
-                          /*suffixIcon: IconButton(
+                        /*suffixIcon: IconButton(
                             icon: const Icon(Icons.clear),
                             onPressed: clearText,
                           ),*/
@@ -444,7 +425,7 @@ class _MembersState extends State<Members> {
                           child: Center(
                             child: InkWell(
                               onTap: () {
-                               Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileMembers(memberId: data[i]['id'], userType: widget.userType, userID: widget.userId,)));
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileMembers(memberId: data[i]['id'], userType: widget.userType, userID: widget.userId,)));
                                 // Add your onTap functionality here
                               },
                               child: Card(
