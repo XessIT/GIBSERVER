@@ -371,13 +371,12 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
           setState(() {
             userdata = responseData.cast<Map<String, dynamic>>();
             if (userdata.isNotEmpty) {
+              profileImage =
+                  'http://mybudgetbook.in/GIBAPI/${userdata[0]["profile_image"]}';
               district = userdata[0]['district'] ?? '';
               chapter = userdata[0]['chapter'] ?? '';
               print('District: $district, Chapter: $chapter');
               getData();
-              profileImage =
-                  'http://mybudgetbook.in/GIBAPI/${userdata[0]["profile_image"]}';
-              _imageBytes = base64Decode(userdata[0]['profile_image']);
             }
           });
         } else {

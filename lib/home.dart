@@ -22,7 +22,6 @@ import 'meeting.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 
-
 class Homepage extends StatefulWidget {
   final String? userType;
   final String? userId;
@@ -163,15 +162,13 @@ class _HomepageState extends State<Homepage> {
 
   ///Wish data table code fetch
 
-
   String imageUrl = "";
-  TextEditingController district = TextEditingController();
-  TextEditingController chapter = TextEditingController();
+  String district = "";
+  String chapter = "";
 
   Uint8List? _imageBytes;
 
   List<Map<String, dynamic>> userdata = [];
-
 
   Future<void> fetchData(String? userId) async {
     try {
@@ -184,16 +181,15 @@ class _HomepageState extends State<Homepage> {
         if (responseData is List<dynamic>) {
           setState(() {
             userdata = responseData.cast<Map<String, dynamic>>();
+            print(userdata.isNotEmpty);
             if (userdata.isNotEmpty) {
-              district = userdata[0]['district'] ?? '';
-              chapter = userdata[0]['chapter'] ?? '';
-              print('District: $district, Chapter: $chapter');
-              getData();
               imageUrl =
                   'http://mybudgetbook.in/GIBAPI/${userdata[0]["profile_image"]}';
-              _imageBytes = base64Decode(userdata[0]['profile_image']);
-            }
 
+              district = userdata[0]['district'] ?? '';
+              chapter = userdata[0]['chapter'] ?? '';
+              getData();
+            }
           });
         } else {
           print('Invalid response data format');
@@ -903,7 +899,6 @@ class _HomepageState extends State<Homepage> {
                                   itemBuilder: (context, i) {
                                     String imageUrl =
                                         'http://mybudgetbook.in/GIBAPI/${data1[i]["offer_image"]}';
-
 
                                     String dateString = data1[i][
                                         'validity']; // This will print the properly encoded URL
