@@ -62,7 +62,6 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
     ybecontroller = TextEditingController(text: widget.currentybe,);
     businesstype = widget.currentbusinesstype!;
     uid = widget.userId!;
-    print('uid: $uid');
     // TODO: implement build
     loadData();
     super.initState();
@@ -111,8 +110,7 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
   Future<void> Edit() async {
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/business_edit.php');
-      print('url: $url');
-      print('id: ${widget.userId}');
+
       final response = await http.put(
         url,
         body: jsonEncode({
@@ -128,12 +126,10 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
           "id": widget.userId
         }),
       );
-      print(url);
-      print("ResponseStatus: ${response.statusCode}");
+
       if (response.statusCode == 200) {
         final responseData = jsonDecode(utf8.decode(response.bodyBytes));
-        print("Raw response body: ${response.body}");
-        print("Message: ${responseData['message']}");
+
         saveData();
         Navigator.push(context, MaterialPageRoute(builder: (context) => Profile(userID: widget.userId, userType: widget.userType.toString(),)));
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -150,8 +146,7 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
   Future<void> Update() async {
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/business_edit.php');
-      print('url: $url');
-      print('id: ${widget.userId}');
+
       final response = await http.put(
         url,
         body: jsonEncode({
@@ -168,12 +163,10 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
           "id": widget.userId
         }),
       );
-      print(url);
-      print("ResponseStatus: ${response.statusCode}");
+
       if (response.statusCode == 200) {
         final responseData = jsonDecode(utf8.decode(response.bodyBytes));
-        print("Raw response body: ${response.body}");
-        print("Message: ${responseData['message']}");
+
         saveData();
         Navigator.push(context, MaterialPageRoute(builder: (context) => Profile(userID: widget.userId, userType: widget.userType.toString(),)));
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -206,10 +199,7 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
     ImagePicker imagePicker = ImagePicker();
     XFile? pickedImage = await imagePicker.pickImage(source: ImageSource.gallery);
     if (pickedImage != null) {
-      // Verify that pickedImage is indeed an XFile
-      print('pickedImage type: ${pickedImage.runtimeType}');
 
-      // Read the image file as bytes
       try {
         final imageBytes = await pickedImage!.readAsBytes();
         // Encode the bytes to base64
@@ -217,9 +207,7 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
         setState(() {
           selectedImage = imageBytes;
           imageName = pickedImage!.name;
-          print('Image Name: $imageName');
           imageData = base64ImageData;
-          print('Base64 Image Data: $imageData');
         });
       } catch (e) {
         print('Error reading image file: $e');

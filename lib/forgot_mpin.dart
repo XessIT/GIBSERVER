@@ -23,17 +23,13 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
 
   List<Map<String, dynamic>> data = [];
   Future<void> getData() async {
-    print('Attempting to make HTTP request...');
     try {
       final url = Uri.parse(
           'http://mybudgetbook.in/GIBAPI/registration.php?table=registration&mobile=${mobileController.text}');
-      print(url);
       final response = await http.get(url);
-      print("ResponseStatus: ${response.statusCode}");
-      print("Response: ${response.body}");
+
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
-        print("ResponseData: $responseData");
 
         final List<dynamic> itemGroups = responseData;
         setState(() {
@@ -42,9 +38,7 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
           userName = data[0]["first_name"];
           membersid = "  ${data[0]["member_id"]}";
           passwords = "  ${data[0]["password"]}";
-          print(data);
         });
-        print('Data: $data');
       } else {
         print('Error: ${response.statusCode}');
       }
@@ -175,12 +169,10 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                                       final url = Uri.parse(
                                           "https://obligr.io/api_v2/message/send?api_key=$apikey&dlt_template_id=$templateid&sender_id=$senderid&mobile_no=$number&message=$encodedSms&unicode=0");
                                       try {
-                                        print(url);
                                         final response = await http.get(url);
                                         if (response.statusCode == 200) {
                                           mobileController.clear();
                                           Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
-                                          print('SMS sent successfully');
                                         } else {
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(const SnackBar(

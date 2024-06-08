@@ -54,7 +54,6 @@ class _AboutGibViewtabState extends State<AboutGibViewtab> {
         final List<dynamic> itemGroups = responseData;
         setState(() {
           aboutVisiondata = itemGroups.cast<Map<String, dynamic>>();
-          print("aboutvision:$aboutVisiondata");
         });
       } else {
         //print('Error: ${response.statusCode}');

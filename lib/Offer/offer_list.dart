@@ -158,13 +158,7 @@ class _AddOfferPageState extends State<AddOfferPage> {
       if (response.statusCode == 200) {
         // Handle successful response
         var data = json.decode(response.body);
-        print(data);
-        // Show online status message
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(
-        //     content: Text('Now online.'),
-        //   ),
-        // );
+
       } else {
         // Handle other status codes
         print('Request failed with status: ${response.statusCode}');
@@ -205,7 +199,6 @@ class _AddOfferPageState extends State<AddOfferPage> {
     showLocalImage = true;
     if (pickedImage != null) {
       // Verify that pickedImage is indeed an XFile
-      print('pickedImage type: ${pickedImage.runtimeType}');
 
       // Read the image file as bytes
       try {
@@ -215,9 +208,7 @@ class _AddOfferPageState extends State<AddOfferPage> {
         setState(() {
           selectedImage = imageBytes;
           imageName = pickedImage!.name;
-          print('Image Name: $imageName');
           imageData = base64ImageData;
-          print('Base64 Image Data: $imageData');
         });
       } catch (e) {
         print('Error reading image file: $e');
@@ -242,7 +233,6 @@ class _AddOfferPageState extends State<AddOfferPage> {
   // ends here
   List<Map<String, dynamic>> data=[];
   Future<void> getData() async {
-    print('Attempting to make HTTP request...');
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/offers.php?table=registration&id=${widget.userId}');
       //   print(url);
@@ -251,20 +241,17 @@ class _AddOfferPageState extends State<AddOfferPage> {
       // print("Response: ${response.body}");
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
-        print("ResponseData: $responseData");
         if (responseData is List) {
           // If responseData is a List (multiple records)
           final List<dynamic> itemGroups = responseData;
           setState(() {
             data = itemGroups.cast<Map<String, dynamic>>();
           });
-          print('Data: $data');
         } else if (responseData is Map<String, dynamic>) {
           // If responseData is a Map (single record)
           setState(() {
             data = [responseData];
           });
-          print('Data: $data');
         }
       } else {
         print('Error: ${response.statusCode}');
@@ -277,7 +264,6 @@ class _AddOfferPageState extends State<AddOfferPage> {
   }
   Future<void> offers(String datefetch) async {
     try {
-      print("_date.text before check request: ${_date.text}");
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/offers.php');
       if (datefetch.isNotEmpty) {
         final DateTime parsedDate = DateFormat('dd/MM/yyyy').parse(datefetch);
@@ -299,13 +285,9 @@ class _AddOfferPageState extends State<AddOfferPage> {
             "block_status": "Unblock"
           }),
         );
-        print(url);
-        //  print("imagedata: $imagedata");
-        print("imagename: $imageName");
-        print("ResponseStatus: ${response.statusCode}");
+
 
         if (response.statusCode == 200) {
-          print("Offers response: ${response.body}");
 
         } else {
           print("Error: ${response.statusCode}");
@@ -529,7 +511,6 @@ class _AddOfferPageState extends State<AddOfferPage> {
                                   content: Text("Please Select the Image")));
                             }
                             else if (_formKey.currentState!.validate()) {
-                              print("_date.text before sending request: ${_date.text}");
                               offers(_date.text);
                               Navigator.push(context,
                                 MaterialPageRoute(builder: (context)=> OfferList(userId: widget.userId, userType: widget.userType,)),);
@@ -600,13 +581,7 @@ class _RunningPageState extends State<RunningPage> {
       if (response.statusCode == 200) {
         // Handle successful response
         var data = json.decode(response.body);
-        print(data);
-        // Show online status message
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(
-        //     content: Text('Now online.'),
-        //   ),
-        // );
+
       } else {
         // Handle other status codes
         print('Request failed with status: ${response.statusCode}');
@@ -633,16 +608,12 @@ class _RunningPageState extends State<RunningPage> {
   }
   List<Map<String, dynamic>> data=[];
   Future<void> getData() async {
-    print('Attempting to make HTTP request...');
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/offers.php?table=UnblockOffers');
-      print(url);
       final response = await http.get(url);
-      print("ResponseStatus: ${response.statusCode}");
-      print("Response: ${response.body}");
+
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
-        print("ResponseData: $responseData");
         final List<dynamic> itemGroups = responseData;
         setState(() {});
         // data = itemGroups.cast<Map<String, dynamic>>();
@@ -655,13 +626,9 @@ class _RunningPageState extends State<RunningPage> {
             print('Error parsing validity date: $e');
             return false;
           }
-          print('Widget User ID: ${widget.userId}');
-          print('Item User ID: ${item['user_id']}');
-          print('Validity Date: $validityDate');
-          print('Current Date: ${DateTime.now()}');
+
           bool satisfiesFilter = item['user_id'] == widget.userId && validityDate.isAfter(DateTime.now());
-          print("Item block status: ${item['block_status']}");
-          print('Satisfies Filter: $satisfiesFilter');
+
           return satisfiesFilter;
         }).toList();
         // Call setState() after updating data
@@ -669,7 +636,6 @@ class _RunningPageState extends State<RunningPage> {
           // Cast the filtered data to the correct type
           data = filteredData.cast<Map<String, dynamic>>();
         });
-        print('Data: $data');
       } else {
         print('Error: ${response.statusCode}');
       }
@@ -682,7 +648,6 @@ class _RunningPageState extends State<RunningPage> {
   }
   Future<Uint8List?> getImageBytes(String imageUrl) async {
     try {
-      print('imageUrl: $imageUrl');
       final response = await http.get(Uri.parse(imageUrl));
       if (response.statusCode == 200) {
         return response.bodyBytes;
@@ -699,12 +664,8 @@ class _RunningPageState extends State<RunningPage> {
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/offers.php?ID=$ID');
       final response = await http.delete(url);
-      print("Delete Url: $url");
       if (response.statusCode == 200) {
-        // Success handling, e.g., show a success message
-        print("Delete Response: ${response.body}");
-        print('ID: $ID');
-        print('Offer Deleted successfully');
+
       }
       else {
         // Error handling, e.g., show an error message
@@ -1001,13 +962,7 @@ class _CompletedPageState extends State<CompletedPage> {
       if (response.statusCode == 200) {
         // Handle successful response
         var data = json.decode(response.body);
-        print(data);
-        // Show online status message
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(
-        //     content: Text('Now online.'),
-        //   ),
-        // );
+
       } else {
         // Handle other status codes
         print('Request failed with status: ${response.statusCode}');
@@ -1034,16 +989,12 @@ class _CompletedPageState extends State<CompletedPage> {
   }
   List<Map<String, dynamic>> data=[];
   Future<void> getData() async {
-    print('Attempting to make HTTP request...');
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/offers.php?table=UnblockOffers');
-      print(url);
       final response = await http.get(url);
-      print("ResponseStatus: ${response.statusCode}");
-      print("Response: ${response.body}");
+
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
-        print("ResponseData: $responseData");
         final List<dynamic> itemGroups = responseData;
         setState(() {});
         // Filter data based on user_id and validity date
@@ -1056,7 +1007,6 @@ class _CompletedPageState extends State<CompletedPage> {
             return false;
           }
           bool satisfiesFilter = item['user_id'] == widget.userId && validityDate.isBefore(DateTime.now());
-          print('Satisfies Filter: $satisfiesFilter');
           return satisfiesFilter;
         }).toList();
         // Call setState() after updating data
@@ -1064,7 +1014,6 @@ class _CompletedPageState extends State<CompletedPage> {
           // Cast the filtered data to the correct type
           data = filteredData.cast<Map<String, dynamic>>();
         });
-        print('Data: $data');
       } else {
         print('Error: ${response.statusCode}');
       }
@@ -1228,13 +1177,7 @@ class _BlockPageState extends State<BlockPage> {
       if (response.statusCode == 200) {
         // Handle successful response
         var data = json.decode(response.body);
-        print(data);
-        // Show online status message
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(
-        //     content: Text('Now online.'),
-        //   ),
-        // );
+
       } else {
         // Handle other status codes
         print('Request failed with status: ${response.statusCode}');
@@ -1265,13 +1208,10 @@ class _BlockPageState extends State<BlockPage> {
     print('Attempting to make HTTP request...');
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/offers.php?table=BlockOffers');
-      print(url);
       final response = await http.get(url);
-      print("ResponseStatus: ${response.statusCode}");
-      print("Response: ${response.body}");
+
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
-        print("ResponseData: $responseData");
         final List<dynamic> itemGroups = responseData;
 
         // Filter data based on user_id and validity date
@@ -1296,7 +1236,6 @@ class _BlockPageState extends State<BlockPage> {
         setState(() {
           data = filteredData;
         });
-        print('Data: $data');
       }
       else {
         print('Error: ${response.statusCode}');
@@ -1336,12 +1275,8 @@ class _BlockPageState extends State<BlockPage> {
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/offers.php?ID=$ID');
       final response = await http.delete(url);
-      print("Delete Url: $url");
       if (response.statusCode == 200) {
-        // Success handling, e.g., show a success message
-        print("Delete Response: ${response.body}");
-        print('ID: $ID');
-        print('Offer Deleted successfully');
+
       }
       else {
         // Error handling, e.g., show an error message

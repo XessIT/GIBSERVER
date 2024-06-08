@@ -196,7 +196,6 @@ class _AchievementViewPhotosPageState extends State<AchievementViewPhotosPage> {
   Future<void> _fetchImages() async {
     final url = Uri.parse(
         'http://mybudgetbook.in/GIBADMINAPI/gibachievementimagefetch.php');
-    print('123$url');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -221,7 +220,6 @@ class _AchievementViewPhotosPageState extends State<AchievementViewPhotosPage> {
     try {
       final url = Uri.parse(
           'http://mybudgetbook.in/GIBADMINAPI/gibachievementimagefetch.php');
-      print('Deleting image with URL: $url');
 
       // Create a JSON object with the image ID
       Map<String, dynamic> jsonData = {'id': imageId};
@@ -241,7 +239,6 @@ class _AchievementViewPhotosPageState extends State<AchievementViewPhotosPage> {
             content: Text('Image deleted successfully'),
           ),
         );
-        print('Image deleted successfully');
       } else {
         throw Exception(
             'Failed to delete image. Status code: ${response.statusCode}');

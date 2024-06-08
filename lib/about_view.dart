@@ -33,23 +33,18 @@ class _AboutTabState extends State<AboutTab> {
       final url = Uri.parse(
           'http://mybudgetbook.in/GIBAPI/about.php?table=about_vision');
       if (kDebugMode) {
-        print("Url:$url");
       }
       final response = await http.get(url);
       if (kDebugMode) {
-        print("Response:$response");
       }
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         final List<dynamic> itemGroups = responseData;
         if (kDebugMode) {
-          print("responseData:$responseData");
         }
         if (kDebugMode) {
-          print("statusCode:${response.statusCode}");
         }
         if (kDebugMode) {
-          print("statusCode:${response.body}");
         }
         setState(() {
           aboutVisiondata = itemGroups.cast<Map<String, dynamic>>();
@@ -67,25 +62,15 @@ class _AboutTabState extends State<AboutTab> {
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/about.php?table=about_gib');
       if (kDebugMode) {
-        print("Url:$url");
       }
 
       final response = await http.get(url);
       if (kDebugMode) {
-        print("Response:$response");
       }
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         final List<dynamic> itemGroups = responseData;
-        if (kDebugMode) {
-          print("responseData:$responseData");
-        }
-        if (kDebugMode) {
-          print("statusCode:${response.statusCode}");
-        }
-        if (kDebugMode) {
-          print("statusCode:${response.body}");
-        }
+
         setState(() {
           aboutGIBdata = itemGroups.cast<Map<String, dynamic>>();
           // print("aboutgib:$aboutGIBdata");
@@ -103,25 +88,15 @@ class _AboutTabState extends State<AboutTab> {
       final url = Uri.parse(
           'http://mybudgetbook.in/GIBAPI/about.php?table=about_mission');
       if (kDebugMode) {
-        print("aboutMission Url:$url");
       }
 
       final response = await http.get(url);
       if (kDebugMode) {
-        print("aboutMission Response:$response");
       }
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         final List<dynamic> itemGroups = responseData;
-        if (kDebugMode) {
-          print("aboutMission responseData:$responseData");
-        }
-        if (kDebugMode) {
-          print("aboutMission statusCode:${response.statusCode}");
-        }
-        if (kDebugMode) {
-          print("aboutMission statusCode:${response.body}");
-        }
+
         setState(() {
           aboutMissiondata = itemGroups.cast<Map<String, dynamic>>();
           //  print("about Mission data:$aboutMissiondata");
@@ -152,13 +127,7 @@ class _AboutTabState extends State<AboutTab> {
       if (response.statusCode == 200) {
         // Handle successful response
         var data = json.decode(response.body);
-        print(data);
-        // Show online status message
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(
-        //     content: Text('Now online.'),
-        //   ),
-        // );
+
       } else {
         // Handle other status codes
         print('Request failed with status: ${response.statusCode}');

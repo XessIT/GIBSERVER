@@ -22,17 +22,13 @@ class _GuestProfileState extends State<GuestProfile> {
 
   List<Map<String, dynamic>> data = [];
   Future<void> getData() async {
-    print('Attempting to fetch data...');
     try {
       final url = Uri.parse(
           'http://mybudgetbook.in/GIBAPI/guest_profile.php?id=${widget.userID}');
-      print('Request URL: $url');
       final response = await http.get(url);
-      print("ResponseStatus: ${response.statusCode}");
-      print("Response: ${response.body}");
+
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
-        print("ResponseData: $responseData");
 
         if (responseData is List) {
           // If responseData is a List (multiple records)
@@ -43,9 +39,7 @@ class _GuestProfileState extends State<GuestProfile> {
               imageParameter = data[0]["profile_image"];
               imageUrl = 'http://mybudgetbook.in/GIBAPI/$imageParameter';
             });
-            print('Data: $data');
           } else {
-            print('Empty data list.');
           }
         } else if (responseData is Map<String, dynamic>) {
           // If responseData is a Map (single record)
@@ -54,7 +48,6 @@ class _GuestProfileState extends State<GuestProfile> {
             imageParameter = responseData["profile_image"];
             imageUrl = 'http://mybudgetbook.in/GIBAPI/$imageParameter';
           });
-          print('Data: $data');
         } else {
           print('Unexpected response format.');
         }
@@ -71,7 +64,6 @@ class _GuestProfileState extends State<GuestProfile> {
   @override
   void initState() {
     getData();
-    print("USER ID---${widget.userID}");
     // TODO: implement initState
     super.initState();
 
@@ -106,13 +98,7 @@ class _GuestProfileState extends State<GuestProfile> {
       if (response.statusCode == 200) {
         // Handle successful response
         var data = json.decode(response.body);
-        print(data);
-        // Show online status message
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(
-        //     content: Text('Now online.'),
-        //   ),
-        // );
+
       } else {
         // Handle other status codes
         print('Request failed with status: ${response.statusCode}');

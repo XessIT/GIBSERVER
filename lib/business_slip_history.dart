@@ -9,7 +9,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 
 import 'business_slip.dart';
-import 'duplicate.dart';
 
 
 class BusinessHistory extends StatefulWidget {
@@ -92,16 +91,13 @@ class _CompletedState extends State<Completed> {
   TextEditingController reasonController = TextEditingController(); // Controller for the reason text field
 
   Future<void> fetchData() async {
-    print("with user id ${widget.userId}");
     try {
       //http://mybudgetbook.in/GIBAPI/user.php?table=registration&id=$userId
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=${widget.userId}');
       final response = await http.get(url);
-      print("fetch url:$url");
 
       if (response.statusCode == 200) {
-        print("fetch status code:${response.statusCode}");
-        print("fetch body:${response.body}");
+
         final responseData = json.decode(response.body);
         if (responseData is List<dynamic>) {
           setState(() {
@@ -130,20 +126,15 @@ class _CompletedState extends State<Completed> {
   String filter = "All";
   List<Map<String, dynamic>> data=[];
   Future<void> getData() async {
-    print('Attempting to make HTTP request...');
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/business_slip.php?table=business_slip&mobile=$fetchMobile&status=$status');
-      print("gib members url =$url");
       final response = await http.get(url);
-      print("gib members ResponseStatus: ${response.statusCode}");
-      print("gib members Response: ${response.body}");
+
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
-        print("gib members ResponseData: $responseData");
         final List<dynamic> itemGroups = responseData;
         setState(() {});
         data = itemGroups.cast<Map<String, dynamic>>();
-        print('gib members Data: $data');
       } else {
         print('Error: ${response.statusCode}');
       }
@@ -405,16 +396,13 @@ class _PendingState extends State<Pending> {
   bool isReason = true;
   bool isAmount = false;
   Future<void> fetchData() async {
-    print("with user id ${widget.userId}");
     try {
       //http://mybudgetbook.in/GIBAPI/user.php?table=registration&id=$userId
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=${widget.userId}');
       final response = await http.get(url);
-      print("fetch url:$url");
 
       if (response.statusCode == 200) {
-        print("fetch status code:${response.statusCode}");
-        print("fetch body:${response.body}");
+
         final responseData = json.decode(response.body);
         if (responseData is List<dynamic>) {
           setState(() {
@@ -443,20 +431,15 @@ class _PendingState extends State<Pending> {
   String filter = "All";
   List<Map<String, dynamic>> data=[];
   Future<void> getData() async {
-    print('Attempting to make HTTP request...');
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/business_slip.php?table=business_slip&mobile=$fetchMobile&status=$status');
-      print("gib members url =$url");
       final response = await http.get(url);
-      print("gib members ResponseStatus: ${response.statusCode}");
-      print("gib members Response: ${response.body}");
+
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
-        print("gib members ResponseData: $responseData");
         final List<dynamic> itemGroups = responseData;
         setState(() {});
         data = itemGroups.cast<Map<String, dynamic>>();
-        print('gib members Data: $data');
       } else {
         print('Error: ${response.statusCode}');
       }
@@ -470,7 +453,6 @@ class _PendingState extends State<Pending> {
 
   Future<void> updateBusinessSlip(String id, String status, String reason) async {
     final url = Uri.parse('http://mybudgetbook.in/GIBAPI/business_slip.php');
-    print('url123$url');
     final response = await http.put(
       url,
       headers: <String, String>{
@@ -484,7 +466,6 @@ class _PendingState extends State<Pending> {
     );
 
     if (response.statusCode == 200) {
-      print('Business slip updated successfully');
     } else {
       throw Exception('Failed to update business slip');
     }
@@ -689,10 +670,8 @@ class _PendingState extends State<Pending> {
                                                             "chapter": data[i]["chapter"],
                                                           }),
                                                         );
-                                                        print(url);
-                                                        print("ResponseStatus: ${response.statusCode}");
+
                                                         if (response.statusCode == 200) {
-                                                          print("Offers response: ${response.body}");
                                                         } else {
                                                           print("Error: ${response.statusCode}");
                                                         }
@@ -719,7 +698,6 @@ class _PendingState extends State<Pending> {
                                     );
                                   }
                                   else {
-                                    print('ID is null');
                                   }
                                 },
                                 icon: Icon(Icons.check, color: Colors.green),
@@ -895,16 +873,13 @@ class _UnsuccessfulState extends State<Unsuccessful> {
   TextEditingController reasonController = TextEditingController(); // Controller for the reason text field
 
   Future<void> fetchData() async {
-    print("with user id ${widget.userId}");
     try {
       //http://mybudgetbook.in/GIBAPI/user.php?table=registration&id=$userId
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=${widget.userId}');
       final response = await http.get(url);
-      print("fetch url:$url");
 
       if (response.statusCode == 200) {
-        print("fetch status code:${response.statusCode}");
-        print("fetch body:${response.body}");
+
         final responseData = json.decode(response.body);
         if (responseData is List<dynamic>) {
           setState(() {
@@ -933,20 +908,15 @@ class _UnsuccessfulState extends State<Unsuccessful> {
   String filter = "All";
   List<Map<String, dynamic>> data=[];
   Future<void> getData() async {
-    print('Attempting to make HTTP request...');
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/business_slip.php?table=business_slip&mobile=$fetchMobile&status=$status');
-      print("gib members url =$url");
       final response = await http.get(url);
-      print("gib members ResponseStatus: ${response.statusCode}");
-      print("gib members Response: ${response.body}");
+
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
-        print("gib members ResponseData: $responseData");
         final List<dynamic> itemGroups = responseData;
         setState(() {});
         data = itemGroups.cast<Map<String, dynamic>>();
-        print('gib members Data: $data');
       } else {
         print('Error: ${response.statusCode}');
       }

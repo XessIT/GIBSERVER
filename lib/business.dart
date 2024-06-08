@@ -150,7 +150,6 @@ class _GibTransactionState extends State<GibTransaction> {
         final responseData = json.decode(response.body);
         setState(() {
           totalRows = responseData['totalRows'];
-          print("my id :${widget.userId}");
         });
       } else {
         print('Error: ${response.statusCode}');
@@ -630,9 +629,8 @@ class _MyTransactionState extends State<MyTransaction> {
             totalRows = responseData['totalRows'];
           });
         } else {
-          print('Error: ${response.statusCode}');
-          print("totalRows: $totalRows");
-          print(widget.userId);
+          print ('Error: ${response.statusCode}');
+
         }
       } else {
         print('Error: userId is null or empty');
@@ -678,8 +676,6 @@ class _MyTransactionState extends State<MyTransaction> {
           });
         } else {
           print('Error: ${response.statusCode}');
-          print("totalRows: $totalRows");
-          print(widget.userId);
         }
       } else {
         print('Error: userId is null or empty');
@@ -725,8 +721,7 @@ class _MyTransactionState extends State<MyTransaction> {
           });
         } else {
           print('Error: ${response.statusCode}');
-          print("totalRows: $visitortotalRows");
-          print(widget.userId);
+
         }
       } else {
         print('Error: userId is null or empty');
@@ -772,8 +767,7 @@ class _MyTransactionState extends State<MyTransaction> {
           });
         } else {
           print('Error: ${response.statusCode}');
-          print("totalRows: $visitortotalRows");
-          print(widget.userId);
+
         }
       } else {
         print('Error: userId is null or empty');

@@ -80,9 +80,7 @@ class _GtoGPageState extends State<GtoGPage> {
       final response = await http.get(url);
       if (response.statusCode == 200) {
 
-        print("response S: ${response.statusCode}");
-        print("response B: ${response.body}");
-        print('-----------------------------------');
+
         final responseData = json.decode(response.body);
         if (responseData is List<dynamic>) {
           setState(() {
@@ -98,12 +96,7 @@ class _GtoGPageState extends State<GtoGPage> {
               });
             }
           });
-          print('-----------------------------------');
-          print('name $fname');
-          print('name $mobile');
-          print('widget $mycomapny');
-          print('district $district');
-          print('chapter $chapter');
+
         } else {
           // Handle invalid response data (not a List)
           print('Invalid response data format');

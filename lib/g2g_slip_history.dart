@@ -30,11 +30,9 @@ class _G2GHistoryState extends State<G2GHistory> {
       //http://mybudgetbook.in/GIBAPI/user.php?table=registration&id=$userId
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=${widget.userId}');
       final response = await http.get(url);
-      print("fetch url:$url");
 
       if (response.statusCode == 200) {
-        print("fetch status code:${response.statusCode}");
-        print("fetch body:${response.body}");
+
         final responseData = json.decode(response.body);
         if (responseData is List<dynamic>) {
           setState(() {
@@ -61,20 +59,15 @@ class _G2GHistoryState extends State<G2GHistory> {
   }
   List<Map<String, dynamic>> data=[];
   Future<void> getData() async {
-    print('Attempting to make HTTP request...');
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/g2g_slip.php?table=g2g');
-      print("gib members url =$url");
       final response = await http.get(url);
-      print("gib members ResponseStatus: ${response.statusCode}");
-      print("gib members Response: ${response.body}");
+
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
-        print("gib members ResponseData: $responseData");
         final List<dynamic> itemGroups = responseData;
         setState(() {});
         data = itemGroups.cast<Map<String, dynamic>>();
-        print('gib members Data: $data');
       } else {
         print('Error: ${response.statusCode}');
       }

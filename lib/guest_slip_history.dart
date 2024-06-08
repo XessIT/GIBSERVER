@@ -29,11 +29,9 @@ class _GuestHistoryState extends State<GuestHistory> {
           'http://mybudgetbook.in/GIBAPI/visiters_slip.php?user_id=${widget
               .userId}');
       final response = await http.get(url);
-      print("visitors url:$url");
 
       if (response.statusCode == 200) {
-        print("visitors status code:${response.statusCode}");
-        print("visitors body:${response.body}");
+
 
         final responseData = json.decode(response.body);
         if (responseData is List<dynamic>) {

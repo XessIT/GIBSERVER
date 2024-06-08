@@ -89,7 +89,6 @@ class _EditOfferState extends State<EditOffer> {
     showLocalImage = true;
     if (pickedImage != null) {
       // Verify that pickedImage is indeed an XFile
-      print('pickedImage type: ${pickedImage.runtimeType}');
 
       // Read the image file as bytes
       try {
@@ -99,9 +98,7 @@ class _EditOfferState extends State<EditOffer> {
         setState(() {
           selectedImage = imageBytes;
           imageName = pickedImage!.name;
-          print('Image Name: $imageName');
           imageData = base64ImageData;
-          print('Base64 Image Data: $imageData');
         });
       } catch (e) {
         print('Error reading image file: $e');
@@ -112,7 +109,6 @@ class _EditOfferState extends State<EditOffer> {
     ImagePicker imagepicker = ImagePicker();
     XFile? file = await imagepicker.pickImage(source: ImageSource.camera);
     showLocalImage = true;
-    print('${file?.path}');
     pickedimage = File(file!.path);
     setState(() {
 
@@ -140,11 +136,9 @@ class _EditOfferState extends State<EditOffer> {
           "ID": widget.Id
         }),
       );
-      print(url);
-      print("ResponseStatus: ${response.statusCode}");
+
 
       if (response.statusCode == 200) {
-        print("Offers response: ${response.body}");
         Navigator.push(context,
           MaterialPageRoute(builder: (context)=> OfferList(userId: widget.user_id, userType: widget.userType,)),);
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -176,11 +170,8 @@ class _EditOfferState extends State<EditOffer> {
           "ID": widget.Id
         }),
       );
-      print(url);
-      print("ResponseStatus: ${response.statusCode}");
 
       if (response.statusCode == 200) {
-        print("Offers response: ${response.body}");
         Navigator.push(context,
           MaterialPageRoute(builder: (context)=> OfferList(userId: widget.user_id, userType: widget.userType,)),);
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -213,13 +204,7 @@ class _EditOfferState extends State<EditOffer> {
       if (response.statusCode == 200) {
         // Handle successful response
         var data = json.decode(response.body);
-        print(data);
-        // Show online status message
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(
-        //     content: Text('Now online.'),
-        //   ),
-        // );
+
       } else {
         // Handle other status codes
         print('Request failed with status: ${response.statusCode}');

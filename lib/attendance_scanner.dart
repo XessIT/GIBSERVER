@@ -46,13 +46,7 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
       if (response.statusCode == 200) {
         // Handle successful response
         var data = json.decode(response.body);
-        print(data);
-        // Show online status message
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(
-        //     content: Text('Now online.'),
-        //   ),
-        // );
+
       } else {
         // Handle other status codes
         print('Request failed with status: ${response.statusCode}');
@@ -218,8 +212,7 @@ class _AttendanceScannerPageState extends State<AttendanceScannerPage> {
         },
       );
       if (response.statusCode == 200) {
-        print(response.body);
-        print('Attendance inserted successfully');
+
       } else {
         throw Exception('Failed to insert attendance: ${response.statusCode}');
       }

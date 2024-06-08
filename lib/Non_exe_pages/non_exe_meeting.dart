@@ -91,7 +91,6 @@ class _UpComingTrainingProgramState extends State<UpComingTrainingProgram> {
   List<Map<String, dynamic>> data=[];
 
   Future<void> getData() async {
-    print('Attempting to make HTTP request...');
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type');
       final response = await http.get(url);
@@ -107,14 +106,12 @@ class _UpComingTrainingProgramState extends State<UpComingTrainingProgram> {
             print('Error parsing validity date: $e');
             return false;
           }
-          print('Validity Date: $validityDate');
-          print('Current Date: ${DateTime.now()}');
+
 
           // Check if the meeting date is after the current date and within the current year
           bool isCurrentYear = validityDate.year == DateTime.now().year;
           bool satisfiesFilter = validityDate.isAfter(DateTime.now()) && isCurrentYear;
 
-          print('Satisfies Filter: $satisfiesFilter');
           return satisfiesFilter;
         }).toList();
         setState(() {
@@ -224,7 +221,6 @@ class _CompletedTrainingProgramState extends State<CompletedTrainingProgram> {
   String type = "Training Program";
   List<Map<String, dynamic>> data=[];
   Future<void> getData() async {
-    print('Attempting to make HTTP request...');
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type');
       final response = await http.get(url);
@@ -240,13 +236,11 @@ class _CompletedTrainingProgramState extends State<CompletedTrainingProgram> {
             print('Error parsing validity date: $e');
             return false;
           }
-          print('Validity Date: $validityDate');
-          print('Current Date: ${DateTime.now()}');
+
           bool isCurrentYear = validityDate.year == DateTime.now().year;
           bool satisfiesFilter = validityDate.isBefore(DateTime.now()) && isCurrentYear;
 
           //    bool satisfiesFilter =  validityDate.isBefore(DateTime.now());
-          print('Satisfies Filter: $satisfiesFilter');
           return satisfiesFilter;
         }).toList();
         setState(() {
