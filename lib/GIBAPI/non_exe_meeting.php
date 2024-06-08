@@ -14,10 +14,12 @@ $conn = mysqli_connect($servername, $username, $password, $dbname);
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // Check if member_type parameter is set in the URL
-    if (isset($_GET['member_type'])) {
+    if (isset($_GET['member_type']) && isset($_GET['district']) && isset($_GET['chapter'])) {
         $member_type = mysqli_real_escape_string($conn, $_GET['member_type']);
+        $district = mysqli_real_escape_string($conn, $_GET['district']);
+        $chapter = mysqli_real_escape_string($conn, $_GET['chapter']);
 
-        $meetingname = "SELECT * FROM meeting WHERE member_type='$member_type'";
+        $meetingname = "SELECT * FROM meeting WHERE member_type='$member_type' AND district='$district' AND chapter='$chapter'";
     } else {
         $meetingname = "SELECT * FROM meeting";
     }
