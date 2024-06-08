@@ -4,6 +4,7 @@ import 'dart:core';
 import 'dart:typed_data';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/services.dart';
@@ -14,6 +15,7 @@ import 'package:gipapp/settings_page_executive.dart';
 import 'package:gipapp/year_meeting_details.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'Non_exe_pages/non_exe_home.dart';
@@ -104,7 +106,6 @@ class _HomepageState extends State<Homepage> {
   @override
   void initState() {
     _fetchImages(widget.userType.toString());
-
     fetchData(widget.userId);
     getData();
     getData1();
@@ -185,40 +186,17 @@ class _HomepageState extends State<Homepage> {
   }
 
   ///Wish data table code fetch
-  List<Map<String, dynamic>> wishdata = [];
-  Future<void> wishData(String? member_type) async {
-    try {
-      final url = Uri.parse(
-          'http://mybudgetbook.in/GIBAPI/registration.php?table=registration&member_type=$member_type');
-      final response = await http.get(url);
-      //  print("Wish url:$url");
-      if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        if (responseData is List<dynamic>) {
-          setState(() {
-            userdata = responseData.cast<Map<String, dynamic>>();
-            print("user data $userdata");
-          });
-        } else {
-          // Handle invalid response data (not a List)
-          print('Invalid response data format');
-        }
-      } else {
-        // Handle non-200 status code
-        print('Error: ${response.statusCode}');
-      }
-    } catch (error) {
-      // Handle other errors
-      print('Error: $error');
-    }
-  }
+
 
   String imageUrl = "";
-  String? district = "";
-  String? chapter = "";
+  TextEditingController district = TextEditingController();
+  TextEditingController chapter = TextEditingController();
+
   Uint8List? _imageBytes;
 
   List<Map<String, dynamic>> userdata = [];
+
+
   Future<void> fetchData(String? userId) async {
     try {
       final url = Uri.parse(
@@ -234,10 +212,10 @@ class _HomepageState extends State<Homepage> {
               imageUrl =
               'http://mybudgetbook.in/GIBAPI/${userdata[0]["profile_image"]}';
               _imageBytes = base64Decode(userdata[0]['profile_image']);
-               district = userdata[0]['district'] ?? '';
-               chapter = userdata[0]['chapter'] ?? '';
-              print('District: $district, Chapter: $chapter');
+               district.text = userdata[0]['district'] ?? '';
+               chapter.text = userdata[0]['chapter'] ?? '';
             }
+
           });
         } else {
           print('Invalid response data format');
@@ -1044,7 +1022,7 @@ class _HomepageState extends State<Homepage> {
                                               MainAxisAlignment.start,
                                               children: [
                                                 // CIRCLEAVATAR STARTS
-                                                /*Padding(
+                                                Padding(
                                                   padding: const EdgeInsets.all(8.0),
                                                   child: InkWell(
                                                     onTap: () {
@@ -1073,7 +1051,7 @@ class _HomepageState extends State<Homepage> {
                                                       backgroundImage: NetworkImage(imageUrl),
                                                     ),
                                                   ),
-                                                ),*/
+                                                ),
                                                 SizedBox(width: 20),
                                                 // END CIRCLEAVATAR
                                                 Column(
@@ -1232,7 +1210,7 @@ class _HomepageState extends State<Homepage> {
                         //height: 80,
                         child: Row(
                           children: [
-                           /* Padding(
+                            Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: InkWell(
                                 onTap: () {
@@ -1260,7 +1238,7 @@ class _HomepageState extends State<Homepage> {
                                   backgroundImage: NetworkImage(imageUrl),
                                 ),
                               ),
-                            ),*/
+                            ),
                             Padding(
                               padding: const EdgeInsets.only(left: 8.0),
                               child: Column(
