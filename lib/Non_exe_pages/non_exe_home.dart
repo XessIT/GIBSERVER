@@ -1168,7 +1168,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                                   '${data1[i]['offer_type']} - ${data1[i]['name']}',
                                                   // Text style starts
                                                   style: const TextStyle(
-                                                    fontSize: 11,
+                                                    fontSize: 14,
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),

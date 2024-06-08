@@ -393,7 +393,7 @@ class _GuestHomePageState extends State<GuestHomePage> {
                                                       '${data[i]['offer_type']} - ${data[i]['name']}',
                                                       // Text style starts
                                                       style: const TextStyle(
-                                                        fontSize: 11,
+                                                        fontSize: 14,
                                                         fontWeight: FontWeight.bold,
                                                       ),
                                                     ),

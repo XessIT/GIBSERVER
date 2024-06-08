@@ -23,13 +23,16 @@ class BusinessPage extends StatefulWidget {
 
 class _BusinessPageState extends State<BusinessPage> {
   String date = "Date";
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 2, // Change this to 2 to match the number of tabs
       child: Scaffold(
         appBar: AppBar(
-          title: (Text('My Business', style: Theme.of(context).textTheme.displayLarge,)
+          title: Text(
+            'My Business',
+            style: Theme.of(context).textTheme.displayLarge,
           ),
           leading: IconButton(
             onPressed: () {
@@ -41,8 +44,7 @@ class _BusinessPageState extends State<BusinessPage> {
                           userType: widget.userType.toString(),
                           userId: widget.userId.toString(),
                         )));
-              }
-              else {
+              } else {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -54,11 +56,10 @@ class _BusinessPageState extends State<BusinessPage> {
             },
             icon: const Icon(Icons.navigate_before),
           ),
-          iconTheme:  const IconThemeData(
-            color: Colors.white,),
-
+          iconTheme: const IconThemeData(
+            color: Colors.white,
+          ),
         ),
-
         body: PopScope(
           canPop: false,
           onPopInvoked: (didPop) {
@@ -88,25 +89,23 @@ class _BusinessPageState extends State<BusinessPage> {
             child: Center(
               child: Column(
                 children: [
-                  //TABBAR STARTS
                   const TabBar(
                     isScrollable: true,
                     labelColor: Colors.green,
                     unselectedLabelColor: Colors.black,
                     tabs: [
-                      Tab(text: ('GiB Total Transaction'),),
-                      Tab(text: ('My Transaction')
-                    //  Tab(text:('My Total Transaction'),
-                      ),
+                      Tab(text: 'GiB Total Transaction'),
+                      Tab(text: 'My Transaction'),
                     ],
                   ),
-                  //TABBAR VIEW STARTS
                   Expanded(
-                    child: TabBarView(children: <Widget>[
-                      GibTransaction(userId: widget.userId, userType: widget.userType),
-                      MyTransaction(userId: widget.userId, userType: widget.userType),
-                     // MyTotalTransaction(userId: widget.userId, userType: widget.userType),
-                    ],
+                    child: TabBarView(
+                      children: <Widget>[
+                        GibTransaction(
+                            userId: widget.userId, userType: widget.userType),
+                        MyTransaction(
+                            userId: widget.userId, userType: widget.userType),
+                      ],
                     ),
                   )
                 ],
@@ -118,10 +117,6 @@ class _BusinessPageState extends State<BusinessPage> {
     );
   }
 }
-
-
-
-
 
 class GibTransaction extends StatefulWidget {
   final String? userType;
