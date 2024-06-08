@@ -170,12 +170,10 @@ class _GalleryState extends State<Gallery> {
     String imageId = _imageDataList[imageIndex]['id'];
     final url =
         'http://mybudgetbook.in/GIBAPI/deleteImage.php?image_id=$imageId';
-    print('url: $url');
 
     final response = await http.delete(Uri.parse(url));
 
     if (response.statusCode == 200) {
-      print('Image deleted successfully.');
       setState(() {
         _imageUrlsList.removeAt(imageIndex);
         _imageDataList.removeAt(imageIndex);
@@ -371,7 +369,6 @@ class _VideoState extends State<Video> {
 
       var response = await request.send();
       if (response.statusCode == 200) {
-        print('Video uploaded successfully.');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Video uploaded successfully.')),
         );
@@ -427,7 +424,6 @@ class _VideoState extends State<Video> {
     final response = await http.delete(Uri.parse(url));
 
     if (response.statusCode == 200) {
-      print('Video deleted successfully.');
       setState(() {
         _videos.removeAt(videoIndex);
       });

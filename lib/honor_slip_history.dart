@@ -29,15 +29,12 @@ class _HonorHistoryState extends State<HonorHistory> {
   String filter = "All";
 
   Future<void> fetchData() async {
-    print("with user id ${widget.userId}");
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=${widget.userId}');
       final response = await http.get(url);
-      print("fetch url:$url");
 
       if (response.statusCode == 200) {
-        print("fetch status code:${response.statusCode}");
-        print("fetch body:${response.body}");
+
         final responseData = json.decode(response.body);
         if (responseData is List<dynamic>) {
           setState(() {
@@ -59,20 +56,15 @@ class _HonorHistoryState extends State<HonorHistory> {
   }
 
   Future<void> getData() async {
-    print('Attempting to make HTTP request...');
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/honor_slip.php?table=honor_slip&mobile=$fetchMobile');
-      print("gib members url =$url");
       final response = await http.get(url);
-      print("gib members ResponseStatus: ${response.statusCode}");
-      print("gib members Response: ${response.body}");
+
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
-        print("gib members ResponseData: $responseData");
         setState(() {
           data = List<Map<String, dynamic>>.from(responseData);
         });
-        print('gib members Data: $data');
       } else {
         print('Error: ${response.statusCode}');
       }

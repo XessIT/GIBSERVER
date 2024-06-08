@@ -151,7 +151,7 @@ class NonExecutiveHome extends StatefulWidget {
     required this.userID,
     required this.userType,
 
-    //   this.userType,
+    // this.userType,
   }) : super(key: key);
 
   @override
@@ -163,7 +163,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
   List<Map<String, dynamic>> userdata = [];
   List<Map<String, dynamic>> offersdata = [];
   String? registerStatus = "Register";
-  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   Uint8List? _imageBytes;
   String imageUrl = "";
   String profileImage = "";

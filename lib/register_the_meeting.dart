@@ -34,11 +34,9 @@ String registerStatus="";
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/register_meeting.php?user_id=${widget.userId}&meeting_id=${widget.currentid}');
       final response = await http.get(url);
-      print("r url:$url");
 
       if (response.statusCode == 200) {
-        print("r status code:${response.statusCode}");
-        print("r body:${response.body}");
+
 
         final responseData = json.decode(response.body);
         if (responseData is List<dynamic>) {

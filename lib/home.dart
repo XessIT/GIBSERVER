@@ -64,7 +64,6 @@ class _HomepageState extends State<Homepage> {
       if (response.statusCode == 200) {
         // Handle successful response
         var data = json.decode(response.body);
-        print(data);
       } else {
         // Handle other status codes
         print('Request failed with status: ${response.statusCode}');
@@ -139,11 +138,9 @@ class _HomepageState extends State<Homepage> {
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php');
       final response = await http.get(url);
-      //  print("Meeting url:$url");
 
       if (response.statusCode == 200) {
-        // print("Meeting status code:${response.statusCode}");
-        // print("Meeting body:${response.body}");
+
 
         final responseData = json.decode(response.body);
         if (responseData is List<dynamic>) {
@@ -165,6 +162,7 @@ class _HomepageState extends State<Homepage> {
 
 
   String imageUrl = "";
+  String imageUrl2 = "";
   TextEditingController district = TextEditingController();
   TextEditingController chapter = TextEditingController();
 
@@ -189,7 +187,7 @@ class _HomepageState extends State<Homepage> {
               chapter = userdata[0]['chapter'] ?? '';
               print('District: $district, Chapter: $chapter');
               getData();
-              imageUrl =
+              imageUrl2 =
                   'http://mybudgetbook.in/GIBAPI/${userdata[0]["profile_image"]}';
               _imageBytes = base64Decode(userdata[0]['profile_image']);
             }
@@ -1163,8 +1161,7 @@ class _HomepageState extends State<Homepage> {
                                                 400.0, // Set the height of the dialog
 
                                             child: PhotoView(
-                                              imageProvider:
-                                                  NetworkImage(imageUrl),
+                                              imageProvider: NetworkImage(imageUrl2),
                                             ),
                                           ),
                                         ),
@@ -1175,7 +1172,7 @@ class _HomepageState extends State<Homepage> {
                                 child: CircleAvatar(
                                   radius: 30.0,
                                   backgroundColor: Colors.cyan,
-                                  backgroundImage: NetworkImage(imageUrl),
+                                  backgroundImage: NetworkImage(imageUrl2),
                                 ),
                               ),
                             ),

@@ -24,17 +24,14 @@ class _ActivityState extends State<Activity> {
   String? fetchMobile = "";
   List<Map<String, dynamic>> userdata = [];
   Future<void> fetchData() async {
-    print("with user id ${widget.userId}");
     try {
       //http://mybudgetbook.in/GIBAPI/user.php?table=registration&id=$userId
       final url = Uri.parse(
           'http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=${widget.userId}');
       final response = await http.get(url);
-      print("fetch url:$url");
 
       if (response.statusCode == 200) {
-        print("fetch status code:${response.statusCode}");
-        print("fetch body:${response.body}");
+
         final responseData = json.decode(response.body);
         if (responseData is List<dynamic>) {
           setState(() {
@@ -62,21 +59,15 @@ class _ActivityState extends State<Activity> {
 
   List<Map<String, dynamic>> data = [];
   Future<void> getData() async {
-    print('Attempting to make HTTP request...');
     try {
       final url = Uri.parse(
           'http://mybudgetbook.in/GIBAPI/registration.php?table=waiting&mobile=$fetchMobile');
-      print("gib members url =$url");
       final response = await http.get(url);
-      print("gib members ResponseStatus: ${response.statusCode}");
-      print("gib members Response: ${response.body}");
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
-        print("gib members ResponseData: $responseData");
         final List<dynamic> itemGroups = responseData;
         setState(() {});
         data = itemGroups.cast<Map<String, dynamic>>();
-        print('gib members Data: $data');
       } else {
         print('Error: ${response.statusCode}');
       }
@@ -124,7 +115,6 @@ class _ActivityState extends State<Activity> {
       final url =
           Uri.parse('http://mybudgetbook.in/GIBAPI/registration.php?id=$id');
       final response = await http.delete(url);
-      print("Delete Url: $url");
       if (response.statusCode == 200) {
         Navigator.push(
             context,
@@ -135,10 +125,7 @@ class _ActivityState extends State<Activity> {
                     )));
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Rejected Successfully")));
-        print("Delete Response: ${response.body}");
 
-        print('ID: $id');
-        print('Offer Deleted successfully');
       } else {
         // Error handling, e.g., show an error message
         print('Error: ${response.statusCode}');
@@ -153,7 +140,6 @@ class _ActivityState extends State<Activity> {
   void initState() {
     super.initState();
     fetchData();
-    print("uid: ${widget.userId}");
   }
 
   @override

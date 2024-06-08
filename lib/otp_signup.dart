@@ -30,7 +30,6 @@ class _OTPGETMsgState extends State<OTPGETMsg> {
                 try {
                   final response = await http.get(url);
                   if (response.statusCode == 200) {
-                    print('SMS sent successfully');
                   } else {
                     print('Failed to send SMS');
                   }

@@ -30,19 +30,14 @@ class _DoctorsState extends State<Doctors> {
   Future<void> getGibDoctors() async {
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/registration.php?table=registration&member_type=$doctor');
-      print("Doctor Url:$url");
-      final response = await http.get(url);
 
-      print("Response:$response");
+      final response = await http.get(url);
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         final List<dynamic> itemGroups = responseData;
-        print("responseData:$responseData");
-        print("statusCode:${response.statusCode}");
-        print("statusCode:${response.body}");
+
         setState(() {
           getDoctor = itemGroups.cast<Map<String, dynamic>>();
-          print("aboutVision:$getDoctor");
         });
       } else {
         // Handle error
@@ -99,13 +94,7 @@ class _DoctorsState extends State<Doctors> {
       if (response.statusCode == 200) {
         // Handle successful response
         var data = json.decode(response.body);
-        print(data);
-        // Show online status message
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(
-        //     content: Text('Now online.'),
-        //   ),
-        // );
+
       } else {
         // Handle other status codes
         print('Request failed with status: ${response.statusCode}');
@@ -330,42 +319,47 @@ class DoctorsDetailsPage extends StatefulWidget {
 }
 
 class _DoctorsDetailsPageState extends State<DoctorsDetailsPage> {
-  List<Map<String,dynamic>> getDoctor=[];
+  List<Map<String, dynamic>> getDoctor = [];
   String imageUrl = "";
+  bool isLoading = true; // Add isLoading flag
+  String errorMessage = ""; // Add errorMessage to handle errors
+
   Future<void> getGibDoctors() async {
     try {
-
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=${widget.itemId}');
-
-      print("Doctor fetch Url:$url");
       final response = await http.get(url);
 
-      print("Response:$response");
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         final List<dynamic> itemGroups = responseData;
-        print("responseData:$responseData");
-        print("statusCode:${response.statusCode}");
-        print("statusCode:${response.body}");
+
         setState(() {
           getDoctor = itemGroups.cast<Map<String, dynamic>>();
-          imageUrl = 'http://mybudgetbook.in/GIBAPI/${getDoctor[0]["profile_image"]}';
-          print("doctor:$getDoctor");
+          if (getDoctor.isNotEmpty) {
+            imageUrl = 'http://mybudgetbook.in/GIBAPI/${getDoctor[0]["profile_image"]}';
+          }
+          isLoading = false; // Set loading to false after data is loaded
         });
       } else {
-        // Handle error
+        setState(() {
+          errorMessage = "Failed to fetch data. Status code: ${response.statusCode}";
+          isLoading = false; // Set loading to false even if there's an error
+        });
       }
     } catch (error) {
-      // Handle error
+      setState(() {
+        errorMessage = "An error occurred: $error";
+        isLoading = false; // Set loading to false in case of an exception
+      });
     }
   }
 
   @override
   void initState() {
-    // TODO: implement initState
-    if(widget.itemId!.isNotEmpty){
-      getGibDoctors();}
     super.initState();
+    if (widget.itemId!.isNotEmpty) {
+      getGibDoctors();
+    }
     _checkConnectivityAndGetData();
     Connectivity().onConnectivityChanged.listen((result) {
       setState(() {
@@ -374,11 +368,13 @@ class _DoctorsDetailsPageState extends State<DoctorsDetailsPage> {
     });
     Future.delayed(Duration(seconds: 1), () {
       setState(() {
-        isLoading = false; // Hide the loading indicator after 4 seconds
+        isLoading = false; // Hide the loading indicator after 1 second
       });
     });
   }
+
   var _connectivityResult = ConnectivityResult.none;
+
   Future<void> _checkConnectivityAndGetData() async {
     var connectivityResult = await Connectivity().checkConnectivity();
     setState(() {
@@ -388,30 +384,18 @@ class _DoctorsDetailsPageState extends State<DoctorsDetailsPage> {
       _getInternet();
     }
   }
-  Future<void> _getInternet() async {
-    // Replace the URL with your PHP backend URL
-    var url = 'http://mybudgetbook.in/GIBAPI/internet.php';
 
+  Future<void> _getInternet() async {
+    var url = 'http://mybudgetbook.in/GIBAPI/internet.php';
     try {
       var response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
-        // Handle successful response
         var data = json.decode(response.body);
-        print(data);
-        // Show online status message
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(
-        //     content: Text('Now online.'),
-        //   ),
-        // );
       } else {
-        // Handle other status codes
         print('Request failed with status: ${response.statusCode}');
       }
     } catch (e) {
-      // Handle network errors
       print('Error: $e');
-      // Show offline status message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Please check your internet connection.'),
@@ -419,69 +403,66 @@ class _DoctorsDetailsPageState extends State<DoctorsDetailsPage> {
       );
     }
   }
-  bool isLoading = true;
-  ///refresh
-  List<String> items = List.generate(20, (index) => 'Item $index');
+
   Future<void> _refresh() async {
     await Future.delayed(const Duration(seconds: 1));
     setState(() {
-      initState();
+      isLoading = true;
+      getGibDoctors();
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Doctor Details",style: Theme.of(context).textTheme.displayLarge),
+        title: Text("Doctor Details", style: Theme.of(context).textTheme.displayLarge),
         iconTheme: const IconThemeData(color: Colors.white),
         leading: IconButton(
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Doctors(userType:widget.userType, userId:widget.userId,)));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => Doctors(userType: widget.userType, userId: widget.userId,)));
           },
           icon: const Icon(Icons.navigate_before),
         ),
       ),
       body: RefreshIndicator(
         onRefresh: _refresh,
-        child: PopScope(
-          canPop: false,
-          onPopInvoked: (didPop)  {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Doctors(userType:widget.userType, userId:widget.userId,)));
-          },
-          child: Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: const AssetImage("assets/img_3.png"),
-                  colorFilter: ColorFilter.mode(Colors.white.withOpacity(0.2), BlendMode.dstATop),
-                  fit: BoxFit.cover,
+        child: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: const AssetImage("assets/img_3.png"),
+              colorFilter: ColorFilter.mode(Colors.white.withOpacity(0.2), BlendMode.dstATop),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: isLoading
+              ? Center(child: CircularProgressIndicator())
+              : errorMessage.isNotEmpty
+              ? Center(child: Text(errorMessage))
+              : Center(
+            child: Column(
+              children: [
+                const SizedBox(height: 30),
+                SizedBox(
+                  width: double.infinity,
+                  height: 250,
+                  child: Image.network(imageUrl, fit: BoxFit.cover),
                 ),
-              ),
-              child: Center(
-                child: Column(
-                  children: [
-                    const SizedBox(height: 30,),
-                    SizedBox(
-                        width: double.infinity,
-                        height: 250,
-                        child: Image.network(imageUrl,fit: BoxFit.cover,)),
-                    const SizedBox(height: 20,),
-
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Align(
-                        alignment: Alignment.topLeft,
-                        child: Text("Doctor Name : Dr."'${getDoctor[0]['first_name']}\n\n'
-                            "Specialization : "'${getDoctor[0]['specialist']}\n\n'
-                            "Hospital Name : " '${getDoctor[0]['hospital_name']}\n\n'
-                            "Hospital Address : "'${getDoctor[0]['hospital_address']}\n\n'
-                        ),
-                      ),
+                const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      "Doctor Name : Dr.${getDoctor[0]['first_name']}\n\n"
+                          "Specialization : ${getDoctor[0]['specialist']}\n\n"
+                          "Hospital Name : ${getDoctor[0]['hospital_name']}\n\n"
+                          "Hospital Address : ${getDoctor[0]['hospital_address']}\n\n",
                     ),
-                  ],
+                  ),
                 ),
-              )
+              ],
+            ),
           ),
         ),
       ),

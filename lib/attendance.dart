@@ -7,7 +7,6 @@ import 'Non_exe_pages/non_exe_home.dart';
 import 'Non_exe_pages/settings_non_executive.dart';
 import 'guest_home.dart';
 import 'home.dart';
-import 'home1.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
