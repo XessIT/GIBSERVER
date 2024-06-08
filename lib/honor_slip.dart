@@ -543,6 +543,7 @@ class _DirectState extends State<Direct> {
           child: Column(
             children: [
               const SizedBox(height: 20,),
+              Text("Walk In", style: Theme.of(context).textTheme.bodyLarge,),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TypeAheadFormField(

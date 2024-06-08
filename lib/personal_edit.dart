@@ -9,6 +9,8 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart'as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 
 class PersonalEdit extends StatefulWidget {
@@ -173,6 +175,7 @@ class _PersonalEditState extends State<PersonalEdit> {
           'native': spousenativecontroller.text,
           's_father_koottam': spousekoottam.toString(),
           's_father_kovil': spousekovilcontroller.text,
+          's_blood': spouseblood.toString(),
           'education': educationcontroller.text,
           'past_experience': pastexpcontroller.text,
           'marital_status': status.toString(),
@@ -184,6 +187,7 @@ class _PersonalEditState extends State<PersonalEdit> {
       print("ResponseStatus: ${response.statusCode}");
       if (response.statusCode == 200) {
         print("Offers response: ${response.body}");
+
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => Profile(userID: widget.userId, userType: widget.userType.toString(),)),
@@ -231,6 +235,7 @@ class _PersonalEditState extends State<PersonalEdit> {
           'native': spousenativecontroller.text,
           's_father_koottam': spousekoottam.toString(),
           's_father_kovil': spousekovilcontroller.text,
+          's_blood': spouseblood.toString(),
           'education': educationcontroller.text,
           'past_experience': pastexpcontroller.text,
           'marital_status': status.toString(),
@@ -255,7 +260,30 @@ class _PersonalEditState extends State<PersonalEdit> {
       // Handle error as needed
     }
   }
-
+  Future<void> _saveToSharedPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('fname', firstnamecontroller.text);
+    await prefs.setString('lname', lastnamecontroller.text);
+    await prefs.setString('location', locationcontroller.text);
+    await prefs.setString('dob', _dobdate.text);
+    await prefs.setString('district', districtController.text);
+    await prefs.setString('mobile', mobilecontroller.text);
+    await prefs.setString('chapter', chapterController.text);
+    await prefs.setString('kovil', kovilcontroller.text);
+    await prefs.setString('email', emailcontroller.text);
+    await prefs.setString('spousename', spousenamecontroller.text);
+    await prefs.setString('wad', _waddate.text);
+    await prefs.setString('spousekovil', spousekovilcontroller.text);
+    await prefs.setString('education', educationcontroller.text);
+    await prefs.setString('pastexperience', pastexpcontroller.text);
+    await prefs.setString('koottam', koottam.toString());
+    await prefs.setString('spousekoottam', spousekoottam.toString());
+    await prefs.setString('bloodgroup', blood.toString());
+    await prefs.setString('spousenative', spousenativecontroller.text);
+    await prefs.setString('marital_status', status.toString());
+    await prefs.setString('imageUrl', widget.imageUrl.toString());
+    await prefs.setString('imageParameter', widget.imageUrl.toString());
+  }
 
   String category = 'Business';
   var categorylist = ['Business','Service'];
