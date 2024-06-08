@@ -1,53 +1,33 @@
 import 'dart:convert';
 import 'dart:core';
-import 'dart:typed_data';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
-import 'package:gipapp/about_view.dart';
-import 'package:gipapp/profile.dart';
+
 import 'package:gipapp/settings_page_executive.dart';
-import 'package:gipapp/year_meeting_details.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:photo_view/photo_view.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'Non_exe_pages/non_exe_home.dart';
-import 'Non_exe_pages/settings_non_executive.dart';
-import 'Offer/offer.dart';
-import 'add_member.dart';
-import 'attendance.dart';
-import 'attendance_scanner.dart';
-import 'awesome_dilog.dart';
-import 'blood_group.dart';
+
 import 'business.dart';
-import 'change_mpin.dart';
-import 'gib_achievements.dart';
-import 'gib_doctors.dart';
-import 'gib_gallery.dart';
+
 import 'gib_members.dart';
 import 'guest_home.dart';
 import 'guest_slip.dart';
-import 'guest_slip_history.dart';
-import 'login.dart';
 import 'meeting.dart';
-import 'my_activity.dart';
-import 'my_gallery.dart';
-import 'notification.dart';
+
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:clay_containers/clay_containers.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+
 
 class Homepage extends StatefulWidget {
   final String? userType;
   final String? userId;
 
-  Homepage({
+  const Homepage({
     Key? key,
     required this.userType,
     required this.userId,
@@ -182,40 +162,17 @@ class _HomepageState extends State<Homepage> {
   }
 
   ///Wish data table code fetch
-  List<Map<String, dynamic>> wishdata = [];
-  Future<void> wishData(String? member_type) async {
-    try {
-      final url = Uri.parse(
-          'http://mybudgetbook.in/GIBAPI/registration.php?table=registration&member_type=$member_type');
-      final response = await http.get(url);
-      //  print("Wish url:$url");
-      if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        if (responseData is List<dynamic>) {
-          setState(() {
-            userdata = responseData.cast<Map<String, dynamic>>();
-            print("user data $userdata");
-          });
-        } else {
-          // Handle invalid response data (not a List)
-          print('Invalid response data format');
-        }
-      } else {
-        // Handle non-200 status code
-        print('Error: ${response.statusCode}');
-      }
-    } catch (error) {
-      // Handle other errors
-      print('Error: $error');
-    }
-  }
+
 
   String imageUrl = "";
-  String? district = "";
-  String? chapter = "";
+  TextEditingController district = TextEditingController();
+  TextEditingController chapter = TextEditingController();
+
   Uint8List? _imageBytes;
 
   List<Map<String, dynamic>> userdata = [];
+
+
   Future<void> fetchData(String? userId) async {
     try {
       final url = Uri.parse(
@@ -231,12 +188,12 @@ class _HomepageState extends State<Homepage> {
               district = userdata[0]['district'] ?? '';
               chapter = userdata[0]['chapter'] ?? '';
               print('District: $district, Chapter: $chapter');
-
               getData();
               imageUrl =
                   'http://mybudgetbook.in/GIBAPI/${userdata[0]["profile_image"]}';
               _imageBytes = base64Decode(userdata[0]['profile_image']);
             }
+
           });
         } else {
           print('Invalid response data format');
@@ -946,6 +903,7 @@ class _HomepageState extends State<Homepage> {
                                   itemBuilder: (context, i) {
                                     String imageUrl =
                                         'http://mybudgetbook.in/GIBAPI/${data1[i]["offer_image"]}';
+
 
                                     String dateString = data1[i][
                                         'validity']; // This will print the properly encoded URL
