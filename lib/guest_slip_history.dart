@@ -82,82 +82,85 @@ class _GuestHistoryState extends State<GuestHistory> {
               },
         ),
       ),
-      body: groupedVisitors.isEmpty ? Center(child: Text("No Record Found")) : ListView.builder(
-        itemCount: groupedVisitors.length,
-        itemBuilder: (context, index) {
-          String date = groupedVisitors.keys.elementAt(index);
-          List<Map<String, dynamic>> visitors = groupedVisitors[date]!;
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    date,
-                    style: TextStyle(
-                      color: Colors.blue,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+      body: groupedVisitors.isEmpty ? Center(child: Text("No Record Found"))
+          : Expanded(
+            child: ListView.builder(
+                    itemCount: groupedVisitors.length,
+                    itemBuilder: (context, index) {
+            String date = groupedVisitors.keys.elementAt(index);
+            List<Map<String, dynamic>> visitors = groupedVisitors[date]!;
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      date,
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
-                ListView.builder(
-                  shrinkWrap: true,
-                 // physics: NeverScrollableScrollPhysics(),
-                  itemCount: visitors.length,
-                  itemBuilder: (context, index) {
-                    Map<String, dynamic> visitor = visitors[index];
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        width: 100,
-                        height: 83,
-                      //  padding: const EdgeInsets.all(10.0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(15.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 3,
-                              blurRadius: 7,
-                              offset: Offset(0, 3), // changes position of shadow
-                            ),
-                          ],
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Text("${visitor["guest_name"]}"),
-                                ],
+                  ListView.builder(
+                    shrinkWrap: true,
+                   // physics: NeverScrollableScrollPhysics(),
+                    itemCount: visitors.length,
+                    itemBuilder: (context, index) {
+                      Map<String, dynamic> visitor = visitors[index];
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          width: 100,
+                          height: 83,
+                        //  padding: const EdgeInsets.all(10.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(15.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 3,
+                                blurRadius: 7,
+                                offset: Offset(0, 3), // changes position of shadow
                               ),
-                              SizedBox(height: 10,),
-                              Expanded(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text("Location: ${visitor["location"]}"),
-                                    Text("Date: ${visitor["meeting_date"]}"),
-                                  ],
-                                ),
-                              ),
-
                             ],
                           ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Text("${visitor["guest_name"]}"),
+                                  ],
+                                ),
+                                SizedBox(height: 10,),
+                                Expanded(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("Location: ${visitor["location"]}"),
+                                      Text("Date: ${visitor["meeting_date"]}"),
+                                    ],
+                                  ),
+                                ),
+
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                ),
-              ],
-            ),
-          );
-        },
-      ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            );
+                    },
+                  ),
+          ),
     );
   }
 

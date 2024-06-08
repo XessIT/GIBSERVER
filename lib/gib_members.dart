@@ -183,7 +183,6 @@ class _GibMembersState extends State<GibMembers> {
   ///refresh
   List<String> items = List.generate(20, (index) => 'Item $index');
   Future<void> _refresh() async {
-    await Future.delayed(const Duration(seconds: 1));
     setState(() {
       getDistrict();
       fetchData().then((_) {
@@ -327,7 +326,7 @@ class _GibMembersState extends State<GibMembers> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(
-                        width: 150,
+                        width: 160,
                         height: 50,
                         child: TypeAheadFormField<String>(
                           textFieldConfiguration: TextFieldConfiguration(
@@ -362,7 +361,7 @@ class _GibMembersState extends State<GibMembers> {
                       ),
                       const SizedBox(height: 10, width: 20),
                       SizedBox(
-                        width: 150,
+                        width: 160,
                         height: 50,
                         child: TypeAheadFormField<String>(
                           textFieldConfiguration: TextFieldConfiguration(
