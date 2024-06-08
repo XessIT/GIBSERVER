@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:core';
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -81,6 +82,8 @@ class _HomepageState extends State<Homepage> {
 
   @override
   void initState() {
+    _fetchImages(widget.userType.toString());
+
     fetchData(widget.userId);
     getData1();
     _checkConnectivityAndGetData();
@@ -111,6 +114,7 @@ class _HomepageState extends State<Homepage> {
   Future<void> _refresh() async {
     await Future.delayed(const Duration(seconds: 1));
     setState(() {
+      _fetchImages(widget.userType.toString());
       fetchData(widget.userId);
       getData();
       getData1();
@@ -527,6 +531,27 @@ class _HomepageState extends State<Homepage> {
       return false;
     }
   }
+/// Get image
+  List<String> _imagePaths = [];
+  Future<void> _fetchImages(String userType) async {
+    final url = Uri.parse(
+        'http://mybudgetbook.in/GIBAPI/adsdisplay.php?memberType=$userType');
+    final response = await http.get(url);
+    print("gowthm testing");
+    print("$url");
+
+    if (response.statusCode == 200) {
+      List<dynamic> imageData = jsonDecode(response.body);
+      setState(() {
+        _imagePaths = imageData
+            .expand((data) => List<String>.from(data['imagepaths']))
+            .toList();
+        isLoading = false;
+      });
+    } else {
+      print('Failed to fetch images.');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -718,7 +743,11 @@ class _HomepageState extends State<Homepage> {
                                                                                               meeting_place: meetingPlace,
                                                                                               meeting_type: meetingType,
                                                                                             )));
-
+                                                                                    print('1234567890');
+                                                                                    print("meeting_place${meetingPlace}");
+                                                                                    print("meeting_type${meetingType}");
+                                                                                    print("");
+                                                                                    print("UserID:-${widget.userId}${widget.userType}");
                                                                                     registerDateStoreDatabase(id, meetingType, meetingDate, meetingPlace);
                                                                                   }
                                                                                 },
@@ -1069,6 +1098,7 @@ class _HomepageState extends State<Homepage> {
                     ],
                   ),
                 ),
+
                 Positioned(
                   top: 0,
                   left: 0,
