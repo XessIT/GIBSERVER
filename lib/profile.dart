@@ -1189,7 +1189,6 @@ class _ImageViewState extends State<ImageView> {
   initState() {
     super.initState();
     _fetchImages();
-    print('_fetchimage:$_fetchImages');
   }
 
 

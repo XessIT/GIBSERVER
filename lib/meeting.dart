@@ -238,12 +238,10 @@ class _UpComingNetworkMeetingState extends State<UpComingNetworkMeeting> {
   List<Map<String, dynamic>> data=[];
 
   Future<void> getData() async {
-    print('Attempting to make HTTP request...');
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type&district=${widget.district}&chapter=${widget.chapter}&member_type=${widget.userType}');
       final response = await http.get(url);
       if (response.statusCode == 200) {
-        print("fetch unm: ${response.body}");
         final responseData = json.decode(response.body);
         final List<dynamic> itemGroups = responseData;
         // No need to call setState here because we're not updating the UI at this point
@@ -255,14 +253,12 @@ class _UpComingNetworkMeetingState extends State<UpComingNetworkMeeting> {
             print('Error parsing validity date: $e');
             return false;
           }
-          print('Validity Date: $validityDate');
-          print('Current Date: ${DateTime.now()}');
+
 
           // Check if the meeting date is after the current date and within the current year
           bool isCurrentYear = validityDate.year == DateTime.now().year;
           bool satisfiesFilter = validityDate.isAfter(DateTime.now()) && isCurrentYear;
 
-          print('Satisfies Filter: $satisfiesFilter');
           return satisfiesFilter;
         }).toList();
         setState(() {
@@ -375,7 +371,6 @@ class _CompletedNetworkMeetingState extends State<CompletedNetworkMeeting> {
   DateTime date = DateTime.now();
   List<Map<String, dynamic>> data=[];
   Future<void> getData() async {
-    print('Attempting to make HTTP request...');
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type&district=${widget.district}&chapter=${widget.chapter}&member_type=${widget.userType}');
       final response = await http.get(url);
@@ -391,12 +386,10 @@ class _CompletedNetworkMeetingState extends State<CompletedNetworkMeeting> {
             print('Error parsing validity date: $e');
             return false;
           }
-          print('Validity Date: $validityDate');
-          print('Current Date: ${DateTime.now()}');
+
           bool isCurrentYear = validityDate.year == DateTime.now().year;
           bool satisfiesFilter = validityDate.isBefore(DateTime.now()) && isCurrentYear;
        //   bool satisfiesFilter =  validityDate.isBefore(DateTime.now());
-          print('Satisfies Filter: $satisfiesFilter');
           return satisfiesFilter;
         }).toList();
         setState(() {
@@ -558,7 +551,6 @@ class _UpcomingTeamMeetingState extends State<UpcomingTeamMeeting> {
   List<Map<String, dynamic>> data=[];
 
   Future<void> getData() async {
-    print('Attempting to make HTTP request...');
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type&district=${widget.district}&chapter=${widget.chapter}&member_type=${widget.userType}');
       final response = await http.get(url);
@@ -574,14 +566,12 @@ class _UpcomingTeamMeetingState extends State<UpcomingTeamMeeting> {
             print('Error parsing validity date: $e');
             return false;
           }
-          print('Validity Date: $validityDate');
-          print('Current Date: ${DateTime.now()}');
+
 
           // Check if the meeting date is after the current date and within the current year
           bool isCurrentYear = validityDate.year == DateTime.now().year;
           bool satisfiesFilter = validityDate.isAfter(DateTime.now()) && isCurrentYear;
 
-          print('Satisfies Filter: $satisfiesFilter');
           return satisfiesFilter;
         }).toList();
         setState(() {
@@ -708,7 +698,6 @@ class _CompletedTeamMeetingState extends State<CompletedTeamMeeting> {
   String type = "Team Meeting";
   List<Map<String, dynamic>> data=[];
   Future<void> getData() async {
-    print('Attempting to make HTTP request...');
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type&district=${widget.district}&chapter=${widget.chapter}&member_type=${widget.userType}');
       final response = await http.get(url);
@@ -724,13 +713,11 @@ class _CompletedTeamMeetingState extends State<CompletedTeamMeeting> {
             print('Error parsing validity date: $e');
             return false;
           }
-          print('Validity Date: $validityDate');
-          print('Current Date: ${DateTime.now()}');
+
 
           bool isCurrentYear = validityDate.year == DateTime.now().year;
           bool satisfiesFilter = validityDate.isBefore(DateTime.now()) && isCurrentYear;
         //  bool satisfiesFilter =  validityDate.isBefore(DateTime.now());
-          print('Satisfies Filter: $satisfiesFilter');
           return satisfiesFilter;
         }).toList();
         setState(() {
@@ -899,7 +886,6 @@ class _UpComingTrainingProgramState extends State<UpComingTrainingProgram> {
   List<Map<String, dynamic>> data=[];
 
   Future<void> getData() async {
-    print('Attempting to make HTTP request...');
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type&district=${widget.district}&chapter=${widget.chapter}&member_type=${widget.userType}');
       final response = await http.get(url);
@@ -915,14 +901,12 @@ class _UpComingTrainingProgramState extends State<UpComingTrainingProgram> {
             print('Error parsing validity date: $e');
             return false;
           }
-          print('Validity Date: $validityDate');
-          print('Current Date: ${DateTime.now()}');
+
 
           // Check if the meeting date is after the current date and within the current year
           bool isCurrentYear = validityDate.year == DateTime.now().year;
           bool satisfiesFilter = validityDate.isAfter(DateTime.now()) && isCurrentYear;
 
-          print('Satisfies Filter: $satisfiesFilter');
           return satisfiesFilter;
         }).toList();
         setState(() {
@@ -1035,7 +1019,6 @@ class _CompletedTrainingProgramState extends State<CompletedTrainingProgram> {
   String type = "Training Program";
   List<Map<String, dynamic>> data=[];
   Future<void> getData() async {
-    print('Attempting to make HTTP request...');
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type&district=${widget.district}&chapter=${widget.chapter}&member_type=${widget.userType}');
       final response = await http.get(url);
@@ -1051,13 +1034,11 @@ class _CompletedTrainingProgramState extends State<CompletedTrainingProgram> {
             print('Error parsing validity date: $e');
             return false;
           }
-          print('Validity Date: $validityDate');
-          print('Current Date: ${DateTime.now()}');
+
           bool isCurrentYear = validityDate.year == DateTime.now().year;
           bool satisfiesFilter = validityDate.isBefore(DateTime.now()) && isCurrentYear;
 
       //    bool satisfiesFilter =  validityDate.isBefore(DateTime.now());
-          print('Satisfies Filter: $satisfiesFilter');
           return satisfiesFilter;
         }).toList();
         setState(() {
@@ -1224,7 +1205,6 @@ class _UpComingGIBMeetingState extends State<UpComingGIBMeeting> {
   String type = "Industrial Visit";
   List<Map<String, dynamic>> data=[];
   Future<void> getData() async {
-    print('Attempting to make HTTP request...');
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type&district=${widget.district}&chapter=${widget.chapter}&member_type=${widget.userType}');
       final response = await http.get(url);
@@ -1240,14 +1220,12 @@ class _UpComingGIBMeetingState extends State<UpComingGIBMeeting> {
             print('Error parsing validity date: $e');
             return false;
           }
-          print('Validity Date: $validityDate');
-          print('Current Date: ${DateTime.now()}');
+
 
           // Check if the meeting date is after the current date and within the current year
           bool isCurrentYear = validityDate.year == DateTime.now().year;
           bool satisfiesFilter = validityDate.isAfter(DateTime.now()) && isCurrentYear;
 
-          print('Satisfies Filter: $satisfiesFilter');
           return satisfiesFilter;
         }).toList();
         setState(() {
@@ -1357,7 +1335,6 @@ class _CompletedGIBMeetingState extends State<CompletedGIBMeeting> {
   String type = "Industrial Visit";
   List<Map<String, dynamic>> data=[];
   Future<void> getData() async {
-    print('Attempting to make HTTP request...');
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type&district=${widget.district}&chapter=${widget.chapter}&member_type=${widget.userType}');
       final response = await http.get(url);
@@ -1373,14 +1350,11 @@ class _CompletedGIBMeetingState extends State<CompletedGIBMeeting> {
             print('Error parsing validity date: $e');
             return false;
           }
-          print('Validity Date: $validityDate');
-          print('Current Date: ${DateTime.now()}');
 
 
           bool isCurrentYear = validityDate.year == DateTime.now().year;
           bool satisfiesFilter = validityDate.isBefore(DateTime.now()) && isCurrentYear;
         //  bool satisfiesFilter =  validityDate.isBefore(DateTime.now());
-          print('Satisfies Filter: $satisfiesFilter');
           return satisfiesFilter;
         }).toList();
         setState(() {

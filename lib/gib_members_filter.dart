@@ -62,20 +62,15 @@ class _GIBmembersFilterState extends State<GIBmembersFilter> {
 
   List<Map<String, dynamic>> data=[];
   Future<void> getData(String districts,String chapters) async {
-    print('Attempting to make HTTP request...');
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/gib_members.php?member_type=${widget.userType}&district=$districts&chapter=$chapters&id=${widget.userId}');
-      print("gib members url =$url");
       final response = await http.get(url);
-      print("gib members ResponseStatus: ${response.statusCode}");
-      print("gib members Response: ${response.body}");
+
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
-        print("gib members ResponseData: $responseData");
         final List<dynamic> itemGroups = responseData;
         setState(() {});
         data = itemGroups.cast<Map<String, dynamic>>();
-        print('gib members Data: $data');
       } else {
         print('Error: ${response.statusCode}');
       }
@@ -121,7 +116,6 @@ class _GIBmembersFilterState extends State<GIBmembersFilter> {
         setState(() {
           suggesstionchapterdata = units.cast<Map<String, dynamic>>();
         });
-        print('Sorted chapter Names: $suggesstionchapterdata');
         setState(() {
           setState(() {
           });

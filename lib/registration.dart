@@ -123,15 +123,12 @@ class _GuestState extends State<Guest> {
 
   Future<void> MobileBaseIdFetched(String mobile) async {
     try {
-      print("Mobile :$mobile");
 
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/registration.php?table=registration&mobile=$mobile');
       final response = await http.get(url);
-      print("id fetch URL :$url" );
 
       if (response.statusCode == 200) {
-        print("response.statusCode :${response.statusCode}" );
-        print("response .body :${response.body}" );
+
         final responseData = json.decode(response.body);
         if (responseData is List<dynamic>) {
           setState(() {
@@ -139,7 +136,6 @@ class _GuestState extends State<Guest> {
             if (mobileBaseFetchIDdata.isNotEmpty) {
               setState(() {
                 referreridcotroller.text = mobileBaseFetchIDdata[0]["member_id"];
-                print("referrer ID--${referreridcotroller.text}" );
               });
             }
           });
@@ -166,14 +162,11 @@ class _GuestState extends State<Guest> {
 
   Future<void> idBaseMobileNoFetched(String memberId) async {
     try {
-      print("Mobile :$memberId");
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/registration.php?table=registration&member_id=$memberId');
       final response = await http.get(url);
-      print("id fetch URL memberId :$url" );
 
       if (response.statusCode == 200) {
-        print("response.statusCode memberId :${response.statusCode}" );
-        print("response .body memberId :${response.body}" );
+
         final responseData = json.decode(response.body);
 
         if (responseData is List<dynamic>) {
@@ -182,7 +175,6 @@ class _GuestState extends State<Guest> {
             if (idBaseFetchMobiledata.isNotEmpty) {
               setState(() {
                 referrermobilecontroller.text = idBaseFetchMobiledata[0]["mobile"];
-                print("referrer ID--${referrermobilecontroller.text}" );
               });
             }
           });
@@ -224,21 +216,17 @@ class _GuestState extends State<Guest> {
 
     if (type == "Guest") {
       membertype = "Guest";
-      print("type:$membertype");
       blockStatus = "UnBlock";
       adminRights = "Accepted";
     } else if (type == "Member") {
       membertype = "Non-Executive"; // Or any other default member type
     } else {
       // Handle unexpected type value (optional)
-      print("Unexpected member type: $type");
       return; // Or throw an exception
     }
     try {
       String uri = "http://mybudgetbook.in/GIBAPI/registration.php";
-      print("registration URL: $uri");
       // String uri = "http://mybudgetbook.in/GIBAPI/save_image.php";
-      print("ImageName: $imagename");
       var res = await http.post(Uri.parse(uri),
           body: jsonEncode({
             "imagename": imagename,
@@ -283,9 +271,7 @@ class _GuestState extends State<Guest> {
       );
 
       if (res.statusCode == 200) {
-        print(uri);
-        print("Response Status: ${res.statusCode}");
-        print("Response Body: ${res.body}");
+
 
         // Check if response body is empty
         if (res.body.isNotEmpty) {
@@ -328,11 +314,9 @@ class _GuestState extends State<Guest> {
       final imageBytes = await pickedImage!.readAsBytes();
       setState(() {
         selectedImage = imageBytes;
-        print('Image pick: $selectedImage');
         imagename = pickedImage!.name;
-        print('Image Name: $imagename');
+
         imagedata = base64Encode(imageBytes);
-        print('Image Data: $imagedata');
       });
     }
   }
@@ -372,9 +356,7 @@ class _GuestState extends State<Guest> {
         setState(() {
           suggesstiondataitemName = units.cast<Map<String, dynamic>>();
         });
-        print('Sorted chapter Names: $suggesstiondataitemName');
         setState(() {
-          print('chapter: $chapters');
           setState(() {
           });
           chapterController.clear();

@@ -36,7 +36,6 @@ class _AboutState extends State<About> {
         final List<dynamic> itemGroups = responseData;
         setState(() {
           suggesstiondata = itemGroups.cast<Map<String, dynamic>>();
-          print("district:$suggesstiondata}");
         });
       } else {
         //print('Error: ${response.statusCode}');

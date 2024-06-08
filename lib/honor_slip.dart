@@ -391,7 +391,6 @@ class _DirectState extends State<Direct> {
   @override
   void initState(){
     searchResults = List.from(allItems);
-    print("searchResults: $searchResults");
     fetchRegistrationData();
     fetchData(widget.userId.toString());
     super.initState();
@@ -451,8 +450,7 @@ class _DirectState extends State<Direct> {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=$userId');
       final response = await http.get(url);
       if (response.statusCode == 200) {
-        print("response S: ${response.statusCode}");
-        print("response B: ${response.body}");
+
         final responseData = json.decode(response.body);
         if (responseData is List<dynamic>) {
           setState(() {
@@ -502,8 +500,7 @@ class _DirectState extends State<Direct> {
           "chapter": chapter.toString(),
         }),
       );
-      print(url);
-      print("ResponseStatus: ${response.statusCode}");
+
       if (response.statusCode == 200) {
         print("Offers response: ${response.body}");
       } else {

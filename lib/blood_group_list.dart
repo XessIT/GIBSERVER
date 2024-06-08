@@ -39,13 +39,7 @@ class _BloodListState extends State<BloodList> {
       if (response.statusCode == 200) {
         // Handle successful response
         var data = json.decode(response.body);
-        print(data);
-        // Show online status message
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(
-        //     content: Text('Now online.'),
-        //   ),
-        // );
+
       } else {
         // Handle other status codes
         print('Request failed with status: ${response.statusCode}');
@@ -94,16 +88,12 @@ class _BloodListState extends State<BloodList> {
 
   List<Map<String, dynamic>> data=[];
   Future<void> getData() async {
-    print('Attempting to make HTTP request...');
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/gib_members.php');
-      print(url);
       final response = await http.get(url);
-      print("ResponseStatus: ${response.statusCode}");
-      print("ALL Response: ${response.body}");
+
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
-        print("ResponseData: $responseData");
         final List<dynamic> itemGroups = responseData;
         setState(() {});
         // data = itemGroups.cast<Map<String, dynamic>>();
@@ -114,7 +104,6 @@ class _BloodListState extends State<BloodList> {
           // Cast the filtered data to the correct type
           data = filteredData.cast<Map<String, dynamic>>();
         });
-        print('Data: $data');
       } else {
         print('Error: ${response.statusCode}');
       }

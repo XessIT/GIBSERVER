@@ -7,7 +7,6 @@ import 'Non_exe_pages/non_exe_home.dart';
 import 'Non_exe_pages/settings_non_executive.dart';
 import 'guest_home.dart';
 import 'home.dart';
-import 'home1.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -155,7 +154,6 @@ class _NetworkAttendanceState extends State<NetworkAttendance> {
       if (response.statusCode == 200) {
         // Handle successful response
         var data = json.decode(response.body);
-        print(data);
       } else {
         // Handle other status codes
         print('Request failed with status: ${response.statusCode}');
@@ -228,7 +226,6 @@ class _NetworkAttendanceState extends State<NetworkAttendance> {
         if (data is Map<String, dynamic> && data.containsKey('count')) {
           setState(() {
             totalMeetCount = int.parse(data['count'].toString());
-            print(totalMeetCount);
           });
         } else {
           throw Exception('Unexpected response format');
@@ -254,7 +251,6 @@ class _NetworkAttendanceState extends State<NetworkAttendance> {
             presentCount = int.parse(data['presentCount'].toString());
             absentCount = int.parse(data['absentCount'].toString());
             leaveCount = int.parse(data['leaveCount'].toString());
-            print('Present: $presentCount, Absent: $absentCount, Leave: $leaveCount');
 
           });
         } else {
@@ -538,7 +534,6 @@ class _TeamMeetingPageState extends State<TeamMeetingPage> {
         if (data is Map<String, dynamic> && data.containsKey('count')) {
           setState(() {
             totalMeetCount = int.parse(data['count'].toString());
-            print(totalMeetCount);
           });
         } else {
           throw Exception('Unexpected response format');
@@ -564,7 +559,6 @@ class _TeamMeetingPageState extends State<TeamMeetingPage> {
             presentCount = int.parse(data['presentCount'].toString());
             absentCount = int.parse(data['absentCount'].toString());
             leaveCount = int.parse(data['leaveCount'].toString());
-            print('Present: $presentCount, Absent: $absentCount, Leave: $leaveCount');
 
           });
         } else {
@@ -845,7 +839,6 @@ class _TrainingProgramState extends State<TrainingProgram> {
         if (data is Map<String, dynamic> && data.containsKey('count')) {
           setState(() {
             totalMeetCount = int.parse(data['count'].toString());
-            print(totalMeetCount);
           });
         } else {
           throw Exception('Unexpected response format');
@@ -871,7 +864,6 @@ class _TrainingProgramState extends State<TrainingProgram> {
             presentCount = int.parse(data['presentCount'].toString());
             absentCount = int.parse(data['absentCount'].toString());
             leaveCount = int.parse(data['leaveCount'].toString());
-            print('Present: $presentCount, Absent: $absentCount, Leave: $leaveCount');
 
           });
         } else {
@@ -1133,7 +1125,6 @@ class _IndustrialVisitState extends State<IndustrialVisit> {
       if (response.statusCode == 200) {
         // Handle successful response
         var data = json.decode(response.body);
-        print(data);
       } else {
         // Handle other status codes
         print('Request failed with status: ${response.statusCode}');
@@ -1206,7 +1197,6 @@ class _IndustrialVisitState extends State<IndustrialVisit> {
         if (data is Map<String, dynamic> && data.containsKey('count')) {
           setState(() {
             totalMeetCount = int.parse(data['count'].toString());
-            print(totalMeetCount);
           });
         } else {
           throw Exception('Unexpected response format');
@@ -1232,7 +1222,6 @@ class _IndustrialVisitState extends State<IndustrialVisit> {
             presentCount = int.parse(data['presentCount'].toString());
             absentCount = int.parse(data['absentCount'].toString());
             leaveCount = int.parse(data['leaveCount'].toString());
-            print('Present: $presentCount, Absent: $absentCount, Leave: $leaveCount');
 
           });
         } else {

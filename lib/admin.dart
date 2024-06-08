@@ -481,7 +481,6 @@ class _AddVideosState extends State<AddVideos> {
   }
 
   Future uploadVideo() async {
-    print('${result?.paths}');
     pickedfile = File(result!.files.first.path!);
     if (result == null) return;
     String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();

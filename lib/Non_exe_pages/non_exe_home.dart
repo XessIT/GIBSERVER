@@ -25,7 +25,6 @@ import '../attendance.dart';
 import '../attendance_scanner.dart';
 import '../blood_group.dart';
 import '../change_mpin.dart';
-import '../duplicate.dart';
 import '../gib_doctors.dart';
 import '../gib_members.dart';
 import '../guest_home.dart';
@@ -112,13 +111,7 @@ class _NonExecutiveHomeNavState extends State<NonExecutiveHomeNav> {
       if (response.statusCode == 200) {
         // Handle successful response
         var data = json.decode(response.body);
-        print(data);
-        // Show online status message
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(
-        //     content: Text('Now online.'),
-        //   ),
-        // );
+
       } else {
         // Handle other status codes
         print('Request failed with status: ${response.statusCode}');
@@ -151,7 +144,7 @@ class NonExecutiveHome extends StatefulWidget {
     required this.userID,
     required this.userType,
 
-    //   this.userType,
+    // this.userType,
   }) : super(key: key);
 
   @override
@@ -163,13 +156,12 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
   List<Map<String, dynamic>> userdata = [];
   List<Map<String, dynamic>> offersdata = [];
   String? registerStatus = "Register";
-  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   Uint8List? _imageBytes;
   String imageUrl = "";
   String profileImage = "";
   String? fetchMobile = "";
   bool isLoading = true;
-
 
   final GlobalKey<FormState> tempKey = GlobalKey<FormState>();
   var _connectivityResult = ConnectivityResult.none;
@@ -183,6 +175,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
       _getInternet();
     }
   }
+
   Future<void> _getInternet() async {
     // Replace the URL with your PHP backend URL
     var url = 'http://mybudgetbook.in/BUDGETAPI/internet.php';
@@ -192,7 +185,6 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
       if (response.statusCode == 200) {
         // Handle successful response
         var data = json.decode(response.body);
-        print(data);
       } else {
         // Handle other status codes
         print('Request failed with status: ${response.statusCode}');
@@ -209,12 +201,11 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
     }
   }
 
-
   @override
   void initState() {
     _fetchImages(widget.userType.toString());
     fetchData(widget.userID);
-    getData();
+    //getData();
     getData1();
     _checkConnectivityAndGetData();
     Connectivity().onConnectivityChanged.listen((result) {
@@ -235,8 +226,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
       String meetingDate, String meetingPlace) async {
     try {
       final uri =
-      Uri.parse("http://mybudgetbook.in/GIBAPI/register_meeting.php");
-      print("Register Meeting: $uri");
+          Uri.parse("http://mybudgetbook.in/GIBAPI/register_meeting.php");
       final res = await http.post(uri,
           headers: {"Content-Type": "application/json"},
           body: jsonEncode({
@@ -252,7 +242,6 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
         if (res.body.isNotEmpty) {
           try {
             var responseBody = jsonDecode(res.body);
-            print('meeting: ${responseBody["success"]}');
             if (responseBody["success"]) {
               ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text(responseBody["message"])));
@@ -261,14 +250,12 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                 _showGuestDialog(
                     meetingId, meetingType, meetingDate, meetingPlace);
               } else {
-                print('meeting: ${responseBody["success"]}');
                 ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(responseBody["message"])));
               }
             }
           } catch (e) {
-            print("Error parsing JSON response: $e");
-            print("Raw response: ${res.body}");
+
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text("Error parsing server response.")));
           }
@@ -277,7 +264,6 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
           ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text("Server returned an empty response.")));
         }
-
       } else {
         print(
             "Failed to register meeting. Server returned status code: ${res.statusCode}");
@@ -291,7 +277,6 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
           SnackBar(content: Text("Error uploading meeting data: $e")));
     }
   }
-
 
   void _showGuestDialog(String meetingId, String meetingType,
       String meetingDate, String meetingPlace) {
@@ -332,24 +317,26 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                           userType: widget.userType,
                           meeting_date: meetingDate,
                           user_mobile: userdata[0]["mobile"],
-                          user_name: '${userdata[0]["first_name"] ?? ""} ${userdata[0]["last_name"] ?? ""}',
-                          member_id:userdata[0]["member_id"] ,
+                          user_name:
+                              '${userdata[0]["first_name"] ?? ""} ${userdata[0]["last_name"] ?? ""}',
+                          member_id: userdata[0]["member_id"],
                           meeting_place: meetingPlace,
-                          meeting_type: meetingType // Replace this with the actual mobile fetching logic if needed
-                      ),
+                          meeting_type:
+                              meetingType // Replace this with the actual mobile fetching logic if needed
+                          ),
                     ),
                   );
                 }
               },
               child:
-              Text('Yes', style: Theme.of(context).textTheme.displaySmall),
+                  Text('Yes', style: Theme.of(context).textTheme.displaySmall),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
               child:
-              Text('No', style: Theme.of(context).textTheme.displaySmall),
+                  Text('No', style: Theme.of(context).textTheme.displaySmall),
             ),
           ],
         ),
@@ -357,7 +344,8 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
     );
   }
 
-
+  String? district = "";
+  String? chapter = "";
 
   Future<void> fetchData(String? userId) async {
     try {
@@ -373,7 +361,9 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
             if (userdata.isNotEmpty) {
               profileImage =
                   'http://mybudgetbook.in/GIBAPI/${userdata[0]["profile_image"]}';
-              _imageBytes = base64Decode(userdata[0]['profile_image']);
+              district = userdata[0]['district'] ?? '';
+              chapter = userdata[0]['chapter'] ?? '';
+              getData();
             }
           });
         } else {
@@ -390,11 +380,9 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
   List<Map<String, dynamic>> data = [];
   String type = "Non-Executive";
   Future<void> getData() async {
-    print('Attempting to make HTTP request...');
     try {
       final url = Uri.parse(
-          'http://mybudgetbook.in/GIBAPI/non_exe_meeting.php?member_type=$type');
-      print('URL: $url');
+          'http://mybudgetbook.in/GIBAPI/non_exe_meeting.php?member_type=${widget.userType}&district=${district}&chapter=${chapter}');
       final response = await http.get(url);
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
@@ -411,9 +399,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
             print('Error parsing registration dates: $e');
             return false;
           }
-          print('Registration Opening Date: $registrationOpeningDate');
-          print('Registration Closing Date: $registrationClosingDate');
-          print('Current Date: ${DateTime.now()}');
+
 
           // Check if the registration opening date is before the current date
           bool isOpenForRegistration =
@@ -423,8 +409,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
           bool isRegistrationOpen =
               registrationClosingDate.isAfter(DateTime.now());
 
-          print('Is Open for Registration: $isOpenForRegistration');
-          print('Is Registration Open: $isRegistrationOpen');
+
 
           // Return true if the meeting is open for registration and false otherwise
           return isOpenForRegistration && isRegistrationOpen;
@@ -432,8 +417,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
         setState(() {
           // Cast the filtered data to the correct type and update your state
           data = filteredData.cast<Map<String, dynamic>>();
-          print('Data123: $data');
-          print('--------------------');
+
         });
       } else {
         print('Error: ${response.statusCode}');
@@ -470,17 +454,13 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
   /// offers fetch
   List<Map<String, dynamic>> data1 = [];
   Future<void> getData1() async {
-    print('Attempting to make HTTP request...');
     try {
       final url = Uri.parse(
           'http://mybudgetbook.in/GIBAPI/offers.php?table=UnblockOffers');
-      print(url);
       final response = await http.get(url);
-      print("ResponseStatus: ${response.statusCode}");
-      print("Response: ${response.body}");
+
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
-        print("ResponseData: $responseData");
         final List<dynamic> itemGroups = responseData;
         setState(() {});
         // data = itemGroups.cast<Map<String, dynamic>>();
@@ -493,13 +473,9 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
             print('Error parsing validity date: $e');
             return false;
           }
-          print('Widget User ID: ${widget.userID}');
-          print('Item User ID: ${item['user_id']}');
-          print('Validity Date: $validityDate');
-          print('Current Date: ${DateTime.now()}');
+
           bool satisfiesFilter = validityDate.isAfter(DateTime.now());
-          print("Item block status: ${item['block_status']}");
-          print('Satisfies Filter: $satisfiesFilter');
+
           return satisfiesFilter;
         }).toList();
         // Call setState() after updating data
@@ -507,7 +483,6 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
           // Cast the filtered data to the correct type
           data1 = filteredData.cast<Map<String, dynamic>>();
         });
-        print('Data: $data1');
       } else {
         print('Error: ${response.statusCode}');
       }
@@ -520,9 +495,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
 
   Future<Uint8List?> getImageBytes(String imageUrl) async {
     try {
-      print("123456789087654323456789");
-      print('imageUrl: $imageUrl');
-      print("123456789087654323456789");
+
 
       final response = await http.get(Uri.parse(imageUrl));
       if (response.statusCode == 200) {
@@ -540,7 +513,8 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
   /// get check meeting
   Future<bool> isUserRegistered(String meetingId) async {
     try {
-      final uri = Uri.parse("http://mybudgetbook.in/GIBAPI/register_meeting.php?user_id=${widget.userID}&meeting_id=$meetingId");
+      final uri = Uri.parse(
+          "http://mybudgetbook.in/GIBAPI/register_meeting.php?user_id=${widget.userID}&meeting_id=$meetingId");
 
       final res = await http.get(uri);
 
@@ -548,7 +522,8 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
         List<dynamic> responseBody = jsonDecode(res.body);
         return responseBody.isNotEmpty;
       } else {
-        print("Failed to check registration. Server returned status code: ${res.statusCode}");
+        print(
+            "Failed to check registration. Server returned status code: ${res.statusCode}");
 
         return false;
       }
@@ -558,15 +533,12 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
     }
   }
 
-
   List<String> _imagePaths = [];
   Future<void> _fetchImages(String userType) async {
-    final url = Uri.parse('http://mybudgetbook.in/GIBAPI/adsdisplay.php?memberType=$userType');
+    final url = Uri.parse(
+        'http://mybudgetbook.in/GIBAPI/adsdisplay.php?memberType=$userType');
     final response = await http.get(url);
-    print("gowthm testing");
-    print("$url");
-
-    if (response.statusCode == 200) {
+      if (response.statusCode == 200) {
       List<dynamic> imageData = jsonDecode(response.body);
       setState(() {
         _imagePaths = imageData
@@ -587,7 +559,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
       fetchData(widget.userID);
       _fetchImages(widget.userType.toString());
 
-      getData();
+      //getData();
       getData1();
       _checkConnectivityAndGetData();
       Connectivity().onConnectivityChanged.listen((result) {
@@ -607,12 +579,6 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      /*drawer: SafeArea(
-        child: NavDrawer(
-          userID: widget.userID.toString(),
-          userType: widget.userType.toString(),
-        ),
-      ),*/
       body: WillPopScope(
         onWillPop: () async {
           AwesomeDialog(
@@ -657,11 +623,8 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  data.isEmpty
-                      ? SizedBox.shrink()
-                      :
-                  SizedBox(height: 180),
-                  if (_imagePaths.isNotEmpty)... [
+                  data.isEmpty ? SizedBox.shrink() : SizedBox(height: 180),
+                  if (_imagePaths.isNotEmpty) ...[
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Card(
@@ -669,61 +632,71 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                         child: Container(
                           child: Text(
                             'Ads',
-                            style: Theme.of(context)
-                                .textTheme
-                                .headlineMedium,
+                            style: Theme.of(context).textTheme.headlineMedium,
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(height: 10,),
+                    SizedBox(
+                      height: 10,
+                    ),
                     Container(
                         child: CarouselSlider(
-                          items: _imagePaths.map((imagePath) {
-                            return Builder(
-                              builder: (BuildContext context) {
-                                return FutureBuilder(
-                                  future: http.get(Uri.parse('http://mybudgetbook.in/GIBADMINAPI/$imagePath')),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
-                                      final imageResponse = snapshot.data as http.Response;
-                                      if (imageResponse.statusCode == 200) {
-                                        return Container(
-                                          margin: EdgeInsets.symmetric(horizontal: 5.0),
-                                          child: CachedNetworkImage(
-                                            imageUrl: 'http://mybudgetbook.in/GIBADMINAPI/$imagePath',
-                                            placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                                            errorWidget: (context, url, error) => Text('Error loading image'),
-                                            fit: BoxFit.cover,
-                                            width: double.infinity,
-                                          ),
-                                        );
-                                      } else {
-                                        return Text('Error loading image');
-                                      }
-                                    } else if (snapshot.connectionState == ConnectionState.waiting) {
-                                      return Center(child: CircularProgressIndicator());
-                                    } else {
-                                      return Text('Error loading image');
-                                    }
-                                  },
-                                );
+                      items: _imagePaths.map((imagePath) {
+                        return Builder(
+                          builder: (BuildContext context) {
+                            return FutureBuilder(
+                              future: http.get(Uri.parse(
+                                  'http://mybudgetbook.in/GIBADMINAPI/$imagePath')),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                        ConnectionState.done &&
+                                    snapshot.hasData) {
+                                  final imageResponse =
+                                      snapshot.data as http.Response;
+                                  if (imageResponse.statusCode == 200) {
+                                    return Container(
+                                      margin:
+                                          EdgeInsets.symmetric(horizontal: 5.0),
+                                      child: CachedNetworkImage(
+                                        imageUrl:
+                                            'http://mybudgetbook.in/GIBADMINAPI/$imagePath',
+                                        placeholder: (context, url) => Center(
+                                            child: CircularProgressIndicator()),
+                                        errorWidget: (context, url, error) =>
+                                            Text('Error loading image'),
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                      ),
+                                    );
+                                  } else {
+                                    return Text('Error loading image');
+                                  }
+                                } else if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Center(
+                                      child: CircularProgressIndicator());
+                                } else {
+                                  return Text('Error loading image');
+                                }
                               },
                             );
-                          }).toList(),
-                          options: CarouselOptions(
-                            height: 200.0,
-                            enlargeCenterPage: true,
-                            autoPlay: true,
-                            aspectRatio: 16 / 9,
-                            autoPlayCurve: Curves.fastOutSlowIn,
-                            enableInfiniteScroll: true,
-                            autoPlayAnimationDuration: const Duration(milliseconds: 800),
-                            viewportFraction:0.8,
-                          ),
-                        )
-                    ),],
-
+                          },
+                        );
+                      }).toList(),
+                      options: CarouselOptions(
+                        height: 200.0,
+                        enlargeCenterPage: true,
+                        autoPlay: true,
+                        aspectRatio: 16 / 9,
+                        autoPlayCurve: Curves.fastOutSlowIn,
+                        enableInfiniteScroll: true,
+                        autoPlayAnimationDuration:
+                            const Duration(milliseconds: 800),
+                        viewportFraction: 0.8,
+                      ),
+                    )),
+                  ],
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Card(
@@ -759,10 +732,8 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                   width: 100,
                                   curveType: CurveType.concave,
                                   child: Column(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Row(
@@ -961,7 +932,6 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                                                                     TextButton(
                                                                                         onPressed: () {
                                                                                           if (tempKey.currentState!.validate()) {
-                                                                                            print("Guest Count: ${guestcount.text.trim()}");
                                                                                             Navigator.push(
                                                                                                 context,
                                                                                                 MaterialPageRoute(
@@ -977,11 +947,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                                                                                           meeting_place: meetingPlace,
                                                                                                           meeting_type: meetingType,
                                                                                                         )));
-                                                                                            print('1234567890');
-                                                                                            print("meeting_place${meetingPlace}");
-                                                                                            print("meeting_type${meetingType}");
-                                                                                            print("");
-                                                                                            print("UserID:-${widget.userID}${widget.userType}");
+
                                                                                             registerDateStoreDatabase(id, meetingType, meetingDate, meetingPlace);
                                                                                           }
                                                                                         },
@@ -1036,214 +1002,14 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                       SizedBox(
                                         height: 5,
                                       ),
-                                      Padding(
-                                        padding:
-                                        const EdgeInsets.all(8.0),
-                                        child: Row(
-                                          mainAxisAlignment:MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              '${meeting['meeting_type']}',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .headlineSmall,
-                                            ),
-                                            SizedBox(width: 20,),
-                                            IconButton(onPressed: () async {
-                                              bool isRegistered = await isUserRegistered(id);
-
-                                              if (isRegistered) {
-                                                // Directly show the guest addition dialog
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (ctx) => Form(
-                                                    key: tempKey,
-                                                    child: AlertDialog(
-                                                      backgroundColor: Colors.grey[800],
-                                                      title: Text(
-                                                        'Do you wish to add Guest?',
-                                                        style: Theme.of(context).textTheme.displaySmall,
-                                                      ),
-                                                      content: TextFormField(
-                                                        controller: guestcount,
-                                                        validator: (value) {
-                                                          if (value!.isEmpty) {
-                                                            return "* Enter a Guest Count";
-                                                          }
-                                                          return null;
-                                                        },
-                                                        decoration: InputDecoration(
-                                                          labelText: "Guest Count",
-                                                          labelStyle: Theme.of(context).textTheme.displaySmall,
-                                                          hintText: "Ex:5",
-                                                        ),
-                                                        keyboardType: TextInputType.number,
-                                                        inputFormatters: <TextInputFormatter>[
-                                                          FilteringTextInputFormatter.digitsOnly,
-                                                          LengthLimitingTextInputFormatter(3)
-                                                        ],
-                                                      ),
-                                                      actions: [
-                                                        TextButton(
-                                                          onPressed: () {
-                                                            if (tempKey.currentState!.validate()) {
-                                                              Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                  builder: (context) => VisitorsSlip(
-                                                                    userId: widget.userID,
-                                                                    meetingId: id,
-                                                                    guestcount: guestcount.text.trim(),
-                                                                    userType: widget.userType,
-                                                                    meeting_date: meetingDate,
-                                                                    user_mobile: userdata[0]["mobile"],
-                                                                    user_name: '${userdata[0]["first_name"] ?? ""} ${userdata[0]["last_name"] ?? ""}',
-                                                                    member_id: userdata[0]["member_id"],
-                                                                    meeting_place: meetingPlace,
-                                                                    meeting_type: meetingType,
-                                                                  ),
-                                                                ),
-                                                              );
-                                                              registerDateStoreDatabase(id, meetingType, meetingDate, meetingPlace);
-                                                            }
-                                                          },
-                                                          child: Text(
-                                                            'Yes',
-                                                            style: Theme.of(context).textTheme.displaySmall,
-                                                          ),
-                                                        ),
-                                                        TextButton(
-                                                          onPressed: () {
-                                                            Navigator.pop(context);
-                                                          },
-                                                          child: Text(
-                                                            'No',
-                                                            style: Theme.of(context).textTheme.displaySmall,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                );
-                                              }
-                                              else {showDialog(context: context, builder: (ctx) =>
-                                              // Dialog box for register meeting and add guest
-                                              AlertDialog(
-                                                title:
-                                                Text(
-                                                  'Meeting',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodySmall,
-                                                ),
-                                                content:
-                                                Text(
-                                                  "Do You Want to Register the Meeting?",
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodySmall,
-                                                ),
-                                                actions: [
-                                                  TextButton(
-                                                      onPressed:
-                                                          () {
-                                                        Navigator.pop(context);
-                                                        showDialog(
-                                                            context: context,
-                                                            builder: (ctx) => Form(
-                                                              key: tempKey,
-                                                              child: AlertDialog(
-                                                                //  backgroundColor: Colors.grey[800],
-                                                                title: Text(
-                                                                  'Do you wish to add Guest?',
-                                                                  style: Theme.of(context).textTheme.bodySmall,
-                                                                ),
-                                                                content: TextFormField(
-                                                                  controller: guestcount,
-                                                                  validator: (value) {
-                                                                    if (value!.isEmpty) {
-                                                                      return "* Enter a Guest Count";
-                                                                    }
-                                                                    return null;
-                                                                  },
-                                                                  decoration: InputDecoration(
-                                                                    labelText: "Guest Count",
-                                                                    labelStyle: Theme.of(context).textTheme.bodySmall,
-                                                                    hintText: "Ex:5",
-                                                                  ),
-                                                                  keyboardType: TextInputType.number,
-                                                                  inputFormatters: <TextInputFormatter>[
-                                                                    FilteringTextInputFormatter.digitsOnly,
-                                                                    LengthLimitingTextInputFormatter(3)
-                                                                  ],
-                                                                ),
-                                                                actions: [
-                                                                  TextButton(
-                                                                      onPressed: () {
-                                                                        if (tempKey.currentState!.validate()) {
-                                                                          print("Guest Count: ${guestcount.text.trim()}");
-                                                                          Navigator.push(context, MaterialPageRoute(builder: (context) => VisitorsSlip(userId: widget.userID,
-                                                                            meetingId: id, guestcount: guestcount.text.trim(), userType: widget.userType, meeting_date: meetingDate,
-                                                                            user_mobile: userdata[0]["mobile"],
-                                                                            user_name: '${userdata[0]["first_name"] ?? ""} ${userdata[0]["last_name"] ?? ""}',
-                                                                            member_id:userdata[0]["member_id"],
-                                                                            meeting_place: meetingPlace,
-                                                                            meeting_type: meetingType,
-                                                                          )));
-                                                                          print('1234567890');
-                                                                          print("meeting_place${meetingPlace}");
-                                                                          print("meeting_type${meetingType}");
-                                                                          print("");
-                                                                          registerDateStoreDatabase(id, meetingType, meetingDate, meetingPlace);
-                                                                        }
-                                                                      },
-                                                                      child: Text(
-                                                                        'Yes',
-                                                                        style: Theme.of(context).textTheme.bodySmall,
-                                                                      )),
-                                                                  TextButton(
-                                                                      onPressed: () {
-                                                                        Navigator.pop(context);
-                                                                      },
-                                                                      child: Text(
-                                                                        'No',
-                                                                        style: Theme.of(context).textTheme.bodySmall,
-                                                                      ))
-                                                                ],
-                                                              ),
-                                                            ));
-                                                      },
-                                                      child:
-                                                      Text(
-                                                        'OK',
-                                                        style: Theme.of(context).textTheme.bodySmall,
-                                                      )),
-                                                  TextButton(
-                                                      onPressed:
-                                                          () {
-                                                        Navigator.pop(context);
-                                                      },
-                                                      child:
-                                                      Text(
-                                                        'Cancel',
-                                                        style: Theme.of(context).textTheme.bodySmall,
-                                                      ))
-                                                ],
-                                              ));}}, icon: const Icon(Icons.person_add_alt_1_rounded, color: Colors.green,))
-                                          ],
-                                        ),
-                                      ),
                                       SizedBox(
                                         height: 5,
                                       ),
                                       Padding(
-                                        padding:
-                                        const EdgeInsets.all(8.0),
+                                        padding: const EdgeInsets.all(8.0),
                                         child: Row(
                                           mainAxisAlignment:
-                                          MainAxisAlignment
-                                              .spaceBetween,
-
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
                                               '${meeting['meeting_date']}',
@@ -1261,11 +1027,10 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                         ),
                                       ),
                                       Padding(
-                                        padding:
-                                        const EdgeInsets.all(8.0),
+                                        padding: const EdgeInsets.all(8.0),
                                         child: Row(
-                                          mainAxisAlignment:MainAxisAlignment.spaceBetween,
-
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
                                               '${_formatTimeString(meeting['from_time'])} to ${_formatTimeString(meeting['to_time'])}',
@@ -1279,18 +1044,14 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                                 children: [
                                                   const WidgetSpan(
                                                     child: Padding(
-                                                      padding: EdgeInsets
-                                                          .only(
+                                                      padding: EdgeInsets.only(
                                                           right:
-                                                          5.0), // Adjust the spacing as needed
+                                                              5.0), // Adjust the spacing as needed
                                                       child: Icon(
-                                                          Icons
-                                                              .location_on,
-                                                          color: Colors
-                                                              .green),
+                                                          Icons.location_on,
+                                                          color: Colors.green),
                                                     ),
                                                   ),
-
                                                   TextSpan(
                                                     text: meeting['place'],
                                                     style: Theme.of(context)
@@ -1319,8 +1080,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                         autoPlayCurve: Curves.fastOutSlowIn,
                         enableInfiniteScroll: false,
                         autoPlayAnimationDuration:
-                        const Duration(milliseconds: 800),
-
+                            const Duration(milliseconds: 800),
                         viewportFraction: 1,
                       ),
                     ),
