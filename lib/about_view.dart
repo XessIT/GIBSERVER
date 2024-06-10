@@ -304,7 +304,7 @@ class _AboutTabState extends State<AboutTab> {
                                       aboutGIBdata.isNotEmpty &&
                                           aboutGIBdata[0]["gib_content_2"].isNotEmpty
                                           ? "${aboutGIBdata[0]["gib_content_2"]}"
-                                          : "Loading...",
+                                          : "",
                                       textAlign: TextAlign.justify,
                                     ),
                                   ),
@@ -315,7 +315,7 @@ class _AboutTabState extends State<AboutTab> {
                                       aboutGIBdata.isNotEmpty &&
                                           aboutGIBdata[0]["gib_content_3"].isNotEmpty
                                           ? "${aboutGIBdata[0]["gib_content_3"]}"
-                                          : "Loading...",
+                                          : "",
                                       textAlign: TextAlign.justify,
                                     ),
                                   ),

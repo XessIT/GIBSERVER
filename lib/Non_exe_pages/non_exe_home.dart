@@ -33,6 +33,7 @@ import '../guest_slip.dart';
 import '../home.dart';
 import '../login.dart';
 import '../profile.dart';
+import 'attendance_non_exe.dart';
 
 class NonExecutiveHomeNav extends StatefulWidget {
   final String? userType;
@@ -640,7 +641,6 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                 children: [
                  // data.isEmpty ? SizedBox.shrink() : SizedBox(height: 180),
                   SizedBox(height: 170,),
-
                   if (_imagePaths.isNotEmpty) ...[
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -749,7 +749,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                   ),
                   isLoadingMeeting ? Center(child: CircularProgressIndicator())
                       : data.isEmpty
-                      ? Center(child: Text("No upcoming meetings", style: TextStyle(color: Colors.black),))
+                      ? Center(child: Text("No upcoming meetings", style: TextStyle(color: Colors.black,fontWeight: FontWeight.normal),))
                       : Container(
                     child: CarouselSlider(
                       items: data.map((meeting) {
@@ -1033,7 +1033,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
-                                              '${_formatTimeString(meeting['from_time'])} to ${_formatTimeString(meeting['to_time'])}',
+                                              '${(meeting['from_time'])} to ${(meeting['to_time'])}',
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .bodySmall,
@@ -1089,7 +1089,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      'Offers',
+                      "Today's Offers",
                       style: GoogleFonts.aBeeZee(
                         fontSize: 16,
                         color: Colors.green,
@@ -1105,7 +1105,6 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                         itemBuilder: (context, i) {
                           String imageUrl =
                               'http://mybudgetbook.in/GIBAPI/${data1[i]["offer_image"]}';
-
                           String dateString = data1[i][
                               'validity']; // This will print the properly encoded URL
                           DateTime dateTime =
@@ -1156,7 +1155,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                               children: [
                                                 // START TEXTS
                                                 Text(
-                                                  '${data1[i]['company_name']},',
+                                                  '${data1[i]['company_name']}',
                                                   // Text style starts
                                                   style: const TextStyle(
                                                     color: Colors.green,
@@ -1394,8 +1393,7 @@ class _NavigationBarNonState extends State<NavigationBarNon> {
     _pages = [
       NonExecutiveHomeNav(userId: widget.userId, userType: widget.userType),
       OffersPage(userId: widget.userId, userType: widget.userType),
-      AttendancePage(
-          userID: widget.userId, userType: widget.userType.toString()),
+      AttendancePageNonExe(userID: widget.userId, userType: widget.userType.toString()),
       GibMembers(userId: widget.userId, userType: widget.userType.toString()),
       SettingsPageNon(userId: widget.userId, userType: widget.userType),
     ];
@@ -1411,46 +1409,31 @@ class _NavigationBarNonState extends State<NavigationBarNon> {
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.home_outlined,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.black45
-                  : Colors.white,
+              Icons.home,
             ),
             label: 'Home',
           ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.local_offer,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.black45
-                  : Colors.white,
             ),
             label: 'Offers',
           ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.supervisor_account,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.black45
-                  : Colors.white,
             ),
             label: 'Attendance',
           ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.account_circle_outlined,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.black45
-                  : Colors.white,
             ),
             label: 'Members',
           ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.more_horiz,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.black45
-                  : Colors.white,
             ),
             label: 'More',
           ),

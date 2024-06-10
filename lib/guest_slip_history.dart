@@ -30,7 +30,7 @@ class _GuestHistoryState extends State<GuestHistory> {
   }
   Future<void> _refresh() async {
 
-    Future.delayed(Duration(seconds: 2), () {
+    Future.delayed(const Duration(seconds: 2), () {
       setState(() {
         isLoading = false; // Hide the loading indicator after 4 seconds
       });
