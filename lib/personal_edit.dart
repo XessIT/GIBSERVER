@@ -188,12 +188,11 @@ class _PersonalEditState extends State<PersonalEdit> {
           MaterialPageRoute(builder: (context) => Profile(userID: widget.userId, userType: widget.userType.toString(),)),
         );
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Container(
-            child: Text(
+          content:
+             Text(
               "Profile Successfully Updated",
               style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white),
             ),
-          ),
           backgroundColor: Colors.green,
         ));
       } else {
