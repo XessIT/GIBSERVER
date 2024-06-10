@@ -1,6 +1,4 @@
 import 'dart:convert'; // for base64Encode
-//import 'dart:typed_data'; // Import this for Uint8List
-//import 'dart:html' as html;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
@@ -1084,12 +1082,10 @@ class _CompletedPageState extends State<CompletedPage> {
                                           fontWeight: FontWeight.bold
                                       ),),
                                     Text(DateFormat('dd-MM-yyyy').format(dateTime)),
-
                                   ],
                                 ),
                               ],
                             ),
-
                           ],
                         ),
                       ),

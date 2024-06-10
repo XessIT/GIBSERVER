@@ -6,7 +6,6 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/services.dart';
-
 import 'package:gipapp/settings_page_executive.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -890,7 +889,7 @@ class _HomepageState extends State<Homepage> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          'Offers',
+                          "Today's Offers",
                           style: GoogleFonts.aBeeZee(
                             fontSize: 16,
                             color: Colors.green,
@@ -1093,8 +1092,11 @@ class _HomepageState extends State<Homepage> {
                                   ),
                                 ),
                               );
-                            }),
+                            }
+                            ),
+
                       ),
+
                     ],
                   ),
                 ),
