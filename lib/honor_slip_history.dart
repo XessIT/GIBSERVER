@@ -78,7 +78,7 @@ class _HonorHistoryState extends State<HonorHistory> {
   @override
   void initState() {
     fetchData();
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(Duration(seconds: 2), () {
       setState(() {
         isLoading = false;
       });

@@ -233,7 +233,7 @@ class _GtoGPageState extends State<GtoGPage> {
           icon: const Icon(Icons.navigate_before),
           onPressed: () {
             Navigator.push(context, MaterialPageRoute(
-                builder: (context) => BusinessPage(userType: widget.userType, userId: widget.userId)
+                builder: (context) => BusinessPage(userType: widget.userType, userId: widget.userId,initialTabIndex: 1,)
             ));
           },
         ),

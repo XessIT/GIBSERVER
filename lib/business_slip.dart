@@ -192,14 +192,14 @@ class _ReferralPageState extends State<ReferralPage> {
       appBar: AppBar(
         title: Text('BUSINESS SLIP', style: Theme.of(context).textTheme.displayLarge),
         iconTheme: const IconThemeData(color: Colors.white),
-        leading: IconButton(
-          icon: const Icon(Icons.navigate_before),
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(
-                builder: (context) => BusinessPage(userType: widget.userType, userId: widget.userId)
-            ));
-          },
-        ),
+          leading: IconButton(
+            icon: const Icon(Icons.navigate_before),
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => BusinessPage(userType: widget.userType, userId: widget.userId, initialTabIndex: 1,)
+              ));
+            },
+          ),
         actions: [
           IconButton(onPressed:(){
             Navigator.push(context, MaterialPageRoute(
@@ -211,7 +211,7 @@ class _ReferralPageState extends State<ReferralPage> {
       body: PopScope(
         canPop: false,
         onPopInvoked: (didPop)  {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => BusinessPage(userType:widget.userType, userId:widget.userId,)));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => BusinessPage(userType:widget.userType, userId:widget.userId,initialTabIndex: 1,)));
         },
         child: SingleChildScrollView(
           child: Center(

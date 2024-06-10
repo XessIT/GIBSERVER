@@ -16,13 +16,26 @@ class GuestHistory extends StatefulWidget {
 
 class _GuestHistoryState extends State<GuestHistory> {
   List<Map<String, dynamic>> visitorsFetchdata = [];
-
+  bool isLoading = true;
   @override
   void initState() {
     visitorsFetch();
+    Future.delayed(Duration(seconds: 2), () {
+      setState(() {
+        isLoading = false;
+      });
+
+    });
     super.initState();
   }
+  Future<void> _refresh() async {
 
+    Future.delayed(Duration(seconds: 2), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
+  }
   Future<void> visitorsFetch() async {
     try {
       final url = Uri.parse(
@@ -75,22 +88,24 @@ class _GuestHistoryState extends State<GuestHistory> {
               context,
               MaterialPageRoute(
                 builder: (context) => BusinessPage(
-                  userId: widget.userId, userType: '',
+                  userId: widget.userId, userType: '',initialTabIndex: 1,
                 ),
               ),
             );
           },
         ),
       ),
-      body: groupedVisitors.isEmpty ? Center(child: Text("No Record Found"))
+      body:
+          isLoading ? Center(child: CircularProgressIndicator()) :
+      groupedVisitors.isEmpty ? Center(child: Text("No Record Found"))
           : Expanded(
-        child: ListView.builder(
-          itemCount: groupedVisitors.length,
-          itemBuilder: (context, index) {
-            String date = groupedVisitors.keys.elementAt(index);
-            List<Map<String, dynamic>> visitors = groupedVisitors[date]!;
-            return SingleChildScrollView(
-              child: Column(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: List.generate(groupedVisitors.length, (index) {
+              String date = groupedVisitors.keys.elementAt(index);
+              List<Map<String, dynamic>> visitors = groupedVisitors[date]!;
+              return Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Padding(
@@ -106,7 +121,7 @@ class _GuestHistoryState extends State<GuestHistory> {
                   ),
                   ListView.builder(
                     shrinkWrap: true,
-                    // physics: NeverScrollableScrollPhysics(),
+                    physics: NeverScrollableScrollPhysics(), // Disable scrolling for the inner list
                     itemCount: visitors.length,
                     itemBuilder: (context, index) {
                       Map<String, dynamic> visitor = visitors[index];
@@ -115,7 +130,6 @@ class _GuestHistoryState extends State<GuestHistory> {
                         child: Container(
                           width: 100,
                           height: 83,
-                          //  padding: const EdgeInsets.all(10.0),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(15.0),
@@ -147,7 +161,6 @@ class _GuestHistoryState extends State<GuestHistory> {
                                     ],
                                   ),
                                 ),
-
                               ],
                             ),
                           ),
@@ -156,11 +169,12 @@ class _GuestHistoryState extends State<GuestHistory> {
                     },
                   ),
                 ],
-              ),
-            );
-          },
+              );
+            }),
+          ),
         ),
       ),
+
     );
   }
 
