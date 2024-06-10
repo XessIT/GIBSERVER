@@ -741,7 +741,7 @@ class _HomepageState extends State<Homepage> {
 
                       isLoadingMeeting ? Center(child: CircularProgressIndicator())
                        : data.isEmpty
-                          ? Center(child: Text("No upcoming meetings", style: TextStyle(color: Colors.black),))
+                          ? Center(child: Text("No upcoming meetings", style: TextStyle(color: Colors.black,fontWeight: FontWeight.normal),))
                           : CarouselSlider(
                         items: data.map((meeting) {
                           String meetingDate = meeting['meeting_date'];
