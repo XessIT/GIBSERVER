@@ -16,13 +16,26 @@ class GuestHistory extends StatefulWidget {
 
 class _GuestHistoryState extends State<GuestHistory> {
   List<Map<String, dynamic>> visitorsFetchdata = [];
-
+  bool isLoading = true;
   @override
   void initState() {
     visitorsFetch();
+    Future.delayed(Duration(seconds: 2), () {
+      setState(() {
+        isLoading = false;
+      });
+
+    });
     super.initState();
   }
+  Future<void> _refresh() async {
 
+    Future.delayed(Duration(seconds: 2), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
+  }
   Future<void> visitorsFetch() async {
     try {
       final url = Uri.parse(
@@ -82,8 +95,9 @@ class _GuestHistoryState extends State<GuestHistory> {
           },
         ),
       ),
-      body:groupedVisitors.isEmpty
-          ? Center(child: Text("No Record Found"))
+      body:
+          isLoading ? Center(child: CircularProgressIndicator()) :
+      groupedVisitors.isEmpty ? Center(child: Text("No Record Found"))
           : Expanded(
         child: SingleChildScrollView(
           child: Column(
