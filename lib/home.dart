@@ -604,15 +604,13 @@ class _HomepageState extends State<Homepage> {
                       : Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      data.isEmpty
+                      /*data.isEmpty
                           ? const SizedBox.shrink()
-                          : const SizedBox(
-                        height: 190,
-                      ),
+                          : const SizedBox(height: 190,
+                      ),*/
+                      SizedBox(height: 190,),
                       if (_imagePaths.isNotEmpty) ...[
-                        SizedBox(
-                          height: 80,
-                        ),
+
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Card(
