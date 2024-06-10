@@ -760,7 +760,7 @@ class _MyTransactionState extends State<MyTransaction> {
         if (response.statusCode == 200) {
           final responseData = json.decode(response.body);
           setState(() {
-            honortotalRows = responseData['total_rows'] ?? '0';
+            honortotalRows = responseData['totalRows'] ?? '0';
           });
         } else {
           print('Error: ${response.statusCode}');

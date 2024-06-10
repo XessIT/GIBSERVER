@@ -75,7 +75,6 @@ class _MeetingUpcomingPageState extends State<MeetingUpcomingPage> {
         child: Scaffold(
         appBar: AppBar(
         title: Text('Meeting', style: Theme.of(context).textTheme.displayLarge),
-    centerTitle: true,
     iconTheme: const IconThemeData(color: Colors.white),
     leading: IconButton(
     onPressed: () {

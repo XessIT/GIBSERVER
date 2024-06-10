@@ -16,26 +16,13 @@ class GuestHistory extends StatefulWidget {
 
 class _GuestHistoryState extends State<GuestHistory> {
   List<Map<String, dynamic>> visitorsFetchdata = [];
-  bool isLoading = true;
+
   @override
   void initState() {
     visitorsFetch();
-    Future.delayed(Duration(seconds: 2), () {
-      setState(() {
-        isLoading = false;
-      });
-
-    });
     super.initState();
   }
-  Future<void> _refresh() async {
 
-    Future.delayed(const Duration(seconds: 2), () {
-      setState(() {
-        isLoading = false; // Hide the loading indicator after 4 seconds
-      });
-    });
-  }
   Future<void> visitorsFetch() async {
     try {
       final url = Uri.parse(
@@ -88,93 +75,92 @@ class _GuestHistoryState extends State<GuestHistory> {
               context,
               MaterialPageRoute(
                 builder: (context) => BusinessPage(
-                  userId: widget.userId, userType: '',initialTabIndex: 1,
+                  userId: widget.userId, userType: '',
                 ),
               ),
             );
           },
         ),
       ),
-        body:
-            isLoading ? Center(child: CircularProgressIndicator()) :
-        groupedVisitors.isEmpty ? Center(child: Text("No Record Found"))
-            : Expanded(
-           child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: List.generate(groupedVisitors.length, (index) {
-                String date = groupedVisitors.keys.elementAt(index);
-                List<Map<String, dynamic>> visitors = groupedVisitors[date]!;
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        date,
-                        style: const TextStyle(
-                          color: Colors.blue,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+      body: groupedVisitors.isEmpty ? Center(child: Text("No Record Found"))
+          : Expanded(
+        child: ListView.builder(
+          itemCount: groupedVisitors.length,
+          itemBuilder: (context, index) {
+            String date = groupedVisitors.keys.elementAt(index);
+            List<Map<String, dynamic>> visitors = groupedVisitors[date]!;
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      date,
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(), // Disable scrolling for the inner list
-                      itemCount: visitors.length,
-                      itemBuilder: (context, index) {
-                        Map<String, dynamic> visitor = visitors[index];
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            width: 100,
-                            height: 83,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(15.0),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  spreadRadius: 3,
-                                  blurRadius: 7,
-                                  offset: Offset(0, 3), // changes position of shadow
+                  ),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    // physics: NeverScrollableScrollPhysics(),
+                    itemCount: visitors.length,
+                    itemBuilder: (context, index) {
+                      Map<String, dynamic> visitor = visitors[index];
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          width: 100,
+                          height: 83,
+                          //  padding: const EdgeInsets.all(10.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(15.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 3,
+                                blurRadius: 7,
+                                offset: Offset(0, 3), // changes position of shadow
+                              ),
+                            ],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Text("${visitor["guest_name"]}"),
+                                  ],
                                 ),
-                              ],
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                children: [
-                                  Row(
+                                SizedBox(height: 10,),
+                                Expanded(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text("${visitor["guest_name"]}"),
+                                      Text("Location: ${visitor["location"]}"),
+                                      Text("Date: ${visitor["meeting_date"]}"),
                                     ],
                                   ),
-                                  SizedBox(height: 10,),
-                                  Expanded(
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text("Location: ${visitor["location"]}"),
-                                        Text("Date: ${visitor["meeting_date"]}"),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                ),
+
+                              ],
                             ),
                           ),
-                        );
-                      },
-                    ),
-                  ],
-                );
-              }),
-            ),
-          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
         ),
-
+      ),
     );
   }
 
