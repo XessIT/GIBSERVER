@@ -1139,7 +1139,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                               children: [
                                                 // START TEXTS
                                                 Text(
-                                                  '${data1[i]['company_name']},',
+                                                  '${data1[i]['company_name']}',
                                                   // Text style starts
                                                   style: const TextStyle(
                                                     color: Colors.green,
@@ -1394,46 +1394,31 @@ class _NavigationBarNonState extends State<NavigationBarNon> {
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.home_outlined,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.black45
-                  : Colors.white,
+              Icons.home,
             ),
             label: 'Home',
           ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.local_offer,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.black45
-                  : Colors.white,
             ),
             label: 'Offers',
           ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.supervisor_account,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.black45
-                  : Colors.white,
             ),
             label: 'Attendance',
           ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.account_circle_outlined,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.black45
-                  : Colors.white,
             ),
             label: 'Members',
           ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.more_horiz,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.black45
-                  : Colors.white,
             ),
             label: 'More',
           ),
