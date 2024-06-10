@@ -788,10 +788,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                                         id);
                                                 if (isRegistered) {
                                                   // Directly show the guest addition dialog
-                                                  showDialog(
-                                                      context:
-                                                      context,
-                                                      builder: (ctx) =>
+                                                  showDialog(context: context, builder: (ctx) =>
                                                           Form(
                                                             key: tempKey,
                                                             child: AlertDialog(

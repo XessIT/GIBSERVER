@@ -777,92 +777,74 @@ class _HomepageState extends State<Homepage> {
 
                                                   if (isRegistered) {
                                                     // Directly show the guest addition dialog
-                                                    showDialog(context: context,
-                                                        builder: (ctx) =>
-                                                            Form(
-                                                              key: tempKey,
-                                                              child: AlertDialog(
-                                                                //  backgroundColor: Colors.grey[800],
-                                                                title: Text(
-                                                                  'You Already Registered , Do you wish to add Guest?',
-                                                                  style: Theme.of(context).textTheme.bodySmall,
-                                                                ),
-                                                                content: Container(
-                                                                  height: 100,
-                                                                  width:200,
-                                                                  child: Column(
-                                                                    children: [
-                                                                      Row(
-                                                                        mainAxisAlignment: MainAxisAlignment.end,
-                                                                        children: [
-                                                                          Text(
-                                                                            'Already Registered!',
-
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                      TextFormField(
-                                                                        controller: guestcount,
-                                                                        validator: (value) {
-                                                                          if (value!.isEmpty) {
-                                                                            return "* Enter a Guest Count";
-                                                                          }else if (value == "0") {
-                                                                            return "* Enter a Valid Guest Count";
-                                                                          }
-                                                                          return null;
-                                                                        },
-                                                                        decoration: InputDecoration(
-                                                                          labelText: "Guest Count",
-                                                                          labelStyle: Theme.of(context).textTheme.bodySmall,
-                                                                          hintText: "Ex:5",
-                                                                        ),
-                                                                        keyboardType: TextInputType.number,
-                                                                        inputFormatters: <TextInputFormatter>[
-                                                                          FilteringTextInputFormatter.digitsOnly,
-                                                                          LengthLimitingTextInputFormatter(3)
-                                                                        ],
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                                actions: [
-                                                                  TextButton(
-                                                                      onPressed: () {
-                                                                        if (tempKey.currentState!.validate()) {
-                                                                          Navigator.push(
-                                                                              context,
-                                                                              MaterialPageRoute(
-                                                                                  builder: (context) => VisitorsSlip(
-                                                                                    userId: widget.userId,
-                                                                                    meetingId: id,
-                                                                                    guestcount: guestcount.text.trim(),
-                                                                                    userType: widget.userType,
-                                                                                    meeting_date: meetingDate,
-                                                                                    user_mobile: userdata[0]["mobile"],
-                                                                                    user_name: '${userdata[0]["first_name"] ?? ""} ${userdata[0]["last_name"] ?? ""}',
-                                                                                    member_id: userdata[0]["member_id"],
-                                                                                    meeting_place: meetingPlace,
-                                                                                    meeting_type: meetingType,
-                                                                                  )));
-
-                                                                          registerDateStoreDatabase(id, meetingType, meetingDate, meetingPlace);
-                                                                        }
-                                                                      },
-                                                                      child: Text(
-                                                                        'Yes',
-                                                                        style: Theme.of(context).textTheme.bodySmall,
-                                                                      )),
-                                                                  TextButton(
-                                                                      onPressed: () {
-                                                                        Navigator.pop(context);
-                                                                      },
-                                                                      child: Text(
-                                                                        'No',
-                                                                        style: Theme.of(context).textTheme.bodySmall,
-                                                                      ))
-                                                                ],
+                                                    showDialog(context: context, builder: (ctx) =>
+                                                        Form(
+                                                          key: tempKey,
+                                                          child: AlertDialog(
+                                                            //  backgroundColor: Colors.grey[800],
+                                                            title: Text(
+                                                              'Do you wish to add Guest?',
+                                                              style: Theme.of(context).textTheme.bodySmall,
+                                                            ),
+                                                            content: TextFormField(
+                                                              style:TextStyle(fontSize: 12),
+                                                              controller: guestcount,
+                                                              validator: (value) {
+                                                                if (value!.isEmpty) {
+                                                                  return "* Enter a Guest Count";
+                                                                } else if (value == "0") {
+                                                                  return "* Enter a Valid Guest Count";
+                                                                }
+                                                                return null;
+                                                              },
+                                                              decoration: InputDecoration(
+                                                                labelText: "Guest Count",
+                                                                labelStyle: Theme.of(context).textTheme.bodySmall,
+                                                                hintText: "Ex:5",
                                                               ),
-                                                            ));
+                                                              keyboardType: TextInputType.number,
+                                                              inputFormatters: <TextInputFormatter>[
+                                                                FilteringTextInputFormatter.digitsOnly,
+                                                                LengthLimitingTextInputFormatter(3)
+                                                              ],
+                                                            ),
+                                                            actions: [
+                                                              TextButton(
+                                                                  onPressed: () {
+                                                                    if (tempKey.currentState!.validate()) {
+                                                                      Navigator.push(
+                                                                          context,
+                                                                          MaterialPageRoute(
+                                                                              builder: (context) => VisitorsSlip(
+                                                                                userId: widget.userId,
+                                                                                meetingId: id,
+                                                                                guestcount: guestcount.text.trim(),
+                                                                                userType: widget.userType,
+                                                                                meeting_date: meetingDate,
+                                                                                user_mobile: userdata[0]["mobile"],
+                                                                                user_name: '${userdata[0]["first_name"] ?? ""} ${userdata[0]["last_name"] ?? ""}',
+                                                                                member_id: userdata[0]["member_id"],
+                                                                                meeting_place: meetingPlace,
+                                                                                meeting_type: meetingType,
+                                                                              )));
+                                                                      //   registerDateStoreDatabase(id, meetingType, meetingDate, meetingPlace);
+                                                                    }
+                                                                  },
+                                                                  child: Text(
+                                                                    'Yes',
+                                                                    style: Theme.of(context).textTheme.bodySmall,
+                                                                  )),
+                                                              TextButton(
+                                                                  onPressed: () {
+                                                                    Navigator.pop(context);
+                                                                  },
+                                                                  child: Text(
+                                                                    'No',
+                                                                    style: Theme.of(context).textTheme.bodySmall,
+                                                                  ))
+                                                            ],
+                                                          ),
+                                                        ));
                                                   } else {
                                                     showDialog(context: context, builder: (ctx) =>
                                                     // Dialog box for register meeting and add guest
