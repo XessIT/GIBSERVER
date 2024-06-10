@@ -187,7 +187,7 @@ class _GibMembersState extends State<GibMembers> {
         print("Error in fetchData: $error");
       });
     });
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(Duration(seconds: 2), () {
       setState(() {
         isLoading = false; // Hide the loading indicator after 4 seconds
       });

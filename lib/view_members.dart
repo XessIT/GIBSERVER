@@ -449,21 +449,34 @@ class _ImageViewState extends State<ImageView> {
       print('Failed to fetch images.');
     }
   }
-
+  bool isLoading = true;
   @override
   initState() {
     super.initState();
     _fetchImages();
+    Future.delayed(Duration(seconds: 2), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
   }
 
+  Future<void> _refresh() async {
 
+    Future.delayed(Duration(seconds: 2), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
+  }
 
 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:  _imageBytesList.isEmpty ? const Center(child: Text("No Images")) : GridView.builder(
+      body:  isLoading ? const Center(child: CircularProgressIndicator())
+          : _imageBytesList.isEmpty ? const Center(child: Text("No Images")) : GridView.builder(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           mainAxisSpacing: 10.0,
