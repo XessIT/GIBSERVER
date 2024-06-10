@@ -65,16 +65,16 @@ class _DetailsState extends State<Details> {
                                         Row(
                                           // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                           children: [
-                                            const Padding(
+                                             Padding(
                                               padding: EdgeInsets.fromLTRB(
                                                   30, 0, 0, 0),
-                                              child: Text('Name'),
+                                              child: Text('Name',style: Theme.of(context).textTheme.bodySmall),
                                             ),
                                             Padding(
                                               padding: const EdgeInsets.fromLTRB(
                                                   90, 0, 0, 0),
                                               child: Text(
-                                                  '${data['First Name']}'),
+                                                  '${data['First Name']}',style: Theme.of(context).textTheme.bodySmall),
                                             )
                                           ],
                                         ),
@@ -82,15 +82,15 @@ class _DetailsState extends State<Details> {
                                         Row(
                                           // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                           children:  [
-                                            const Padding(
+                                             Padding(
                                               padding: EdgeInsets.fromLTRB(
                                                   30, 0, 0, 0),
-                                              child: Text('District'),
+                                              child: Text('District',style: Theme.of(context).textTheme.bodySmall),
                                             ),
                                             Padding(
                                               padding: const EdgeInsets.fromLTRB(
                                                   85, 0, 0, 0),
-                                              child: Text('${data['District']}'),
+                                              child: Text('${data['District']}',style: Theme.of(context).textTheme.bodySmall),
                                             )
                                           ],
                                         ),
@@ -98,15 +98,15 @@ class _DetailsState extends State<Details> {
                                         Row(
                                           // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                           children: [
-                                            const Padding(
+                                             Padding(
                                               padding: EdgeInsets.fromLTRB(
                                                   30, 0, 0, 0),
-                                              child: Text('Chapter'),
+                                              child: Text('Chapter',style: Theme.of(context).textTheme.bodySmall),
                                             ),
                                             Padding(
                                               padding: const EdgeInsets.fromLTRB(
                                                   79, 0, 0, 0),
-                                              child: Text('${data['Chapter']}'),
+                                              child: Text('${data['Chapter']}',style: Theme.of(context).textTheme.bodySmall),
                                             )
                                           ],
                                         ),
@@ -114,15 +114,15 @@ class _DetailsState extends State<Details> {
                                         Row(
                                           // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                           children: [
-                                            const Padding(
+                                             Padding(
                                               padding: EdgeInsets.fromLTRB(
                                                   30, 0, 0, 0),
-                                              child: Text('Native'),
+                                              child: Text('Native',style: Theme.of(context).textTheme.bodySmall),
                                             ),
                                             Padding(
-                                              padding: const EdgeInsets.fromLTRB(
+                                              padding:  EdgeInsets.fromLTRB(
                                                   90, 0, 0, 0),
-                                              child: Text('${data['Location']}'),
+                                              child: Text('${data['Location']}',style: Theme.of(context).textTheme.bodySmall),
                                             )
                                           ],
                                         ),
@@ -130,15 +130,15 @@ class _DetailsState extends State<Details> {
                                         Row(
                                           // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                           children: [
-                                            const Padding(
+                                             Padding(
                                               padding: EdgeInsets.fromLTRB(
                                                   30, 0, 0, 0),
-                                              child: Text('DOB'),
+                                              child: Text('DOB',style: Theme.of(context).textTheme.bodySmall),
                                             ),
                                             Padding(
-                                              padding:const EdgeInsets.fromLTRB(
+                                              padding: EdgeInsets.fromLTRB(
                                                   105, 0, 0, 0),
-                                              child: Text('${data['Date of Birth']}'),
+                                              child: Text('${data['Date of Birth']}',style: Theme.of(context).textTheme.bodySmall),
                                             )
                                           ],
                                         ),
@@ -146,15 +146,15 @@ class _DetailsState extends State<Details> {
                                         Row(
                                           // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                           children: [
-                                            const Padding(
+                                             Padding(
                                               padding: EdgeInsets.fromLTRB(
                                                   30, 0, 0, 0),
-                                              child: Text('Koottam'),
+                                              child: Text('Koottam',style: Theme.of(context).textTheme.bodySmall),
                                             ),
                                             Padding(
-                                              padding: const EdgeInsets.fromLTRB(
+                                              padding:  EdgeInsets.fromLTRB(
                                                   75, 0, 0, 0),
-                                              child: Text('${data['Koottam']}'),
+                                              child: Text('${data['Koottam']}',style: Theme.of(context).textTheme.bodySmall),
                                             )
                                           ],
                                         ),
@@ -162,16 +162,16 @@ class _DetailsState extends State<Details> {
                                         Row(
                                           // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                           children: [
-                                            const Padding(
+                                             Padding(
                                               padding: EdgeInsets.fromLTRB(
                                                   30, 0, 0, 0),
-                                              child: Text('Kovil'),
+                                              child: Text('Kovil',style: Theme.of(context).textTheme.bodySmall),
                                             ),
                                             Padding(
-                                              padding:const EdgeInsets.fromLTRB(
+                                              padding: EdgeInsets.fromLTRB(
                                                   100, 0, 0, 0),
                                               child: Text(
-                                                  '${data['Kovil']}'),
+                                                  '${data['Kovil']}',style: Theme.of(context).textTheme.bodySmall),
                                             )
                                           ],
                                         ),
@@ -179,15 +179,15 @@ class _DetailsState extends State<Details> {
                                         Row(
                                           // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                           children: [
-                                            const Padding(
+                                             Padding(
                                               padding: EdgeInsets.fromLTRB(
                                                   30, 0, 0, 0),
-                                              child: Text('Member'),
+                                              child: Text('Member',style: Theme.of(context).textTheme.bodySmall),
                                             ),
                                             Padding(
-                                              padding: const EdgeInsets.fromLTRB(
+                                              padding:  EdgeInsets.fromLTRB(
                                                   75, 0, 0, 0),
-                                              child: Text('${data['Member Type']}'),
+                                              child: Text('${data['Member Type']}',style: Theme.of(context).textTheme.bodySmall),
                                             )
                                           ],
                                         ),
@@ -195,15 +195,15 @@ class _DetailsState extends State<Details> {
                                         Row(
                                           // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                           children: [
-                                            const        Padding(
+                                                    Padding(
                                               padding: EdgeInsets.fromLTRB(
                                                   30, 0, 0, 0),
-                                              child: Text('Blood Group'),
+                                              child: Text('Blood Group',style: Theme.of(context).textTheme.bodySmall),
                                             ),
                                             Padding(
-                                              padding: const EdgeInsets.fromLTRB(
+                                              padding:  EdgeInsets.fromLTRB(
                                                   50, 0, 0, 0),
-                                              child: Text('${data['Blood Group']}'),
+                                              child: Text('${data['Blood Group']}',style: Theme.of(context).textTheme.bodySmall),
                                             )
                                           ],
                                         ),
@@ -219,15 +219,15 @@ class _DetailsState extends State<Details> {
                                             mainAxisAlignment: MainAxisAlignment
                                                 .start,
                                             children: [
-                                              const Padding(
+                                               Padding(
                                                 padding: EdgeInsets.fromLTRB(
                                                     30, 0, 0, 0),
-                                                child: Text('Spouse Name'),
+                                                child: Text('Spouse Name',style: Theme.of(context).textTheme.bodySmall),
                                               ),
                                               Padding(
-                                                padding:const EdgeInsets.fromLTRB(
+                                                padding: EdgeInsets.fromLTRB(
                                                     110, 0, 0, 0),
-                                                child: Text('${data['Spouse Name']}'),
+                                                child: Text('${data['Spouse Name']}',style: Theme.of(context).textTheme.bodySmall),
                                               )
                                             ],
                                           ),
@@ -235,15 +235,15 @@ class _DetailsState extends State<Details> {
                                           Row(
                                             // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                             children: [
-                                              const Padding(
+                                               Padding(
                                                 padding: EdgeInsets.fromLTRB(
                                                     30, 0, 0, 0),
-                                                child: Text('WAD'),
+                                                child: Text('WAD',style: Theme.of(context).textTheme.bodySmall),
                                               ),
                                               Padding(
-                                                padding: const EdgeInsets.fromLTRB(
+                                                padding:  EdgeInsets.fromLTRB(
                                                     175, 0, 0, 0),
-                                                child: Text('${data['Wedding Anniversary Date']}'),
+                                                child: Text('${data['Wedding Anniversary Date']}',style: Theme.of(context).textTheme.bodySmall),
                                               )
                                             ],
                                           ),
@@ -252,31 +252,30 @@ class _DetailsState extends State<Details> {
                                             mainAxisAlignment: MainAxisAlignment
                                                 .start,
                                             children:  [
-                                              const Padding(
+                                               Padding(
                                                 padding: EdgeInsets.fromLTRB(
                                                     30, 0, 0, 0),
-                                                child: Text('Spouse Native'),
+                                                child: Text('Spouse Native',style: Theme.of(context).textTheme.bodySmall),
                                               ),
                                               Padding(
                                                 padding:const EdgeInsets.fromLTRB(
                                                     108, 0, 0, 0),
-                                                child: Text('${data['Spouse Native']}'),
+                                                child: Text('${data['Spouse Native']}',style: Theme.of(context).textTheme.bodySmall),
                                               )
                                             ],
                                           ),
                                           const Divider(),
                                           Row(
                                             // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                            children: [
-                                              const        Padding(
+                                            children: [Padding(
                                                 padding: EdgeInsets.fromLTRB(
                                                     30, 0, 0, 0),
-                                                child: Text('Spouse Blood Group'),
+                                                child: Text('Spouse Blood Group',style: Theme.of(context).textTheme.bodySmall),
                                               ),
                                               Padding(
-                                                padding: const EdgeInsets.fromLTRB(
+                                                padding:  EdgeInsets.fromLTRB(
                                                     67, 0, 0, 0),
-                                                child: Text('${data['Spouse Blood Group']}'),
+                                                child: Text('${data['Spouse Blood Group']}',style: Theme.of(context).textTheme.bodySmall),
                                               )
                                             ],
                                           ),
@@ -284,16 +283,16 @@ class _DetailsState extends State<Details> {
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment.start,
                                             children:  [
-                                              const Padding(
+                                               Padding(
                                                 padding: EdgeInsets.fromLTRB(
                                                     30, 0, 0, 0),
                                                 child: Text(
-                                                    'Spouse Father Koottam'),
+                                                    'Spouse Father Koottam',style: Theme.of(context).textTheme.bodySmall),
                                               ),
                                               Padding(
-                                                padding: const EdgeInsets.fromLTRB(
+                                                padding:  EdgeInsets.fromLTRB(
                                                     42, 0, 0, 0),
-                                                child: Text('${data['Spouse Father Koottam']}'),
+                                                child: Text('${data['Spouse Father Koottam']}',style: Theme.of(context).textTheme.bodySmall),
                                               )
 
                                             ],),
@@ -301,17 +300,17 @@ class _DetailsState extends State<Details> {
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment.start,
                                             children:  [
-                                              const Padding(
+                                               Padding(
                                                 padding: EdgeInsets.fromLTRB(
                                                     30, 0, 0, 0),
                                                 child: Text(
-                                                    'Spouse Father Kovil'),
+                                                    'Spouse Father Kovil',style: Theme.of(context).textTheme.bodySmall),
                                               ),
                                               Padding(
-                                                padding: const EdgeInsets.fromLTRB(
+                                                padding:  EdgeInsets.fromLTRB(
                                                     70, 0, 0, 0),
                                                 child: Text(
-                                                    '${data['Spouse Father Kovil']}'),
+                                                    '${data['Spouse Father Kovil']}',style: Theme.of(context).textTheme.bodySmall),
                                               )
 
                                             ],),
@@ -325,13 +324,13 @@ class _DetailsState extends State<Details> {
                                         Row(
                                           mainAxisAlignment: MainAxisAlignment.start,
                                           children: [
-                                            const Padding(
+                                             Padding(
                                               padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                                              child: Text('Mobile Number'),
+                                              child: Text('Mobile Number',style: Theme.of(context).textTheme.bodySmall),
                                             ),
                                             Padding(
-                                              padding: const EdgeInsets.fromLTRB(70, 0, 0, 0),
-                                              child: Text('${data['Mobile']}'),
+                                              padding:  EdgeInsets.fromLTRB(70, 0, 0, 0),
+                                              child: Text('${data['Mobile']}',style: Theme.of(context).textTheme.bodySmall),
                                             )
 
                                           ],),
@@ -339,13 +338,13 @@ class _DetailsState extends State<Details> {
                                         Row(
                                           mainAxisAlignment: MainAxisAlignment.start,
                                           children: [
-                                            const Padding(
+                                             Padding(
                                               padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                                              child: Text('Email'),
+                                              child: Text('Email',style: Theme.of(context).textTheme.bodySmall),
                                             ),
                                             Padding(
                                               padding: const EdgeInsets.fromLTRB(145, 0, 0, 0),
-                                              child: Text('${data['Email']}'),
+                                              child: Text('${data['Email']}',style: Theme.of(context).textTheme.bodySmall),
                                             )
 
                                           ],),

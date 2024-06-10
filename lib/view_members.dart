@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gipapp/personal_edit.dart';
 import 'package:gipapp/view_gallery_image.dart';
@@ -189,49 +190,19 @@ class _BusinessInfoState extends State<BusinessInfo> {
         child: Center(
           child: Column(
             children: [
-              // SizedBox(
-              //   width: double.infinity,
-              //   height: 300,
-              //   child: Image.asset('assets/logo.png', fit: BoxFit.cover),
-              // ),
-              // SizedBox(
-              //   width: double.infinity,
-              //   height: 300,
-              //   child: Image.network(imageUrl, fit: BoxFit.fill,),
-              // ),
 
               Container(
                 width: double.infinity,
-                height: 300,
+                height: 250,
                 child: imageUrl.isEmpty
                     ? Image.asset('assets/logo.png', fit: BoxFit.cover)
-                    : Image.network(imageUrl, fit: BoxFit.fill,),
-              ),
-
-
-
-              /*Align(
-                alignment: Alignment.topRight,
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=> BusinessEditPage(
-                      currentbusinessimage: businessimage,
-                      currentcompanyname: companyname,
-                      currentmobile: mobile,
-                      currentemail: email,
-                      currentaddress: address,
-                      currentwebsite: website,
-                      currentybe: ybe,
-                      // documentid: documentid,
-                      currentbusinesskeywords: businesskeywords,
-                      currentbusinesstype: businesstype, id: widget.userID,
-                      imageUrl: imageParameter,
-
-                    )));
-                  },
-                 // icon: const Icon(Icons.edit,color: Colors.green,),
+                    : CachedNetworkImage(
+                  imageUrl: imageUrl,
+                  fit: BoxFit.fill,
+                  placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                  errorWidget: (context, url, error) => Image.asset('assets/logo.png'),
                 ),
-              ),*/
+              ),
               ExpansionTile(
                 leading: const Icon(Icons.info),
                 title: const Text('Business Information'),
@@ -240,13 +211,13 @@ class _BusinessInfoState extends State<BusinessInfo> {
                   Row(
                     // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      const Padding(
+                       Padding(
                         padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                        child: Text('Business Type'),
+                        child: Text('Business Type',style: Theme.of(context).textTheme.bodySmall),
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(108, 0, 0, 0),
-                        child: Text(businesstype!),
+                        child: Text(businesstype!,style: Theme.of(context).textTheme.bodySmall),
                       )
                     ],
                   ),
@@ -254,13 +225,13 @@ class _BusinessInfoState extends State<BusinessInfo> {
                   Row(
                     // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      const Padding(
+                       Padding(
                         padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                        child: Text('Company Name'),
+                        child: Text('Company Name',style: Theme.of(context).textTheme.bodySmall),
                       ),
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(94, 0, 0, 0),
-                        child: Text(companyname!),
+                        padding:  EdgeInsets.fromLTRB(94, 0, 0, 0),
+                        child: Text(companyname!,style: Theme.of(context).textTheme.bodySmall),
                       )
                     ],
                   ),
@@ -273,13 +244,13 @@ class _BusinessInfoState extends State<BusinessInfo> {
                       children:  [
                         Column(
                           children: [
-                            const Padding(
+                             Padding(
                               padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                              child: Text('Business Keywords'),
+                              child: Text('Business Keywords',style: Theme.of(context).textTheme.bodySmall),
                             ),
                             Padding(
                               padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
-                              child: Text(businesskeywords!,
+                              child: Text(businesskeywords!,style: Theme.of(context).textTheme.bodySmall,
                                 textAlign: TextAlign.justify,
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 3,),
@@ -301,15 +272,15 @@ class _BusinessInfoState extends State<BusinessInfo> {
                     child: Row(
                       // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children:  [
-                        const Padding(
+                         Padding(
                           padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
                           child: Align(
                               alignment: Alignment.topLeft,
-                              child: Text('Address')),
+                              child: Text('Address',style: Theme.of(context).textTheme.bodySmall)),
                         ),
                         Padding(
                           padding: const EdgeInsets.fromLTRB(124, 0, 0, 0),
-                          child: Text(address!,
+                          child: Text(address!,style: Theme.of(context).textTheme.bodySmall
                             //  textAlign: TextAlign.justify,
                           ),
                         )
@@ -319,15 +290,15 @@ class _BusinessInfoState extends State<BusinessInfo> {
                   const SizedBox(height: 20,),
                   Row(
                     children:  [
-                      const Padding(
+                       Padding(
                         padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
                         child: Align(
                             alignment: Alignment.topLeft,
-                            child: Text('Mobile')),
+                            child: Text('Mobile',style: Theme.of(context).textTheme.bodySmall)),
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(130, 0, 0, 0),
-                        child: Text(mobile!,
+                        child: Text(mobile!,style: Theme.of(context).textTheme.bodySmall,
                           textAlign: TextAlign.justify,
                         ),
                       )
@@ -336,15 +307,15 @@ class _BusinessInfoState extends State<BusinessInfo> {
                   const SizedBox(height: 20,),
                   Row(
                     children: [
-                      const Padding(
+                       Padding(
                         padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
                         child: Align(
                             alignment: Alignment.topLeft,
-                            child: Text('Email')),
+                            child: Text('Email',style: Theme.of(context).textTheme.bodySmall)),
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(140, 0, 0, 2),
-                        child: Text(email!,
+                        child: Text(email!,style: Theme.of(context).textTheme.bodySmall,
                           textAlign: TextAlign.justify,
                         ),
                       )
@@ -362,9 +333,9 @@ class _BusinessInfoState extends State<BusinessInfo> {
                     children: [
                       Column(
                         children: [
-                          const Padding(
+                           Padding(
                             padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                            child: Text('Website/Brochure'),
+                            child: Text('Website/Brochure',style: Theme.of(context).textTheme.bodySmall),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(left: 18),
@@ -375,7 +346,7 @@ class _BusinessInfoState extends State<BusinessInfo> {
                                   color: Colors.green,
                                 ),
                                 SizedBox(width: 5),  // Add some space between the icon and the text
-                                Text(website!),
+                                Text(website!,style: Theme.of(context).textTheme.bodySmall),
                               ],
                             ),
                           ),
@@ -387,13 +358,13 @@ class _BusinessInfoState extends State<BusinessInfo> {
                   Row(
                     // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      const Padding(
+                       Padding(
                         padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                        child: Text('Year of Business\nEstablished'),
+                        child: Text('Year of Business\nEstablished',style: Theme.of(context).textTheme.bodySmall),
                       ),
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(88, 0, 0, 0),
-                        child: Text(ybe!),
+                        padding:  EdgeInsets.fromLTRB(88, 0, 0, 0),
+                        child: Text(ybe!,style: Theme.of(context).textTheme.bodySmall),
                       )
                     ],
                   ),

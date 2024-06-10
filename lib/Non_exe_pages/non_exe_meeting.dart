@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-
 import 'non_exe_home.dart';
+
 
 class NonExeMeeting extends StatefulWidget {
   final String? userType;
@@ -21,7 +21,6 @@ class _NonExeMeetingState extends State<NonExeMeeting> {
       child: Scaffold(
         appBar: AppBar(
           title:  Text('Meeting',style: Theme.of(context).textTheme.displayLarge),
-          centerTitle: true,
           iconTheme: const IconThemeData(color: Colors.white),
           leading: IconButton(
             onPressed: () {
@@ -291,13 +290,9 @@ class _CompletedTrainingProgramState extends State<CompletedTrainingProgram> {
                     children: [
                       Row(
                         children: [
-                          //DATE TEXT STARTS
-                          //   const SizedBox(width: 23,),
-                          //  SizedBox(height: 30,),
                           Align(
                             alignment: Alignment.topLeft,
                             child: Text('${data[i]['meeting_date']}',
-                              //format(DateTime.now()),style:  TextStyle(color: Colors.green[900],fontWeight:FontWeight.bold),
                             ),
                           ),
                         ],

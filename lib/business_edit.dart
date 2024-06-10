@@ -272,21 +272,57 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
                     const SizedBox(height: 20,),
                     InkWell(
                       child: ClipOval(
-                          child: Container(
-                            width: 150,
-                            height: 150,
-                        child: selectedImage == null ? CachedNetworkImage(
-                          imageUrl: image, // Your network image URL
-                          placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                          errorWidget: (context, url, error) => Icon(Icons.error),
-                          cacheKey: image + DateTime.now().toString(), // Unique cache key
-                          fadeOutDuration: Duration(milliseconds: 200), // Smooth fade-out
-                          fadeInDuration: Duration(milliseconds: 200), // Smooth fade-in
-                          filterQuality: FilterQuality.high, // Maintain image quality
-                        ) : Image.memory(selectedImage!)),
+                        child: Container(
+                          width: 150,
+                          height: 150,
+                          child: Stack(
+                            children: [
+                              // Display the image
+                              Positioned.fill(
+                                child: selectedImage == null
+                                    ? Image.network(image, fit: BoxFit.cover)
+                                    : Image.memory(selectedImage!, fit: BoxFit.cover),
+                              ),
+                              // Overlay the camera icon
+                              Align(
+                                alignment: Alignment.bottomRight,
+                                child: Container(
+                                  padding: EdgeInsets.all(8.0),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black45,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Center(
+                                    child: Icon(
+                                      Icons.camera_alt,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                       onTap: () {
-                        pickImageFromGallery();
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (ctx) {
+                            return Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ListTile(
+                                  leading: Icon(Icons.storage),
+                                  title: Text("From Gallery"),
+                                  onTap: () {
+                                    pickImageFromGallery();
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
                       },
                     ),
                     const SizedBox(height: 10,),

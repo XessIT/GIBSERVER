@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:html';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -238,6 +239,9 @@ class _GuestProfileEditState extends State<GuestProfileEdit> {
       initState();
     });
   }
+  final ImagePicker _picker = ImagePicker();
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -284,39 +288,64 @@ class _GuestProfileEditState extends State<GuestProfileEdit> {
                     const SizedBox(
                       height: 20,
                     ),
-                    InkWell(
-                      child: ClipOval(
-                        child: Container(
-                          width: 150,
-                          height: 150,
-                          child: selectedImage == null
-                              ? Image.network(image)
-                              : Image.memory(selectedImage!),
-                        ),
-                      ),
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          builder: (ctx) {
-                            return Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                ListTile(
-                                  leading: Icon(Icons.storage),
-                                  title: Text("From Gallery"),
-                                  onTap: () {
-                                    pickImageFromGallery();
-                                    Navigator.pop(context);
-                                  },
+                InkWell(
+                  child: ClipOval(
+                    child: Container(
+                      width: 150,
+                      height: 150,
+                      child: Stack(
+                        children: [
+                          // Display the image
+                          Positioned.fill(
+                            child: selectedImage == null
+                                ? Image.network(image, fit: BoxFit.cover)
+                                : Image.memory(selectedImage!, fit: BoxFit.cover),
+                          ),
+                          // Overlay the camera icon
+                          Align(
+                            alignment: Alignment.bottomRight,
+                            child: Container(
+                              padding: EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                color: Colors.black45,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: Icon(
+                                  Icons.camera_alt,
+                                  color: Colors.white,
                                 ),
-                              ],
-                            );
-                          },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  onTap: () {
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (ctx) {
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ListTile(
+                              leading: Icon(Icons.storage),
+                              title: Text("From Gallery"),
+                              onTap: () {
+                                pickImageFromGallery();
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ],
                         );
                       },
-                    ),
+                    );
+                  },
+                ),
 
-                    const SizedBox(
+
+                const SizedBox(
                       height: 20,
                       width: 10,
                     ),
@@ -345,7 +374,7 @@ class _GuestProfileEditState extends State<GuestProfileEdit> {
                           );
                         },
                         decoration: InputDecoration(
-                          labelText: "First Name",
+                          hintText: "First Name",
                           labelStyle: Theme.of(context)
                               .textTheme
                               .bodySmall
@@ -392,12 +421,12 @@ class _GuestProfileEditState extends State<GuestProfileEdit> {
                           );
                         },
                         decoration: InputDecoration(
-                          labelText: "Last Name",
+                          hintText: "Last Name",
                           labelStyle: Theme.of(context)
                               .textTheme
                               .bodySmall
                               ?.copyWith(fontWeight: FontWeight.bold),
-                          hintText: "Last Name",
+
                           suffixIcon:
                               Icon(Icons.account_circle, color: Colors.green),
                         ),
@@ -438,12 +467,11 @@ class _GuestProfileEditState extends State<GuestProfileEdit> {
                           );
                         },
                         decoration: InputDecoration(
-                          labelText: "Company Name/Occupation",
+                          hintText: "Company Name/Occupation",
                           labelStyle: Theme.of(context)
                               .textTheme
                               .bodySmall
                               ?.copyWith(fontWeight: FontWeight.bold),
-                          hintText: "Company Name/Occupation",
                           suffixIcon: Icon(Icons.business, color: Colors.green),
                         ),
                         inputFormatters: [
@@ -477,12 +505,11 @@ class _GuestProfileEditState extends State<GuestProfileEdit> {
                           return null;
                         },
                         decoration: InputDecoration(
-                          labelText: "Email",
+                          hintText: "Email",
                           labelStyle: Theme.of(context)
                               .textTheme
                               .bodySmall
                               ?.copyWith(fontWeight: FontWeight.bold),
-                          hintText: "Email",
                           suffixIcon: Icon(Icons.mail, color: Colors.green),
                         ),
                       ),
@@ -510,12 +537,11 @@ class _GuestProfileEditState extends State<GuestProfileEdit> {
                           return null;
                         },
                         decoration: InputDecoration(
-                          labelText: "Mobile Number",
+                          hintText: "Mobile Number",
                           labelStyle: Theme.of(context)
                               .textTheme
                               .bodySmall
                               ?.copyWith(fontWeight: FontWeight.bold),
-                          hintText: "Mobile Number",
                           prefixText: '+91 ',
                           prefixStyle: Theme.of(context)
                               .textTheme
@@ -618,12 +644,11 @@ class _GuestProfileEditState extends State<GuestProfileEdit> {
                           );
                         },
                         decoration: InputDecoration(
-                          labelText: "Location",
+                          hintText: "Location",
                           labelStyle: Theme.of(context)
                               .textTheme
                               .bodySmall
                               ?.copyWith(fontWeight: FontWeight.bold),
-                          hintText: "Location",
                           suffixIcon: Icon(Icons.location_on_rounded,
                               color: Colors.green),
                         ),

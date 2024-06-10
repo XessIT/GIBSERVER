@@ -788,7 +788,6 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                                 bool isRegistered =
                                                     await isUserRegistered(
                                                         id);
-
                                                 if (isRegistered) {
                                                   // Directly show the guest addition dialog
                                                   showDialog(
@@ -844,8 +843,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                                                                   meeting_place: meetingPlace,
                                                                                   meeting_type: meetingType,
                                                                                 )));
-
-                                                                        registerDateStoreDatabase(id, meetingType, meetingDate, meetingPlace);
+                                                                     //   registerDateStoreDatabase(id, meetingType, meetingDate, meetingPlace);
                                                                       }
                                                                     },
                                                                     child: Text(
@@ -885,6 +883,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                                               TextButton(
                                                                   onPressed:
                                                                       () {
+                                                                        registerDateStoreDatabase(id, meetingType, meetingDate, meetingPlace);
                                                                     Navigator.pop(
                                                                         context);
                                                                     showDialog(
@@ -940,8 +939,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                                                                                         meeting_place: meetingPlace,
                                                                                                         meeting_type: meetingType,
                                                                                                       )));
-
-                                                                                          registerDateStoreDatabase(id, meetingType, meetingDate, meetingPlace);
+                                                                                       //   registerDateStoreDatabase(id, meetingType, meetingDate, meetingPlace);
                                                                                         }
                                                                                       },
                                                                                       child: Text(
