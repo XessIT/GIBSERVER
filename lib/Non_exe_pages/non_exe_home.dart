@@ -16,6 +16,7 @@ import 'package:flutter/widgets.dart';
 import 'package:gipapp/Non_exe_pages/settings_non_executive.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
@@ -163,6 +164,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
   String profileImage = "";
   String? fetchMobile = "";
   bool isLoading = true;
+  bool isLoadingMeeting = true;
 
   final GlobalKey<FormState> tempKey = GlobalKey<FormState>();
   var _connectivityResult = ConnectivityResult.none;
@@ -219,7 +221,11 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
         isLoading = false; // Hide the loading indicator after 4 seconds
       });
     });
-
+    Future.delayed( Duration(seconds: 2),(){
+      setState(() {
+        isLoadingMeeting = false; // Hide the loading indicator after 4 seconds
+      });
+    });
     super.initState();
   }
 
@@ -400,25 +406,18 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
             print('Error parsing registration dates: $e');
             return false;
           }
-
-
           // Check if the registration opening date is before the current date
           bool isOpenForRegistration =
               registrationOpeningDate.isBefore(DateTime.now());
-
           // Check if the registration closing date is after the current date
           bool isRegistrationOpen =
               registrationClosingDate.isAfter(DateTime.now());
-
-
-
           // Return true if the meeting is open for registration and false otherwise
           return isOpenForRegistration && isRegistrationOpen;
         }).toList();
         setState(() {
           // Cast the filtered data to the correct type and update your state
           data = filteredData.cast<Map<String, dynamic>>();
-
         });
       } else {
         print('Error: ${response.statusCode}');
@@ -573,7 +572,23 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
           isLoading = false; // Hide the loading indicator after 4 seconds
         });
       });
+      Future.delayed(const Duration(seconds: 1), () {
+        setState(() {
+          isLoadingMeeting = false; // Hide the loading indicator after 4 seconds
+        });
+      });
+
+
     });
+  }
+
+  String _formatDate(String dateStr) {
+    try {
+      DateTime date = DateFormat('yyyy-MM-dd').parse(dateStr);
+      return DateFormat('MMMM-dd,yyyy').format(date);
+    } catch (e) {
+      return dateStr; // Return the original string if parsing fails
+    }
   }
 
   @override
@@ -624,7 +639,9 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  data.isEmpty ? SizedBox.shrink() : SizedBox(height: 180),
+                 // data.isEmpty ? SizedBox.shrink() : SizedBox(height: 180),
+                  SizedBox(height: 190,),
+
                   if (_imagePaths.isNotEmpty) ...[
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -656,18 +673,39 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                   final imageResponse =
                                       snapshot.data as http.Response;
                                   if (imageResponse.statusCode == 200) {
-                                    return Container(
-                                      margin:
-                                          EdgeInsets.symmetric(horizontal: 5.0),
-                                      child: CachedNetworkImage(
-                                        imageUrl:
-                                            'http://mybudgetbook.in/GIBADMINAPI/$imagePath',
-                                        placeholder: (context, url) => Center(
-                                            child: CircularProgressIndicator()),
-                                        errorWidget: (context, url, error) =>
-                                            Text('Error loading image'),
-                                        fit: BoxFit.cover,
-                                        width: double.infinity,
+                                    return GestureDetector(
+                                      onTap: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return Dialog(
+                                              child: Container(
+                                                width:
+                                                300.0, // Set the width of the dialog
+                                                height:
+                                                400.0,
+                                                child: PhotoView(
+                                                  imageProvider: CachedNetworkImageProvider(
+                                                    'http://mybudgetbook.in/GIBADMINAPI/$imagePath',
+                                                  ),
+                                                  backgroundDecoration: BoxDecoration(
+                                                    color: Colors.black,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      },
+                                      child: Container(
+                                        margin: EdgeInsets.symmetric(horizontal: 5.0),
+                                        child: CachedNetworkImage(
+                                          imageUrl: 'http://mybudgetbook.in/GIBADMINAPI/$imagePath',
+                                          placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                                          errorWidget: (context, url, error) => Text('Error loading image'),
+                                          fit: BoxFit.cover,
+                                          width: double.infinity,
+                                        ),
                                       ),
                                     );
                                   } else {
@@ -710,7 +748,10 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                       ),
                     ),
                   ),
-                  Container(
+                  isLoadingMeeting ? Center(child: CircularProgressIndicator())
+                      : data.isEmpty
+                      ? Center(child: Text("No upcoming meetings", style: TextStyle(color: Colors.black),))
+                      : Container(
                     child: CarouselSlider(
                       items: data.map((meeting) {
                         String meetingDate = meeting['meeting_date'];
@@ -972,7 +1013,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
-                                              '${meeting['meeting_date']}',
+                                              _formatDate(meeting["meeting_date"]),
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .bodySmall,
@@ -1116,7 +1157,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                               children: [
                                                 // START TEXTS
                                                 Text(
-                                                  '${data1[i]['company_name']},',
+                                                  '${data1[i]['company_name']}',
                                                   // Text style starts
                                                   style: const TextStyle(
                                                     color: Colors.green,
@@ -1370,46 +1411,31 @@ class _NavigationBarNonState extends State<NavigationBarNon> {
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.home_outlined,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.black45
-                  : Colors.white,
+              Icons.home,
             ),
             label: 'Home',
           ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.local_offer,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.black45
-                  : Colors.white,
             ),
             label: 'Offers',
           ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.supervisor_account,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.black45
-                  : Colors.white,
             ),
             label: 'Attendance',
           ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.account_circle_outlined,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.black45
-                  : Colors.white,
             ),
             label: 'Members',
           ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.more_horiz,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.black45
-                  : Colors.white,
             ),
             label: 'More',
           ),

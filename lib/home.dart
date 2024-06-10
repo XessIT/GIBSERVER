@@ -11,16 +11,16 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import 'business.dart';
-
 import 'gib_members.dart';
 import 'guest_home.dart';
 import 'guest_slip.dart';
 import 'meeting.dart';
-
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+
 
 class Homepage extends StatefulWidget {
   final String? userType;
@@ -43,6 +43,7 @@ class _HomepageState extends State<Homepage> {
   String? fetchMobile = "";
   String? memberType = "Executive";
   bool isLoading = true;
+  bool isLoadingMeeting = true;
   var _connectivityResult = ConnectivityResult.none;
   Future<void> _checkConnectivityAndGetData() async {
     var connectivityResult = await Connectivity().checkConnectivity();
@@ -95,6 +96,12 @@ class _HomepageState extends State<Homepage> {
         isLoading = false; // Hide the loading indicator after 4 seconds
       });
     });
+
+    Future.delayed(const Duration(seconds: 2), () {
+      setState(() {
+        isLoadingMeeting = false; // Hide the loading indicator after 4 seconds
+      });
+    });
     super.initState();
   }
 
@@ -125,6 +132,11 @@ class _HomepageState extends State<Homepage> {
       Future.delayed(const Duration(seconds: 1), () {
         setState(() {
           isLoading = false; // Hide the loading indicator after 4 seconds
+        });
+      });
+      Future.delayed(const Duration(seconds: 2), () {
+        setState(() {
+            isLoadingMeeting = false; // Hide the loading indicator after 4 seconds
         });
       });
     });
@@ -549,6 +561,21 @@ class _HomepageState extends State<Homepage> {
     }
   }
 
+  //download image
+  Future<void> _downloadImage(String url) async {
+    var status = await Permission.storage.request();
+    if (status.isGranted) {
+      final directory = await getExternalStorageDirectory();
+      final filePath = '${directory?.path}/${url.split('/').last}';
+      final response = await http.get(Uri.parse(url));
+      final file = File(filePath);
+      await file.writeAsBytes(response.bodyBytes);
+      print('Image downloaded to $filePath');
+    } else {
+      print('Permission denied');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -629,31 +656,48 @@ class _HomepageState extends State<Homepage> {
                               items: _imagePaths.map((imagePath) {
                                 return Builder(
                                   builder: (BuildContext context) {
-                                    return FutureBuilder(
-                                      future: http.get(Uri.parse(
-                                          'http://mybudgetbook.in/GIBADMINAPI/$imagePath')),
+                                    return FutureBuilder(future: http.get(Uri.parse('http://mybudgetbook.in/GIBADMINAPI/$imagePath')),
                                       builder: (context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.done &&
-                                            snapshot.hasData) {
-                                          final imageResponse =
-                                          snapshot.data as http.Response;
+                                        if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                                          final imageResponse = snapshot.data as http.Response;
                                           if (imageResponse.statusCode == 200) {
-                                            return Container(
-                                              margin:
-                                              EdgeInsets.symmetric(horizontal: 5.0),
-                                              child: CachedNetworkImage(
-                                                imageUrl:
-                                                'http://mybudgetbook.in/GIBADMINAPI/$imagePath',
-                                                placeholder: (context, url) => Center(
-                                                    child: CircularProgressIndicator()),
-                                                errorWidget: (context, url, error) =>
-                                                    Text('Error loading image'),
-                                                fit: BoxFit.cover,
-                                                width: double.infinity,
+                                            return GestureDetector(
+                                              onTap: () {
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (BuildContext context) {
+                                                    return Dialog(
+                                                      child: Container(
+                                                        width:
+                                                        300.0, // Set the width of the dialog
+                                                        height:
+                                                        400.0,
+                                                        child: PhotoView(
+                                                          imageProvider: CachedNetworkImageProvider(
+                                                            'http://mybudgetbook.in/GIBADMINAPI/$imagePath',
+                                                          ),
+                                                          backgroundDecoration: BoxDecoration(
+                                                            color: Colors.black,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                              child: Container(
+                                                margin: EdgeInsets.symmetric(horizontal: 5.0),
+                                                child: CachedNetworkImage(
+                                                  imageUrl: 'http://mybudgetbook.in/GIBADMINAPI/$imagePath',
+                                                  placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                                                  errorWidget: (context, url, error) => Text('Error loading image'),
+                                                  fit: BoxFit.cover,
+                                                  width: double.infinity,
+                                                ),
                                               ),
                                             );
-                                          } else {
+                                          }
+                                          else {
                                             return Text('Error loading image');
                                           }
                                         } else if (snapshot.connectionState ==
@@ -695,7 +739,9 @@ class _HomepageState extends State<Homepage> {
                         ),
                       ),
 
-                      data.isEmpty ? Center(child: Text('No Meeting',style: TextStyle(color: Colors.black),))
+                      isLoadingMeeting ? Center(child: CircularProgressIndicator())
+                       : data.isEmpty
+                          ? Center(child: Text("No upcoming meetings", style: TextStyle(color: Colors.black),))
                           : CarouselSlider(
                         items: data.map((meeting) {
                           String meetingDate = meeting['meeting_date'];
@@ -945,7 +991,7 @@ class _HomepageState extends State<Homepage> {
                                               .spaceBetween,
                                           children: [
                                             Text(
-                                              '${meeting['meeting_date']}',
+                                        _formatDate(meeting["meeting_date"]),
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .bodySmall,
@@ -1023,6 +1069,7 @@ class _HomepageState extends State<Homepage> {
                           viewportFraction: 1,
                         ),
                       ),
+
                       const SizedBox(height: 10),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -1081,7 +1128,6 @@ class _HomepageState extends State<Homepage> {
                                                                 300.0, // Set the width of the dialog
                                                                 height:
                                                                 400.0, // Set the height of the dialog
-
                                                                 child:
                                                                 PhotoView(
                                                                   imageProvider:
