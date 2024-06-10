@@ -170,7 +170,9 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
         saveData();
         Navigator.push(context, MaterialPageRoute(builder: (context) => Profile(userID: widget.userId, userType: widget.userType.toString(),)));
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text("Profile Successfully Updated"))
+            content: Text("Profile Successfully Updated"),
+          backgroundColor: Colors.green,
+        )
         );
       } else {
         print("Error: ${response.statusCode}");
