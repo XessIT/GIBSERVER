@@ -43,6 +43,7 @@ class _HomepageState extends State<Homepage> {
   String? memberType = "Executive";
   bool isLoading = true;
   bool isLoadingMeeting = true;
+
   var _connectivityResult = ConnectivityResult.none;
   Future<void> _checkConnectivityAndGetData() async {
     var connectivityResult = await Connectivity().checkConnectivity();
@@ -103,6 +104,13 @@ class _HomepageState extends State<Homepage> {
     });
     super.initState();
   }
+
+  @override
+  void dispose() {
+    // Ensure no context-dependent operations are performed here
+    super.dispose();
+  }
+
 
   String _formatDate(String dateStr) {
     try {
@@ -745,6 +753,8 @@ class _HomepageState extends State<Homepage> {
                                     mainAxisAlignment:
                                     MainAxisAlignment.start,
                                     children: [
+
+
                                       Padding(
                                         padding:
                                         const EdgeInsets.all(8.0),
@@ -767,9 +777,7 @@ class _HomepageState extends State<Homepage> {
 
                                                   if (isRegistered) {
                                                     // Directly show the guest addition dialog
-                                                    showDialog(
-                                                        context:
-                                                        context,
+                                                    showDialog(context: context,
                                                         builder: (ctx) =>
                                                             Form(
                                                               key: tempKey,
@@ -779,26 +787,43 @@ class _HomepageState extends State<Homepage> {
                                                                   'Do you wish to add Guest?',
                                                                   style: Theme.of(context).textTheme.bodySmall,
                                                                 ),
-                                                                content: TextFormField(
-                                                                  controller: guestcount,
-                                                                  validator: (value) {
-                                                                    if (value!.isEmpty) {
-                                                                      return "* Enter a Guest Count";
-                                                                    }else if (value == "0") {
-                                                                      return "* Enter a Valid Guest Count";
-                                                                    }
-                                                                    return null;
-                                                                  },
-                                                                  decoration: InputDecoration(
-                                                                    labelText: "Guest Count",
-                                                                    labelStyle: Theme.of(context).textTheme.bodySmall,
-                                                                    hintText: "Ex:5",
+                                                                content: Container(
+                                                                  height: 100,
+                                                                  width:200,
+                                                                  child: Column(
+                                                                    children: [
+                                                                      Row(
+                                                                        mainAxisAlignment: MainAxisAlignment.end,
+                                                                        children: [
+                                                                          Text(
+                                                                            'Already Registered!',
+
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                      TextFormField(
+                                                                        controller: guestcount,
+                                                                        validator: (value) {
+                                                                          if (value!.isEmpty) {
+                                                                            return "* Enter a Guest Count";
+                                                                          }else if (value == "0") {
+                                                                            return "* Enter a Valid Guest Count";
+                                                                          }
+                                                                          return null;
+                                                                        },
+                                                                        decoration: InputDecoration(
+                                                                          labelText: "Guest Count",
+                                                                          labelStyle: Theme.of(context).textTheme.bodySmall,
+                                                                          hintText: "Ex:5",
+                                                                        ),
+                                                                        keyboardType: TextInputType.number,
+                                                                        inputFormatters: <TextInputFormatter>[
+                                                                          FilteringTextInputFormatter.digitsOnly,
+                                                                          LengthLimitingTextInputFormatter(3)
+                                                                        ],
+                                                                      ),
+                                                                    ],
                                                                   ),
-                                                                  keyboardType: TextInputType.number,
-                                                                  inputFormatters: <TextInputFormatter>[
-                                                                    FilteringTextInputFormatter.digitsOnly,
-                                                                    LengthLimitingTextInputFormatter(3)
-                                                                  ],
                                                                 ),
                                                                 actions: [
                                                                   TextButton(
@@ -862,6 +887,8 @@ class _HomepageState extends State<Homepage> {
                                                                 () {
                                                               Navigator.pop(
                                                                   context);
+                                                              registerDateStoreDatabase(id, meetingType, meetingDate, meetingPlace);
+
                                                               showDialog(
                                                                   context:
                                                                   context,
@@ -915,7 +942,7 @@ class _HomepageState extends State<Homepage> {
                                                                                               meeting_type: meetingType,
                                                                                             )));
 
-                                                                                    registerDateStoreDatabase(id, meetingType, meetingDate, meetingPlace);
+                                                                                   // registerDateStoreDatabase(id, meetingType, meetingDate, meetingPlace);
                                                                                   }
                                                                                 },
                                                                                 child: Text(
@@ -965,6 +992,9 @@ class _HomepageState extends State<Homepage> {
                                           ],
                                         ),
                                       ),
+
+
+
                                       const SizedBox(
                                         height: 5,
                                       ),
