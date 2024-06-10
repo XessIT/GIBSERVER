@@ -15,7 +15,9 @@ import 'package:http/http.dart' as http;
 class BusinessPage extends StatefulWidget {
   final String? userType;
   final String? userId;
-  const BusinessPage({super.key, required this.userType, required this.userId});
+  final int initialTabIndex; // Add this line
+
+  const BusinessPage({super.key, required this.userType, required this.userId, this.initialTabIndex = 0}); // Modify this line
 
   @override
   State<BusinessPage> createState() => _BusinessPageState();
@@ -27,7 +29,8 @@ class _BusinessPageState extends State<BusinessPage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2, // Change this to 2 to match the number of tabs
+      length: 2,
+      initialIndex: widget.initialTabIndex, // Set initial index here
       child: Scaffold(
         appBar: AppBar(
           title: Text(
@@ -117,7 +120,6 @@ class _BusinessPageState extends State<BusinessPage> {
     );
   }
 }
-
 class GibTransaction extends StatefulWidget {
   final String? userType;
   final String? userId;
@@ -758,7 +760,7 @@ class _MyTransactionState extends State<MyTransaction> {
         if (response.statusCode == 200) {
           final responseData = json.decode(response.body);
           setState(() {
-            honortotalRows = responseData['totalRows'];
+            honortotalRows = responseData['total_rows'] ?? '0';
           });
         } else {
           print('Error: ${response.statusCode}');
@@ -834,6 +836,7 @@ class _MyTransactionState extends State<MyTransaction> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       body: Center(
         child: SingleChildScrollView(
           child: Column(
@@ -1148,318 +1151,6 @@ class _MyTransactionState extends State<MyTransaction> {
 
 
 
-
-
-class MyTotalTransaction extends StatefulWidget {
-  final String? userId;
-  final String? userType;
-  const MyTotalTransaction({
-    Key? key, required this.userId, required this.userType}) : super(key: key);
-
-  @override
-  State<MyTotalTransaction> createState() => _MyTotalTransactionState();
-}
-
-class _MyTotalTransactionState extends State<MyTotalTransaction> {
-  String? mobile="";
-  String? name="";
-
-  String? id ="";
-  String? totalRows = "0";
-
-  Future<void> getBusinessCount(String id) async {
-    try {
-      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/gibBusiness.php?table=MyBusinessTotalYear&id=$id');
-      final response = await http.get(url);
-      if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        setState(() {
-          totalRows = responseData['totalRows'];
-        });
-      } else {
-        print('Error: ${response.statusCode}');
-      }
-    } catch (error) {
-      print('Error: $error');
-    }
-  }
-
-  @override
-  void initState() {
-    id = widget.userId;
-    getBusinessCount(id!);
-    // TODO: implement initState
-  }
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: 20,),
-              Padding(
-                padding: const EdgeInsets.only(left: 5.0, right: 5.0),
-                child: Card(
-                  elevation: 5,
-                  margin: EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    children: [
-                      // Network Image
-                      Container(
-                        height: 110,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          gradient: LinearGradient(
-                            colors: [Colors.blue, Colors.green], // Gradient colors
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                          ),
-                        ),
-                        child: Padding(
-                          padding:  EdgeInsets.all(16.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("Business Year : $totalRows", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),),
-                                  SizedBox(height: 10,),
-                                  SizedBox(height: 10,),
-                                  Text("Upto Date", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),),
-                                ],
-                              ),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  CircleAvatar(
-                                    radius: 30,
-                                    backgroundImage: AssetImage('assets/letter-b.png'),
-                                  ),
-                                ],
-
-                              ),
-                            ],
-                          ),
-                        ),
-
-                      ),
-                      // Text "Business"
-                      Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Text(
-                          'Business',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ), /// Business year
-              SizedBox(height: 20,),
-              Padding(
-                padding: const EdgeInsets.only(left: 5.0, right: 5.0),
-                child: Card(
-                  elevation: 5,
-                  margin: EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    children: [
-                      // Network Image
-                      Container(
-                        height: 110,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          gradient: LinearGradient(
-                            colors: [Color(0xFFE4E6F1), Color(0xFFCBD6EE)], // Gradient colors
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                          ),
-
-                        ),
-                        child: Padding(
-                          padding:  EdgeInsets.all(16.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("Business Year", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.green),),
-                                  SizedBox(height: 10,),
-                                  SizedBox(height: 10,),
-                                  Text("Upto Date", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.green),),
-                                ],
-                              ),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  CircleAvatar(
-                                    radius: 30,
-                                    backgroundColor: Colors.green,
-                                    child: Text(
-                                      'G2G', style: TextStyle(color: Colors.white,fontSize: 30, fontWeight: FontWeight.bold),
-                                    ),
-                                  ),                                ],
-
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      // Text "Business"
-                      Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Text(
-                          'G2G',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),  ///G2G
-              SizedBox(height: 20,),
-              Padding(
-                padding: const EdgeInsets.only(left: 5.0, right: 5.0),
-                child: Card(
-                  elevation: 5,
-                  margin: EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    children: [
-                      // Network Image
-                      Container(
-                        height: 110,
-                        decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [Color(0xFF6096B4), Color(0xFF93BFCF)], // Gradient colors
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                            ),
-                            borderRadius: BorderRadius.circular(10)
-                        ),
-                        child: Padding(
-                          padding:  EdgeInsets.all(16.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("Business Year", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),),
-                                  SizedBox(height: 10,),
-                                  SizedBox(height: 10,),
-                                  Text("Upto Date", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),),
-                                ],
-                              ),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  CircleAvatar(
-                                    radius: 30,
-                                    backgroundImage: AssetImage('assets/letter-g.png'),
-                                  ),
-                                ],
-
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      // Text "Business"
-                      Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Text(
-                          'Guest',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ), /// guest
-              SizedBox(height: 20,),
-              Padding(
-                padding: const EdgeInsets.only(left: 5.0, right: 5.0),
-                child: Card(
-                  elevation: 5,
-                  margin: EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    children: [
-                      // Network Image
-                      Container(
-                        height: 110,
-                        decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [Color(0xFFADD8E6), Color(0xFF98FB98)], // Gradient colors (Light blue and light green)
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                            ),
-                            borderRadius: BorderRadius.circular(10)
-                        ),
-                        child: Padding(
-                          padding:  EdgeInsets.all(16.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("Business Year", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),),
-                                  SizedBox(height: 10,),
-                                  SizedBox(height: 10,),
-                                  Text("Upto Date", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),),
-                                ],
-                              ),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  CircleAvatar(
-                                    radius: 30,
-                                    backgroundImage: AssetImage('assets/letter-h.png'),
-                                  ),
-                                ],
-
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      // Text "Business"
-                      Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Text(
-                          'Honoring',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),  /// Hounrint
-              SizedBox(height: 20,),
-
-            ],
-
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 
 
