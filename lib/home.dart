@@ -744,6 +744,7 @@ class _HomepageState extends State<Homepage> {
                           String meetingType = meeting['meeting_type'];
                           String id = meeting['id'];
 
+
                           ///DateTime dateTime = DateFormat('yyyy-MM-dd').parse(dateString);
                           return Builder(
                             builder: (BuildContext context) {
@@ -761,7 +762,7 @@ class _HomepageState extends State<Homepage> {
                                         const EdgeInsets.all(8.0),
                                         child: Row(
                                           mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                          MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
                                               '${meeting['meeting_type']}',
@@ -769,9 +770,7 @@ class _HomepageState extends State<Homepage> {
                                                   .textTheme
                                                   .headlineSmall,
                                             ),
-                                            const SizedBox(
-                                              width: 20,
-                                            ),
+
                                             IconButton(
                                                 onPressed: () async {
                                                   bool isRegistered = await isUserRegistered(id);
@@ -991,7 +990,60 @@ class _HomepageState extends State<Homepage> {
                                                   Icons
                                                       .person_add_alt_1_rounded,
                                                   color: Colors.green,
-                                                ))
+                                                )),
+
+                                            FutureBuilder<bool>(
+                                              future: isUserRegistered(id),
+                                              builder: (context, snapshot) {
+                                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                                  return CircularProgressIndicator();
+                                                } else if (snapshot.hasError) {
+                                                  return Icon(Icons.error, color: Colors.red);
+                                                } else {
+                                                  bool isRegistered = snapshot.data ?? false;
+                                                  return Container(
+                                                    decoration:
+                                                    const BoxDecoration(
+                                                      color: Colors
+                                                          .green, // Change the color here
+                                                      borderRadius:
+                                                      BorderRadius
+                                                          .only(
+                                                        topLeft: Radius
+                                                            .circular(
+                                                            10.0),
+                                                        bottomRight: Radius
+                                                            .circular(
+                                                            10.0),
+                                                      ),
+                                                    ),
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal:
+                                                        6.0,
+                                                        vertical:
+                                                        2.0),
+                                                    child: Text(
+                                                      isRegistered ? 'Registered' : 'Un Registered',
+                                                      style: TextStyle(
+                                                        color: Colors
+                                                            .white, // Change the text color here
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold,
+                                                        fontStyle:
+                                                        FontStyle
+                                                            .italic, // Add any additional styles here
+                                                        fontSize:
+                                                        12.0, // Adjust font size as needed
+                                                      ),
+                                                    ),
+                                                  );
+                                                }
+                                              },
+                                            ),
+
+                                            /// in this view i want a text for regesiter meeting , and unregesiter meeting
                                           ],
                                         ),
                                       ),
