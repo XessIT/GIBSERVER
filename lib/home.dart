@@ -611,7 +611,7 @@ class _HomepageState extends State<Homepage> {
                       ),
                       if (_imagePaths.isNotEmpty) ...[
                         SizedBox(
-                          height: 200,
+                          height: 80,
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
