@@ -146,15 +146,17 @@ class _GibGalleryState extends State<GibGallery> {
   }
 }
 
+
+
 class ViewPhotosPage extends StatefulWidget {
   final String userType;
   final String? userID;
 
   const ViewPhotosPage({
-    super.key,
+    Key? key,
     required this.userType,
     required this.userID,
-  });
+  }) : super(key: key);
 
   @override
   State<ViewPhotosPage> createState() => _ViewPhotosPageState();
@@ -211,7 +213,7 @@ class _ViewPhotosPageState extends State<ViewPhotosPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("GiB Gallery",style: Theme.of(context).textTheme.displayLarge),
+        title: Text("GiB Gallery", style: Theme.of(context).textTheme.displayLarge),
         iconTheme: IconThemeData(
           color: Colors.white,
         ),
@@ -223,8 +225,8 @@ class _ViewPhotosPageState extends State<ViewPhotosPage> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => SettingsPageNon(
-                    userType: widget.userType.toString(),
-                    userId: widget.userID.toString(),
+                    userType: widget.userType,
+                    userId: widget.userID,
                   ),
                 ),
               );
@@ -233,8 +235,8 @@ class _ViewPhotosPageState extends State<ViewPhotosPage> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => SettingsPageExecutive(
-                    userType: widget.userType.toString(),
-                    userId: widget.userID.toString(),
+                    userType: widget.userType,
+                    userId: widget.userID,
                   ),
                 ),
               );
@@ -242,93 +244,64 @@ class _ViewPhotosPageState extends State<ViewPhotosPage> {
           },
         ),
       ),
-      body: PopScope(
-        canPop: false,
-        onPopInvoked: (didPop)  {
-          if (widget.userType == "Non-Executive") {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SettingsPageNon(
-                  userType: widget.userType.toString(),
-                  userId: widget.userID.toString(),
-                ),
-              ),
-            );
-          } else {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SettingsPageExecutive(
-                  userType: widget.userType.toString(),
-                  userId: widget.userID.toString(),
-                ),
-              ),
-            );
-          }          },
-        child: _imageGroups.isEmpty ? const Center(child: Text("No Images")) : ListView.builder(
-          itemCount: _imageGroups.length,
-          itemBuilder: (context, index) {
-            final group = _imageGroups[index];
-            return Card(
-              margin: EdgeInsets.all(8.0),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Event Name - ${group['event_name'] ?? 'Unknown'}',
-                          style: const TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
-                          ),
+      body: _imageGroups.isEmpty
+          ? const Center(child: Text("No Images"))
+          : ListView.builder(
+        itemCount: _imageGroups.length,
+        itemBuilder: (context, index) {
+          final group = _imageGroups[index];
+          return Card(
+            margin: EdgeInsets.all(8.0),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Event Name - ${group['event_name'] ?? 'Unknown'}',
+                        style: const TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold,
                         ),
-                        Text(
-                          'Date - ${group['selectedDate'] ?? 'Unknown'}',
-                          style: const TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8.0),
-                    GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 5,
-                        crossAxisSpacing: 8.0,
-                        mainAxisSpacing: 10.0,
                       ),
-                      itemCount: group['imagepaths']?.length ?? 0,
-                      itemBuilder: (context, imageIndex) {
-                        final imagePath = group['imagepaths']?[imageIndex] ?? '';
-                        final imageName = imagePath.split('/').last;
-
-                        return Stack(
-                          children: [
-                            CachedNetworkImage(
-                              imageUrl: 'http://mybudgetbook.in/GIBADMINAPI/$imagePath',
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                              placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
-                              errorWidget: (context, url, error) => const Text('Error loading image'),
-                            ),
-                          ],
-                        );
-                      },
+                      Text(
+                        'Date - ${group['selectedDate'] ?? 'Unknown'}',
+                        style: const TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8.0),
+                  GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 5,
+                      crossAxisSpacing: 8.0,
+                      mainAxisSpacing: 10.0,
                     ),
-                  ],
-                ),
+                    itemCount: group['imagepaths']?.length ?? 0,
+                    itemBuilder: (context, imageIndex) {
+                      final imagePath = group['imagepaths']?[imageIndex] ?? '';
+                      return CachedNetworkImage(
+                        imageUrl: 'http://mybudgetbook.in/GIBADMINAPI/$imagePath',
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+                        errorWidget: (context, url, error) => const Text('Error loading image'),
+                      );
+                    },
+                  ),
+                ],
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }

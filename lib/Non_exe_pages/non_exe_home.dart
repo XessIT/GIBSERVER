@@ -639,7 +639,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                  // data.isEmpty ? SizedBox.shrink() : SizedBox(height: 180),
-                  SizedBox(height: 190,),
+                  SizedBox(height: 170,),
 
                   if (_imagePaths.isNotEmpty) ...[
                     Padding(
