@@ -77,7 +77,6 @@ class _MyGalleryState extends State<MyGallery> {
 
 
 
-
 class Gallery extends StatefulWidget {
   final String? userId;
   final String? userType;
@@ -89,31 +88,43 @@ class Gallery extends StatefulWidget {
 
 class _GalleryState extends State<Gallery> {
   bool _isLoading = false;
-
   final ImagePicker _imagePicker = ImagePicker();
   List<String> _imageUrlsList = [];
   List<Map<String, dynamic>> _imageDataList = [];
 
-  Future<void> _pickAndUploadImage(ImageSource source) async {
-    final pickedImage = await _imagePicker.pickImage(
-      source: source,
+  Future<void> _pickAndUploadImages() async {
+    int imagesToPick = 5 - _imageUrlsList.length;
+    final pickedImages = await _imagePicker.pickMultiImage(
       imageQuality: 10,
       maxHeight: 1000,
       maxWidth: 1000,
     );
 
-    if (pickedImage != null) {
+    if (pickedImages != null && pickedImages.length > imagesToPick) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('You can only pick $imagesToPick images.')),
+      );
+      return;
+    }
+
+    if (pickedImages != null) {
       setState(() {
-        _isLoading = true;  // Set loading to true
+        _isLoading = true;
       });
-      final bytes = await pickedImage.readAsBytes();
-      await _uploadImage(bytes);
+
+      for (var pickedImage in pickedImages) {
+        final bytes = await pickedImage.readAsBytes();
+        await _uploadImage(bytes);
+      }
+
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
   Future<void> _uploadImage(Uint8List imageBytes) async {
-    final url =
-        'http://mybudgetbook.in/GIBAPI/mygallery.php?userId=${widget.userId}';
+    final url = 'http://mybudgetbook.in/GIBAPI/mygallery.php?userId=${widget.userId}';
 
     final response = await http.post(
       Uri.parse(url),
@@ -126,21 +137,14 @@ class _GalleryState extends State<Gallery> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Image uploaded successfully.')),
       );
-
-      // Refresh the gallery after successful upload
       await _fetchImages();
     } else {
       print('Failed to upload image.');
     }
-
-    setState(() {
-      _isLoading = false;  // Set loading to false after the entire process
-    });
   }
 
   Future<void> _fetchImages() async {
-    final url =
-        'http://mybudgetbook.in/GIBAPI/mygalleryfetch.php?userId=${widget.userId}';
+    final url = 'http://mybudgetbook.in/GIBAPI/mygalleryfetch.php?userId=${widget.userId}';
 
     final response = await http.get(Uri.parse(url));
 
@@ -166,10 +170,10 @@ class _GalleryState extends State<Gallery> {
     super.initState();
     _fetchImages();
   }
+
   Future<void> _deleteImage(int imageIndex) async {
     String imageId = _imageDataList[imageIndex]['id'];
-    final url =
-        'http://mybudgetbook.in/GIBAPI/deleteImage.php?image_id=$imageId';
+    final url = 'http://mybudgetbook.in/GIBAPI/deleteImage.php?image_id=$imageId';
 
     final response = await http.delete(Uri.parse(url));
 
@@ -217,19 +221,26 @@ class _GalleryState extends State<Gallery> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // Appbar title
         title: Text('My Gallery', style: Theme.of(context).textTheme.displayLarge),
         iconTheme: const IconThemeData(color: Colors.white),
         leading: IconButton(
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPageExecutive(userType: widget.userType, userId: widget.userId,)));
-            },
-            icon: const Icon(Icons.navigate_before)),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SettingsPageExecutive(
+                  userType: widget.userType,
+                  userId: widget.userId,
+                ),
+              ),
+            );
+          },
+          icon: const Icon(Icons.navigate_before),
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
@@ -237,23 +248,7 @@ class _GalleryState extends State<Gallery> {
         foregroundColor: Colors.white,
         onPressed: () async {
           if (_imageUrlsList.length < 5) {
-            showModalBottomSheet(
-                context: context,
-                builder: (ctx) {
-                  return Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ListTile(
-                        leading: const Icon(Icons.photo_library),
-                        title: const Text("From Gallery"),
-                        onTap: () async {
-                          Navigator.pop(ctx);
-                          await _pickAndUploadImage(ImageSource.gallery);
-                        },
-                      ),
-                    ],
-                  );
-                });
+            await _pickAndUploadImages();
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
@@ -265,44 +260,63 @@ class _GalleryState extends State<Gallery> {
         child: const Icon(Icons.add),
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())  // Show loading indicator
-          : _imageUrlsList.isEmpty
-          ? const Center(child: Text("No Images"))
-          : GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: 10.0,
-          crossAxisSpacing: 10.0,
-        ),
-        itemCount: _imageUrlsList.length,
-        itemBuilder: (BuildContext context, i) {
-          return Stack(
-            children: [
-              CachedNetworkImage(
-                imageUrl: _imageUrlsList[i],
-                placeholder: (context, url) => CircularProgressIndicator(),
-                errorWidget: (context, url, error) => Icon(Icons.error),
-                fit: BoxFit.cover,
-              ),
-              Positioned(
-                top: 5,
-                right: 5,
-                child: IconButton(
-                  icon: Icon(Icons.cancel),
-                  onPressed: () {
-                    _showDeleteConfirmationDialog(i);
-                  },
+          ? Center(child: CircularProgressIndicator())
+          : Column(
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(left: 100),
+            child: Card(
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  '*Only 5 images can be uploaded',
+                  style: TextStyle(fontSize: 16, color: Colors.red,fontWeight: FontWeight.bold),
                 ),
               ),
-            ],
-          );
-        },
+            ),
+          ),
+          SizedBox(height: 10,),
+          Expanded(
+            child: _imageUrlsList.isEmpty
+                ? const Center(child: Text("No Images"))
+                : GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 10.0,
+                crossAxisSpacing: 10.0,
+              ),
+              itemCount: _imageUrlsList.length,
+              itemBuilder: (BuildContext context, i) {
+                return Stack(
+                  children: [
+                    CachedNetworkImage(
+                      imageUrl: _imageUrlsList[i],
+                      placeholder: (context, url) => CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
+                      fit: BoxFit.cover,
+                    ),
+                    Positioned(
+                      top: 5,
+                      right: 5,
+                      child: IconButton(
+                        icon: Icon(Icons.delete, color: Colors.red,),
+                        onPressed: () {
+                          _showDeleteConfirmationDialog(i);
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
-
-
 }
+
+
 
 
 
