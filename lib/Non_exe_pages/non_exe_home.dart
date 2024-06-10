@@ -640,8 +640,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                  // data.isEmpty ? SizedBox.shrink() : SizedBox(height: 180),
-                  SizedBox(height: 190,),
-
+                  SizedBox(height: 170,),
                   if (_imagePaths.isNotEmpty) ...[
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -750,7 +749,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                   ),
                   isLoadingMeeting ? Center(child: CircularProgressIndicator())
                       : data.isEmpty
-                      ? Center(child: Text("No upcoming meetings", style: TextStyle(color: Colors.black),))
+                      ? Center(child: Text("No upcoming meetings", style: TextStyle(color: Colors.black,fontWeight: FontWeight.normal),))
                       : Container(
                     child: CarouselSlider(
                       items: data.map((meeting) {
@@ -1034,7 +1033,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
-                                              '${_formatTimeString(meeting['from_time'])} to ${_formatTimeString(meeting['to_time'])}',
+                                              '${(meeting['from_time'])} to ${(meeting['to_time'])}',
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .bodySmall,
@@ -1090,7 +1089,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      'Offers',
+                      "Today's Offers",
                       style: GoogleFonts.aBeeZee(
                         fontSize: 16,
                         color: Colors.green,
@@ -1106,7 +1105,6 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                         itemBuilder: (context, i) {
                           String imageUrl =
                               'http://mybudgetbook.in/GIBAPI/${data1[i]["offer_image"]}';
-
                           String dateString = data1[i][
                               'validity']; // This will print the properly encoded URL
                           DateTime dateTime =
