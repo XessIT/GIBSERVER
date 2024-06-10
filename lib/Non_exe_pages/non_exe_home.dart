@@ -32,6 +32,7 @@ import '../guest_slip.dart';
 import '../home.dart';
 import '../login.dart';
 import '../profile.dart';
+import 'attendance_non_exe.dart';
 
 class NonExecutiveHomeNav extends StatefulWidget {
   final String? userType;
@@ -1353,8 +1354,7 @@ class _NavigationBarNonState extends State<NavigationBarNon> {
     _pages = [
       NonExecutiveHomeNav(userId: widget.userId, userType: widget.userType),
       OffersPage(userId: widget.userId, userType: widget.userType),
-      AttendancePage(
-          userID: widget.userId, userType: widget.userType.toString()),
+      AttendancePageNonExe(userID: widget.userId, userType: widget.userType.toString()),
       GibMembers(userId: widget.userId, userType: widget.userType.toString()),
       SettingsPageNon(userId: widget.userId, userType: widget.userType),
     ];
