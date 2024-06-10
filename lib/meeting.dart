@@ -267,6 +267,7 @@ class _UpComingNetworkMeetingState extends State<UpComingNetworkMeeting> {
   @override
   void initState() {
     super.initState();
+    getData();
       getData().then((_) {
         setState(() {
           isLoading = false;
@@ -343,12 +344,6 @@ class _UpComingNetworkMeetingState extends State<UpComingNetworkMeeting> {
     );
   }
 }
-
-
-
-
-
-
 
 
 class CompletedNetworkMeeting extends StatefulWidget {
@@ -588,7 +583,7 @@ class _UpcomingTeamMeetingState extends State<UpcomingTeamMeeting> {
   void initState() {
     super.initState();
     getData();
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(Duration(seconds: 2), () {
       setState(() {
         isLoading = false; // Hide the loading indicator after 4 seconds
       });
@@ -733,7 +728,7 @@ class _CompletedTeamMeetingState extends State<CompletedTeamMeeting> {
   void initState() {
     super.initState();
     getData();
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(Duration(seconds: 2), () {
       setState(() {
         isLoading = false; // Hide the loading indicator after 4 seconds
       });
@@ -923,7 +918,7 @@ class _UpComingTrainingProgramState extends State<UpComingTrainingProgram> {
   void initState() {
     super.initState();
     getData();
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(Duration(seconds: 2), () {
       setState(() {
         isLoading = false; // Hide the loading indicator after 4 seconds
       });
@@ -1054,7 +1049,7 @@ class _CompletedTrainingProgramState extends State<CompletedTrainingProgram> {
   void initState() {
     super.initState();
     getData();
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(Duration(seconds: 2), () {
       setState(() {
         isLoading = false; // Hide the loading indicator after 4 seconds
       });
@@ -1242,7 +1237,7 @@ class _UpComingGIBMeetingState extends State<UpComingGIBMeeting> {
   void initState() {
     super.initState();
     getData();
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(Duration(seconds: 2), () {
       setState(() {
         isLoading = false; // Hide the loading indicator after 4 seconds
       });
@@ -1370,7 +1365,7 @@ class _CompletedGIBMeetingState extends State<CompletedGIBMeeting> {
   void initState() {
     super.initState();
     getData();
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(Duration(seconds: 2), () {
       setState(() {
         isLoading = false; // Hide the loading indicator after 4 seconds
       });
