@@ -266,15 +266,16 @@ class _HomepageState extends State<Homepage> {
           try {
             var responseBody = jsonDecode(res.body);
             if (responseBody["success"]) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(responseBody["message"])));
+              // ScaffoldMessenger.of(context).showSnackBar(
+              //     SnackBar(content: Text(responseBody["message"])));
             } else {
               if (responseBody["message"] == "Record already exists") {
                 _showGuestDialog(
                     meetingId, meetingType, meetingDate, meetingPlace);
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(responseBody["message"])));
+              }
+              else {
+                // ScaffoldMessenger.of(context).showSnackBar(
+                //     SnackBar(content: Text(responseBody["message"])));
               }
             }
           } catch (e) {
@@ -776,7 +777,7 @@ class _HomepageState extends State<Homepage> {
                                                               child: AlertDialog(
                                                                 //  backgroundColor: Colors.grey[800],
                                                                 title: Text(
-                                                                  'Do you wish to add Guest?',
+                                                                  'You Already Registered , Do you wish to add Guest?',
                                                                   style: Theme.of(context).textTheme.bodySmall,
                                                                 ),
                                                                 content: TextFormField(
@@ -860,6 +861,7 @@ class _HomepageState extends State<Homepage> {
                                                         TextButton(
                                                             onPressed:
                                                                 () {
+                                                                  registerDateStoreDatabase(id, meetingType, meetingDate, meetingPlace);
                                                               Navigator.pop(
                                                                   context);
                                                               showDialog(
@@ -914,7 +916,6 @@ class _HomepageState extends State<Homepage> {
                                                                                               meeting_place: meetingPlace,
                                                                                               meeting_type: meetingType,
                                                                                             )));
-
                                                                                     registerDateStoreDatabase(id, meetingType, meetingDate, meetingPlace);
                                                                                   }
                                                                                 },

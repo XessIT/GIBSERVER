@@ -138,7 +138,7 @@ class _BloodListState extends State<BloodList> {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => BloodGroup(userType: widget.userType, userId: widget.userId,)));
               },
           child: isLoading ? const Center(child: CircularProgressIndicator())
-              : data.isEmpty ? const Center(child: Text("Data not found", style: TextStyle(color: Colors.black)))
+              : data.isEmpty ? const Center(child: Text("No Members", style: TextStyle(color: Colors.black,fontWeight: FontWeight.normal)))
            : ListView.builder(
               itemCount: data.length,
               itemBuilder: (context, i) {

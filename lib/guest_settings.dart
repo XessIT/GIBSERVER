@@ -27,16 +27,6 @@ class GuestSettings extends StatelessWidget {
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             color: Colors.green,
-/*
-              gradient: LinearGradient(
-                begin: Alignment.topRight,
-                end: Alignment.bottomLeft,
-                colors: [
-                  Colors.green,
-                  Color(0xFF8155BA),
-                ],
-              )
-*/
           ),
         ),
         title: Text(
@@ -85,58 +75,11 @@ class GuestSettings extends StatelessWidget {
                     icons: CupertinoIcons.profile_circled,
                     iconStyle: IconStyle(),
                     title: 'Profile',
-                    titleStyle: Theme.of(context).textTheme.bodyMedium,
+                    titleStyle: Theme.of(context).textTheme.bodySmall,
                     // subtitle:'Profile Image, Name, Income',
                     titleMaxLine: 1,
                     subtitleMaxLine: 1,
                   ),
-
-                 /* SettingsItem(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => Doctors(
-                              userType: userType.toString(),
-                              userId: userId.toString(),
-                            )),
-                      );
-                    },
-                    icons: Icons.add_circle,
-                    iconStyle: IconStyle(
-                      iconsColor: Colors.white,
-                      withBackground: true,
-                      backgroundColor: Colors.purple,
-                    ),
-                    title: 'Gib Doctors',
-                    titleStyle: Theme.of(context).textTheme.bodyMedium,
-                    // subtitle:'Profile Image, Name, Income',
-                    titleMaxLine: 1,
-                    subtitleMaxLine: 1,
-                  ),
-                  SettingsItem(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => BloodGroup(
-                              userType: userType.toString(),
-                              userId: userId.toString(),
-                            )),
-                      );
-                    },
-                    icons: Icons.bloodtype,
-                    iconStyle: IconStyle(
-                      iconsColor: Colors.white,
-                      withBackground: true,
-                      backgroundColor: Colors.red,
-                    ),
-                    title: 'Blood Group',
-                    titleStyle: Theme.of(context).textTheme.bodyMedium,
-                    // subtitle:'Profile Image, Name, Income',
-                    titleMaxLine: 1,
-                    subtitleMaxLine: 1,
-                  ),*/
                   SettingsItem(
                     onTap: () => {
                                  Navigator.push(
@@ -151,7 +94,7 @@ class GuestSettings extends StatelessWidget {
                       backgroundColor: Colors.green,
                     ),
                     title: 'About GIB',
-                    titleStyle: Theme.of(context).textTheme.bodyMedium,
+                    titleStyle: Theme.of(context).textTheme.bodySmall,
                     // subtitle:'Profile Image, Name, Income',
                     titleMaxLine: 1,
                     subtitleMaxLine: 1,
@@ -173,7 +116,7 @@ class GuestSettings extends StatelessWidget {
                       backgroundColor: Colors.green,
                     ),
                     title: 'Change M-PIN',
-                    titleStyle: Theme.of(context).textTheme.bodyMedium,
+                    titleStyle: Theme.of(context).textTheme.bodySmall,
                     // subtitle:'Profile Image, Name, Income',
                     titleMaxLine: 1,
                     subtitleMaxLine: 1,
@@ -184,7 +127,7 @@ class GuestSettings extends StatelessWidget {
                 settingsGroupTitle: "Account",
                 settingsGroupTitleStyle: Theme.of(context)
                     .textTheme
-                    .bodyMedium
+                    .bodySmall
                     ?.copyWith(fontWeight: FontWeight.bold),
                 items: [
                   SettingsItem(
@@ -243,7 +186,7 @@ class GuestSettings extends StatelessWidget {
                     ),
                     icons: Icons.exit_to_app_rounded,
                     title: "Log Out",
-                    titleStyle: Theme.of(context).textTheme.bodyMedium,
+                    titleStyle: Theme.of(context).textTheme.bodySmall,
                   ),
                   /* SettingsItem(
                     onTap: () {},
