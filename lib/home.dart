@@ -80,7 +80,7 @@ class _HomepageState extends State<Homepage> {
 
   @override
   void initState() {
-    _fetchImages(widget.userType.toString());
+    _fetchImages("Executive");
 
     fetchData(widget.userId);
     getData1();
@@ -118,7 +118,7 @@ class _HomepageState extends State<Homepage> {
   Future<void> _refresh() async {
     await Future.delayed(const Duration(seconds: 1));
     setState(() {
-      _fetchImages(widget.userType.toString());
+      _fetchImages("Executive");
       fetchData(widget.userId);
       getData();
       getData1();

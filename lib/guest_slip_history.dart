@@ -95,85 +95,85 @@ class _GuestHistoryState extends State<GuestHistory> {
           },
         ),
       ),
-      body:
-          isLoading ? Center(child: CircularProgressIndicator()) :
-      groupedVisitors.isEmpty ? Center(child: Text("No Record Found"))
-          : Expanded(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: List.generate(groupedVisitors.length, (index) {
-              String date = groupedVisitors.keys.elementAt(index);
-              List<Map<String, dynamic>> visitors = groupedVisitors[date]!;
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      date,
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+        body:
+            isLoading ? Center(child: CircularProgressIndicator()) :
+        groupedVisitors.isEmpty ? Center(child: Text("No Record Found"))
+            : Expanded(
+           child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: List.generate(groupedVisitors.length, (index) {
+                String date = groupedVisitors.keys.elementAt(index);
+                List<Map<String, dynamic>> visitors = groupedVisitors[date]!;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        date,
+                        style: const TextStyle(
+                          color: Colors.blue,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(), // Disable scrolling for the inner list
-                    itemCount: visitors.length,
-                    itemBuilder: (context, index) {
-                      Map<String, dynamic> visitor = visitors[index];
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          width: 100,
-                          height: 83,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(15.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.5),
-                                spreadRadius: 3,
-                                blurRadius: 7,
-                                offset: Offset(0, 3), // changes position of shadow
-                              ),
-                            ],
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Text("${visitor["guest_name"]}"),
-                                  ],
-                                ),
-                                SizedBox(height: 10,),
-                                Expanded(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text("Location: ${visitor["location"]}"),
-                                      Text("Date: ${visitor["meeting_date"]}"),
-                                    ],
-                                  ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(), // Disable scrolling for the inner list
+                      itemCount: visitors.length,
+                      itemBuilder: (context, index) {
+                        Map<String, dynamic> visitor = visitors[index];
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            width: 100,
+                            height: 83,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(15.0),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 3,
+                                  blurRadius: 7,
+                                  offset: Offset(0, 3), // changes position of shadow
                                 ),
                               ],
                             ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text("${visitor["guest_name"]}"),
+                                    ],
+                                  ),
+                                  SizedBox(height: 10,),
+                                  Expanded(
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text("Location: ${visitor["location"]}"),
+                                        Text("Date: ${visitor["meeting_date"]}"),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              );
-            }),
+                        );
+                      },
+                    ),
+                  ],
+                );
+              }),
+            ),
           ),
         ),
-      ),
 
     );
   }

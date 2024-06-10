@@ -7,6 +7,7 @@ import 'Non_exe_pages/non_exe_home.dart';
 import 'Non_exe_pages/settings_non_executive.dart';
 import 'home.dart';
 
+
 class MeetingUpcoming extends StatelessWidget {
   final String? userType;
   final String? userId;
@@ -14,14 +15,16 @@ class MeetingUpcoming extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-      body: MeetingUpcomingPage(userType: userType.toString(), userId: userId.toString()),
+    return Scaffold(
+      body: MeetingUpcomingPage(userType: userType, userId: userId),
     );
   }
 }
+
 class MeetingUpcomingPage extends StatefulWidget {
   final String? userType;
   final String? userId;
+
   const MeetingUpcomingPage({super.key, required this.userType, required this.userId});
 
   @override
@@ -29,19 +32,19 @@ class MeetingUpcomingPage extends StatefulWidget {
 }
 
 class _MeetingUpcomingPageState extends State<MeetingUpcomingPage> {
-
-  @override
-  initState() {
-    super.initState();
-    fetchData(widget.userId);
-  }
   String district = "";
   String chapter = "";
   List<Map<String, dynamic>> userdata = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData(widget.userId);
+  }
+
   Future<void> fetchData(String? userId) async {
     try {
-      final url = Uri.parse(
-          'http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=$userId');
+      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=$userId');
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
@@ -58,23 +61,52 @@ class _MeetingUpcomingPageState extends State<MeetingUpcomingPage> {
           print('Invalid response data format');
         }
       } else {
-        //  print('Error: ${response.statusCode}');
+        print('Error: ${response.statusCode}');
       }
     } catch (error) {
       print('Error: $error');
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 4,
-      child: Scaffold(
+        length: 4,
+        child: Scaffold(
         appBar: AppBar(
-          title:  Text('Meeting',style: Theme.of(context).textTheme.displayLarge),
-          centerTitle: true,
-          iconTheme: const IconThemeData(color: Colors.white),
-          leading: IconButton(
-            onPressed: () {
+        title: Text('Meeting', style: Theme.of(context).textTheme.displayLarge),
+    centerTitle: true,
+    iconTheme: const IconThemeData(color: Colors.white),
+    leading: IconButton(
+    onPressed: () {
+    if (widget.userType == "Non-Executive") {
+    Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => NavigationBarNon(
+        userType: widget.userType.toString(),
+        userId: widget.userId.toString(),
+      ),
+    ),
+    );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => NavigationBarExe(
+            userType: widget.userType.toString(),
+            userId: widget.userId.toString(),
+          ),
+        ),
+      );
+    }
+    },
+      icon: const Icon(Icons.navigate_before),
+    ),
+        ),
+          body: PopScope(
+            canPop: false,
+            onPopInvoked: (didPop) {
               if (widget.userType == "Non-Executive") {
                 Navigator.push(
                   context,
@@ -85,8 +117,7 @@ class _MeetingUpcomingPageState extends State<MeetingUpcomingPage> {
                     ),
                   ),
                 );
-              }
-              else{
+              } else {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -98,91 +129,56 @@ class _MeetingUpcomingPageState extends State<MeetingUpcomingPage> {
                 );
               }
             },
-            icon: const Icon(Icons.navigate_before),
-          ),
-        ),
-
-        body: PopScope(
-          canPop: false,
-          onPopInvoked: (didPop)  {
-            if (widget.userType == "Non-Executive") {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => NavigationBarNon(
-                    userType: widget.userType.toString(),
-                    userId: widget.userId.toString(),
-                  ),
-                ),
-              );
-            }
-            else{
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => NavigationBarExe(
-                    userType: widget.userType.toString(),
-                    userId: widget.userId.toString(),
-                  ),
-                ),
-              );
-            }
-          },
-          child:  Column(
+            child: Column(
               children: [
-                //TABBAR STARTS
                 const TabBar(
                   isScrollable: true,
                   labelColor: Colors.green,
                   unselectedLabelColor: Colors.black,
                   tabs: [
-                    Tab(text: ('Network Meeting'),),
-                    Tab(text: ('Team Meeting'),),
-                    Tab(text: ('Training Program'),),
-                    Tab(text: ("Industrial Visit"),),
-                    //  Tab(text: ('API'),)
+                    Tab(text: ('Network Meeting')),
+                    Tab(text: ('Team Meeting')),
+                    Tab(text: ('Training Program')),
+                    Tab(text: ("Industrial Visit")),
                   ],
                 ),
-                //TABBAR VIEW STARTS
                 Expanded(
-                  child: TabBarView(children: <Widget>[
-                    NetworkMeeting(district: district,chapter: chapter, userType: widget.userType),
-                    TeamMeeting(district: district,chapter: chapter, userType: widget.userType),
-                    TrainingProgram(district: district,chapter: chapter, userType: widget.userType),
-                    GIBMeeting(district: district,chapter: chapter, userType: widget.userType),
-                    //  MyHomePage(title: '',),
-                  ],
+                  child: TabBarView(
+                    children: <Widget>[
+                      NetworkMeeting(district: district, chapter: chapter, userType: widget.userType),
+                      TeamMeeting(district: district, chapter: chapter, userType: widget.userType),
+                      TrainingProgram(district: district, chapter: chapter, userType: widget.userType),
+                      GIBMeeting(district: district, chapter: chapter, userType: widget.userType),
+                    ],
                   ),
-                )
-              ]),
+                ),
+              ],
+            ),
+          ),
         ),
-      ),
     );
   }
 }
 
 class NetworkMeeting extends StatefulWidget {
-   final String? district;
-   final String? chapter;
-   final String? userType;
+  final String? district;
+  final String? chapter;
+  final String? userType;
   const NetworkMeeting({super.key, required this.district, required this.chapter, required this.userType});
 
   @override
   State<NetworkMeeting> createState() => _NetworkMeetingState();
 }
+
 class _NetworkMeetingState extends State<NetworkMeeting> {
   @override
   Widget build(BuildContext context) {
-    return  DefaultTabController(
+    return DefaultTabController(
       length: 2,
       child: Scaffold(
         body: Column(
           children: [
-            const SizedBox(
-              height: 20,width: 100,
-            ),
-
-            //MAIN CONTAINER STARTS
+            const SizedBox(height: 20, width: 100),
             Container(
               height: 35,
               width: 250,
@@ -190,28 +186,25 @@ class _NetworkMeetingState extends State<NetworkMeeting> {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(0),
               ),
-
-              //TABBAR STARTS
               child: const TabBar(
                 labelColor: Colors.green,
-                //TABS STARTS
                 unselectedLabelColor: Colors.black,
                 tabs: [
                   Tab(text: ('Upcoming')),
                   Tab(text: ('Completed')),
                 ],
-              ) ,
+              ),
             ),
-            const SizedBox(height: 20,),
-
-            //TABBAR VIEW STARTS
+            const SizedBox(height: 20),
             Expanded(
-              child: TabBarView(children: [
-                UpComingNetworkMeeting(district: widget.district,chapter: widget.chapter, userType: widget.userType),
-                CompletedNetworkMeeting(district: widget.district,chapter: widget.chapter, userType: widget.userType),
-              ]),
+              child: TabBarView(
+                children: [
+                  UpComingNetworkMeeting(district: widget.district, chapter: widget.chapter, userType: widget.userType),
+                  CompletedNetworkMeeting(district: widget.district, chapter: widget.chapter, userType: widget.userType),
+                ],
+              ),
             ),
-            const SizedBox(height: 30,),
+            const SizedBox(height: 30),
           ],
         ),
       ),
@@ -219,32 +212,31 @@ class _NetworkMeetingState extends State<NetworkMeeting> {
   }
 }
 
-class  UpComingNetworkMeeting extends StatefulWidget {
+class UpComingNetworkMeeting extends StatefulWidget {
   final String? district;
   final String? chapter;
   final String? userType;
+
   const UpComingNetworkMeeting({Key? key, required this.district, required this.chapter, required this.userType}) : super(key: key);
 
   @override
   State<UpComingNetworkMeeting> createState() => _UpComingNetworkMeetingState();
 }
+
 class _UpComingNetworkMeetingState extends State<UpComingNetworkMeeting> {
   String type = "Network Meeting";
-
-  var date =  DateTime.now();
-
-  List<String>item=["a","b","c"];
-
-  List<Map<String, dynamic>> data=[];
+  bool isLoading = true;
+  List<Map<String, dynamic>> data = [];
 
   Future<void> getData() async {
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type&district=${widget.district}&chapter=${widget.chapter}&member_type=${widget.userType}');
       final response = await http.get(url);
+
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         final List<dynamic> itemGroups = responseData;
-        // No need to call setState here because we're not updating the UI at this point
+
         List<dynamic> filteredData = itemGroups.where((item) {
           DateTime validityDate;
           try {
@@ -254,15 +246,13 @@ class _UpComingNetworkMeetingState extends State<UpComingNetworkMeeting> {
             return false;
           }
 
-
-          // Check if the meeting date is after the current date and within the current year
           bool isCurrentYear = validityDate.year == DateTime.now().year;
           bool satisfiesFilter = validityDate.isAfter(DateTime.now()) && isCurrentYear;
 
           return satisfiesFilter;
         }).toList();
+
         setState(() {
-          // Cast the filtered data to the correct type and update your state
           data = filteredData.cast<Map<String, dynamic>>();
         });
       } else {
@@ -271,90 +261,95 @@ class _UpComingNetworkMeetingState extends State<UpComingNetworkMeeting> {
       print('HTTP request completed. Status code: ${response.statusCode}');
     } catch (e) {
       print('Error making HTTP request: $e');
-      throw e; // rethrow the error if needed
     }
   }
-  bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
-    getData();
-    Future.delayed(Duration(seconds: 3), () {
-      setState(() {
-        isLoading = false; // Hide the loading indicator after 4 seconds
+      getData().then((_) {
+        setState(() {
+          isLoading = false;
       });
+        Future.delayed(const Duration(seconds: 2), () {
+          setState(() {
+            isLoading = false;
+          });
+        });
+
     });
   }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: isLoading
-            ? const Center(
-          // Show CircularProgressIndicator while loading
-          child: CircularProgressIndicator(),
-        )
-            : data.isNotEmpty
-            ? ListView.builder(
-            itemCount: data.length,
-            itemBuilder:(context, i){
-              // const SizedBox(height:2);
-              return Expanded(
-                child: Card(
-                  //   elevation: 1,
-                  color: Colors.white,
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Align(
-                              alignment: Alignment.topLeft,
-                              child: Text('${data[i]['meeting_date']}',
-                                //format(DateTime.now()),style:  TextStyle(color: Colors.green[900],fontWeight:FontWeight.bold),
-                              ),
-                            ),
-                            //TIME TEXT STARTS
-                            //format(DateTime.now()),),
-                          ],
-                        ),
-                        //NETWORK MEETING TEXT STARTS
-                        //   const SizedBox(width: 30,),
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Align(alignment:Alignment.topLeft,
-                                child: Text('${data[i]['from_time']}-\n'
-                                    '${data[i]['to_time']}'),
-                              ),
-                              Align(alignment:Alignment.center,
-                                  child: Text('${data[i]['meeting_name']}')),
-                              Align(alignment:Alignment.topRight,
-                                child: RichText(
-                                  text:  TextSpan(
-                                      children: [
-                                        const WidgetSpan(child: Icon(Icons.location_on)),
-                                        TextSpan(text: ('${data[i]['place']}'),style: const TextStyle(color: Colors.black)
-                                        )
-                                      ]
-                                  ),
-                                ),
-                              ),
-                            ]
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            })
-            :Center(child: const Text("There is No Meeting")),
+    getData();
 
+    return Scaffold(
+      body: isLoading
+          ? const Center(
+        child: CircularProgressIndicator(),
+      )
+          : data.isNotEmpty
+          ? ListView.builder(
+        itemCount: data.length,
+        itemBuilder: (context, i) {
+          return Card(
+            color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Text('${data[i]['meeting_date']}'),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Text('${data[i]['from_time']} - ${data[i]['to_time']}'),
+                      ),
+                      Align(
+                        alignment: Alignment.center,
+                        child: Text('${data[i]['meeting_name']}'),
+                      ),
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: RichText(
+                          text: TextSpan(
+                            children: [
+                              const WidgetSpan(child: Icon(Icons.location_on)),
+                              TextSpan(text: ('${data[i]['place']}'), style: const TextStyle(color: Colors.black)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      )
+          : const Center(child: Text("There is No Meeting")),
     );
   }
 }
+
+
+
+
+
+
+
 
 class CompletedNetworkMeeting extends StatefulWidget {
   final String? district;
@@ -410,7 +405,7 @@ class _CompletedNetworkMeetingState extends State<CompletedNetworkMeeting> {
   void initState() {
     super.initState();
     getData();
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(Duration(seconds: 2), () {
       setState(() {
         isLoading = false; // Hide the loading indicator after 4 seconds
       });
