@@ -772,7 +772,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                       padding: const EdgeInsets.all(8.0),
                                       child: Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
                                             '${meeting['meeting_type']}',
@@ -780,9 +780,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                                 .textTheme
                                                 .headlineSmall,
                                           ),
-                                          SizedBox(
-                                            width: 20,
-                                          ),
+
                                           IconButton(
                                               onPressed: () async {
                                                 bool isRegistered =
@@ -790,10 +788,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                                         id);
                                                 if (isRegistered) {
                                                   // Directly show the guest addition dialog
-                                                  showDialog(
-                                                      context:
-                                                      context,
-                                                      builder: (ctx) =>
+                                                  showDialog(context: context, builder: (ctx) =>
                                                           Form(
                                                             key: tempKey,
                                                             child: AlertDialog(
@@ -986,7 +981,58 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                                 Icons
                                                     .person_add_alt_1_rounded,
                                                 color: Colors.green,
-                                              ))
+                                              )),
+                                          FutureBuilder<bool>(
+                                            future: isUserRegistered(id),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                                return CircularProgressIndicator();
+                                              } else if (snapshot.hasError) {
+                                                return Icon(Icons.error, color: Colors.red);
+                                              } else {
+                                                bool isRegistered = snapshot.data ?? false;
+                                                return Container(
+                                                  decoration:
+                                                  const BoxDecoration(
+                                                    color: Colors
+                                                        .green, // Change the color here
+                                                    borderRadius:
+                                                    BorderRadius
+                                                        .only(
+                                                      topLeft: Radius
+                                                          .circular(
+                                                          10.0),
+                                                      bottomRight: Radius
+                                                          .circular(
+                                                          10.0),
+                                                    ),
+                                                  ),
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal:
+                                                      6.0,
+                                                      vertical:
+                                                      2.0),
+                                                  child: Text(
+                                                    isRegistered ? 'Registered' : 'Un Registered',
+                                                    style: TextStyle(
+                                                      color: Colors
+                                                          .white, // Change the text color here
+                                                      fontWeight:
+                                                      FontWeight
+                                                          .bold,
+                                                      fontStyle:
+                                                      FontStyle
+                                                          .italic, // Add any additional styles here
+                                                      fontSize:
+                                                      12.0, // Adjust font size as needed
+                                                    ),
+                                                  ),
+                                                );
+                                              }
+                                            },
+                                          ),
+
                                         ],
                                       ),
                                     ),

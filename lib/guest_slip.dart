@@ -216,8 +216,17 @@ class _VisitorsSlipState extends State<VisitorsSlip> {
                               Container(
                                 width: 350,
                                 decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5.0),
-                                    border: Border.all(color: Colors.green)),
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.5),
+                                      spreadRadius: 3,
+                                      blurRadius: 7,
+                                      offset: Offset(0, 3), // changes position of shadow
+                                    ),
+                                  ],
+                                ),
                                 child: Column(
                                   children: [
                                     const SizedBox(
@@ -703,10 +712,10 @@ class _VisitorsSlipState extends State<VisitorsSlip> {
                                     const SizedBox(
                                       height: 10,
                                     ),
-                                    const Padding(
+                                     Padding(
                                       padding: EdgeInsets.all(8.0),
                                       child: Text(
-                                        'Note:Ask your Guest to bring min.50 visiting cards',
+                                        'Note : Ask your Guest to bring min.50 visiting cards',style: Theme.of(context).textTheme.bodySmall,
                                       ),
                                     ),
                                   ],
