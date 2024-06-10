@@ -206,70 +206,49 @@ class _GuestProfileState extends State<GuestProfile> {
                         children: [
                           Text(
                             "First Name",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                           SizedBox(
                             height: 2,
                           ),
                           Text(
                             "Last Name",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                           SizedBox(
                             height: 2,
                           ),
                           Text(
                             "Company Name",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                           SizedBox(
                             height: 2,
                           ),
                           Text(
                             "Mobile",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                           SizedBox(
                             height: 2,
                           ),
                           Text(
                             "Email",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                           SizedBox(
                             height: 2,
                           ),
                           Text(
                             "Blood Group",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                           SizedBox(
                             height: 2,
                           ),
                           Text(
                             "Location",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ]),
                     const SizedBox(width: 20),
@@ -278,70 +257,49 @@ class _GuestProfileState extends State<GuestProfile> {
                         children: [
                           Text(
                             ":",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                           SizedBox(
                             height: 2,
                           ),
                           Text(
                             ":",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                           SizedBox(
                             height: 2,
                           ),
                           Text(
                             ":",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                           SizedBox(
                             height: 2,
                           ),
                           Text(
                             ":",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                           SizedBox(
                             height: 2,
                           ),
                           Text(
                             ":",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                           SizedBox(
                             height: 2,
                           ),
                           Text(
                             ":",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                           SizedBox(
                             height: 2,
                           ),
                           Text(
                             ":",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ]),
                     SizedBox(width: 20),
@@ -350,70 +308,49 @@ class _GuestProfileState extends State<GuestProfile> {
                         children: [
                           Text(
                             data.isNotEmpty ? "${data[0]['first_name']}" : "",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                           SizedBox(
                             height: 2,
                           ),
                           Text(
                             data.isNotEmpty ? "${data[0]['last_name']}" : "",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                           SizedBox(
                             height: 2,
                           ),
                           Text(
                             data.isNotEmpty ? "${data[0]['company_name']}" : "",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                           SizedBox(
                             height: 2,
                           ),
                           Text(
                             data.isNotEmpty ? "${data[0]['mobile']}" : "",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                           SizedBox(
                             height: 2,
                           ),
                           Text(
                             data.isNotEmpty ? "${data[0]['email']}" : "",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                           SizedBox(
                             height: 2,
                           ),
                           Text(
                             data.isNotEmpty ? "${data[0]['blood_group']}" : "",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                           SizedBox(
                             height: 2,
                           ),
                           Text(
                             data.isNotEmpty ? "${data[0]['place']}" : "",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ])
                   ]),

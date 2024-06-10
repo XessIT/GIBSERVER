@@ -311,19 +311,24 @@ class _GuestHomePageState extends State<GuestHomePage> {
                 SingleChildScrollView(
                   child: Column(
                     children: [
-                      const SizedBox(height: 80),
+                      const SizedBox(height: 170),
                       if (_imagePaths.isNotEmpty) ...[
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Card(
-                            elevation: 0,
-                            child: Container(
-                              child: Text(
-                                'Ads',
-                                style: Theme.of(context).textTheme.headlineMedium,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Card(
+                                elevation: 0,
+                                child: Container(
+                                  child: Text(
+                                    'Ads',
+                                    style: Theme.of(context).textTheme.headlineMedium,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
+                          ],
                         ),
                         SizedBox(
                           height: 10,
@@ -406,16 +411,21 @@ class _GuestHomePageState extends State<GuestHomePage> {
                               ),
                             )),
                       ],
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          'New Offers',
-                          style: GoogleFonts.aBeeZee(
-                            fontSize: 16,
-                            color: Colors.green,
-                            fontWeight: FontWeight.bold,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "Today's Offers",
+                              style: GoogleFonts.aBeeZee(
+                                fontSize: 16,
+                                color: Colors.green,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
                       Container(
                         height: MediaQuery.of(context).size.height *

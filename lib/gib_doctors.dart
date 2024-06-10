@@ -7,6 +7,7 @@ import 'package:gipapp/settings_page_executive.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart'as http;
 
+import 'guest_home.dart';
 import 'guest_settings.dart';
 import 'home.dart';
 
@@ -128,7 +129,18 @@ class _DoctorsState extends State<Doctors> {
           ),
           leading: IconButton(
             onPressed: () {
-              if (widget.userType == "Non-Executive") {
+              if (widget.userType == "Guest") {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => GuestHome(
+                      userType: widget.userType.toString(),
+                      userId: widget.userId.toString(),
+                    ),
+                  ),
+                );
+              }
+            else if (widget.userType == "Non-Executive") {
                 Navigator.push(
                   context,
                   MaterialPageRoute(

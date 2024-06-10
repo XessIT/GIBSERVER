@@ -428,7 +428,7 @@ class _GibMembersState extends State<GibMembers> {
                                     backgroundImage: NetworkImage(imageUrl),
                                   ),
                                   title: Text('${data[i]['first_name']}'),
-                                  subtitle: Text('${data[i]['company_name']}'),
+                                  subtitle: Text('${data[i]['company_name']}',style: TextStyle(fontSize: 16,fontWeight: FontWeight.normal)),
                                   trailing: IconButton(
                                     onPressed: () async {
                                       final call =

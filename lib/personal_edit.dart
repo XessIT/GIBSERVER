@@ -188,12 +188,11 @@ class _PersonalEditState extends State<PersonalEdit> {
           MaterialPageRoute(builder: (context) => Profile(userID: widget.userId, userType: widget.userType.toString(),)),
         );
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Container(
-            child: Text(
+          content:
+             Text(
               "Profile Successfully Updated",
               style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white),
             ),
-          ),
           backgroundColor: Colors.green,
         ));
       } else {
@@ -420,8 +419,63 @@ class _PersonalEditState extends State<PersonalEdit> {
                   Text('Personal Information ${widget.currentID.toString()}',
                     style: Theme.of(context).textTheme.displayMedium,),
                   const SizedBox(width: 20,),
-
                   InkWell(
+                    child: ClipOval(
+                      child: Container(
+                        width: 150,
+                        height: 150,
+                        child: Stack(
+                          children: [
+                            // Display the image
+                            Positioned.fill(
+                              child: selectedImage == null
+                                  ? Image.network(image, fit: BoxFit.cover)
+                                  : Image.memory(selectedImage!, fit: BoxFit.cover),
+                            ),
+                            // Overlay the camera icon
+                            Align(
+                              alignment: Alignment.bottomRight,
+                              child: Container(
+                                padding: EdgeInsets.all(8.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.black45,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Center(
+                                  child: Icon(
+                                    Icons.camera_alt,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (ctx) {
+                          return Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ListTile(
+                                leading: Icon(Icons.storage),
+                                title: Text("From Gallery"),
+                                onTap: () {
+                                  pickImageFromGallery();
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                  ),
+
+                 /* InkWell(
                     child: ClipOval(
                       child: Container(
                         width: 150,
@@ -432,7 +486,7 @@ class _PersonalEditState extends State<PersonalEdit> {
                     onTap: () {
                       pickImageFromGallery();
                     },
-                  ),
+                  ),*/
                   SizedBox(
                     width: 300,
                     child: TextFormField(
