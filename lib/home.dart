@@ -610,6 +610,9 @@ class _HomepageState extends State<Homepage> {
                         height: 190,
                       ),
                       if (_imagePaths.isNotEmpty) ...[
+                        SizedBox(
+                          height: 200,
+                        ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Card(
@@ -622,9 +625,7 @@ class _HomepageState extends State<Homepage> {
                             ),
                           ),
                         ),
-                        SizedBox(
-                          height: 10,
-                        ),
+
                         Container(
                             child: CarouselSlider(
                               items: _imagePaths.map((imagePath) {
@@ -695,7 +696,9 @@ class _HomepageState extends State<Homepage> {
                           ),
                         ),
                       ),
-                      CarouselSlider(
+
+                      data.isEmpty ? Center(child: Text('No Meeting',style: TextStyle(color: Colors.black),))
+                          : CarouselSlider(
                         items: data.map((meeting) {
                           String meetingDate = meeting['meeting_date'];
                           String meetingPlace = meeting['place'];
