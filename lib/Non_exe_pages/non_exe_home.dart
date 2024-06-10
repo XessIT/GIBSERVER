@@ -16,6 +16,7 @@ import 'package:flutter/widgets.dart';
 import 'package:gipapp/Non_exe_pages/settings_non_executive.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
@@ -404,25 +405,18 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
             print('Error parsing registration dates: $e');
             return false;
           }
-
-
           // Check if the registration opening date is before the current date
           bool isOpenForRegistration =
               registrationOpeningDate.isBefore(DateTime.now());
-
           // Check if the registration closing date is after the current date
           bool isRegistrationOpen =
               registrationClosingDate.isAfter(DateTime.now());
-
-
-
           // Return true if the meeting is open for registration and false otherwise
           return isOpenForRegistration && isRegistrationOpen;
         }).toList();
         setState(() {
           // Cast the filtered data to the correct type and update your state
           data = filteredData.cast<Map<String, dynamic>>();
-
         });
       } else {
         print('Error: ${response.statusCode}');
@@ -587,6 +581,15 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
     });
   }
 
+  String _formatDate(String dateStr) {
+    try {
+      DateTime date = DateFormat('yyyy-MM-dd').parse(dateStr);
+      return DateFormat('MMMM-dd,yyyy').format(date);
+    } catch (e) {
+      return dateStr; // Return the original string if parsing fails
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -669,18 +672,39 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                   final imageResponse =
                                       snapshot.data as http.Response;
                                   if (imageResponse.statusCode == 200) {
-                                    return Container(
-                                      margin:
-                                          EdgeInsets.symmetric(horizontal: 5.0),
-                                      child: CachedNetworkImage(
-                                        imageUrl:
-                                            'http://mybudgetbook.in/GIBADMINAPI/$imagePath',
-                                        placeholder: (context, url) => Center(
-                                            child: CircularProgressIndicator()),
-                                        errorWidget: (context, url, error) =>
-                                            Text('Error loading image'),
-                                        fit: BoxFit.cover,
-                                        width: double.infinity,
+                                    return GestureDetector(
+                                      onTap: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return Dialog(
+                                              child: Container(
+                                                width:
+                                                300.0, // Set the width of the dialog
+                                                height:
+                                                400.0,
+                                                child: PhotoView(
+                                                  imageProvider: CachedNetworkImageProvider(
+                                                    'http://mybudgetbook.in/GIBADMINAPI/$imagePath',
+                                                  ),
+                                                  backgroundDecoration: BoxDecoration(
+                                                    color: Colors.black,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      },
+                                      child: Container(
+                                        margin: EdgeInsets.symmetric(horizontal: 5.0),
+                                        child: CachedNetworkImage(
+                                          imageUrl: 'http://mybudgetbook.in/GIBADMINAPI/$imagePath',
+                                          placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                                          errorWidget: (context, url, error) => Text('Error loading image'),
+                                          fit: BoxFit.cover,
+                                          width: double.infinity,
+                                        ),
                                       ),
                                     );
                                   } else {
@@ -988,7 +1012,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
-                                              '${meeting['meeting_date']}',
+                                              _formatDate(meeting["meeting_date"]),
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .bodySmall,

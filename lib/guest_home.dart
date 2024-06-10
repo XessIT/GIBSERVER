@@ -9,6 +9,7 @@ import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'Offer/offer.dart';
 import 'blood_group.dart';
@@ -342,18 +343,39 @@ class _GuestHomePageState extends State<GuestHomePage> {
                                           final imageResponse =
                                           snapshot.data as http.Response;
                                           if (imageResponse.statusCode == 200) {
-                                            return Container(
-                                              margin:
-                                              EdgeInsets.symmetric(horizontal: 5.0),
-                                              child: CachedNetworkImage(
-                                                imageUrl:
-                                                'http://mybudgetbook.in/GIBADMINAPI/$imagePath',
-                                                placeholder: (context, url) => Center(
-                                                    child: CircularProgressIndicator()),
-                                                errorWidget: (context, url, error) =>
-                                                    Text('Error loading image'),
-                                                fit: BoxFit.cover,
-                                                width: double.infinity,
+                                            return GestureDetector(
+                                              onTap: () {
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (BuildContext context) {
+                                                    return Dialog(
+                                                      child: Container(
+                                                        width:
+                                                        300.0, // Set the width of the dialog
+                                                        height:
+                                                        400.0,
+                                                        child: PhotoView(
+                                                          imageProvider: CachedNetworkImageProvider(
+                                                            'http://mybudgetbook.in/GIBADMINAPI/$imagePath',
+                                                          ),
+                                                          backgroundDecoration: BoxDecoration(
+                                                            color: Colors.black,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                              child: Container(
+                                                margin: EdgeInsets.symmetric(horizontal: 5.0),
+                                                child: CachedNetworkImage(
+                                                  imageUrl: 'http://mybudgetbook.in/GIBADMINAPI/$imagePath',
+                                                  placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                                                  errorWidget: (context, url, error) => Text('Error loading image'),
+                                                  fit: BoxFit.cover,
+                                                  width: double.infinity,
+                                                ),
                                               ),
                                             );
                                           } else {
