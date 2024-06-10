@@ -43,6 +43,7 @@ class _HomepageState extends State<Homepage> {
   String? fetchMobile = "";
   String? memberType = "Executive";
   bool isLoading = true;
+  bool isLoadingMeeting = true;
   var _connectivityResult = ConnectivityResult.none;
   Future<void> _checkConnectivityAndGetData() async {
     var connectivityResult = await Connectivity().checkConnectivity();
@@ -95,6 +96,12 @@ class _HomepageState extends State<Homepage> {
         isLoading = false; // Hide the loading indicator after 4 seconds
       });
     });
+
+    Future.delayed(const Duration(seconds: 2), () {
+      setState(() {
+        isLoadingMeeting = false; // Hide the loading indicator after 4 seconds
+      });
+    });
     super.initState();
   }
 
@@ -125,6 +132,11 @@ class _HomepageState extends State<Homepage> {
       Future.delayed(const Duration(seconds: 1), () {
         setState(() {
           isLoading = false; // Hide the loading indicator after 4 seconds
+        });
+      });
+      Future.delayed(const Duration(seconds: 2), () {
+        setState(() {
+            isLoadingMeeting = false; // Hide the loading indicator after 4 seconds
         });
       });
     });
@@ -695,7 +707,9 @@ class _HomepageState extends State<Homepage> {
                         ),
                       ),
 
-                      data.isEmpty ? Center(child: Text('No Meeting',style: TextStyle(color: Colors.black),))
+                      isLoadingMeeting ? Center(child: CircularProgressIndicator())
+                       : data.isEmpty
+                          ? Center(child: Text("No upcoming meetings", style: TextStyle(color: Colors.black),))
                           : CarouselSlider(
                         items: data.map((meeting) {
                           String meetingDate = meeting['meeting_date'];
@@ -1023,6 +1037,7 @@ class _HomepageState extends State<Homepage> {
                           viewportFraction: 1,
                         ),
                       ),
+
                       const SizedBox(height: 10),
                       Padding(
                         padding: const EdgeInsets.all(8.0),

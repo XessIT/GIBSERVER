@@ -162,6 +162,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
   String profileImage = "";
   String? fetchMobile = "";
   bool isLoading = true;
+  bool isLoadingMeeting = true;
 
   final GlobalKey<FormState> tempKey = GlobalKey<FormState>();
   var _connectivityResult = ConnectivityResult.none;
@@ -218,7 +219,11 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
         isLoading = false; // Hide the loading indicator after 4 seconds
       });
     });
-
+    Future.delayed( Duration(seconds: 2),(){
+      setState(() {
+        isLoadingMeeting = false; // Hide the loading indicator after 4 seconds
+      });
+    });
     super.initState();
   }
 
@@ -572,6 +577,13 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
           isLoading = false; // Hide the loading indicator after 4 seconds
         });
       });
+      Future.delayed(const Duration(seconds: 1), () {
+        setState(() {
+          isLoadingMeeting = false; // Hide the loading indicator after 4 seconds
+        });
+      });
+
+
     });
   }
 
@@ -623,7 +635,9 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  data.isEmpty ? SizedBox.shrink() : SizedBox(height: 180),
+                 // data.isEmpty ? SizedBox.shrink() : SizedBox(height: 180),
+                  SizedBox(height: 190,),
+
                   if (_imagePaths.isNotEmpty) ...[
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -709,7 +723,10 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                       ),
                     ),
                   ),
-                  Container(
+                  isLoadingMeeting ? Center(child: CircularProgressIndicator())
+                      : data.isEmpty
+                      ? Center(child: Text("No upcoming meetings", style: TextStyle(color: Colors.black),))
+                      : Container(
                     child: CarouselSlider(
                       items: data.map((meeting) {
                         String meetingDate = meeting['meeting_date'];
