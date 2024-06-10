@@ -451,31 +451,25 @@ class _GuestHomePageState extends State<GuestHomePage> {
                                                       style: const TextStyle(
                                                         color: Colors.green,
                                                         fontSize: 15,
+                                                          fontWeight: FontWeight.normal
                                                       ),
                                                     ),
                                                     // start texts
                                                     Text(
                                                       '${data[i]['offer_type']} - ${data[i]['name']}',
                                                       // Text style starts
-                                                      style: const TextStyle(
-                                                        fontSize: 14,
-                                                        fontWeight: FontWeight.bold,
-                                                      ),
+                                                        style: Theme.of(context).textTheme.bodySmall
                                                     ),
                                                     Text(
                                                       "Mobile - ${data[i]['mobile']}",
                                                       // New date format
-                                                      style: const TextStyle(
-                                                        fontSize: 12,
-                                                      ),
+                                                        style: Theme.of(context).textTheme.bodySmall
                                                     ),
                                                     // Text starts
                                                     Text(
                                                       "Validity - ${DateFormat('d MMMM yyyy').format(dateTime)}",
                                                       // New date format
-                                                      style: const TextStyle(
-                                                        fontSize: 12,
-                                                      ),
+                                                        style: Theme.of(context).textTheme.bodySmall
                                                     ),
                                                   ],
                                                 ),
