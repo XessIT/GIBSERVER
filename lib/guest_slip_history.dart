@@ -97,7 +97,7 @@ class _GuestHistoryState extends State<GuestHistory> {
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
                       date,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.blue,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
