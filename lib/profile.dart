@@ -390,13 +390,17 @@ class _PersonalState extends State<Personal> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Padding(
+                       Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: Text('Name'),
+                      
+                        child: Text('Name', style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall,),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(fname!),
+                        child: Text(fname!, 
+                          style: Theme.of(context).textTheme.bodySmall,),
                       ),
 
                     ],
@@ -408,13 +412,17 @@ class _PersonalState extends State<Personal> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children:  [
-                        const Padding(
+                         Padding(
                           padding: EdgeInsets.all(8.0),
-                          child: Text('District'),
+                          child: Text('District', style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall,),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text(district!),
+                          child: Text(district!, style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall,),
                         )
                       ],
                     ),
@@ -426,13 +434,17 @@ class _PersonalState extends State<Personal> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children:  [
-                        const Padding(
+                         Padding(
                           padding: EdgeInsets.all(8.0),
-                          child: Text('Chapter'),
+                          child: Text('Chapter', style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall,),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text(chapter!),
+                          child: Text(chapter!, style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall,),
                         )
                       ],
                     ),
@@ -441,13 +453,15 @@ class _PersonalState extends State<Personal> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Padding(
+                       Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: Text('Native'),
+                        child: Text('Native', style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall,),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(location!),
+                        child: Text(location!,style: Theme.of(context).textTheme.bodySmall,),
                       )
                     ],
                   ),
@@ -459,13 +473,17 @@ class _PersonalState extends State<Personal> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Padding(
+                         Padding(
                           padding: EdgeInsets.all(8.0),
-                          child: Text('DOB'),
+                          child: Text('DOB', style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall,),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text(dob!),
+                          child: Text(dob!, style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall,),
                         )
                       ],
                     ), if(widget.userType != "Guest")
@@ -474,13 +492,17 @@ class _PersonalState extends State<Personal> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Padding(
+                         Padding(
                           padding: EdgeInsets.all(8.0),
-                          child: Text('Koottam'),
+                          child: Text('Koottam', style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall,),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text(koottam!),
+                          child: Text(koottam!, style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall,),
                         )
                       ],
                     ),
@@ -491,13 +513,17 @@ class _PersonalState extends State<Personal> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children:  [
-                        const Padding(
+                         Padding(
                           padding: EdgeInsets.all(8.0),
-                          child: Text('Kovil'),
+                          child: Text('Kovil', style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall,),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text(kovil!),
+                          child: Text(kovil!, style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall,),
                         )
                       ],
                     ),
@@ -505,13 +531,15 @@ class _PersonalState extends State<Personal> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Padding(
+                       Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: Text('Blood Group'),
+                        child: Text('Blood Group', style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall,),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(bloodgroup!),
+                        child: Text(bloodgroup!, style: Theme.of(context).textTheme.bodySmall,),
                       )
                     ],
                   ),
@@ -520,19 +548,19 @@ class _PersonalState extends State<Personal> {
               if(widget.userType != "Guest" && marital_status=="Married")
                 ExpansionTile(
                   leading: const Icon(Icons.group),
-                  title: const Text('Dependents'),
+                  title:  Text('Dependents',),
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children:  [
-                        const Padding(
+                         Padding(
                           padding: EdgeInsets.all(8.0),
-                          child: Text('Spouse Name'),
+                          child: Text('Spouse Name', style: Theme.of(context).textTheme.bodySmall,),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child:spousename!.isEmpty ? const Text("-")
-                              : Text(spousename!),
+                              : Text(spousename!, style: Theme.of(context).textTheme.bodySmall,),
                         )
                       ],
                     ),
@@ -540,13 +568,13 @@ class _PersonalState extends State<Personal> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children:  [
-                        const Padding(
+                         Padding(
                           padding: EdgeInsets.all(8.0),
-                          child: Text('Wedding Date'),
+                          child: Text('Wedding Date', style: Theme.of(context).textTheme.bodySmall,),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text(wad!),
+                          child: Text(wad!, style: Theme.of(context).textTheme.bodySmall,),
                         )
                       ],
                     ),
@@ -554,14 +582,14 @@ class _PersonalState extends State<Personal> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Padding(
+                         Padding(
                           padding: EdgeInsets.all(8.0),
-                          child: Text('Spouse Blood Group'),
+                          child: Text('Spouse Blood Group', style: Theme.of(context).textTheme.bodySmall,),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: spousebloodgroup!.isEmpty ? const Text("-")
-                              : Text(spousebloodgroup!),
+                              : Text(spousebloodgroup!, style: Theme.of(context).textTheme.bodySmall,),
                         )
                       ],
                     ),
@@ -569,14 +597,14 @@ class _PersonalState extends State<Personal> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children:  [
-                        const Padding(
+                         Padding(
                           padding: EdgeInsets.all(8.0),
-                          child: Text('Spouse Native'),
+                          child: Text('Spouse Native', style: Theme.of(context).textTheme.bodySmall,),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child:spousenative == null ? const Text("Nil")
-                              : Text(spousenative!),
+                              : Text(spousenative!, style: Theme.of(context).textTheme.bodySmall,),
                         )
                       ],
                     ),
@@ -584,14 +612,14 @@ class _PersonalState extends State<Personal> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Padding(
+                         Padding(
                           padding: EdgeInsets.all(8.0),
-                          child: Text('Spouse Father Koottam'),
+                          child: Text('Spouse Father Koottam', style: Theme.of(context).textTheme.bodySmall,),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: spousekoottam == null ? const Text("Nil")
-                              : Text(spousekoottam!),
+                              : Text(spousekoottam!, style: Theme.of(context).textTheme.bodySmall,),
                         )
 
                       ],),
@@ -599,14 +627,14 @@ class _PersonalState extends State<Personal> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Padding(
+                         Padding(
                           padding: EdgeInsets.all(8.0),
-                          child: Text('Spouse Father Kovil'),
+                          child: Text('Spouse Father Kovil', style: Theme.of(context).textTheme.bodySmall,),
                         ),
                         Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding:  EdgeInsets.all(8.0),
                           child: spousekovil== null ? const Text("Nil")
-                              : Text(spousekovil!),
+                              : Text(spousekovil!, style: Theme.of(context).textTheme.bodySmall,),
                         )
 
                       ],),
@@ -619,13 +647,13 @@ class _PersonalState extends State<Personal> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Padding(
+                       Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: Text('Mobile Number'),
+                        child: Text('Mobile Number', style: Theme.of(context).textTheme.bodySmall,),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text("+91${mobile!}"),
+                        child: Text("+91${mobile!}",style: Theme.of(context).textTheme.bodySmall,),
                       )
 
                     ],),
@@ -633,13 +661,13 @@ class _PersonalState extends State<Personal> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Padding(
+                       Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: Text('Email'),
+                        child: Text('Email' ,style: Theme.of(context).textTheme.bodySmall,),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(email!),
+                        child: Text(email!, style: Theme.of(context).textTheme.bodySmall,),
                       )
 
                     ],),
@@ -654,32 +682,32 @@ class _PersonalState extends State<Personal> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
                       children: [
-                        const Padding(
+                         Padding(
                           padding: EdgeInsets.all(8.0),
-                          child: Text('Education'),
+                          child: Text('Education', style: Theme.of(context).textTheme.bodySmall,),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text(education!),)
+                          child: Text(education!, style: Theme.of(context).textTheme.bodySmall,),)
                       ],
                     )
                   ],
                 ),
               if(widget.userType != "Guest")
                 ExpansionTile(
-                  leading: const Icon(Icons.man),
-                  title: const Text('Past Experience'),
+                  leading:  Icon(Icons.man),
+                  title:  Text('Past Experience',),
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children:  [
-                        const Padding(
+                         Padding(
                           padding: EdgeInsets.all(8.0),
-                          child: Text('Past Experience'),
+                          child: Text('Past Experience', style: Theme.of(context).textTheme.bodySmall,),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text(pastexperience!),
+                          child: Text(pastexperience!, style: Theme.of(context).textTheme.bodySmall,),
                         )
                       ],
                     ),
@@ -918,26 +946,26 @@ class _BusinessInfoState extends State<BusinessInfo> {
                   const SizedBox(height: 10,),
                   Row(
                     children: [
-                      const Padding(
+                       Padding(
                         padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                        child: Text('Business Type'),
+                        child: Text('Business Type', style: Theme.of(context).textTheme.bodySmall,),
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(108, 0, 0, 0),
-                        child: Text(businesstype ?? ""),
+                        child: Text(businesstype ?? "", style: Theme.of(context).textTheme.bodySmall,),
                       )
                     ],
                   ),
                   const SizedBox(height: 10,),
                   Row(
                     children: [
-                      const Padding(
+                       Padding(
                         padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                        child: Text('Company Name'),
+                        child: Text('Company Name', style: Theme.of(context).textTheme.bodySmall,),
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(94, 0, 0, 0),
-                        child: Text(companyname ?? ""),
+                        child: Text(companyname ?? "", style: Theme.of(context).textTheme.bodySmall,),
                       )
                     ],
                   ),
@@ -948,16 +976,16 @@ class _BusinessInfoState extends State<BusinessInfo> {
                       children: [
                         Column(
                           children: [
-                            const Padding(
+                             Padding(
                               padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                              child: Text('Business Keywords'),
+                              child: Text('Business Keywords', style: Theme.of(context).textTheme.bodySmall,),
                             ),
                             Padding(
                               padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
                               child: Text(businesskeywords ?? "",
                                 textAlign: TextAlign.justify,
                                 overflow: TextOverflow.ellipsis,
-                                maxLines: 3,),
+                                maxLines: 3, style: Theme.of(context).textTheme.bodySmall,),
                             )
                           ],
                         ),
@@ -974,15 +1002,15 @@ class _BusinessInfoState extends State<BusinessInfo> {
                     height: 100,
                     child: Row(
                       children: [
-                        const Padding(
+                         Padding(
                           padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
                           child: Align(
                               alignment: Alignment.topLeft,
-                              child: Text('Address')),
+                              child: Text('Address', style: Theme.of(context).textTheme.bodySmall,)),
                         ),
                         Padding(
                           padding: const EdgeInsets.fromLTRB(124, 0, 0, 0),
-                          child: Text(address ?? ""),
+                          child: Text(address ?? "", style: Theme.of(context).textTheme.bodySmall,),
                         )
                       ],
                     ),
@@ -990,15 +1018,15 @@ class _BusinessInfoState extends State<BusinessInfo> {
                   const SizedBox(height: 20,),
                   Row(
                     children: [
-                      const Padding(
+                       Padding(
                         padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
                         child: Align(
                             alignment: Alignment.topLeft,
-                            child: Text('Mobile')),
+                            child: Text('Mobile', style: Theme.of(context).textTheme.bodySmall,)),
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(130, 0, 0, 0),
-                        child: Text(mobile ?? "",
+                        child: Text(mobile ?? "", style: Theme.of(context).textTheme.bodySmall,
                           textAlign: TextAlign.justify,
                         ),
                       )
@@ -1007,15 +1035,15 @@ class _BusinessInfoState extends State<BusinessInfo> {
                   const SizedBox(height: 20,),
                   Row(
                     children: [
-                      const Padding(
+                       Padding(
                         padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
                         child: Align(
                             alignment: Alignment.topLeft,
-                            child: Text('Email')),
+                            child: Text('Email', style: Theme.of(context).textTheme.bodySmall,)),
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(140, 0, 0, 2),
-                        child: Text(email ?? "",
+                        child: Text(email ?? "", style: Theme.of(context).textTheme.bodySmall,
                           textAlign: TextAlign.justify,
                         ),
                       )
@@ -1031,9 +1059,9 @@ class _BusinessInfoState extends State<BusinessInfo> {
                     children: [
                       Column(
                         children: [
-                          const Padding(
+                           Padding(
                             padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                            child: Text('Website/Brochure'),
+                            child: Text('Website/Brochure', style: Theme.of(context).textTheme.bodySmall,),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(left: 18),
@@ -1044,7 +1072,7 @@ class _BusinessInfoState extends State<BusinessInfo> {
                                   color: Colors.green,
                                 ),
                                 SizedBox(width: 5),  // Add some space between the icon and the text
-                                Text(website ?? ""),
+                                Text(website ?? "", style: Theme.of(context).textTheme.bodySmall,),
                               ],
                             ),
                           ),
@@ -1055,13 +1083,13 @@ class _BusinessInfoState extends State<BusinessInfo> {
                   const Divider(color: Colors.grey,),
                   Row(
                     children: [
-                      const Padding(
+                       Padding(
                         padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                        child: Text('Year of Business\nEstablished'),
+                        child: Text('Year of Business\nEstablished', style: Theme.of(context).textTheme.bodySmall,),
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(88, 0, 0, 0),
-                        child: Text(ybe ?? ""),
+                        child: Text(ybe ?? "", style: Theme.of(context).textTheme.bodySmall,),
                       )
                     ],
                   ),
@@ -1094,7 +1122,6 @@ class _ImageAndVideoState extends State<ImageAndVideo> {
       child: Scaffold(
         appBar: AppBar(
           title: Text("Gallery",style: Theme.of(context).textTheme.displayLarge),
-          centerTitle: true,
           iconTheme: IconThemeData(color: Colors.white),
           leading: IconButton(
             icon: Icon(Icons.navigate_before),
