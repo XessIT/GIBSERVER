@@ -2,13 +2,11 @@ import 'dart:convert';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:gipapp/Non_exe_pages/settings_non_executive.dart';
-import 'package:gipapp/search_doctor.dart';
+
 import 'package:gipapp/settings_page_executive.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart'as http;
 
-import 'Non_exe_pages/non_exe_home.dart';
-import 'guest_home.dart';
 import 'guest_settings.dart';
 import 'home.dart';
 
@@ -105,7 +103,7 @@ class _DoctorsState extends State<Doctors> {
       // Show offline status message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Please check your internet connection.'),
+          content: Text('Please ch+eck your internet connection.'),
         ),
       );
     }
@@ -429,11 +427,11 @@ class _DoctorsDetailsPageState extends State<DoctorsDetailsPage> {
         onRefresh: _refresh,
         child: Container(
           decoration: BoxDecoration(
-            image: DecorationImage(
-              image: const AssetImage("assets/img_3.png"),
-              colorFilter: ColorFilter.mode(Colors.white.withOpacity(0.2), BlendMode.dstATop),
-              fit: BoxFit.cover,
-            ),
+            // image: DecorationImage(
+            //   image: const AssetImage("assets/img_3.png"),
+            //   colorFilter: ColorFilter.mode(Colors.white.withOpacity(0.2), BlendMode.dstATop),
+            //   fit: BoxFit.cover,
+            // ),
           ),
           child: isLoading
               ? Center(child: CircularProgressIndicator())
@@ -457,7 +455,7 @@ class _DoctorsDetailsPageState extends State<DoctorsDetailsPage> {
                       "Doctor Name : Dr.${getDoctor[0]['first_name']}\n\n"
                           "Specialization : ${getDoctor[0]['specialist']}\n\n"
                           "Hospital Name : ${getDoctor[0]['hospital_name']}\n\n"
-                          "Hospital Address : ${getDoctor[0]['hospital_address']}\n\n",
+                          "Hospital Address : ${getDoctor[0]['hospital_address']}\n\n",style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ),
                 ),

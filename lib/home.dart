@@ -527,7 +527,7 @@ class _HomepageState extends State<Homepage> {
       return false;
     }
   }
-/// Get image
+  /// Get image
   List<String> _imagePaths = [];
   Future<void> _fetchImages(String userType) async {
     final url = Uri.parse(
@@ -1079,7 +1079,7 @@ class _HomepageState extends State<Homepage> {
                                 ),
                               );
                             }
-                            ),
+                        ),
 
                       ),
 
@@ -1152,7 +1152,6 @@ class _HomepageState extends State<Homepage> {
                                             300.0, // Set the width of the dialog
                                             height:
                                             400.0, // Set the height of the dialog
-
                                             child: PhotoView(
                                               imageProvider:
                                               NetworkImage(imageUrl),
