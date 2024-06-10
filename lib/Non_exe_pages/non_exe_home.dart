@@ -872,9 +872,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                                       ),
                                                     );
                                                   } else {
-                                                    showDialog(
-                                                        context: context,
-                                                        builder: (ctx) =>
+                                                    showDialog(context: context, builder: (ctx) =>
                                                             // Dialog box for register meeting and add guest
                                                             AlertDialog(
                                                               title: Text(
