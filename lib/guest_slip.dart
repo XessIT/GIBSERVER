@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'Non_exe_pages/non_exe_home.dart';
+import 'guest_history2.dart';
 import 'guest_slip_history.dart';
 import 'home.dart';
 
@@ -21,8 +22,8 @@ class VisitorsSlip extends StatefulWidget {
   final String? meeting_place;
   final String? meeting_type;
 
-  VisitorsSlip(
-      {Key? key,
+  const VisitorsSlip(
+      { Key? key,
         required this.guestcount,
         required this.userId,
         required this.meetingId,
@@ -148,7 +149,19 @@ class _VisitorsSlipState extends State<VisitorsSlip> {
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
-                          GuestHistory(userId: widget.userId.toString())),
+                          GuestHistory2(
+                            guestcount: widget.guestcount,
+                            userId: widget.userId,
+                            meetingId: widget.meetingId,
+                            userType: widget.userType,
+                            meeting_date: widget.meeting_date,
+                            user_mobile: widget.user_mobile,
+                            user_name: widget.user_name,
+                            member_id: widget.member_id,
+                            meeting_place: widget.meeting_place,
+                            meeting_type: widget.meeting_type,
+                          ),
+                  ),
                 );
               },
               icon: const Icon(
