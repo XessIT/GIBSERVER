@@ -187,8 +187,15 @@ class _PersonalEditState extends State<PersonalEdit> {
           context,
           MaterialPageRoute(builder: (context) => Profile(userID: widget.userId, userType: widget.userType.toString(),)),
         );
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text("Profile Successfully Updated")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Container(
+            child: Text(
+              "Profile Successfully Updated",
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white),
+            ),
+          ),
+          backgroundColor: Colors.green,
+        ));
       } else {
         print("Error: ${response.statusCode}");
       }
@@ -244,7 +251,10 @@ class _PersonalEditState extends State<PersonalEdit> {
           MaterialPageRoute(builder: (context) => Profile(userID: widget.userId, userType: widget.userType.toString(),)),
         );
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text("You have Successfully Updated")));
+            content: Text("You have Successfully Updated"),
+          backgroundColor: Colors.green,
+        ),
+        );
       } else {
         print("Error: ${response.statusCode}");
       }
@@ -421,24 +431,6 @@ class _PersonalEditState extends State<PersonalEdit> {
                     ),
                     onTap: () {
                       pickImageFromGallery();
-                      /* showModalBottomSheet(
-                        context: context,
-                        builder: (ctx) {
-                          return Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              ListTile(
-                                leading: Icon(Icons.storage),
-                                title: Text("From Gallery"),
-                                onTap: () {
-                                  pickImageFromGallery();
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );*/
                     },
                   ),
                   SizedBox(

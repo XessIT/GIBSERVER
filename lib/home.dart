@@ -528,7 +528,7 @@ class _HomepageState extends State<Homepage> {
       return false;
     }
   }
-/// Get image
+  /// Get image
   List<String> _imagePaths = [];
   Future<void> _fetchImages(String Executive) async {
     final url = Uri.parse(
@@ -604,15 +604,13 @@ class _HomepageState extends State<Homepage> {
                       : Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      data.isEmpty
+                      /*data.isEmpty
                           ? const SizedBox.shrink()
-                          : const SizedBox(
-                        height: 190,
-                      ),
+                          : const SizedBox(height: 190,
+                      ),*/
+                      SizedBox(height: 190,),
                       if (_imagePaths.isNotEmpty) ...[
-                        SizedBox(
-                          height: 80,
-                        ),
+
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Card(
@@ -1274,7 +1272,7 @@ class _HomepageState extends State<Homepage> {
                                 ),
                               );
                             }
-                            ),
+                        ),
 
                       ),
 
@@ -1347,7 +1345,6 @@ class _HomepageState extends State<Homepage> {
                                             300.0, // Set the width of the dialog
                                             height:
                                             400.0, // Set the height of the dialog
-
                                             child: PhotoView(
                                               imageProvider:
                                               NetworkImage(imageUrl),
