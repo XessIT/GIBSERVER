@@ -599,8 +599,10 @@ class _VisitorsSlipState extends State<VisitorsSlip> {
 
                                     Row(
                                       mainAxisAlignment:
-                                      MainAxisAlignment.center,
+                                      MainAxisAlignment.spaceEvenly,
                                       children: [
+                                        Text(''),
+
                                         // Submit button starts
                                         MaterialButton(
                                             shape: RoundedRectangleBorder(
@@ -664,6 +666,8 @@ class _VisitorsSlipState extends State<VisitorsSlip> {
                                               style:
                                               TextStyle(color: Colors.white),
                                             )),
+
+                                        Text('${count}/${widget.guestcount}'),
                                         // Submit button ends
 
                                         // Cancel button starts
@@ -675,13 +679,13 @@ class _VisitorsSlipState extends State<VisitorsSlip> {
                                       height: 10,
                                     ),
 
-                                    Column(
+                                   /* Column(
                                       children: [
                                         Text('Total Guests: ${widget.guestcount}'),
 
-                                        Text('Remaining Guests: ${int.parse(widget.guestcount!) - count}/${widget.guestcount}'),
+                                        Text('Remaining Guests: ${ count}/${widget.guestcount}'),
                                       ],
-                                    ),
+                                    ),*/
 
                                     const SizedBox(
                                       height: 10,
