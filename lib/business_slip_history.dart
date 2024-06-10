@@ -153,7 +153,7 @@ class _CompletedState extends State<Completed> {
   void initState() {
     fetchData();
     super.initState();
-    Future.delayed(const Duration(seconds: 1), () {
+    Future.delayed(const Duration(seconds: 3), () {
       setState(() {
         isLoading = false; // Hide the loading indicator after 4 seconds
       });
@@ -477,7 +477,7 @@ class _PendingState extends State<Pending> {
   void initState() {
     fetchData();
     super.initState();
-    Future.delayed(const Duration(seconds: 1), () {
+    Future.delayed(const Duration(seconds: 3), () {
       setState(() {
         isLoading = false; // Hide the loading indicator after 4 seconds
       });
@@ -934,7 +934,7 @@ class _UnsuccessfulState extends State<Unsuccessful> {
   void initState() {
     fetchData();
     super.initState();
-    Future.delayed(const Duration(seconds: 1), () {
+    Future.delayed(const Duration(seconds: 3 ), () {
       setState(() {
         isLoading = false; // Hide the loading indicator after 4 seconds
       });

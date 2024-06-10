@@ -29,9 +29,11 @@ class _GuestHistoryState extends State<GuestHistory> {
           'http://mybudgetbook.in/GIBAPI/visiters_slip.php?user_id=${widget
               .userId}');
       final response = await http.get(url);
+      print("visitors url:$url");
 
       if (response.statusCode == 200) {
-
+        print("visitors status code:${response.statusCode}");
+        print("visitors body:${response.body}");
 
         final responseData = json.decode(response.body);
         if (responseData is List<dynamic>) {
@@ -69,22 +71,22 @@ class _GuestHistoryState extends State<GuestHistory> {
         leading: IconButton(
           icon: Icon(Icons.navigate_before),
           onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => BusinessPage(
-                    userId: widget.userId, userType: '',
-                  ),
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => BusinessPage(
+                  userId: widget.userId, userType: '',
                 ),
-              );
-              },
+              ),
+            );
+          },
         ),
       ),
       body: groupedVisitors.isEmpty ? Center(child: Text("No Record Found"))
           : Expanded(
-            child: ListView.builder(
-                    itemCount: groupedVisitors.length,
-                    itemBuilder: (context, index) {
+        child: ListView.builder(
+          itemCount: groupedVisitors.length,
+          itemBuilder: (context, index) {
             String date = groupedVisitors.keys.elementAt(index);
             List<Map<String, dynamic>> visitors = groupedVisitors[date]!;
             return SingleChildScrollView(
@@ -104,7 +106,7 @@ class _GuestHistoryState extends State<GuestHistory> {
                   ),
                   ListView.builder(
                     shrinkWrap: true,
-                   // physics: NeverScrollableScrollPhysics(),
+                    // physics: NeverScrollableScrollPhysics(),
                     itemCount: visitors.length,
                     itemBuilder: (context, index) {
                       Map<String, dynamic> visitor = visitors[index];
@@ -113,7 +115,7 @@ class _GuestHistoryState extends State<GuestHistory> {
                         child: Container(
                           width: 100,
                           height: 83,
-                        //  padding: const EdgeInsets.all(10.0),
+                          //  padding: const EdgeInsets.all(10.0),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(15.0),
@@ -156,9 +158,9 @@ class _GuestHistoryState extends State<GuestHistory> {
                 ],
               ),
             );
-                    },
-                  ),
-          ),
+          },
+        ),
+      ),
     );
   }
 
