@@ -58,7 +58,6 @@ class _OffersPageState extends State<OffersPage> {
       if (response.statusCode == 200) {
         // Handle successful response
         var data = json.decode(response.body);
-        print(data);
       } else {
         // Handle other status codes
         print('Request failed with status: ${response.statusCode}');
@@ -86,7 +85,6 @@ class _OffersPageState extends State<OffersPage> {
 
   List<Map<String, dynamic>> data=[];
   Future<void> getData() async {
-    print('Attempting to make HTTP request...');
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/offers.php?table=UnblockOffers');
       final response = await http.get(url);

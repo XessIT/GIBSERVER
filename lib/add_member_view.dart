@@ -88,7 +88,6 @@ class _PendingViewState extends State<PendingView> {
 
                 mobile=dynamicdata[0]["mobile"];
                 phone = mobile;
-                print("Mobile:$mobile");
               });
             }
           });
@@ -115,14 +114,11 @@ class _PendingViewState extends State<PendingView> {
   Future<void> fetchDataAdminRightsbase() async {
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/id_base_details_fetch.php?referrer_mobile=$mobile && admin_rights=$admin_rights');
-      print("mo: $mobile");
-      print("ar: $admin_rights");
-      print(url);
+
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
-        print("response Status: ${response.statusCode}");
-        print("response body: ${response.body}");
+
         final responseData = json.decode(response.body);
         if (responseData is List<dynamic>) {
           setState(() {
@@ -165,13 +161,7 @@ class _PendingViewState extends State<PendingView> {
       if (response.statusCode == 200) {
         // Handle successful response
         var data = json.decode(response.body);
-        print(data);
-        // Show online status message
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(
-        //     content: Text('Now online.'),
-        //   ),
-        // );
+
       } else {
         // Handle other status codes
         print('Request failed with status: ${response.statusCode}');
@@ -308,7 +298,6 @@ class _ApprovedViewState extends State<ApprovedView> {
 
                 mobile=dynamicdata[0]["mobile"];
                 phone = mobile;
-                print("Mobile:$mobile");
               });
             }
           });
@@ -335,21 +324,17 @@ class _ApprovedViewState extends State<ApprovedView> {
   Future<void> fetchDataAdminRightsbase() async {
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/id_base_details_fetch.php?referrer_mobile=$mobile && admin_rights=$admin_rights');
-      print("mo: $mobile");
-      print("ar: $admin_rights");
-      print(url);
+
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
-        print("response Status: ${response.statusCode}");
-        print("response body: ${response.body}");
+
         final responseData = json.decode(response.body);
         if (responseData is List<dynamic>) {
           setState(() {
             AdminRightsdata = responseData.cast<Map<String, dynamic>>();
             if (AdminRightsdata.isNotEmpty) {
               setState(() {
-                print("admin_rights Accepted data =$AdminRightsdata");
               });
             }
           });
@@ -467,7 +452,6 @@ class _RejectedViewState extends State<RejectedView> {
 
                 mobile=dynamicdata[0]["mobile"];
                 phone = mobile;
-                print("Mobile:$mobile");
               });
             }
           });
@@ -494,21 +478,17 @@ class _RejectedViewState extends State<RejectedView> {
   Future<void> fetchDataAdminRightsbase() async {
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/id_base_details_fetch.php?referrer_mobile=$mobile && admin_rights=$admin_rights');
-      print("mo: $mobile");
-      print("ar: $admin_rights");
-      print(url);
+
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
-        print("response Status: ${response.statusCode}");
-        print("response body: ${response.body}");
+
         final responseData = json.decode(response.body);
         if (responseData is List<dynamic>) {
           setState(() {
             AdminRightsdata = responseData.cast<Map<String, dynamic>>();
             if (AdminRightsdata.isNotEmpty) {
               setState(() {
-                print("admin_rights Rejected data =$AdminRightsdata");
               });
             }
           });

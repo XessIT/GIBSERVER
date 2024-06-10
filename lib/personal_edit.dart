@@ -180,10 +180,8 @@ class _PersonalEditState extends State<PersonalEdit> {
 
         }),
       );
-      print(url);
-      print("ResponseStatus: ${response.statusCode}");
+
       if (response.statusCode == 200) {
-        print("Offers response: ${response.body}");
 
         Navigator.push(
           context,
@@ -239,10 +237,8 @@ class _PersonalEditState extends State<PersonalEdit> {
           'id': widget.currentID,
         }),
       );
-      print(url);
-      print("ResponseStatus: ${response.statusCode}");
+
       if (response.statusCode == 200) {
-        print("Offers response: ${response.body}");
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => Profile(userID: widget.userId, userType: widget.userType.toString(),)),
@@ -298,7 +294,6 @@ class _PersonalEditState extends State<PersonalEdit> {
     XFile? pickedImage = await imagePicker.pickImage(source: ImageSource.gallery);
     if (pickedImage != null) {
       // Verify that pickedImage is indeed an XFile
-      print('pickedImage type: ${pickedImage.runtimeType}');
 
       // Read the image file as bytes
       try {
@@ -308,9 +303,7 @@ class _PersonalEditState extends State<PersonalEdit> {
         setState(() {
           selectedImage = imageBytes;
           imageName = pickedImage!.name;
-          print('Image Name: $imageName');
           imageData = base64ImageData;
-          print('Base64 Image Data: $imageData');
         });
       } catch (e) {
         print('Error reading image file: $e');
@@ -364,9 +357,7 @@ class _PersonalEditState extends State<PersonalEdit> {
         setState(() {
           suggesstiondataitemName = units.cast<Map<String, dynamic>>();
         });
-        print('Sorted chapter Names: $suggesstiondataitemName');
         setState(() {
-          print('chapter: $chapters');
           setState(() {
           });
           chapterController.clear();
@@ -1120,7 +1111,6 @@ class _PersonalEditState extends State<PersonalEdit> {
                             if (_formKey.currentState!.validate()) {
                               selectedImage == null ? Edit() : Update();
                               // updatedetails();
-                              print("${firstnamecontroller.text}${mobilecontroller.text}");
 
                             }
 

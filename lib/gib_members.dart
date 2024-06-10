@@ -60,8 +60,7 @@ class _GibMembersState extends State<GibMembers> {
               setState(() {
                 chapter = userdata[0]["chapter"]??"";
                 district = userdata[0]["district"]??"";
-                print("chapter $districtController.text");
-                print("district $chapterController.text");
+
 
 
               });
@@ -84,13 +83,10 @@ class _GibMembersState extends State<GibMembers> {
   List<Map<String, dynamic>> data=[];
 
   Future<void> getData(String districts, String chapters) async {
-    print('Attempting to make HTTP request...');
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/gib_members.php?district=$districts&chapter=$chapters&id=${widget.userId}');
-      print("gib members url =$url");
       final response = await http.get(url);
-      print("gib members ResponseStatus: ${response.statusCode}");
-      print("gib members Response: ${response.body}");
+
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         print("gib members ResponseData: $responseData");
@@ -103,7 +99,6 @@ class _GibMembersState extends State<GibMembers> {
         setState(() {
           data = itemGroups.cast<Map<String, dynamic>>();
         });
-        print('gib members Data: $data');
       } else {
         print('Error: ${response.statusCode}');
       }
@@ -148,7 +143,6 @@ class _GibMembersState extends State<GibMembers> {
         setState(() {
           suggesstionchapterdata = units.cast<Map<String, dynamic>>();
         });
-        print('Sorted chapter Names: $suggesstionchapterdata');
         setState(() {
           setState(() {
           });
@@ -183,7 +177,6 @@ class _GibMembersState extends State<GibMembers> {
   ///refresh
   List<String> items = List.generate(20, (index) => 'Item $index');
   Future<void> _refresh() async {
-    await Future.delayed(const Duration(seconds: 1));
     setState(() {
       getDistrict();
       fetchData().then((_) {
@@ -327,7 +320,7 @@ class _GibMembersState extends State<GibMembers> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(
-                        width: 150,
+                        width: 160,
                         height: 50,
                         child: TypeAheadFormField<String>(
                           textFieldConfiguration: TextFieldConfiguration(
@@ -362,7 +355,7 @@ class _GibMembersState extends State<GibMembers> {
                       ),
                       const SizedBox(height: 10, width: 20),
                       SizedBox(
-                        width: 150,
+                        width: 160,
                         height: 50,
                         child: TypeAheadFormField<String>(
                           textFieldConfiguration: TextFieldConfiguration(

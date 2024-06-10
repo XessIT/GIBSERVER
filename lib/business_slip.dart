@@ -42,9 +42,6 @@ class _ReferralPageState extends State<ReferralPage> {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=$userId');
       final response = await http.get(url);
       if (response.statusCode == 200) {
-        print("response S: ${response.statusCode}");
-        print("response B: ${response.body}");
-        print('-----------------------------------');
 
         final responseData = json.decode(response.body);
         if (responseData is List<dynamic>) {
@@ -92,13 +89,13 @@ class _ReferralPageState extends State<ReferralPage> {
           "referrer_mobile": mobile,
           "referrer_company": companyname,
           "status": status,
-          "user_id": widget.userId
+          "user_id": widget.userId,
+          "district": district,
+          "chapter": chapter
         }),
       );
-      print(url);
-      print("ResponseStatus: ${response.statusCode}");
+
       if (response.statusCode == 200) {
-        print("Offers response: ${response.body}");
 
         Navigator.push(context, MaterialPageRoute(builder: (context)=>BusinessPage(userId: widget.userId, userType: widget.userType)));
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -112,41 +109,6 @@ class _ReferralPageState extends State<ReferralPage> {
       // Handle error as needed
     }
   }
-/*  Future<void> InsertBusinessSlip() async {
-    try {
-      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/business_slip.php');
-        final response = await http.post(
-          url,
-          body: jsonEncode({
-            "type": typeofvisitor.toString(),
-            "Toname": to.text,
-            "Tomobile": tomobile.text,
-            "Tocompanyname": cname.text,
-            "purpose": purpose.text,
-            "referree_name": referreename.text,
-            "referree_mobile": referreemobile.text,
-            "referrer_name": fname.toString(),
-            "referrer_mobile": mobile.toString(),
-            "referrer_company": companyname.toString(),
-            "status": status.toString(),
-            "user_id": widget.userId
-          }),
-        );
-        print(url);
-        print("ResponseStatus: ${response.statusCode}");
-        if (response.statusCode == 200) {
-          print("Offers response: ${response.body}");
-        } else {
-          print("Error: ${response.statusCode}");
-        }
-      } catch (e) {
-=======
->>>>>>> d8809981efdef3c0a2f685c1cba51f3a6554bbe7
-      print("Error during signup: $e");
-      // Handle error as needed
-    }
-  }*/
-
 
   void updateTextFields(int index) {
     setState(() {
@@ -160,13 +122,8 @@ class _ReferralPageState extends State<ReferralPage> {
   void initState() {
     fetchData(widget.userId.toString());
     searchResults = List.from(allItems);
-    print("searchResults: $searchResults");
     fetchRegistrationData();
-    print('fetchRegistrationData$fetchRegistrationData');
-    print("type  ${typeofvisitor}");
-    print("F name${fname}");
-    print(mobile);
-    print(companyname);
+
 
     // TODO: implement initState
     super.initState();
@@ -297,11 +254,7 @@ class _ReferralPageState extends State<ReferralPage> {
                           to.text = suggestion['first_name'];
                           tomobile.text = suggestion['mobile'];
                           cname.text = suggestion['company_name'];
-                          // Update other text fields as needed
-                          print("type  ${typeofvisitor}");
-                          print("F name${fname}");
-                          print(mobile);
-                          print(companyname);
+
                         });
                       },
                     ),

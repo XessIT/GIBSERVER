@@ -76,9 +76,7 @@ class _ChangeState extends State<Change> {
               setState(() {
                 passwordCheck = dynamicdata[0]["password"];
                 getmobile = dynamicdata[0]["mobile"];
-                print(
-                    "get mobile :$getmobile\n---------- password : $passwordCheck ");
-              });
+                            });
             }
           });
         } else {
@@ -107,8 +105,7 @@ class _ChangeState extends State<Change> {
       );
 
       if (response.statusCode == 200) {
-        print("Response Status: ${response.statusCode}");
-        print("Response Body: ${response.body}");
+
         if (widget.userType == "Non-Executive") {
           Navigator.push(
             context,

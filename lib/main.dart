@@ -16,7 +16,6 @@ import 'notification.dart';
 import 'package:http/http.dart' as http;
 
 sendData() {
-  print("Hi Flutter");
 }
 
 final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -51,7 +50,6 @@ Future<void> fetchData() async {
   String? id = prefs.getString('id');
   if (id != null) {
     try {
-      print("MObile for message notification");
       final url = Uri.parse(
           'http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=$id');
       final response = await http.get(url);

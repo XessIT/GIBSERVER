@@ -213,7 +213,6 @@ class _GuestHomePageState extends State<GuestHomePage> {
       var response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
-        print(data);
       } else {
         print('Request failed with status: ${response.statusCode}');
       }

@@ -63,7 +63,6 @@ class _GuestProfileEditState extends State<GuestProfileEdit> {
     companynamecontroller =
         TextEditingController(text: widget.currentCompanyName);
     blood = widget.currentBloodGroup!;
-    print("widget image: ${widget.imageUrl20}");
     setState(() {
       image = 'http://mybudgetbook.in/GIBAPI/${widget.imageUrl20}';
     });
@@ -90,7 +89,6 @@ class _GuestProfileEditState extends State<GuestProfileEdit> {
         await imagePicker.pickImage(source: ImageSource.gallery);
     if (pickedImage != null) {
       // Verify that pickedImage is indeed an XFile
-      print('pickedImage type: ${pickedImage.runtimeType}');
 
       // Read the image file as bytes
       try {
@@ -100,9 +98,7 @@ class _GuestProfileEditState extends State<GuestProfileEdit> {
         setState(() {
           selectedImage = imageBytes;
           imageName = pickedImage!.name;
-          print('Image Name: $imageName');
           imageData = base64ImageData;
-          print('Base64 Image Data: $imageData');
         });
       } catch (e) {
         print('Error reading image file: $e');
@@ -129,10 +125,8 @@ class _GuestProfileEditState extends State<GuestProfileEdit> {
           "id": widget.id
         }),
       );
-      print(url);
-      print("ResponseStatus: ${response.statusCode}");
+
       if (response.statusCode == 200) {
-        print("Offers response: ${response.body}");
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -180,10 +174,7 @@ class _GuestProfileEditState extends State<GuestProfileEdit> {
         }),
       );
 
-      print(url);
-      print("ResponseStatus: ${response.statusCode}");
       if (response.statusCode == 200) {
-        print("Profile update response: ${response.body}");
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -222,13 +213,7 @@ class _GuestProfileEditState extends State<GuestProfileEdit> {
       if (response.statusCode == 200) {
         // Handle successful response
         var data = json.decode(response.body);
-        print(data);
-        // Show online status message
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(
-        //     content: Text('Now online.'),
-        //   ),
-        // );
+
       } else {
         // Handle other status codes
         print('Request failed with status: ${response.statusCode}');

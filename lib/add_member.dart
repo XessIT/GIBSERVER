@@ -143,9 +143,7 @@ class _GuestState extends State<Guest> {
       );
 
       if (response.statusCode == 200) {
-        // print("OTP response: ${response.body}");
-        //print("OTP response: ${response.statusCode} ${response.body}");
-        //print("OTP successful");
+
         // Navigator.push(context, MaterialPageRoute(builder: (context)=>const Home()));
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("OTP store successful")));
@@ -186,9 +184,7 @@ class _GuestState extends State<Guest> {
       final imageBytes = await pickedImage!.readAsBytes();
       setState(() {
         selectedImage = imageBytes;
-        print('Image Name: $imagename');
         imagedata = base64Encode(imageBytes);
-        print('Image Data: $imagedata');
       });
     }
   }
@@ -245,13 +241,11 @@ class _GuestState extends State<Guest> {
           // )));
           ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text("Please wait for Admin Approval")));
-          print("Uploaded image successfully");
         } else {
           // Navigator.push(context, MaterialPageRoute(builder: (context)=> Home(userType: widget.userType, userId: widget.userId)));
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text("Registration is successfull\n"
                   "Please wait for Admin Approval")));
-          print("Image upload failed. Server response: ${response["message"]}");
         }
       } else {
         print(
@@ -325,9 +319,7 @@ class _GuestState extends State<Guest> {
         setState(() {
           suggesstiondataitemName = units.cast<Map<String, dynamic>>();
         });
-        print('Sorted chapter Names: $suggesstiondataitemName');
         setState(() {
-          print('chapter: $chapters');
           setState(() {});
           chapterController.clear();
         });
@@ -357,7 +349,6 @@ class _GuestState extends State<Guest> {
               setState(() {
                 referrermobilecontroller.text = dynamicdata[0]["mobile"];
                 referrerId = dynamicdata[0]["member_id"];
-                //    print("referrer Details Fetch : ${referrermobilecontroller.text},${ referreridcotroller.text}");
               });
             }
           });
@@ -393,13 +384,7 @@ class _GuestState extends State<Guest> {
       if (response.statusCode == 200) {
         // Handle successful response
         var data = json.decode(response.body);
-        print(data);
-        // Show online status message
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(
-        //     content: Text('Now online.'),
-        //   ),
-        // );
+
       } else {
         // Handle other status codes
         print('Request failed with status: ${response.statusCode}');

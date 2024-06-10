@@ -71,7 +71,6 @@ class _VisitorsSlipState extends State<VisitorsSlip> {
     setState(() {
       getMeetingDate = DateFormat('yyyy-MM-dd').format(meetingDate!);
     });
-    print("MDate:- $getMeetingDate");
     try {
       final uri = Uri.parse("http://mybudgetbook.in/GIBAPI/visiters_slip.php");
       var res = await http.post(uri,
@@ -91,7 +90,6 @@ class _VisitorsSlipState extends State<VisitorsSlip> {
             'member_id': widget.member_id,
            // 'guest_count': count1 // Add this line
           }));
-      print("guestSlip -${widget.userId}");
       if (res.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Guest Added Successfully")));
@@ -616,7 +614,6 @@ class _VisitorsSlipState extends State<VisitorsSlip> {
                                                   .validate()) {
                                                 guestDateStoreDatabase();
                                                 count++;
-                                                print("count value -- $count");
 
                                                 if (count <
                                                     int.parse(widget.guestcount

@@ -215,7 +215,6 @@ class _PersonalEditoldState extends State<PersonalEditold> {
       );
 
       if (response.statusCode == 200) {
-        print('User updated successfully');
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => Login()),
@@ -251,7 +250,6 @@ class _PersonalEditoldState extends State<PersonalEditold> {
     ImagePicker imagepicker = ImagePicker();
     XFile? file = await imagepicker.pickImage(source: ImageSource.gallery);
     showLocalImage = true;
-    print('${file?.path}');
     pickedimage = File(file!.path);
     setState(() {
     });
@@ -303,9 +301,7 @@ class _PersonalEditoldState extends State<PersonalEditold> {
         setState(() {
           suggesstiondataitemName = units.cast<Map<String, dynamic>>();
         });
-        print('Sorted chapter Names: $suggesstiondataitemName');
         setState(() {
-          print('chapter: $chapters');
           setState(() {
           });
           chapterController.clear();
