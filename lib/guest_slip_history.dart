@@ -17,17 +17,22 @@ class GuestHistory extends StatefulWidget {
 class _GuestHistoryState extends State<GuestHistory> {
   List<Map<String, dynamic>> visitorsFetchdata = [];
 
+  bool isLoading = true;
   @override
   void initState() {
     visitorsFetch();
+    Future.delayed(Duration(seconds: 2), () {
+      setState(() {
+        isLoading = false;
+      });
+    });
     super.initState();
   }
 
   Future<void> visitorsFetch() async {
     try {
       final url = Uri.parse(
-          'http://mybudgetbook.in/GIBAPI/visiters_slip.php?user_id=${widget
-              .userId}');
+          'http://mybudgetbook.in/GIBAPI/visiters_slip.php?user_id=${widget.userId}');
       final response = await http.get(url);
       print("visitors url:$url");
 
@@ -75,14 +80,16 @@ class _GuestHistoryState extends State<GuestHistory> {
               context,
               MaterialPageRoute(
                 builder: (context) => BusinessPage(
-                  userId: widget.userId, userType: '',
+                  userId: widget.userId, userType: '',initialTabIndex: 1,
                 ),
               ),
             );
           },
         ),
       ),
-      body: groupedVisitors.isEmpty ? Center(child: Text("No Record Found"))
+      body:
+      isLoading ? const Center(child: CircularProgressIndicator(),):
+      groupedVisitors.isEmpty ? Center(child: Text("No Record Found"))
           : Expanded(
         child: ListView.builder(
           itemCount: groupedVisitors.length,

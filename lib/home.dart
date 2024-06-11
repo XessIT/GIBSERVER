@@ -978,7 +978,7 @@ class _HomepageState extends State<Homepage> {
                                               future: isUserRegistered(id),
                                               builder: (context, snapshot) {
                                                 if (snapshot.connectionState == ConnectionState.waiting) {
-                                                  return CircularProgressIndicator();
+                                                  return Text("");
                                                 } else if (snapshot.hasError) {
                                                   return Icon(Icons.error, color: Colors.red);
                                                 } else {

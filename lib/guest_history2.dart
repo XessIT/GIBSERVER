@@ -127,16 +127,16 @@ class _GuestHistory2State extends State<GuestHistory2> {
         ),
       ),
       body:
-      isLoading ? Center(child: CircularProgressIndicator()) :
+      isLoading ? const Center(child: CircularProgressIndicator(),):
       groupedVisitors.isEmpty ? Center(child: Text("No Record Found"))
           : Expanded(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: List.generate(groupedVisitors.length, (index) {
-              String date = groupedVisitors.keys.elementAt(index);
-              List<Map<String, dynamic>> visitors = groupedVisitors[date]!;
-              return Column(
+        child: ListView.builder(
+          itemCount: groupedVisitors.length,
+          itemBuilder: (context, index) {
+            String date = groupedVisitors.keys.elementAt(index);
+            List<Map<String, dynamic>> visitors = groupedVisitors[date]!;
+            return SingleChildScrollView(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Padding(
@@ -152,7 +152,7 @@ class _GuestHistory2State extends State<GuestHistory2> {
                   ),
                   ListView.builder(
                     shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(), // Disable scrolling for the inner list
+                    // physics: NeverScrollableScrollPhysics(),
                     itemCount: visitors.length,
                     itemBuilder: (context, index) {
                       Map<String, dynamic> visitor = visitors[index];
@@ -161,6 +161,7 @@ class _GuestHistory2State extends State<GuestHistory2> {
                         child: Container(
                           width: 100,
                           height: 83,
+                          //  padding: const EdgeInsets.all(10.0),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(15.0),
@@ -192,6 +193,7 @@ class _GuestHistory2State extends State<GuestHistory2> {
                                     ],
                                   ),
                                 ),
+
                               ],
                             ),
                           ),
@@ -200,12 +202,11 @@ class _GuestHistory2State extends State<GuestHistory2> {
                     },
                   ),
                 ],
-              );
-            }),
-          ),
+              ),
+            );
+          },
         ),
       ),
-
     );
   }
 
