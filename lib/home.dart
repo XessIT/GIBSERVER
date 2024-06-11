@@ -311,8 +311,7 @@ class _HomepageState extends State<Homepage> {
     }
   }
 
-  void _showGuestDialog(String meetingId, String meetingType,
-      String meetingDate, String meetingPlace) {
+  void _showGuestDialog(String meetingId, String meetingType, String meetingDate, String meetingPlace) {
     showDialog(
       context: context,
       builder: (ctx) => Form(
@@ -387,8 +386,7 @@ class _HomepageState extends State<Homepage> {
       // print("r url:$url");
 
       if (response.statusCode == 200) {
-        // print("r status code:${response.statusCode}");
-        // print("r body:${response.body}");
+
 
         final responseData = json.decode(response.body);
         if (responseData is List<dynamic>) {
@@ -418,39 +416,42 @@ class _HomepageState extends State<Homepage> {
     try {
       final url = Uri.parse(
           'http://mybudgetbook.in/GIBAPI/non_exe_meeting.php?member_type=${widget.userType}&district=${district}&chapter=${chapter}');
+      print("meeting url: $url");
       final response = await http.get(url);
       if (response.statusCode == 200) {
+        print("re s: ${response.statusCode}");
+        print("re b: ${response.body}");
         final responseData = json.decode(response.body);
         final List<dynamic> itemGroups = responseData;
         List<dynamic> filteredData = itemGroups.where((item) {
           DateTime registrationOpeningDate;
           DateTime registrationClosingDate;
+          DateTime meetingDate;
           try {
-            registrationOpeningDate =
-                DateTime.parse(item['registration_opening_date']);
-            registrationClosingDate =
-                DateTime.parse(item['registration_closing_date']);
+            registrationOpeningDate = DateTime.parse(item['registration_opening_date']);
+            registrationClosingDate = DateTime.parse(item['registration_closing_date']);
+            meetingDate = DateTime.parse(item['meeting_date']);
           } catch (e) {
             print('Error parsing registration dates: $e');
             return false;
           }
 
           // Check if the registration opening date is before the current date
-          bool isOpenForRegistration =
-          registrationOpeningDate.isBefore(DateTime.now());
+          bool isOpenForRegistration = registrationOpeningDate.isBefore(DateTime.now());
 
           // Check if the registration closing date is after the current date
-          bool isRegistrationOpen =
-          registrationClosingDate.isAfter(DateTime.now());
+          bool isRegistrationOpen = registrationClosingDate.isAfter(DateTime.now());
 
+          // Add a flag to indicate if registration is expired
+          item['isRegistrationExpired'] = !isRegistrationOpen;
 
-          // Return true if the meeting is open for registration and false otherwise
-          return isOpenForRegistration && isRegistrationOpen;
+          // Return true if the meeting is before or on the meeting date
+          return DateTime.now().isBefore(meetingDate) || DateTime.now().isAtSameMomentAs(meetingDate);
         }).toList();
+
         setState(() {
           // Cast the filtered data to the correct type and update your state
           data = filteredData.cast<Map<String, dynamic>>();
-
         });
       } else {
         print('Error: ${response.statusCode}');
@@ -743,6 +744,8 @@ class _HomepageState extends State<Homepage> {
                           String meetingPlace = meeting['place'];
                           String meetingType = meeting['meeting_type'];
                           String id = meeting['id'];
+                          bool isRegistrationExpired = meeting['isRegistrationExpired'];
+
 
 
                           ///DateTime dateTime = DateFormat('yyyy-MM-dd').parse(dateString);
@@ -771,7 +774,21 @@ class _HomepageState extends State<Homepage> {
                                                   .headlineSmall,
                                             ),
 
-                                            IconButton(
+                                            isRegistrationExpired
+                                                ? IconButton(
+                                              onPressed: () {
+                                                ScaffoldMessenger.of(context).showSnackBar(
+                                                  SnackBar(
+                                                    content: Text('Registration date closed & Unable to add a guest'   , style: TextStyle(color: Colors.grey, fontSize: 10,fontStyle: FontStyle.italic)),
+                                                    duration: Duration(seconds: 2), // Adjust the duration as needed
+                                                  ),
+                                                );
+                                              },
+                                              icon: Icon(
+                                                Icons.person_add_alt_1_rounded, // Choose the appropriate icon
+                                                color: Colors.grey,
+                                              ),
+                                            ) : IconButton(
                                                 onPressed: () async {
                                                   bool isRegistered = await isUserRegistered(id);
 
@@ -1067,7 +1084,7 @@ class _HomepageState extends State<Homepage> {
                                               .spaceBetween,
                                           children: [
                                             Text(
-                                              '${_formatTimeString(meeting['from_time'])} to ${_formatTimeString(meeting['to_time'])}',
+                                              '${(meeting['from_time'])} to ${(meeting['to_time'])}',
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .bodySmall,
@@ -1135,6 +1152,7 @@ class _HomepageState extends State<Homepage> {
                           ),
                         ),
                       ),
+                      data1.isNotEmpty ?
                       SizedBox(
                         height: MediaQuery.of(context).size.height *
                             0.6, // Adjust the height as needed
@@ -1312,6 +1330,7 @@ class _HomepageState extends State<Homepage> {
                                             ),
                                           ],
                                         ),
+
                                       ],
                                     ),
                                   ),
@@ -1320,8 +1339,17 @@ class _HomepageState extends State<Homepage> {
                             }
                         ),
 
+                      ):
+                      Center(
+                        child: Text(
+                          "No Offers Available",
+                          style: GoogleFonts.aBeeZee(
+                            fontSize: 10,
+                            color: Colors.black,
+                         //   fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
-
                     ],
                   ),
                 ),

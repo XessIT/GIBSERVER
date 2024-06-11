@@ -390,31 +390,39 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
     try {
       final url = Uri.parse(
           'http://mybudgetbook.in/GIBAPI/non_exe_meeting.php?member_type=${widget.userType}&district=${district}&chapter=${chapter}');
+      print("meeting url: $url");
       final response = await http.get(url);
       if (response.statusCode == 200) {
+        print("re s: ${response.statusCode}");
+        print("re b: ${response.body}");
         final responseData = json.decode(response.body);
         final List<dynamic> itemGroups = responseData;
         List<dynamic> filteredData = itemGroups.where((item) {
           DateTime registrationOpeningDate;
           DateTime registrationClosingDate;
+          DateTime meetingDate;
           try {
-            registrationOpeningDate =
-                DateTime.parse(item['registration_opening_date']);
-            registrationClosingDate =
-                DateTime.parse(item['registration_closing_date']);
+            registrationOpeningDate = DateTime.parse(item['registration_opening_date']);
+            registrationClosingDate = DateTime.parse(item['registration_closing_date']);
+            meetingDate = DateTime.parse(item['meeting_date']);
           } catch (e) {
             print('Error parsing registration dates: $e');
             return false;
           }
+
           // Check if the registration opening date is before the current date
-          bool isOpenForRegistration =
-              registrationOpeningDate.isBefore(DateTime.now());
+          bool isOpenForRegistration = registrationOpeningDate.isBefore(DateTime.now());
+
           // Check if the registration closing date is after the current date
-          bool isRegistrationOpen =
-              registrationClosingDate.isAfter(DateTime.now());
-          // Return true if the meeting is open for registration and false otherwise
-          return isOpenForRegistration && isRegistrationOpen;
+          bool isRegistrationOpen = registrationClosingDate.isAfter(DateTime.now());
+
+          // Add a flag to indicate if registration is expired
+          item['isRegistrationExpired'] = !isRegistrationOpen;
+
+          // Return true if the meeting is before or on the meeting date
+          return DateTime.now().isBefore(meetingDate) || DateTime.now().isAtSameMomentAs(meetingDate);
         }).toList();
+
         setState(() {
           // Cast the filtered data to the correct type and update your state
           data = filteredData.cast<Map<String, dynamic>>();
@@ -425,7 +433,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
       print('HTTP request completed. Status code: ${response.statusCode}');
     } catch (e) {
       print('Error making HTTP request: $e');
-      throw e; // rethrow the error if needed
+      rethrow; // rethrow the error if needed
     }
   }
 
@@ -757,6 +765,8 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                         String meetingPlace = meeting['place'];
                         String meetingType = meeting['meeting_type'];
                         String id = meeting['id'];
+                        bool isRegistrationExpired = meeting['isRegistrationExpired'];
+
 
                         ///DateTime dateTime = DateFormat('yyyy-MM-dd').parse(dateString);
                         return Builder(
@@ -781,7 +791,21 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                                 .headlineSmall,
                                           ),
 
-                                          IconButton(
+                                          isRegistrationExpired
+                                              ? IconButton(
+                                            onPressed: () {
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                SnackBar(
+                                                  content: Text('Registration date closed & Unable to add a guest'   , style: TextStyle(color: Colors.grey, fontSize: 10,fontStyle: FontStyle.italic)),
+                                                  duration: Duration(seconds: 2), // Adjust the duration as needed
+                                                ),
+                                              );
+                                            },
+                                            icon: Icon(
+                                              Icons.person_add_alt_1_rounded, // Choose the appropriate icon
+                                              color: Colors.grey,
+                                            ),
+                                          ) :IconButton(
                                               onPressed: () async {
                                                 bool isRegistered =
                                                     await isUserRegistered(
@@ -1133,7 +1157,9 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                       ),
                     ),
                   ),
-                  Container(
+                  SizedBox(height: 10),
+                data1.isNotEmpty ?
+                Container(
                     height: MediaQuery.of(context).size.height *
                         0.6, // Adjust the height as needed
                     child: ListView.builder(
@@ -1276,13 +1302,27 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                         ),
                                       ],
                                     ),
+                                    Container(
+                                      height: 50,
+
+                                    )
                                   ],
                                 ),
                               ),
                             ),
                           );
                         }),
-                  ),
+                  )
+                    : Center(
+                      child: Text(
+                        "No Offers Available",
+                        style: GoogleFonts.aBeeZee(
+                          fontSize: 10,
+                          color: Colors.black,
+                          //fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    )
                 ],
               ),
             ),
