@@ -6,9 +6,10 @@ import 'package:http/http.dart' as http;
 import 'business.dart';
 
 class GuestHistory extends StatefulWidget {
-  final String userId;
+  final String? userType;
+  final String? userId;
 
-  const GuestHistory({Key? key, required this.userId}) : super(key: key);
+  const GuestHistory({Key? key, required this.userType, required this.userId}) : super(key: key);
 
   @override
   State<GuestHistory> createState() => _GuestHistoryState();
@@ -80,15 +81,14 @@ class _GuestHistoryState extends State<GuestHistory> {
               context,
               MaterialPageRoute(
                 builder: (context) => BusinessPage(
-                  userId: widget.userId, userType: '',initialTabIndex: 1,
+                  userId: widget.userId, userType: widget.userType,initialTabIndex: 1,
                 ),
               ),
             );
           },
         ),
       ),
-      body:
-      isLoading ? const Center(child: CircularProgressIndicator(),):
+      body: isLoading ? const Center(child: CircularProgressIndicator(),):
       groupedVisitors.isEmpty ? Center(child: Text("No Record Found"))
           : Expanded(
         child: ListView.builder(

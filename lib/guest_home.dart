@@ -313,7 +313,7 @@ class _GuestHomePageState extends State<GuestHomePage> {
                     children: [
                       const SizedBox(height: 170),
                       if (_imagePaths.isNotEmpty) ...[
-                        Row(
+                        /*Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Padding(
@@ -329,7 +329,7 @@ class _GuestHomePageState extends State<GuestHomePage> {
                               ),
                             ),
                           ],
-                        ),
+                        ),*/
                         SizedBox(
                           height: 10,
                         ),
@@ -404,7 +404,7 @@ class _GuestHomePageState extends State<GuestHomePage> {
                                 autoPlay: true,
                                 aspectRatio: 16 / 9,
                                 autoPlayCurve: Curves.fastOutSlowIn,
-                                enableInfiniteScroll: true,
+                                enableInfiniteScroll: false,
                                 autoPlayAnimationDuration:
                                 const Duration(milliseconds: 800),
                                 viewportFraction: 0.8,

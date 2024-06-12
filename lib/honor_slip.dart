@@ -806,14 +806,14 @@ class _DirectState extends State<Direct> {
 
                 ),
               ),
-              SizedBox(height: 10,),
+              SizedBox(height: 20,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // Login button starts
                   MaterialButton(
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)  ),
-                      minWidth: 100,
+                      minWidth: 300,
                       height: 50,
                       color: Colors.green[800],
                       onPressed: (){

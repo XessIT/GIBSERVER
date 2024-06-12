@@ -650,7 +650,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                  // data.isEmpty ? SizedBox.shrink() : SizedBox(height: 180),
                   SizedBox(height: 170,),
                   if (_imagePaths.isNotEmpty) ...[
-                    Padding(
+                    /*Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Card(
                         elevation: 0,
@@ -661,7 +661,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                           ),
                         ),
                       ),
-                    ),
+                    ),*/
                     SizedBox(
                       height: 10,
                     ),
@@ -736,10 +736,10 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                         autoPlay: true,
                         aspectRatio: 16 / 9,
                         autoPlayCurve: Curves.fastOutSlowIn,
-                        enableInfiniteScroll: true,
+                        enableInfiniteScroll: false,
                         autoPlayAnimationDuration:
                             const Duration(milliseconds: 800),
-                        viewportFraction: 0.8,
+                        viewportFraction: 1.0,
                       ),
                     )),
                   ],
@@ -1163,6 +1163,8 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                     height: MediaQuery.of(context).size.height *
                         0.6, // Adjust the height as needed
                     child: ListView.builder(
+                        padding: const EdgeInsets.only(bottom: 50.0),
+
                         itemCount: data1.length,
                         itemBuilder: (context, i) {
                           String imageUrl =

@@ -634,7 +634,7 @@ class _HomepageState extends State<Homepage> {
                       SizedBox(height: 190,),
                       if (_imagePaths.isNotEmpty) ...[
 
-                        Padding(
+                        /*Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Card(
                             elevation: 0,
@@ -645,7 +645,7 @@ class _HomepageState extends State<Homepage> {
                               ),
                             ),
                           ),
-                        ),
+                        ),*/
 
                         Container(
                             child: CarouselSlider(
@@ -714,7 +714,7 @@ class _HomepageState extends State<Homepage> {
                                 autoPlay: true,
                                 aspectRatio: 16 / 9,
                                 autoPlayCurve: Curves.fastOutSlowIn,
-                                enableInfiniteScroll: true,
+                                enableInfiniteScroll: false,
                                 autoPlayAnimationDuration:
                                 const Duration(milliseconds: 800),
                                 viewportFraction: 0.8,
@@ -914,7 +914,7 @@ class _HomepageState extends State<Homepage> {
                                                                             decoration: InputDecoration(
                                                                               labelText: "Guest Count",
                                                                               labelStyle: Theme.of(context).textTheme.bodySmall,
-                                                                              hintText: "Ex:5",
+                                                                              hintText: "",
                                                                             ),
                                                                             keyboardType: TextInputType.number,
                                                                             inputFormatters: <TextInputFormatter>[
@@ -1157,6 +1157,7 @@ class _HomepageState extends State<Homepage> {
                         height: MediaQuery.of(context).size.height *
                             0.6, // Adjust the height as needed
                         child: ListView.builder(
+                          padding: const EdgeInsets.only(bottom: 50.0),
                             itemCount: data1.length,
                             itemBuilder: (context, i) {
                               String imageUrl =

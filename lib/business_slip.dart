@@ -97,7 +97,7 @@ class _ReferralPageState extends State<ReferralPage> {
 
       if (response.statusCode == 200) {
 
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>BusinessPage(userId: widget.userId, userType: widget.userType)));
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>ReferralPage(userId: widget.userId, userType: widget.userType)));
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text("Business Add Successfully")));
 
@@ -485,8 +485,6 @@ class _ReferralPageState extends State<ReferralPage> {
                         ),
                         const SizedBox(height: 20,),
 
-                        //TextFormField Location starts
-
                         SizedBox(
                           width: 320,
                           height: 50,
@@ -512,34 +510,7 @@ class _ReferralPageState extends State<ReferralPage> {
 
                           ),
                         ),
-
                         const SizedBox(height: 20,),
-                 /*       Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-
-                            MaterialButton(
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)  ),
-                                //minWidth: 100,
-                                height: 50,
-                                color: Colors.green[800],
-                                onPressed: (){
-                                  if (_formKey.currentState!.validate()) {
-                                    InsertBusinessSlip();
-                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>BusinessPage(userId: widget.userId, userType: widget.userType)));
-                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                        content: Text("Registered Successfully")));
-                                  }
-                                },
-                                child: const Text('SUBMIT',
-                                  style: TextStyle(color: Colors.white),)),
-                            // Submit button ends
-
-
-                          ],
-                        ),*/
-
-
 
                       ],
                     ),

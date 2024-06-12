@@ -268,7 +268,7 @@ class _GibTransactionState extends State<GibTransaction> {
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         setState(() {
-          honortotalRows = responseData['totalAmount'];
+          honortotalRows = responseData['totalAmount']??'0';
         });
       } else {
         print('Error: ${response.statusCode}');
@@ -1123,7 +1123,7 @@ class _MyTransactionState extends State<MyTransaction> {
                                   IconButton(onPressed: (){
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (context) => GuestHistory(userId: widget.userId.toString(),)),
+                                      MaterialPageRoute(builder: (context) => GuestHistory(userType: widget.userType, userId: widget.userId)),
                                     );
                                   }, icon: Icon(Icons.navigate_next,color: Colors.black,),),
                                 ],
