@@ -345,12 +345,12 @@ class _HomepageState extends State<Homepage> {
                       builder: (context) => VisitorsSlip(
                           userId: widget.userId,
                           meetingId: meetingId,
+                          meetingName: meetingName,
                           guestcount: guestcount.text.trim(),
                           userType: widget.userType,
                           meeting_date: meetingDate,
                           user_mobile: userdata[0]["mobile"],
-                          user_name:
-                          '${userdata[0]["first_name"] ?? ""} ${userdata[0]["last_name"] ?? ""}',
+                          user_name: '${userdata[0]["first_name"] ?? ""} ${userdata[0]["last_name"] ?? ""}',
                           member_id: userdata[0]["member_id"],
                           meeting_place: meetingPlace,
                           meeting_type:
@@ -411,6 +411,7 @@ class _HomepageState extends State<Homepage> {
   final GlobalKey<FormState> tempKey = GlobalKey<FormState>();
 
   List<Map<String, dynamic>> data = [];
+  String meetingName = "";
   // String type = "Executive";
   Future<void> getData() async {
     try {
@@ -452,6 +453,7 @@ class _HomepageState extends State<Homepage> {
         setState(() {
           // Cast the filtered data to the correct type and update your state
           data = filteredData.cast<Map<String, dynamic>>();
+           meetingName = data[0]['meeting_name'];
         });
       } else {
         print('Error: ${response.statusCode}');
@@ -496,9 +498,16 @@ class _HomepageState extends State<Homepage> {
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         List<dynamic> itemGroups = responseData;
+        DateTime now = DateTime.now();
         List<dynamic> filteredData = itemGroups.where((item) {
           DateTime validityDate = DateTime.parse(item['validity']);
-          return validityDate.isAfter(DateTime.now());
+          // Strip the time part
+          DateTime validityDateOnly = DateTime(validityDate.year, validityDate.month, validityDate.day);
+          DateTime nowOnly = DateTime(now.year, now.month, now.day);
+          print('Validity Date: $validityDateOnly, Current Date: $nowOnly'); // Debug print
+          bool isValid = validityDateOnly.isAfter(nowOnly) || validityDateOnly.isAtSameMomentAs(nowOnly);
+          print('Is Valid: $isValid'); // Debug print
+          return isValid;
         }).toList();
 
         setState(() {
@@ -725,6 +734,7 @@ class _HomepageState extends State<Homepage> {
             String meetingPlace = meeting['place'];
             String meetingType = meeting['meeting_type'];
             String id = meeting['id'];
+            String meetingName = meeting['meeting_name'];
             bool isRegistrationExpired = meeting['isRegistrationExpired'];
             return Builder(
               builder: (BuildContext context) {
@@ -812,6 +822,7 @@ class _HomepageState extends State<Homepage> {
                                                                 builder: (context) => VisitorsSlip(
                                                                   userId: widget.userId,
                                                                   meetingId: id,
+                                                                  meetingName: meetingName,
                                                                   guestcount: guestcount.text.trim(),
                                                                   userType: widget.userType,
                                                                   meeting_date: meetingDate,
@@ -823,6 +834,7 @@ class _HomepageState extends State<Homepage> {
                                                                 )));
                                                         //   registerDateStoreDatabase(id, meetingType, meetingDate, meetingPlace);
                                                       }
+                                                      print(("meeting name - $meetingName"));
                                                     },
                                                     child: Text(
                                                       'Yes',
@@ -931,6 +943,7 @@ class _HomepageState extends State<Homepage> {
                                                                               builder: (context) => VisitorsSlip(
                                                                                 userId: widget.userId,
                                                                                 meetingId: id,
+                                                                                meetingName: meetingName,
                                                                                 guestcount: guestcount.text.trim(),
                                                                                 userType: widget.userType,
                                                                                 meeting_date: meetingDate,

@@ -59,6 +59,8 @@ class _GtoGPageState extends State<GtoGPage> {
   TextEditingController fromtime = TextEditingController();
   TextEditingController totime = TextEditingController();
   TextEditingController companymobile = TextEditingController();
+  DateTime? fromTimeParsed;
+
 
   String capitalizeFirstLetter(String text) {
     if (text.isEmpty) return text;
@@ -440,7 +442,7 @@ class _GtoGPageState extends State<GtoGPage> {
                                         context: context,
                                         initialDate: DateTime.now(),
                                         firstDate: DateTime(1900),
-                                        lastDate: DateTime(2100));
+                                        lastDate:  DateTime.now());
                                     if(pickDate==null) return;{
                                       setState(() {
                                         metdate.text =DateFormat('yyyy/MM/dd').format(pickDate);
@@ -479,16 +481,20 @@ class _GtoGPageState extends State<GtoGPage> {
                                         context: context,
                                         initialTime: TimeOfDay.now(),
                                       );
-                                      if (selectedTime == null) return; // if 'cancel'
-
-                                      // Format the selected time as 'hh:mm a'
-                                      String formattedTime = DateFormat('hh:mm a').format(
-                                        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, selectedTime.hour, selectedTime.minute),
+                                      if (selectedTime == null) return;
+                                      fromTimeParsed = DateTime(
+                                        DateTime.now().year,
+                                        DateTime.now().month,
+                                        DateTime.now().day,
+                                        selectedTime.hour,
+                                        selectedTime.minute,
                                       );
-                                      print("Formatted Time: $formattedTime");
+
+                                      String fromformattedTime = DateFormat('hh:mm a').format(fromTimeParsed!);
+
 
                                       setState(() {
-                                        fromtime.text = formattedTime;
+                                        fromtime.text = fromformattedTime;
                                       });
                                     },
                                     style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
@@ -521,15 +527,36 @@ class _GtoGPageState extends State<GtoGPage> {
                                         context: context,
                                         initialTime: TimeOfDay.now(),
                                       );
-                                      if (selectedTime == null) return; // if 'cancel'
-
-                                      // Format the selected time as 'hh:mm a'
-                                      String formattedTime = DateFormat('hh:mm a').format(
-                                        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, selectedTime.hour, selectedTime.minute),
+                                      if (selectedTime == null) return;
+                                      DateTime toparsedTime = DateTime(
+                                        DateTime.now().year,
+                                        DateTime.now().month,
+                                        DateTime.now().day,
+                                        selectedTime.hour,
+                                        selectedTime.minute,
                                       );
-                                      print("Formatted Time: $formattedTime");
+                                      if (fromTimeParsed != null && toparsedTime.isBefore(fromTimeParsed!)) {
+                                        showDialog(context: context, builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Text("Invalid To Time"),
+                                            content: Text("The 'To Time' cannot be earlier than the 'From Time'."),
+                                            actions: [
+                                              TextButton(
+                                                child: Text("OK"),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                            ],
+                                          );
+                                        },);
+                                        return;
+                                      }
+                                      // Format the selected time as 'hh:mm a'
+                                      String toformattedTime = DateFormat('hh:mm a').format(toparsedTime);
+
                                       setState(() {
-                                        totime.text = formattedTime;
+                                        totime.text = toformattedTime;
                                       });
                                     },style: const TextStyle(fontSize: 12,
                                       fontWeight: FontWeight.bold),
