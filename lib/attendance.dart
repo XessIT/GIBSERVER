@@ -21,6 +21,7 @@ class AttendancePage extends StatefulWidget {
   State<AttendancePage> createState() => _AttendancePageState();
 }
 class _AttendancePageState extends State<AttendancePage> {
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -181,6 +182,7 @@ class _NetworkAttendanceState extends State<NetworkAttendance> {
   @override
   void initState() {
     super.initState();
+    print("User Type baby : ${widget.userType}");
     _checkConnectivityAndGetData();
     Connectivity().onConnectivityChanged.listen((result) {
       setState(() {
