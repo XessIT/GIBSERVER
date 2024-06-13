@@ -308,309 +308,262 @@ class _GuestHomePageState extends State<GuestHomePage> {
               fit: StackFit.expand,
               clipBehavior: Clip.antiAliasWithSaveLayer,
               children: [
-                SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 170),
-                      if (_imagePaths.isNotEmpty) ...[
-                        /*Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Card(
-                                elevation: 0,
-                                child: Container(
-                                  child: Text(
-                                    'Ads',
-                                    style: Theme.of(context).textTheme.headlineMedium,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),*/
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                            child: CarouselSlider(
-                              items: _imagePaths.map((imagePath) {
-                                return Builder(
-                                  builder: (BuildContext context) {
-                                    return FutureBuilder(
-                                      future: http.get(Uri.parse(
-                                          'http://mybudgetbook.in/GIBADMINAPI/$imagePath')),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.done &&
-                                            snapshot.hasData) {
-                                          final imageResponse =
-                                          snapshot.data as http.Response;
-                                          if (imageResponse.statusCode == 200) {
-                                            return GestureDetector(
-                                              onTap: () {
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (BuildContext context) {
-                                                    return Dialog(
-                                                      child: Container(
-                                                        width:
-                                                        300.0, // Set the width of the dialog
-                                                        height:
-                                                        400.0,
-                                                        child: PhotoView(
-                                                          imageProvider: CachedNetworkImageProvider(
-                                                            'http://mybudgetbook.in/GIBADMINAPI/$imagePath',
-                                                          ),
-                                                          backgroundDecoration: BoxDecoration(
-                                                            color: Colors.black,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    );
-                                                  },
-                                                );
-                                              },
-                                              child: Container(
-                                                margin: EdgeInsets.symmetric(horizontal: 5.0),
-                                                child: CachedNetworkImage(
-                                                  imageUrl: 'http://mybudgetbook.in/GIBADMINAPI/$imagePath',
-                                                  placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                                                  errorWidget: (context, url, error) => Text('Error loading image'),
-                                                  fit: BoxFit.cover,
-                                                  width: double.infinity,
-                                                ),
-                                              ),
-                                            );
-                                          } else {
-                                            return Text('Error loading image');
-                                          }
-                                        } else if (snapshot.connectionState ==
-                                            ConnectionState.waiting) {
-                                          return Center(
-                                              child: CircularProgressIndicator());
-                                        } else {
-                                          return Text('Error loading image');
-                                        }
-                                      },
-                                    );
-                                  },
-                                );
-                              }).toList(),
-                              options: CarouselOptions(
-                                height: 200.0,
-                                enlargeCenterPage: true,
-                                autoPlay: true,
-                                aspectRatio: 16 / 9,
-                                autoPlayCurve: Curves.fastOutSlowIn,
-                                enableInfiniteScroll: false,
-                                autoPlayAnimationDuration:
-                                const Duration(milliseconds: 800),
-                                viewportFraction: 0.8,
-                              ),
-                            )),
-                      ],
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              "Today's Offers",
-                              style: GoogleFonts.aBeeZee(
-                                fontSize: 16,
-                                color: Colors.green,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Container(
-                        height: MediaQuery.of(context).size.height *
-                            0.6, // Adjust the height as needed
-                        child: ListView.builder(
-                            itemCount: data.length,
-                            itemBuilder: (context, i) {
-                              String imageUrl = 'http://mybudgetbook.in/GIBAPI/${data[i]["offer_image"]}';
-                              String dateString = data[i]['validity']; // This will print the properly encoded URL
-                              DateTime dateTime = DateFormat('yyyy-MM-dd').parse(dateString);
-                              return Center(
-                                child: Card(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      children: [
-                                        // MAIN ROW STARTS
-                                        Stack(
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                              children: [
-                                                // CIRCLEAVATAR STARTS
-                                                Padding(
-                                                  padding: const EdgeInsets.all(8.0),
-                                                  child: InkWell(
-                                                    onTap: () {
-                                                      showDialog(
-                                                        context: context,
-                                                        builder: (BuildContext context) {
-                                                          return AlertDialog(
-                                                            content: Image.network(imageUrl),
-                                                          );
-                                                        },
-                                                      );
-                                                    },
-                                                    child: CircleAvatar(
-                                                      radius: 30.0,
-                                                      backgroundColor: Colors.cyan,
-                                                      backgroundImage: NetworkImage(imageUrl),
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(width: 20),
-                                                // END CIRCLEAVATAR
-                                                Column(
-                                                  crossAxisAlignment: CrossAxisAlignment
-                                                      .start, // Align texts to the start
-                                                  children: [
-                                                    // START TEXTS
-                                                    Text(
-                                                      '${data[i]['company_name']}',
-                                                      // Text style starts
-                                                      style: const TextStyle(
-                                                        color: Colors.green,
-                                                        fontSize: 15,
-                                                          fontWeight: FontWeight.normal
-                                                      ),
-                                                    ),
-                                                    // start texts
-                                                    Text(
-                                                      '${data[i]['offer_type']} - ${data[i]['name']}',
-                                                      // Text style starts
-                                                        style: Theme.of(context).textTheme.bodySmall
-                                                    ),
-                                                    Text(
-                                                      "Mobile - ${data[i]['mobile']}",
-                                                      // New date format
-                                                        style: Theme.of(context).textTheme.bodySmall
-                                                    ),
-                                                    // Text starts
-                                                    Text(
-                                                      "Validity - ${DateFormat('d MMMM yyyy').format(dateTime)}",
-                                                      // New date format
-                                                        style: Theme.of(context).textTheme.bodySmall
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                            // Banner in the top right side
-                                            data[i]['discount'].toString().isEmpty
-                                                ? Container()
-                                                : Positioned(
-                                              top: 8,
-                                              right:
-                                              8, // Adjust position if needed
-                                              child: Container(
-                                                decoration: const BoxDecoration(
-                                                  color: Colors
-                                                      .red, // Change the color here
-                                                  borderRadius:
-                                                  BorderRadius.only(
-                                                    topLeft:
-                                                    Radius.circular(10.0),
-                                                    bottomRight:
-                                                    Radius.circular(10.0),
-                                                  ),
-                                                ),
-                                                padding: const EdgeInsets.symmetric(
-                                                    horizontal: 6.0,
-                                                    vertical: 2.0),
-                                                child: Row(
-                                                  children: [
-                                                    Text(
-                                                      '${data[i]['discount']}% off', // Text for your banner
-                                                      style: const TextStyle(
-                                                        color: Colors
-                                                            .white, // Change the text color here
-                                                        fontWeight:
-                                                        FontWeight.bold,
-                                                        fontStyle: FontStyle
-                                                            .italic, // Add any additional styles here
-                                                        fontSize:
-                                                        12.0, // Adjust font size as needed
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            Positioned(top: 25, right: 8, // Adjust position if needed
-                                              child: IconButton(
-                                                onPressed: () {
-                                                  launchUrl(Uri.parse("tel://${data[i]['mobile']}"));
-                                                },
-                                                icon: Icon(
-                                                  Icons.call_outlined,
-                                                  color: Colors.green[900],
-                                                ),
-                                              ),
-                                            ),
-                                          ],
+            CustomScrollView(
+            slivers: [
+            SliverToBoxAdapter(
+            child: Column(
+            children: [
+            const SizedBox(height: 170),
+              if (_imagePaths.isNotEmpty) ...[
+            SizedBox(height: 10),
+          CarouselSlider(
+            items: _imagePaths.map((imagePath) {
+              return Builder(
+                builder: (BuildContext context) {
+                  return FutureBuilder(
+                    future: http.get(Uri.parse('http://mybudgetbook.in/GIBADMINAPI/$imagePath')),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                        final imageResponse = snapshot.data as http.Response;
+                        if (imageResponse.statusCode == 200) {
+                          return GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return Dialog(
+                                    child: Container(
+                                      width: 300.0,
+                                      height: 400.0,
+                                      child: PhotoView(
+                                        imageProvider: CachedNetworkImageProvider(
+                                          'http://mybudgetbook.in/GIBADMINAPI/$imagePath',
                                         ),
+                                        backgroundDecoration: BoxDecoration(
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                            child: Container(
+                              margin: EdgeInsets.symmetric(horizontal: 5.0),
+                              child: CachedNetworkImage(
+                                imageUrl: 'http://mybudgetbook.in/GIBADMINAPI/$imagePath',
+                                placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                                errorWidget: (context, url, error) => Text('Error loading image'),
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                              ),
+                            ),
+                          );
+                        } else {
+                          return Text('Error loading image');
+                        }
+                      } else if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      } else {
+                        return Text('Error loading image');
+                      }
+                    },
+                  );
+                },
+              );
+            }).toList(),
+            options: CarouselOptions(
+              height: 200.0,
+              enlargeCenterPage: true,
+              autoPlay: true,
+              aspectRatio: 16 / 9,
+              autoPlayCurve: Curves.fastOutSlowIn,
+              enableInfiniteScroll: false,
+              autoPlayAnimationDuration: const Duration(milliseconds: 800),
+              viewportFraction: 0.8,
+            ),
+          ),
+          ],
+      Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+      Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Text(
+        "Today's Offers",
+        style: GoogleFonts.aBeeZee(
+          fontSize: 16,
+          color: Colors.green,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    ),
+    ],
+    ),
+    ],
+    ),
+    ),
+    SliverList(
+    delegate: SliverChildBuilderDelegate(
+    (context, i) {
+    String imageUrl = 'http://mybudgetbook.in/GIBAPI/${data[i]["offer_image"]}';
+    String dateString = data[i]['validity'];
+    DateTime dateTime = DateFormat('yyyy-MM-dd').parse(dateString);
+
+    return Center(
+    child: Card(
+    child: Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: Column(
+    children: [
+    Stack(
+    children: [
+      Row(
+    mainAxisAlignment: MainAxisAlignment.start,
+    children: [
+    Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: InkWell(
+    onTap: () {
+    showDialog(
+    context: context,
+    builder: (BuildContext context) {
+    return AlertDialog(
+    content: Image.network(imageUrl),
+    );
+    },
+    );
+    },
+    child: CircleAvatar(
+    radius: 30.0,
+    backgroundColor: Colors.cyan,
+    backgroundImage: NetworkImage(imageUrl),
+    ),
+    ),
+    ),
+    SizedBox(width: 20),
+    Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+    Text(
+    '${data[i]['company_name']}',
+    style: const TextStyle(
+    color: Colors.green,
+    fontSize: 15,
+    fontWeight: FontWeight.normal
+    ),
+    ),
+    Text(
+    '${data[i]['offer_type']} - ${data[i]['name']}',
+    style: Theme.of(context).textTheme.bodySmall,
+    ),
+    Text(
+    "Mobile - ${data[i]['mobile']}",
+    style: Theme.of(context).textTheme.bodySmall,
+    ),
+    Text(
+    "Validity - ${DateFormat('d MMMM yyyy').format(dateTime)}",
+    style: Theme.of(context).textTheme.bodySmall,
+    ),
+    ],
+    ),
+    ],
+    ),
+    if (data[i]['discount'].toString().isNotEmpty)
+    Positioned(
+    top: 8,
+    right: 8,
+    child: Container(
+    decoration: const BoxDecoration(
+    color: Colors.red,
+    borderRadius: BorderRadius.only(
+    topLeft: Radius.circular(10.0),
+    bottomRight: Radius.circular(10.0),
+    ),
+    ),
+    padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
+    child: Row(
+    children: [
+    Text(
+    '${data[i]['discount']}% off',
+    style: const TextStyle(
+    color: Colors.white,
+    fontWeight: FontWeight.bold,
+    fontStyle: FontStyle.italic,
+    fontSize: 12.0,
+    ),
+    ),
+    ],
+    ),
+    ),
+    ),
+    Positioned(
+    top: 25,
+    right: 8,
+    child: IconButton(
+    onPressed: () {
+    launchUrl(Uri.parse("tel://${data[i]['mobile']}"));
+    },
+    icon: Icon(
+    Icons.call_outlined,
+    color: Colors.green[900],
+    ),
+    ),
+    ),
+    ],
+    ),
+    ],
+    ),
+    ),
+    ),
+    );
+    },
+    childCount: data.length,
+    ),
+    ),
+    ],
+    ),
+
+                  Positioned(
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                child: ClipPath(
+                                  clipper: CurveClipper(),
+                                  child: Container(
+                                    height: 100,
+                                    width: MediaQuery.of(context).size.width,
+                                    color: Colors.green,
+                                    child: const Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(left: 20),
+                                          child: Text(
+                                            'GIB',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 30,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child: CircleAvatar(
+                                            radius: 25,
+                                            backgroundImage: AssetImage(
+                                              'assets/logo.png',
+                                            ),
+                                            backgroundColor: Colors.green,
+                                          ),
+                                        ),
+
                                       ],
                                     ),
                                   ),
                                 ),
-                              );
-                            }),
-                      ),
-                    ],
-                  ),
-                ),
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  child: ClipPath(
-                    clipper: CurveClipper(),
-                    child: Container(
-                      height: 100,
-                      width: MediaQuery.of(context).size.width,
-                      color: Colors.green,
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(left: 20),
-                            child: Text(
-                              'GIB',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
                               ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: CircleAvatar(
-                              radius: 25,
-                              backgroundImage: AssetImage(
-                                'assets/logo.png',
-                              ),
-                              backgroundColor: Colors.green,
-                            ),
-                          ),
-
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
                 Positioned(
                   top: 80,
                   left: 1,

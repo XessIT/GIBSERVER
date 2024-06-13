@@ -87,7 +87,7 @@ class _AttendancePageState extends State<AttendancePage> {
               children: [
                 TabBar(
                   isScrollable: true,
-                  labelColor: Colors.green.shade100,
+                  labelColor: Colors.green,
                   unselectedLabelColor: Colors.black,
                   tabs: const [
                     Tab(text: ('Network Meeting'),),

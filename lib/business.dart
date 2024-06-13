@@ -97,17 +97,19 @@ class _BusinessPageState extends State<BusinessPage> {
                     labelColor: Colors.green,
                     unselectedLabelColor: Colors.black,
                     tabs: [
-                      Tab(text: 'GiB Total Transaction'),
                       Tab(text: 'My Transaction'),
+                      Tab(text: 'GiB Total Transaction'),
+
                     ],
                   ),
                   Expanded(
                     child: TabBarView(
                       children: <Widget>[
-                        GibTransaction(
-                            userId: widget.userId, userType: widget.userType),
                         MyTransaction(
                             userId: widget.userId, userType: widget.userType),
+                        GibTransaction(
+                            userId: widget.userId, userType: widget.userType),
+
                       ],
                     ),
                   )

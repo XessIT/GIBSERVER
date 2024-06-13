@@ -190,13 +190,13 @@ class _ReferralPageState extends State<ReferralPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('BUSINESS SLIP', style: Theme.of(context).textTheme.displayLarge),
+        title: Text('Business Slip ', style: Theme.of(context).textTheme.displayLarge),
         iconTheme: const IconThemeData(color: Colors.white),
           leading: IconButton(
             icon: const Icon(Icons.navigate_before),
             onPressed: () {
               Navigator.push(context, MaterialPageRoute(
-                  builder: (context) => BusinessPage(userType: widget.userType, userId: widget.userId, initialTabIndex: 1,)
+                  builder: (context) => BusinessPage(userType: widget.userType, userId: widget.userId, initialTabIndex: 0,)
               ));
             },
           ),
@@ -211,7 +211,7 @@ class _ReferralPageState extends State<ReferralPage> {
       body: PopScope(
         canPop: false,
         onPopInvoked: (didPop)  {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => BusinessPage(userType:widget.userType, userId:widget.userId,initialTabIndex: 1,)));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => BusinessPage(userType:widget.userType, userId:widget.userId,initialTabIndex: 0,)));
         },
         child: SingleChildScrollView(
           child: Center(

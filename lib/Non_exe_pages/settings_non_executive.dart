@@ -261,7 +261,7 @@ class SettingsPageNon extends StatelessWidget {
                           builder: (context, setState) {
                             return Container(
                                 padding: EdgeInsets.all(20),
-                                child: Text("Are you sure do you want to Log out?"));
+                                child: Text("Are you sure do you want to Log out?",style: Theme.of(context).textTheme.bodySmall,));
                           },
                         ),
                         btnOk: ElevatedButton(
@@ -280,9 +280,9 @@ class SettingsPageNon extends StatelessWidget {
                             backgroundColor:
                             MaterialStateProperty.all<Color>(Colors.green),
                           ),
-                          child: const Text(
+                          child:  Text(
                             'Yes',
-                            style: TextStyle(color: Colors.white),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ),
                         btnCancel: ElevatedButton(
@@ -295,7 +295,7 @@ class SettingsPageNon extends StatelessWidget {
                           ),
                           child: Text(
                             'No',
-                            style: TextStyle(color: Colors.white),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ),
                       ).show();
