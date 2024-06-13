@@ -66,8 +66,13 @@ class _G2GHistoryState extends State<G2GHistory> {
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         final List<dynamic> itemGroups = responseData;
-        setState(() {});
-        data = itemGroups.cast<Map<String, dynamic>>();
+
+        setState(() {
+          data = itemGroups
+              .cast<Map<String, dynamic>>()
+              .where((item) => item['met_number'] == fetchMobile || item['mobile'] == fetchMobile)
+              .toList();
+        });
       } else {
         print('Error: ${response.statusCode}');
       }
@@ -77,6 +82,7 @@ class _G2GHistoryState extends State<G2GHistory> {
       throw e; // rethrow the error if needed
     }
   }
+
 
   bool isLoading = true;
   @override

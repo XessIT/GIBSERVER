@@ -320,6 +320,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                       builder: (context) => VisitorsSlip(
                           userId: widget.userID,
                           meetingId: meetingId,
+                          meetingName: meetingName,
                           guestcount: guestcount.text.trim(),
                           userType: widget.userType,
                           meeting_date: meetingDate,
@@ -385,6 +386,8 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
   }
 
   List<Map<String, dynamic>> data = [];
+  String meetingName = "";
+
   String type = "Non-Executive";
   Future<void> getData() async {
     try {
@@ -426,6 +429,8 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
         setState(() {
           // Cast the filtered data to the correct type and update your state
           data = filteredData.cast<Map<String, dynamic>>();
+          meetingName = data[0]['meeting_name'];
+
         });
       } else {
         print('Error: ${response.statusCode}');
@@ -845,6 +850,8 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                                                     builder: (context) => VisitorsSlip(
                                                                       userId: widget.userID,
                                                                       meetingId: id,
+                                                                      meetingName: meetingName,
+
                                                                       guestcount: guestcount.text.trim(),
                                                                       userType: widget.userType,
                                                                       meeting_date: meetingDate,
@@ -941,6 +948,7 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
                                                                                   builder: (context) => VisitorsSlip(
                                                                                     userId: widget.userID,
                                                                                     meetingId: id,
+                                                                                    meetingName: meetingName,
                                                                                     guestcount: guestcount.text.trim(),
                                                                                     userType: widget.userType,
                                                                                     meeting_date: meetingDate,
