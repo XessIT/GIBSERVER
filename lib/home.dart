@@ -498,7 +498,7 @@ class _HomepageState extends State<Homepage> {
         List<dynamic> itemGroups = responseData;
         List<dynamic> filteredData = itemGroups.where((item) {
           DateTime validityDate = DateTime.parse(item['validity']);
-          return validityDate.isAfter(DateTime.now());
+          return validityDate.isAfter(DateTime.now()) || validityDate.isAtSameMomentAs(DateTime.now());
         }).toList();
 
         setState(() {
