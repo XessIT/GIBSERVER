@@ -93,6 +93,9 @@ class _OffersPageState extends State<OffersPage> {
         final List<dynamic> itemGroups = responseData;
 
         List<Map<String, dynamic>> filteredData = [];
+        DateTime now = DateTime.now();
+        DateTime nowOnly = DateTime(now.year, now.month, now.day);
+
         for (var item in itemGroups) {
           DateTime validityDate;
           try {
@@ -101,7 +104,11 @@ class _OffersPageState extends State<OffersPage> {
             print('Error parsing validity date: $e');
             continue; // Skip this item if validity date parsing fails
           }
-          if (validityDate.isAfter(DateTime.now()) && item['user_id'] != widget.userId) {
+
+          DateTime validityDateOnly = DateTime(validityDate.year, validityDate.month, validityDate.day);
+          print('Validity Date: $validityDateOnly, Current Date: $nowOnly'); // Debug print
+
+          if ((validityDateOnly.isAfter(nowOnly) || validityDateOnly.isAtSameMomentAs(nowOnly)) && item['user_id'] != widget.userId) {
             filteredData.add(item); // Add item to filteredData if it satisfies the filter
           }
         }
@@ -111,9 +118,10 @@ class _OffersPageState extends State<OffersPage> {
         });
         //print('Data: $data');
       } else {
+        print('Error: ${response.statusCode}');
       }
     } catch (e) {
-      rethrow; // rethrow the error if needed
+      print('Error making HTTP request: $e');
     }
   }
   @override
