@@ -14,6 +14,7 @@ class VisitorsSlip extends StatefulWidget {
   final String? guestcount;
   final String? userId;
   final String? meetingId;
+  final String? meetingName;
   final String? userType;
   final String? meeting_date;
   final String? user_mobile;
@@ -27,6 +28,7 @@ class VisitorsSlip extends StatefulWidget {
         required this.guestcount,
         required this.userId,
         required this.meetingId,
+        required this.meetingName,
         required this.userType,
         required this.meeting_date,
         required this.user_mobile,
@@ -89,6 +91,7 @@ class _VisitorsSlipState extends State<VisitorsSlip> {
             "meeting_date": getMeetingDate,
             'member_name': widget.user_name,
             'member_id': widget.member_id,
+            'meeting_name': widget.meetingName,
            // 'guest_count': count1 // Add this line
           }));
       if (res.statusCode == 200) {
@@ -107,6 +110,16 @@ class _VisitorsSlipState extends State<VisitorsSlip> {
       print("Error Guest Add: $e");
     }
   }
+
+  @override
+  void initState() {
+    print("meetingname : ${widget.meetingName}");
+    // TODO: implement initState
+    super.initState();
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -153,6 +166,7 @@ class _VisitorsSlipState extends State<VisitorsSlip> {
                             guestcount: widget.guestcount,
                             userId: widget.userId,
                             meetingId: widget.meetingId,
+                            meetingName: widget.meetingName,
                             userType: widget.userType,
                             meeting_date: widget.meeting_date,
                             user_mobile: widget.user_mobile,
@@ -160,6 +174,7 @@ class _VisitorsSlipState extends State<VisitorsSlip> {
                             member_id: widget.member_id,
                             meeting_place: widget.meeting_place,
                             meeting_type: widget.meeting_type,
+
                           ),
                   ),
                 );
@@ -627,10 +642,11 @@ class _VisitorsSlipState extends State<VisitorsSlip> {
 
                                         // Submit button starts
                                         MaterialButton(
+
                                             shape: RoundedRectangleBorder(
                                                 borderRadius:
                                                 BorderRadius.circular(5.0)),
-                                            minWidth: 100,
+                                            minWidth: 320,
                                             height: 50,
                                             color: Colors.green[800],
                                             onPressed: () {
