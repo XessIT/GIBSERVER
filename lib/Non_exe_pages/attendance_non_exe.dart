@@ -85,7 +85,7 @@ class _AttendancePageNonExeState extends State<AttendancePageNonExe> {
               children: [
                 TabBar(
                   isScrollable: true,
-                  labelColor: Colors.green.shade100,
+                  labelColor: Colors.green,
                   unselectedLabelColor: Colors.black,
                   tabs: const [
                     Tab(text:('Training Program'),),

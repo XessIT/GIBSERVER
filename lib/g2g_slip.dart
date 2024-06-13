@@ -180,9 +180,12 @@ class _GtoGPageState extends State<GtoGPage> {
     }));
     if (response.statusCode == 200) {
       var responseData = json.decode(response.body);
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>BusinessPage(userId: widget.userId, userType: widget.userType)));
+      //Navigator.push(context, MaterialPageRoute(builder: (context)=>BusinessPage(userId: widget.userId, userType: widget.userType, initialTabIndex: 1,)));
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>GtoG(userId: widget.userId, userType: widget.userType)));
 
       if (responseData['success']) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text("Business Add Successfully")));
       } else {
         // Error sending data
         showDialog(
@@ -233,7 +236,7 @@ class _GtoGPageState extends State<GtoGPage> {
           icon: const Icon(Icons.navigate_before),
           onPressed: () {
             Navigator.push(context, MaterialPageRoute(
-                builder: (context) => BusinessPage(userType: widget.userType, userId: widget.userId,initialTabIndex: 1,)
+                builder: (context) => BusinessPage(userType: widget.userType, userId: widget.userId,initialTabIndex: 0,)
             ));
           },
         ),

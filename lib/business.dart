@@ -97,17 +97,19 @@ class _BusinessPageState extends State<BusinessPage> {
                     labelColor: Colors.green,
                     unselectedLabelColor: Colors.black,
                     tabs: [
-                      Tab(text: 'GiB Total Transaction'),
                       Tab(text: 'My Transaction'),
+                      Tab(text: 'GiB Total Transaction'),
+
                     ],
                   ),
                   Expanded(
                     child: TabBarView(
                       children: <Widget>[
-                        GibTransaction(
-                            userId: widget.userId, userType: widget.userType),
                         MyTransaction(
                             userId: widget.userId, userType: widget.userType),
+                        GibTransaction(
+                            userId: widget.userId, userType: widget.userType),
+
                       ],
                     ),
                   )
@@ -268,7 +270,7 @@ class _GibTransactionState extends State<GibTransaction> {
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         setState(() {
-          honortotalRows = responseData['totalAmount'];
+          honortotalRows = responseData['totalAmount']??'0';
         });
       } else {
         print('Error: ${response.statusCode}');
@@ -1123,7 +1125,7 @@ class _MyTransactionState extends State<MyTransaction> {
                                   IconButton(onPressed: (){
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (context) => GuestHistory(userId: widget.userId.toString(),)),
+                                      MaterialPageRoute(builder: (context) => GuestHistory(userType: widget.userType, userId: widget.userId)),
                                     );
                                   }, icon: Icon(Icons.navigate_next,color: Colors.black,),),
                                 ],

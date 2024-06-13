@@ -152,16 +152,16 @@ class MyApp extends StatelessWidget {
 
         textTheme: GoogleFonts.aBeeZeeTextTheme().copyWith(
           headlineSmall: const TextStyle(fontSize: 16.0,color: Colors.green),
-          headlineMedium: const TextStyle(fontSize: 16.0,color: Colors.green,fontWeight: FontWeight.bold),
+          headlineMedium: const TextStyle(fontSize: 16.0,color: Colors.green),
           headlineLarge:  const TextStyle(fontSize: 16.0,color: Colors.blue),
 
 
           bodySmall: const TextStyle(fontSize: 14, color: Colors.black),
-          bodyMedium: const TextStyle(fontSize: 16, color: Colors.black,fontWeight: FontWeight.bold),
+          bodyMedium: const TextStyle(fontSize: 16, color: Colors.black),
           bodyLarge: const TextStyle(fontSize: 18.0, color: Colors.black),
 
           displayLarge:const TextStyle(fontSize: 18, color: Colors.white),
-          displayMedium: const TextStyle(fontSize: 16, color: Colors.white,fontWeight: FontWeight.bold),
+          displayMedium: const TextStyle(fontSize: 16, color: Colors.white),
           displaySmall: const TextStyle(fontSize: 14, color: Colors.white), // Assuming this is for labels
         ),
 
