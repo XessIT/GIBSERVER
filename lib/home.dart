@@ -498,9 +498,16 @@ class _HomepageState extends State<Homepage> {
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         List<dynamic> itemGroups = responseData;
+        DateTime now = DateTime.now();
         List<dynamic> filteredData = itemGroups.where((item) {
           DateTime validityDate = DateTime.parse(item['validity']);
-          return validityDate.isAfter(DateTime.now());
+          // Strip the time part
+          DateTime validityDateOnly = DateTime(validityDate.year, validityDate.month, validityDate.day);
+          DateTime nowOnly = DateTime(now.year, now.month, now.day);
+          print('Validity Date: $validityDateOnly, Current Date: $nowOnly'); // Debug print
+          bool isValid = validityDateOnly.isAfter(nowOnly) || validityDateOnly.isAtSameMomentAs(nowOnly);
+          print('Is Valid: $isValid'); // Debug print
+          return isValid;
         }).toList();
 
         setState(() {
