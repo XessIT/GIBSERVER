@@ -203,10 +203,9 @@ class _CompletedState extends State<Completed> {
                       child: ExpansionTile(
                         leading: CircleAvatar(
                           backgroundColor: ColorGenerator.getRandomColor(),
-                          child: Text(
-                            filteredData[i]["Toname"][0].toUpperCase(),
-                            style: TextStyle(color: Colors.white),
-                          ),
+                            child: filteredData[i]["Tomobile"] == fetchMobile
+                                ? Text('${filteredData[i]["referrer_name"][0].toUpperCase()}', style: TextStyle(color: Colors.white),)
+                                : Text('${filteredData[i]["Toname"][0].toUpperCase()}', style: TextStyle(color: Colors.white),)
                         ),
                         title: ListTile(
                           contentPadding: EdgeInsets.fromLTRB(30, 0, 0, 0),
@@ -466,6 +465,7 @@ class _PendingState extends State<Pending> {
     );
 
     if (response.statusCode == 200) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => BusinessHistory(userType:widget.userType, userId:widget.userId,)));
     } else {
       throw Exception('Failed to update business slip');
     }
@@ -529,10 +529,9 @@ class _PendingState extends State<Pending> {
                       child: ExpansionTile(
                         leading: CircleAvatar(
                           backgroundColor: ColorGenerator.getRandomColor(),
-                          child: Text(
-                            filteredData[i]["Toname"][0].toUpperCase(),
-                            style: TextStyle(color: Colors.white),
-                          ),
+                          child: filteredData[i]["Tomobile"] == fetchMobile
+                              ? Text('${filteredData[i]["referrer_name"][0].toUpperCase()}', style: TextStyle(color: Colors.white),)
+                              : Text('${filteredData[i]["Toname"][0].toUpperCase()}', style: TextStyle(color: Colors.white),)
                         ),
                         title: ListTile(
                           contentPadding: EdgeInsets.fromLTRB(30, 0, 0, 0),
@@ -984,10 +983,9 @@ class _UnsuccessfulState extends State<Unsuccessful> {
                       child: ExpansionTile(
                         leading: CircleAvatar(
                           backgroundColor: ColorGenerator.getRandomColor(),
-                          child: Text(
-                            filteredData[i]["Toname"][0].toUpperCase(),
-                            style: TextStyle(color: Colors.white),
-                          ),
+                            child: filteredData[i]["Tomobile"] == fetchMobile
+                                ? Text('${filteredData[i]["referrer_name"][0].toUpperCase()}', style: TextStyle(color: Colors.white),)
+                                : Text('${filteredData[i]["Toname"][0].toUpperCase()}', style: TextStyle(color: Colors.white),)
                         ),
                         title: ListTile(
                           contentPadding: EdgeInsets.fromLTRB(30, 0, 0, 0),

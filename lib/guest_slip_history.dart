@@ -71,8 +71,8 @@ class _GuestHistoryState extends State<GuestHistory> {
     Map<String, List<Map<String, dynamic>>> groupedVisitors = groupByDate(visitorsFetchdata);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Guest History', style: Theme.of(context).textTheme.headline6?.copyWith(color: Colors.white)),
-        iconTheme: IconThemeData(color: Colors.white),
+        title: Text('Guest History', style: Theme.of(context).textTheme.displayLarge),
+        iconTheme: const IconThemeData(color: Colors.white),
         leading: IconButton(
           icon: Icon(Icons.navigate_before),
           onPressed: () {
