@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'Offer/offer.dart';
 import 'blood_group.dart';
@@ -130,7 +131,7 @@ class _GuestHomePageState extends State<GuestHomePage> {
     super.initState();
     _fetchImages(widget.userType.toString());
 
-    fetchData(widget.userId);
+    loadUserData();
     getData();
     _checkConnectivityAndGetData();
     Connectivity().onConnectivityChanged.listen((result) {
@@ -145,6 +146,7 @@ class _GuestHomePageState extends State<GuestHomePage> {
       final url = Uri.parse(
           'http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=$userId');
       final response = await http.get(url);
+
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         if (responseData is List<dynamic>) {
@@ -152,15 +154,44 @@ class _GuestHomePageState extends State<GuestHomePage> {
             userdata = responseData.cast<Map<String, dynamic>>();
             if (userdata.isNotEmpty) {
               imageUrl = 'http://mybudgetbook.in/GIBAPI/${userdata[0]["profile_image"]}';
-              _imageBytes = base64Decode(userdata[0]['profile_image']);
+
+              // Store data in SharedPreferences
+              saveUserData(userdata);
             }
           });
+        } else {
+          print('Invalid response data format');
         }
+      } else {
+        //  print('Error: ${response.statusCode}');
       }
     } catch (error) {
       print('Error: $error');
     }
   }
+
+  Future<void> saveUserData(List<Map<String, dynamic>> data) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('guestuserData', json.encode(data));
+  }
+
+  Future<void> loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userDataString = prefs.getString('guestuserData');
+    if (userDataString != null) {
+      final List<dynamic> decodedData = json.decode(userDataString);
+      setState(() {
+        userdata = decodedData.cast<Map<String, dynamic>>();
+        if (userdata.isNotEmpty) {
+          imageUrl = 'http://mybudgetbook.in/GIBAPI/${userdata[0]["profile_image"]}';
+        }
+      });
+    }
+    else{
+      fetchData(widget.userId);
+    }
+  }
+
 
   List<Map<String, dynamic>> data = [];
   Future<void> getData() async {

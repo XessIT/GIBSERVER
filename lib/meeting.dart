@@ -349,25 +349,39 @@ class CompletedNetworkMeeting extends StatefulWidget {
   final String? district;
   final String? chapter;
   final String? userType;
-  const CompletedNetworkMeeting({Key? key, required this.district, required this.chapter, required this.userType}) : super(key: key);
+
+  const CompletedNetworkMeeting({
+    Key? key,
+    required this.district,
+    required this.chapter,
+    required this.userType,
+  }) : super(key: key);
 
   @override
   State<CompletedNetworkMeeting> createState() => _CompletedNetworkMeetingState();
 }
+
 class _CompletedNetworkMeetingState extends State<CompletedNetworkMeeting> {
   String type = "Network Meeting";
+  List<Map<String, dynamic>> data = [];
+  bool isLoading = true;
 
-  DateTime date = DateTime.now();
-  List<Map<String, dynamic>> data=[];
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
   Future<void> getData() async {
+    final url = Uri.parse(
+        'http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type&district=${widget.district}&chapter=${widget.chapter}&member_type=${widget.userType}');
+
     try {
-      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type&district=${widget.district}&chapter=${widget.chapter}&member_type=${widget.userType}');
       final response = await http.get(url);
+
       if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        final List<dynamic> itemGroups = responseData;
-        setState(() {});
-        List<dynamic> filteredData = itemGroups.where((item) {
+        final List<dynamic> responseData = json.decode(response.body);
+        List<Map<String, dynamic>> filteredData = responseData.where((item) {
           DateTime validityDate;
           try {
             validityDate = DateTime.parse(item['meeting_date']);
@@ -375,99 +389,73 @@ class _CompletedNetworkMeetingState extends State<CompletedNetworkMeeting> {
             print('Error parsing validity date: $e');
             return false;
           }
-
           bool isCurrentYear = validityDate.year == DateTime.now().year;
           bool satisfiesFilter = validityDate.isBefore(DateTime.now()) && isCurrentYear;
-       //   bool satisfiesFilter =  validityDate.isBefore(DateTime.now());
           return satisfiesFilter;
-        }).toList();
+        }).toList().cast<Map<String, dynamic>>();
+
         setState(() {
-          // Cast the filtered data to the correct type
-          data = filteredData.cast<Map<String, dynamic>>();
+          data = filteredData;
+          isLoading = false;
         });
       } else {
         print('Error: ${response.statusCode}');
+        setState(() {
+          isLoading = false;
+        });
       }
-      print('HTTP request completed. Status code: ${response.statusCode}');
     } catch (e) {
       print('Error making HTTP request: $e');
-      throw e; // rethrow the error if needed
+      setState(() {
+        isLoading = false;
+      });
     }
   }
-  bool isLoading = true;
-  @override
-  void initState() {
-    super.initState();
-    getData();
-    Future.delayed(Duration(seconds: 2), () {
-      setState(() {
-        isLoading = false; // Hide the loading indicator after 4 seconds
-      });
-    });
-  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-        body: isLoading
-            ? const Center(
-          // Show CircularProgressIndicator while loading
-          child: CircularProgressIndicator(),
-        )
-            : data.isNotEmpty
-            ? ListView.builder(
-            itemCount: data.length,
-            itemBuilder:(context, i){
-              // const SizedBox(height:2);
-              const SizedBox(height: 20,);
-              return Expanded(
-                child: Card(
-                  //   elevation: 1,
-                  color: Colors.white,
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : data.isNotEmpty
+          ? ListView.builder(
+        itemCount: data.length,
+        itemBuilder: (context, i) {
+          return Card(
+            color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Column(
+                    children: [
+                      Text('${data[i]['meeting_date']}'),
+                      Text('${data[i]['from_time']}-\n${data[i]['to_time']}'),
+                    ],
+                  ),
+                  Text('${data[i]['meeting_name']}'),
+                  RichText(
+                    text: TextSpan(
                       children: [
-                        Column(
-                          children: [
-                            Align(
-                              //   alignment: AlignmentDirectional.topStart,
-                              child: Text('${data[i]['meeting_date']}',
-                              ),
-                            ),
-                            //TIME TEXT STARTS
-                            Text('${data[i]['from_time']}-\n'
-                                '${data[i]['to_time']}'),
-                            //format(DateTime.now()),),
-                          ],
-                        ),
-                        //NETWORK MEETING TEXT STARTS
-                        //   const SizedBox(width: 30,),
-                        Text('${data[i]['meeting_name']}'),
-                        //ERODE LOCATION ICON RICHTEXT STARTS
-                        //    const SizedBox(width: 50,),
-                        RichText(
-                          text:  TextSpan(
-                              children: [
-                                const WidgetSpan(child: Icon(Icons.location_on)),
-                                TextSpan(text: ('${data[i]['place']}'),
-                                  style: const TextStyle(color: Colors.black),
-                                )
-                              ]
-                          ),
+                        WidgetSpan(child: Icon(Icons.location_on)),
+                        TextSpan(
+                          text: ('${data[i]['place']}'),
+                          style: const TextStyle(color: Colors.black),
                         ),
                       ],
                     ),
                   ),
-                ),
-              );
-            })
-            :Center(child: const Text("There is No Meeting")),
+                ],
+              ),
+            ),
+          );
+        },
+      )
+          : const Center(child: Text("There is No Meeting")),
     );
   }
 }
-
 class TeamMeeting  extends StatefulWidget {
   final String? district;
   final String? chapter;

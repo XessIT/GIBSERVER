@@ -83,7 +83,7 @@ class _HomepageState extends State<Homepage> {
   void initState() {
     _fetchImages("Executive");
 
-    fetchData(widget.userId);
+    loadUserData();
     getData1();
     _checkConnectivityAndGetData();
     Connectivity().onConnectivityChanged.listen((result) {
@@ -126,7 +126,8 @@ class _HomepageState extends State<Homepage> {
     await Future.delayed(const Duration(seconds: 1));
     setState(() {
       _fetchImages("Executive");
-      fetchData(widget.userId);
+      loadUserData();
+     // fetchData(widget.userId);
       getData();
       getData1();
       _checkConnectivityAndGetData();
@@ -198,14 +199,16 @@ class _HomepageState extends State<Homepage> {
           setState(() {
             userdata = responseData.cast<Map<String, dynamic>>();
             if (userdata.isNotEmpty) {
-              imageUrl =
-                  'http://mybudgetbook.in/GIBAPI/${userdata[0]["profile_image"]}';
+              imageUrl = 'http://mybudgetbook.in/GIBAPI/${userdata[0]["profile_image"]}';
 
               district = userdata[0]['district'] ?? '';
               chapter = userdata[0]['chapter'] ?? '';
               getData();
               LoginMember = userdata[0]['member_type'] ?? '';
-              print("MEMBER TYE : $LoginMember");
+              print("MEMBER TYPE : $LoginMember");
+
+              // Store data in SharedPreferences
+              saveUserData(userdata);
             }
           });
         } else {
@@ -219,6 +222,32 @@ class _HomepageState extends State<Homepage> {
     }
   }
 
+  Future<void> saveUserData(List<Map<String, dynamic>> data) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('userData', json.encode(data));
+  }
+
+  Future<void> loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userDataString = prefs.getString('userData');
+
+    if (userDataString != null) {
+      final List<dynamic> decodedData = json.decode(userDataString);
+      setState(() {
+        userdata = decodedData.cast<Map<String, dynamic>>();
+        if (userdata.isNotEmpty) {
+          imageUrl = 'http://mybudgetbook.in/GIBAPI/${userdata[0]["profile_image"]}';
+          district = userdata[0]['district'] ?? '';
+          chapter = userdata[0]['chapter'] ?? '';
+          LoginMember = userdata[0]['member_type'] ?? '';
+        }
+      });
+    }
+    else{
+      fetchData(widget.userId);
+    }
+  }
+
   ///offers fetch
   List<Map<String, dynamic>> offersdata = [];
   Future<void> offersfetchData() async {
@@ -228,9 +257,6 @@ class _HomepageState extends State<Homepage> {
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
-        // print("status code: ${response.statusCode}");
-        // print("status body: ${response.body}");
-
         final responseData = json.decode(response.body);
         if (responseData is List<dynamic>) {
           setState(() {
