@@ -421,12 +421,12 @@ class _GibTransactionState extends State<GibTransaction> {
                                   children: [
                                     Text(
                                       'Business Year : $accountingYear',
-                                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+                                      style: const TextStyle(fontSize: 16, color: Colors.black),
                                     ),
                                     const SizedBox(height: 10,),
                                     Text(
                                       "Upto Date : $totalRows", // Display the row count here
-                                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+                                      style: const TextStyle(fontSize: 16, color: Colors.black),
                                     ),
                                   ],
                                 ),
