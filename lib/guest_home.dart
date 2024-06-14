@@ -171,14 +171,19 @@ class _GuestHomePageState extends State<GuestHomePage> {
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         final List<dynamic> itemGroups = responseData;
+        DateTime now = DateTime.now();
         List<dynamic> filteredData = itemGroups.where((item) {
-          DateTime validityDate;
-          try {
-            validityDate = DateTime.parse(item['validity']);
-          } catch (e) {
-            return false;
-          }
-          return validityDate.isAfter(DateTime.now());
+          DateTime validityDate = DateTime.parse(item['validity']);
+          // Strip the time part
+          DateTime validityDateOnly =
+          DateTime(validityDate.year, validityDate.month, validityDate.day);
+          DateTime nowOnly = DateTime(now.year, now.month, now.day);
+          print(
+              'Validity Date: $validityDateOnly, Current Date: $nowOnly'); // Debug print
+          bool isValid = validityDateOnly.isAfter(nowOnly) ||
+              validityDateOnly.isAtSameMomentAs(nowOnly);
+          print('Is Valid: $isValid'); // Debug print
+          return isValid;
         }).toList();
         setState(() {
           data = filteredData.cast<Map<String, dynamic>>();

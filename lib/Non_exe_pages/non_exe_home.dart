@@ -483,6 +483,8 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
         setState(() {});
         // data = itemGroups.cast<Map<String, dynamic>>();
         // Filter data based on user_id and validity date
+        DateTime now = DateTime.now();
+        DateTime nowOnly = DateTime(now.year, now.month, now.day);
         List<dynamic> filteredData = itemGroups.where((item) {
           DateTime validityDate;
           try {
@@ -492,8 +494,9 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
             return false;
           }
 
-          bool satisfiesFilter = validityDate.isAfter(DateTime.now());
+          DateTime validityDateOnly = DateTime(validityDate.year, validityDate.month, validityDate.day);
 
+          bool satisfiesFilter = (validityDateOnly.isAfter(nowOnly) || validityDateOnly.isAtSameMomentAs(nowOnly));
           return satisfiesFilter;
         }).toList();
         // Call setState() after updating data
