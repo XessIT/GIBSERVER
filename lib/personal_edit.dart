@@ -182,7 +182,7 @@ class _PersonalEditState extends State<PersonalEdit> {
       );
 
       if (response.statusCode == 200) {
-
+        fetchDataHome(widget.userId);
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => Profile(userID: widget.userId, userType: widget.userType.toString(),)),
@@ -245,6 +245,7 @@ class _PersonalEditState extends State<PersonalEdit> {
       );
 
       if (response.statusCode == 200) {
+        fetchDataHome(widget.userId);
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => Profile(userID: widget.userId, userType: widget.userType.toString(),)),
@@ -285,6 +286,43 @@ class _PersonalEditState extends State<PersonalEdit> {
     await prefs.setString('marital_status', status.toString());
     await prefs.setString('imageUrl', widget.imageUrl.toString());
     await prefs.setString('imageParameter', widget.imageUrl.toString());
+  }
+
+
+  List<Map<String, dynamic>> userdata = [];
+
+  Future<void> fetchDataHome(String? userId) async {
+    try {
+      final url = Uri.parse(
+          'http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=$userId');
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        if (responseData is List<dynamic>) {
+          setState(() {
+            userdata = responseData.cast<Map<String, dynamic>>();
+            if (userdata.isNotEmpty) {
+              imageUrl = 'http://mybudgetbook.in/GIBAPI/${userdata[0]["profile_image"]}';
+
+              // Store data in SharedPreferences
+              saveUserData(userdata);
+            }
+          });
+        } else {
+          print('Invalid response data format');
+        }
+      } else {
+        //  print('Error: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error: $error');
+    }
+  }
+
+  Future<void> saveUserData(List<Map<String, dynamic>> data) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('userData', json.encode(data));
   }
 
   String category = 'Business';

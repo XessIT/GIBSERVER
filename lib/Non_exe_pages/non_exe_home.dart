@@ -206,7 +206,8 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
   @override
   void initState() {
     _fetchImages(widget.userType.toString());
-    fetchData(widget.userID);
+    loadUserData();
+   // fetchData(widget.userID);
     //getData();
     getData1();
     _checkConnectivityAndGetData();
@@ -373,6 +374,9 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
               getData();
               memberType = userdata[0]['member_type'] ?? '';
               print("MEMBER TYE : $memberType");
+
+              // Store data in SharedPreferences
+              saveUserData(userdata);
             }
           });
         } else {
@@ -383,6 +387,32 @@ class _NonExecutiveHomeState extends State<NonExecutiveHome> {
       }
     } catch (error) {
       print('Error: $error');
+    }
+  }
+
+  Future<void> saveUserData(List<Map<String, dynamic>> data) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('userData', json.encode(data));
+  }
+
+  Future<void> loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userDataString = prefs.getString('userData');
+
+    if (userDataString != null) {
+      final List<dynamic> decodedData = json.decode(userDataString);
+      setState(() {
+        userdata = decodedData.cast<Map<String, dynamic>>();
+        if (userdata.isNotEmpty) {
+          imageUrl = 'http://mybudgetbook.in/GIBAPI/${userdata[0]["profile_image"]}';
+          district = userdata[0]['district'] ?? '';
+          chapter = userdata[0]['chapter'] ?? '';
+        //  LoginMember = userdata[0]['member_type'] ?? '';
+        }
+      });
+    }
+    else{
+      fetchData(widget.userID);
     }
   }
 

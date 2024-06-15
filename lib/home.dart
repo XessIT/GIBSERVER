@@ -1562,7 +1562,7 @@ class _HomepageState extends State<Homepage> {
                                       },
                                       child: CircleAvatar(
                                         radius: 30.0,
-                                        backgroundColor: Colors.cyan,
+                                       // backgroundColor: Colors.cyan,
                                         backgroundImage: NetworkImage(imageUrl),
                                       ),
                                     ),

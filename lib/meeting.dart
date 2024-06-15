@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gipapp/settings_page_executive.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 import 'Non_exe_pages/non_exe_home.dart';
 import 'Non_exe_pages/settings_non_executive.dart';
@@ -30,7 +31,6 @@ class MeetingUpcomingPage extends StatefulWidget {
   @override
   State<MeetingUpcomingPage> createState() => _MeetingUpcomingPageState();
 }
-
 class _MeetingUpcomingPageState extends State<MeetingUpcomingPage> {
   String district = "";
   String chapter = "";
@@ -71,41 +71,13 @@ class _MeetingUpcomingPageState extends State<MeetingUpcomingPage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-        length: 4,
-        child: Scaffold(
+      length: 4,
+      child: Scaffold(
         appBar: AppBar(
-        title: Text('Meeting', style: Theme.of(context).textTheme.displayLarge),
-    iconTheme: const IconThemeData(color: Colors.white),
-    leading: IconButton(
-    onPressed: () {
-    if (widget.userType == "Non-Executive") {
-    Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => NavigationBarNon(
-        userType: widget.userType.toString(),
-        userId: widget.userId.toString(),
-      ),
-    ),
-    );
-    } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => NavigationBarExe(
-            userType: widget.userType.toString(),
-            userId: widget.userId.toString(),
-          ),
-        ),
-      );
-    }
-    },
-      icon: const Icon(Icons.navigate_before),
-    ),
-        ),
-          body: PopScope(
-            canPop: false,
-            onPopInvoked: (didPop) {
+          title: Text('Meeting', style: Theme.of(context).textTheme.displayLarge),
+          iconTheme: const IconThemeData(color: Colors.white),
+          leading: IconButton(
+            onPressed: () {
               if (widget.userType == "Non-Executive") {
                 Navigator.push(
                   context,
@@ -128,33 +100,61 @@ class _MeetingUpcomingPageState extends State<MeetingUpcomingPage> {
                 );
               }
             },
-            child: Column(
-              children: [
-                const TabBar(
-                  isScrollable: true,
-                  labelColor: Colors.green,
-                  unselectedLabelColor: Colors.black,
-                  tabs: [
-                    Tab(text: ('Network Meeting')),
-                    Tab(text: ('Team Meeting')),
-                    Tab(text: ('Training Program')),
-                    Tab(text: ("Industrial Visit")),
-                  ],
-                ),
-                Expanded(
-                  child: TabBarView(
-                    children: <Widget>[
-                      NetworkMeeting(district: district, chapter: chapter, userType: widget.userType),
-                      TeamMeeting(district: district, chapter: chapter, userType: widget.userType),
-                      TrainingProgram(district: district, chapter: chapter, userType: widget.userType),
-                      GIBMeeting(district: district, chapter: chapter, userType: widget.userType),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+            icon: const Icon(Icons.navigate_before),
           ),
         ),
+        body: PopScope(
+          canPop: false,
+          onPopInvoked: (didPop) {
+            if (widget.userType == "Non-Executive") {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NavigationBarNon(
+                    userType: widget.userType.toString(),
+                    userId: widget.userId.toString(),
+                  ),
+                ),
+              );
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NavigationBarExe(
+                    userType: widget.userType.toString(),
+                    userId: widget.userId.toString(),
+                  ),
+                ),
+              );
+            }
+          },
+          child: Column(
+            children: [
+              const TabBar(
+                isScrollable: true,
+                labelColor: Colors.green,
+                unselectedLabelColor: Colors.black,
+                tabs: [
+                  Tab(text: ('Network Meeting')),
+                  Tab(text: ('Team Meeting')),
+                  Tab(text: ('Training Program')),
+                  Tab(text: ("Industrial Visit")),
+                ],
+              ),
+              Expanded(
+                child: TabBarView(
+                  children: <Widget>[
+                    NetworkMeeting(district: district, chapter: chapter, userType: widget.userType),
+                    TeamMeeting(district: district, chapter: chapter, userType: widget.userType),
+                    TrainingProgram(district: district, chapter: chapter, userType: widget.userType),
+                    GIBMeeting(district: district, chapter: chapter, userType: widget.userType),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -168,7 +168,6 @@ class NetworkMeeting extends StatefulWidget {
   @override
   State<NetworkMeeting> createState() => _NetworkMeetingState();
 }
-
 class _NetworkMeetingState extends State<NetworkMeeting> {
   @override
   Widget build(BuildContext context) {
@@ -221,7 +220,6 @@ class UpComingNetworkMeeting extends StatefulWidget {
   @override
   State<UpComingNetworkMeeting> createState() => _UpComingNetworkMeetingState();
 }
-
 class _UpComingNetworkMeetingState extends State<UpComingNetworkMeeting> {
   String type = "Network Meeting";
   bool isLoading = true;
@@ -234,6 +232,8 @@ class _UpComingNetworkMeetingState extends State<UpComingNetworkMeeting> {
 
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
+        print('Response data: $responseData');
+
         final List<dynamic> itemGroups = responseData;
 
         List<dynamic> filteredData = itemGroups.where((item) {
@@ -263,19 +263,29 @@ class _UpComingNetworkMeetingState extends State<UpComingNetworkMeeting> {
     }
   }
 
+  String _formatDate(String dateStr) {
+    try {
+      DateTime date = DateFormat('yyyy-MM-dd').parse(dateStr);
+      return DateFormat('MMMM-dd,yyyy').format(date);
+    } catch (e) {
+      return dateStr; // Return the original string if parsing fails
+    }
+  }
+
+
   @override
   void initState() {
     super.initState();
     getData();
-      getData().then((_) {
+    getData().then((_) {
+      setState(() {
+        isLoading = false;
+      });
+      Future.delayed(const Duration(seconds: 2), () {
         setState(() {
           isLoading = false;
-      });
-        Future.delayed(const Duration(seconds: 2), () {
-          setState(() {
-            isLoading = false;
-          });
         });
+      });
 
     });
   }
@@ -296,39 +306,40 @@ class _UpComingNetworkMeetingState extends State<UpComingNetworkMeeting> {
           return Card(
             color: Colors.white,
             child: Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.all(16.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Text('${data[i]['meeting_date']}'),
-                      ),
-                    ],
-                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Text('${data[i]['from_time']} - ${data[i]['to_time']}'),
-                      ),
-                      Align(
-                        alignment: Alignment.center,
-                        child: Text('${data[i]['meeting_name']}'),
-                      ),
-                      Align(
-                        alignment: Alignment.topRight,
-                        child: RichText(
-                          text: TextSpan(
-                            children: [
-                              const WidgetSpan(child: Icon(Icons.location_on)),
-                              TextSpan(text: ('${data[i]['place']}'), style: const TextStyle(color: Colors.black)),
-                            ],
+                      Text(_formatDate(data[i]["meeting_date"])),
+                      Text('${data[i]['from_time']} - ${data[i]['to_time']}'),
+                    ],
+                  ),
+                  SizedBox(height: 10,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: Text('${data[i]['meeting_name']}',
+                            style: Theme.of(context).textTheme.bodySmall,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2, // Change this to the number of lines you want
                           ),
+                        ),
+                      ),
+
+
+                      RichText(
+                        text: TextSpan(
+                          children: [
+                            const WidgetSpan(child: Icon(Icons.location_on)),
+                            TextSpan(text: ('${data[i]['place']}'), style: const TextStyle(color: Colors.black)),
+                          ],
                         ),
                       ),
                     ],
@@ -360,7 +371,6 @@ class CompletedNetworkMeeting extends StatefulWidget {
   @override
   State<CompletedNetworkMeeting> createState() => _CompletedNetworkMeetingState();
 }
-
 class _CompletedNetworkMeetingState extends State<CompletedNetworkMeeting> {
   String type = "Network Meeting";
   List<Map<String, dynamic>> data = [];
@@ -371,6 +381,15 @@ class _CompletedNetworkMeetingState extends State<CompletedNetworkMeeting> {
     super.initState();
     getData();
   }
+  String _formatDate(String dateStr) {
+    try {
+      DateTime date = DateFormat('yyyy-MM-dd').parse(dateStr);
+      return DateFormat('MMMM-dd,yyyy').format(date);
+    } catch (e) {
+      return dateStr; // Return the original string if parsing fails
+    }
+  }
+
 
   Future<void> getData() async {
     final url = Uri.parse(
@@ -424,27 +443,43 @@ class _CompletedNetworkMeetingState extends State<CompletedNetworkMeeting> {
           return Card(
             color: Colors.white,
             child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+
                 children: [
-                  Column(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('${data[i]['meeting_date']}'),
-                      Text('${data[i]['from_time']}-\n${data[i]['to_time']}'),
+                      Text(_formatDate(data[i]["meeting_date"])),
+                      Text('${data[i]['from_time']} - ${data[i]['to_time']}'),
                     ],
                   ),
-                  Text('${data[i]['meeting_name']}'),
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        WidgetSpan(child: Icon(Icons.location_on)),
-                        TextSpan(
-                          text: ('${data[i]['place']}'),
-                          style: const TextStyle(color: Colors.black),
+                  SizedBox(height: 10,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: Text('${data[i]['meeting_name']}',
+                            style: Theme.of(context).textTheme.bodySmall,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2, // Change this to the number of lines you want
+                          ),
                         ),
-                      ],
-                    ),
+                      ),
+
+
+                      RichText(
+                        text: TextSpan(
+                          children: [
+                            const WidgetSpan(child: Icon(Icons.location_on)),
+                            TextSpan(text: ('${data[i]['place']}'), style: const TextStyle(color: Colors.black)),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -456,6 +491,8 @@ class _CompletedNetworkMeetingState extends State<CompletedNetworkMeeting> {
     );
   }
 }
+
+
 class TeamMeeting  extends StatefulWidget {
   final String? district;
   final String? chapter;
@@ -526,6 +563,15 @@ class _UpcomingTeamMeetingState extends State<UpcomingTeamMeeting> {
   String type = "Team Meeting";
 
   List<Map<String, dynamic>> data=[];
+  String _formatDate(String dateStr) {
+    try {
+      DateTime date = DateFormat('yyyy-MM-dd').parse(dateStr);
+      return DateFormat('MMMM-dd,yyyy').format(date);
+    } catch (e) {
+      return dateStr; // Return the original string if parsing fails
+    }
+  }
+
 
   Future<void> getData() async {
     try {
@@ -579,84 +625,64 @@ class _UpcomingTeamMeetingState extends State<UpcomingTeamMeeting> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body:  isLoading
-            ? const Center(
-          // Show CircularProgressIndicator while loading
-          child: CircularProgressIndicator(),
-        )
-            : data.isNotEmpty
-            ?ListView.builder(
-            itemCount: data.length,
-            itemBuilder:(context, i){
-              const SizedBox(height: 20,);
-              return Expanded(
-                child: Card(
-                  //   elevation: 1,
-                  color: Colors.white,
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
+      body:  isLoading
+          ? const Center(
+        // Show CircularProgressIndicator while loading
+        child: CircularProgressIndicator(),
+      )
+          : data.isNotEmpty
+          ?ListView.builder(
+          itemCount: data.length,
+          itemBuilder:(context, i){
+            const SizedBox(height: 20,);
+            return Card(
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            //DATE TEXT STARTS
-                            //   const SizedBox(width: 23,),
-                            //  SizedBox(height: 30,),
-                            Align(
-                              alignment: Alignment.topLeft,
-                              child: Text('${data[i]['meeting_date']}',
-                                //format(DateTime.now()),style:  TextStyle(color: Colors.green[900],fontWeight:FontWeight.bold),
-                              ),
-                            ),
-
-                            //TIME TEXT STARTS
-
-
-                            //format(DateTime.now()),),
-                          ],
-                        ),
-                        //NETWORK MEETING TEXT STARTS
-                        //   const SizedBox(width: 30,),
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Align(alignment:Alignment.topLeft,
-                                child: Text('${data[i]['from_time']}-\n'
-                                    '${data[i]['to_time']}'),
-                              ),
-                              Align(alignment:Alignment.center,
-                                  child: Text('${data[i]['meeting_name']}')),
-                              Align(alignment:Alignment.topRight,
-                                child: RichText(
-                                  text:  TextSpan(
-                                      children: [
-                                        const WidgetSpan(child: Icon(Icons.location_on)),
-                                        TextSpan(text: ('${data[i]['place']}'),style: const TextStyle(color: Colors.black)
-                                        )
-                                      ]
-                                  ),
-                                ),
-                              ),
-                            ]
-                        ),
-
-                        //ERODE LOCATION ICON RICHTEXT STARTS
-
-                        //    const SizedBox(width: 50,),
-
-                        //    const SizedBox(width: 20,),
-                        //const Icon(Icons.thumb_up_outlined,color: Colors.green,size: 20,),
-                        //  const SizedBox(width: 20,),
-                        //  const Icon(Icons.person_add,color: Colors.green,size: 20,),
+                        Text(_formatDate(data[i]["meeting_date"])),
+                        Text('${data[i]['from_time']} - ${data[i]['to_time']}'),
                       ],
                     ),
-                  ),
-                ),
-              );
+                    SizedBox(height: 10,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Text('${data[i]['meeting_name']}',
+                              style: Theme.of(context).textTheme.bodySmall,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2, // Change this to the number of lines you want
+                            ),
+                          ),
+                        ),
 
-            })
-            :Center(child: const Text("There is No Meeting")),
+
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              const WidgetSpan(child: Icon(Icons.location_on)),
+                              TextSpan(text: ('${data[i]['place']}'), style: const TextStyle(color: Colors.black)),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+
+          })
+          :Center(child: const Text("There is No Meeting")),
 
     );
   }
@@ -694,7 +720,7 @@ class _CompletedTeamMeetingState extends State<CompletedTeamMeeting> {
 
           bool isCurrentYear = validityDate.year == DateTime.now().year;
           bool satisfiesFilter = validityDate.isBefore(DateTime.now()) && isCurrentYear;
-        //  bool satisfiesFilter =  validityDate.isBefore(DateTime.now());
+          //  bool satisfiesFilter =  validityDate.isBefore(DateTime.now());
           return satisfiesFilter;
         }).toList();
         setState(() {
@@ -711,6 +737,15 @@ class _CompletedTeamMeetingState extends State<CompletedTeamMeeting> {
     }
   }
   bool isLoading = true;
+  String _formatDate(String dateStr) {
+    try {
+      DateTime date = DateFormat('yyyy-MM-dd').parse(dateStr);
+      return DateFormat('MMMM-dd,yyyy').format(date);
+    } catch (e) {
+      return dateStr; // Return the original string if parsing fails
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -724,70 +759,63 @@ class _CompletedTeamMeetingState extends State<CompletedTeamMeeting> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: isLoading
-            ? const Center(
-          // Show CircularProgressIndicator while loading
-          child: CircularProgressIndicator(),
-        )
-            : data.isNotEmpty
-        ? ListView.builder(
-            itemCount: data.length,
-            itemBuilder:(context, i){
-              const SizedBox(height: 20,);
-              return Expanded(
-                child: Card(
-                  //   elevation: 1,
-                  color: Colors.white,
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child:Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
+      body: isLoading
+          ? const Center(
+        // Show CircularProgressIndicator while loading
+        child: CircularProgressIndicator(),
+      )
+          : data.isNotEmpty
+          ? ListView.builder(
+          itemCount: data.length,
+          itemBuilder:(context, i){
+            const SizedBox(height: 20,);
+            return Card(
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            //DATE TEXT STARTS
-                            //   const SizedBox(width: 23,),
-                            //  SizedBox(height: 30,),
-                            Align(
-                              alignment: Alignment.topLeft,
-                              child: Text('${data[i]['meeting_date']}',
-                                //format(DateTime.now()),style:  TextStyle(color: Colors.green[900],fontWeight:FontWeight.bold),
-                              ),
+                        Text(_formatDate(data[i]["meeting_date"])),
+                        Text('${data[i]['from_time']} - ${data[i]['to_time']}'),
+                      ],
+                    ),
+                    SizedBox(height: 10,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Text('${data[i]['meeting_name']}',
+                              style: Theme.of(context).textTheme.bodySmall,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2, // Change this to the number of lines you want
                             ),
-                            //TIME TEXT STARTS
-                          ],
+                          ),
                         ),
-                        //NETWORK MEETING TEXT STARTS
-                        //   const SizedBox(width: 30,),
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+
+                        RichText(
+                          text: TextSpan(
                             children: [
-                              Align(alignment:Alignment.topLeft,
-                                child: Text('${data[i]['from_time']}-\n'
-                                    '${data[i]['to_time']}'),
-                              ),
-                              Align(alignment:Alignment.center,
-                                  child: Text('${data[i]['meeting_name']}')),
-                              Align(alignment:Alignment.topRight,
-                                child: RichText(
-                                  text:  TextSpan(
-                                      children: [
-                                        const WidgetSpan(child: Icon(Icons.location_on)),
-                                        TextSpan(text: ('${data[i]['place']}'),style: const TextStyle(color: Colors.black)
-                                        )
-                                      ]
-                                  ),
-                                ),
-                              ),
-                            ]
+                              const WidgetSpan(child: Icon(Icons.location_on)),
+                              TextSpan(text: ('${data[i]['place']}'), style: const TextStyle(color: Colors.black)),
+                            ],
+                          ),
                         ),
                       ],
                     ),
-                  ),
+                  ],
                 ),
-              );
-            })
-        : Center(child: const Text("There is No Meeting")),
+              ),
+            );
+          })
+          : Center(child: const Text("There is No Meeting")),
 
     );
   }
@@ -899,6 +927,15 @@ class _UpComingTrainingProgramState extends State<UpComingTrainingProgram> {
       throw e; // rethrow the error if needed
     }
   }
+  String _formatDate(String dateStr) {
+    try {
+      DateTime date = DateFormat('yyyy-MM-dd').parse(dateStr);
+      return DateFormat('MMMM-dd,yyyy').format(date);
+    } catch (e) {
+      return dateStr; // Return the original string if parsing fails
+    }
+  }
+
 
   bool isLoading = true;
   @override
@@ -914,70 +951,64 @@ class _UpComingTrainingProgramState extends State<UpComingTrainingProgram> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body:  isLoading
-            ? const Center(
-          // Show CircularProgressIndicator while loading
-          child: CircularProgressIndicator(),
-        )
-            : data.isNotEmpty
-        ? ListView.builder(
-            itemCount: data.length,
-            itemBuilder:(context, i){
-              const SizedBox(height: 20,);
-              return Expanded(
-                child: Card(
-                  //   elevation: 1,
-                  color: Colors.white,
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
+      body:  isLoading
+          ? const Center(
+        // Show CircularProgressIndicator while loading
+        child: CircularProgressIndicator(),
+      )
+          : data.isNotEmpty
+          ? ListView.builder(
+          itemCount: data.length,
+          itemBuilder:(context, i){
+            const SizedBox(height: 20,);
+            return Card(
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            //DATE TEXT STARTS
-                            //   const SizedBox(width: 23,),
-                            //  SizedBox(height: 30,),
-                            Align(
-                              alignment: Alignment.topLeft,
-                              child: Text('${data[i]['meeting_date']}',
-                                //format(DateTime.now()),style:  TextStyle(color: Colors.green[900],fontWeight:FontWeight.bold),
-                              ),
+                        Text(_formatDate(data[i]["meeting_date"])),
+                        Text('${data[i]['from_time']} - ${data[i]['to_time']}'),
+                      ],
+                    ),
+                    SizedBox(height: 10,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Text('${data[i]['meeting_name']}',
+                              style: Theme.of(context).textTheme.bodySmall,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2, // Change this to the number of lines you want
                             ),
-                          ],
+                          ),
                         ),
-                        //NETWORK MEETING TEXT STARTS
-                        //   const SizedBox(width: 30,),
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+
+                        RichText(
+                          text: TextSpan(
                             children: [
-                              Align(alignment:Alignment.topLeft,
-                                child: Text('${data[i]['from_time']}-\n'
-                                    '${data[i]['to_time']}'),
-                              ),
-                              Align(alignment:Alignment.center,
-                                  child: Text('${data[i]['meeting_name']}')),
-                              Align(alignment:Alignment.topRight,
-                                child: RichText(
-                                  text:  TextSpan(
-                                      children: [
-                                        const WidgetSpan(child: Icon(Icons.location_on)),
-                                        TextSpan(text: ('${data[i]['place']}'),style: const TextStyle(color: Colors.black)
-                                        )
-                                      ]
-                                  ),
-                                ),
-                              ),
-                            ]
+                              const WidgetSpan(child: Icon(Icons.location_on)),
+                              TextSpan(text: ('${data[i]['place']}'), style: const TextStyle(color: Colors.black)),
+                            ],
+                          ),
                         ),
                       ],
                     ),
-                  ),
+                  ],
                 ),
-              );
+              ),
+            );
 
-            })
-        :Center(child: const Text("There is No Meeting")),
+          })
+          :Center(child: const Text("There is No Meeting")),
 
     );
   }
@@ -1015,7 +1046,7 @@ class _CompletedTrainingProgramState extends State<CompletedTrainingProgram> {
           bool isCurrentYear = validityDate.year == DateTime.now().year;
           bool satisfiesFilter = validityDate.isBefore(DateTime.now()) && isCurrentYear;
 
-      //    bool satisfiesFilter =  validityDate.isBefore(DateTime.now());
+          //    bool satisfiesFilter =  validityDate.isBefore(DateTime.now());
           return satisfiesFilter;
         }).toList();
         setState(() {
@@ -1032,6 +1063,16 @@ class _CompletedTrainingProgramState extends State<CompletedTrainingProgram> {
     }
   }
   bool isLoading = true;
+  String _formatDate(String dateStr) {
+    try {
+      DateTime date = DateFormat('yyyy-MM-dd').parse(dateStr);
+      return DateFormat('MMMM-dd,yyyy').format(date);
+    } catch (e) {
+      return dateStr; // Return the original string if parsing fails
+    }
+  }
+
+
   @override
   void initState() {
     super.initState();
@@ -1055,54 +1096,48 @@ class _CompletedTrainingProgramState extends State<CompletedTrainingProgram> {
           itemCount: data.length,
           itemBuilder:(context, i){
             const SizedBox(height: 20,);
-            return Expanded(
-              child: Card(
-                //   elevation: 1,
-                color: Colors.white,
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          //DATE TEXT STARTS
-                          //   const SizedBox(width: 23,),
-                          //  SizedBox(height: 30,),
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Text('${data[i]['meeting_date']}',
-                              //format(DateTime.now()),style:  TextStyle(color: Colors.green[900],fontWeight:FontWeight.bold),
+            return Card(
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(_formatDate(data[i]["meeting_date"])),
+                        Text('${data[i]['from_time']} - ${data[i]['to_time']}'),
+                      ],
+                    ),
+                    SizedBox(height: 10,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Text('${data[i]['meeting_name']}',
+                              style: Theme.of(context).textTheme.bodySmall,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2, // Change this to the number of lines you want
                             ),
                           ),
-                        ],
-                      ),
-                      //NETWORK MEETING TEXT STARTS
-                      //   const SizedBox(width: 30,),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Align(alignment:Alignment.topLeft,
-                              child: Text('${data[i]['from_time']}-\n'
-                                  '${data[i]['to_time']}'),
-                            ),
-                            Align(alignment:Alignment.center,
-                                child: Text('${data[i]['meeting_name']}')),
-                            Align(alignment:Alignment.topRight,
-                              child: RichText(
-                                text:  TextSpan(
-                                    children: [
-                                      const WidgetSpan(child: Icon(Icons.location_on)),
-                                      TextSpan(text: ('${data[i]['place']}'),style: const TextStyle(color: Colors.black)
-                                      )
-                                    ]
-                                ),
-                              ),
-                            ),
-                          ]
-                      ),
-                    ],
-                  ),
+                        ),
+
+
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              const WidgetSpan(child: Icon(Icons.location_on)),
+                              TextSpan(text: ('${data[i]['place']}'), style: const TextStyle(color: Colors.black)),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             );
@@ -1220,6 +1255,16 @@ class _UpComingGIBMeetingState extends State<UpComingGIBMeeting> {
   }
 
   bool isLoading = true;
+  String _formatDate(String dateStr) {
+    try {
+      DateTime date = DateFormat('yyyy-MM-dd').parse(dateStr);
+      return DateFormat('MMMM-dd,yyyy').format(date);
+    } catch (e) {
+      return dateStr; // Return the original string if parsing fails
+    }
+  }
+
+
   @override
   void initState() {
     super.initState();
@@ -1233,71 +1278,68 @@ class _UpComingGIBMeetingState extends State<UpComingGIBMeeting> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: isLoading
-            ? const Center(
-          // Show CircularProgressIndicator while loading
-          child: CircularProgressIndicator(),
-        )
-            : data.isNotEmpty
-        ? ListView.builder(
-            itemCount: data.length,
-            itemBuilder:(context, i){
-              const SizedBox(height: 20,);
-              return Expanded(
-                child: Card(
-                  //   elevation: 1,
-                  color: Colors.white,
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Align(
-                              alignment: Alignment.topLeft,
-                              child: Text('${data[i]['meeting_date']}',
-                                //format(DateTime.now()),style:  TextStyle(color: Colors.green[900],fontWeight:FontWeight.bold),
-                              ),
-                            ),
-                          ],
-                        ),
-                        //NETWORK MEETING TEXT STARTS
-                        //   const SizedBox(width: 30,),
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Align(alignment:Alignment.topLeft,
-                                child: Text('${data[i]['from_time']}-\n'
-                                    '${data[i]['to_time']}'),
-                              ),
-                              Align(alignment:Alignment.center,
-                                  child: Text('${data[i]['meeting_name']}')),
-                              Align(alignment:Alignment.topRight,
-                                child: RichText(
-                                  text:  TextSpan(
-                                      children: [
-                                        const WidgetSpan(child: Icon(Icons.location_on)),
-                                        TextSpan(text: ('${data[i]['place']}'),style: const TextStyle(color: Colors.black)
-                                        )
-                                      ]
-                                  ),
-                                ),
-                              ),
-                            ]
-                        ),
+      body: isLoading
+          ? const Center(
+        // Show CircularProgressIndicator while loading
+        child: CircularProgressIndicator(),
+      )
+          : data.isNotEmpty
+          ? ListView.builder(
+          itemCount: data.length,
+          itemBuilder:(context, i){
+            const SizedBox(height: 20,);
+            return Card(
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
 
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(_formatDate(data[i]["meeting_date"])),
+                        Text('${data[i]['from_time']} - ${data[i]['to_time']}'),
                       ],
                     ),
-                  ),
+                    SizedBox(height: 10,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Text('${data[i]['meeting_name']}',
+                              style: Theme.of(context).textTheme.bodySmall,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2, // Change this to the number of lines you want
+                            ),
+                          ),
+                        ),
+
+
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              const WidgetSpan(child: Icon(Icons.location_on)),
+                              TextSpan(text: ('${data[i]['place']}'), style: const TextStyle(color: Colors.black)),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              );
-            })
-        :const Center(child: Text("There is No Meeting")),
+              ),
+            );
+          })
+          :const Center(child: Text("There is No Meeting")),
 
     );
   }
 }
+
 
 class CompletedGIBMeeting extends StatefulWidget {
   final String? district;
@@ -1331,7 +1373,7 @@ class _CompletedGIBMeetingState extends State<CompletedGIBMeeting> {
 
           bool isCurrentYear = validityDate.year == DateTime.now().year;
           bool satisfiesFilter = validityDate.isBefore(DateTime.now()) && isCurrentYear;
-        //  bool satisfiesFilter =  validityDate.isBefore(DateTime.now());
+          //  bool satisfiesFilter =  validityDate.isBefore(DateTime.now());
           return satisfiesFilter;
         }).toList();
         setState(() {
@@ -1348,6 +1390,15 @@ class _CompletedGIBMeetingState extends State<CompletedGIBMeeting> {
     }
   }
   bool isLoading = true;
+  String _formatDate(String dateStr) {
+    try {
+      DateTime date = DateFormat('yyyy-MM-dd').parse(dateStr);
+      return DateFormat('MMMM-dd,yyyy').format(date);
+    } catch (e) {
+      return dateStr; // Return the original string if parsing fails
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -1361,66 +1412,63 @@ class _CompletedGIBMeetingState extends State<CompletedGIBMeeting> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: isLoading
-            ? const Center(
-          // Show CircularProgressIndicator while loading
-          child: CircularProgressIndicator(),
-        )
-            : data.isNotEmpty
-        ? ListView.builder(
-            itemCount: data.length,
-            itemBuilder:(context, i){
-              const SizedBox(height: 20,);
-              return Expanded(
-                child: Card(
-                  //   elevation: 1,
-                  color: Colors.white,
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
+      body: isLoading
+          ? const Center(
+        // Show CircularProgressIndicator while loading
+        child: CircularProgressIndicator(),
+      )
+          : data.isNotEmpty
+          ? ListView.builder(
+          itemCount: data.length,
+          itemBuilder:(context, i){
+            const SizedBox(height: 20,);
+            return Card(
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            Align(
-                              alignment: Alignment.topLeft,
-                              child: Text('${data[i]['meeting_date']}',
-                                //format(DateTime.now()),style:  TextStyle(color: Colors.green[900],fontWeight:FontWeight.bold),
-                              ),
+                        Text(_formatDate(data[i]["meeting_date"])),
+                        Text('${data[i]['from_time']} - ${data[i]['to_time']}'),
+                      ],
+                    ),
+                    SizedBox(height: 10,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Text('${data[i]['meeting_name']}',
+                              style: Theme.of(context).textTheme.bodySmall,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2, // Change this to the number of lines you want
                             ),
-                          ],
+                          ),
                         ),
-                        //NETWORK MEETING TEXT STARTS
-                        //   const SizedBox(width: 30,),
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+
+                        RichText(
+                          text: TextSpan(
                             children: [
-                              Align(alignment:Alignment.topLeft,
-                                child: Text('${data[i]['from_time']}-\n'
-                                    '${data[i]['to_time']}'),
-                              ),
-                              Align(alignment:Alignment.center,
-                                  child: Text('${data[i]['meeting_name']}')),
-                              Align(alignment:Alignment.topRight,
-                                child: RichText(
-                                  text:  TextSpan(
-                                      children: [
-                                        const WidgetSpan(child: Icon(Icons.location_on)),
-                                        TextSpan(text: ('${data[i]['place']}'),style: const TextStyle(color: Colors.black)
-                                        )
-                                      ]
-                                  ),
-                                ),
-                              ),
-                            ]
+                              const WidgetSpan(child: Icon(Icons.location_on)),
+                              TextSpan(text: ('${data[i]['place']}'), style: const TextStyle(color: Colors.black)),
+                            ],
+                          ),
                         ),
                       ],
                     ),
-                  ),
+                  ],
                 ),
-              );
-            })
-        :const Center(child: Text("There is No Meeting")),
+              ),
+            );
+          })
+          :const Center(child: Text("There is No Meeting")),
 
     );
   }
