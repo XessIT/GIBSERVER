@@ -209,7 +209,8 @@ class _CompletedState extends State<Completed> {
                         ),
                         title: ListTile(
                           contentPadding: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                          title: Text('${filteredData[i]["Toname"]}'),
+                          title: filteredData[i]["Tomobile"] == fetchMobile
+                              ? Text('${filteredData[i]["referrer_name"]}') : Text('${filteredData[i]["Toname"]}'),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -351,7 +352,7 @@ class _CompletedState extends State<Completed> {
                             title: Text('Date: ${filteredData[i]["createdOn"]}'),
                           ),
                           ListTile(
-                            title: Text('Reason: ${filteredData[i]["reason"]}'),
+                            title: Text('Value: ${filteredData[i]["reason"]}'),
                           ),
                         ],
                       ),
@@ -989,7 +990,8 @@ class _UnsuccessfulState extends State<Unsuccessful> {
                         ),
                         title: ListTile(
                           contentPadding: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                          title: Text('${filteredData[i]["Toname"]}'),
+                          title: filteredData[i]["Tomobile"] == fetchMobile
+                              ? Text('${filteredData[i]["referrer_name"]}') : Text('${filteredData[i]["Toname"]}'),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [

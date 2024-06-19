@@ -53,6 +53,7 @@ class _GtoGPageState extends State<GtoGPage> {
 
   String uid = "";
   TextEditingController metwith = TextEditingController();
+  TextEditingController metid = TextEditingController();
   TextEditingController metcompanyname = TextEditingController();
   TextEditingController location = TextEditingController();
   TextEditingController metdate = TextEditingController();
@@ -164,8 +165,11 @@ class _GtoGPageState extends State<GtoGPage> {
     var url = Uri.parse('http://mybudgetbook.in/GIBAPI/g2g_slip.php');
     // final DateTime parsedDate = DateFormat('dd/MM/yyyy').parse(metdate.text);
     // final formattedDate = DateFormat('yyyy/MM/dd').format(parsedDate);
+    print("Met is: ${metwith.text}");
+    print("Met is: ${metid.text}");
     final response = await http.post(url, body: jsonEncode({
       'met_name': metwith.text,
+      'met_id': metid.text,
       'user_id':widget.userId,
       'met_company_name': metcompanyname.text,
       'met_number': companymobile.text,
@@ -282,10 +286,12 @@ class _GtoGPageState extends State<GtoGPage> {
                           setState(() {
                             searchController.text="${suggestion['first_name']} ${suggestion['last_name']}";
                             metwith.text = suggestion['first_name'];
+                            metid.text = suggestion['id'];
                             companymobile.text = suggestion['mobile'];
                             metcompanyname.text = suggestion['company_name'];
                             // Update other text fields as needed
                           });
+                          print("set: ${metid.text}");
                         },
                       ),
                     ),/// search controller

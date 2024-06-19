@@ -86,11 +86,11 @@ class _AttendancePageState extends State<AttendancePage> {
 
           child:  Column(
               children: [
-                TabBar(
+                const TabBar(
                   isScrollable: true,
                   labelColor: Colors.green,
                   unselectedLabelColor: Colors.black,
-                  tabs: const [
+                  tabs: [
                     Tab(text: ('Network Meeting'),),
                     Tab(text: ('Team Meeting') ,),
                     Tab(text:('Training Program'),),

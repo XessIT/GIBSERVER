@@ -145,7 +145,7 @@ class _MeetingUpcomingPageState extends State<MeetingUpcomingPage> {
                 child: TabBarView(
                   children: <Widget>[
                     NetworkMeeting(district: district, chapter: chapter, userType: widget.userType),
-                    TeamMeeting(district: district, chapter: chapter, userType: widget.userType),
+                    TeamMeeting(district: district, chapter: chapter, userType: widget.userType, userId: widget.userId),
                     TrainingProgram(district: district, chapter: chapter, userType: widget.userType),
                     GIBMeeting(district: district, chapter: chapter, userType: widget.userType),
                   ],
@@ -497,7 +497,8 @@ class TeamMeeting  extends StatefulWidget {
   final String? district;
   final String? chapter;
   final String? userType;
-  const TeamMeeting({super.key, required this.district, required this.chapter, required this.userType});
+  final String? userId;
+  const TeamMeeting({super.key, required this.district, required this.chapter, required this.userType, required this.userId});
 
   @override
   State<TeamMeeting> createState() => _TeamMeetingState();
@@ -539,8 +540,8 @@ class _TeamMeetingState extends State<TeamMeeting> {
             //TABBAR VIEW STARTS
             Expanded(
               child: TabBarView(children: [
-                UpcomingTeamMeeting(district: widget.district,chapter: widget.chapter, userType: widget.userType),
-                CompletedTeamMeeting(district: widget.district,chapter: widget.chapter, userType: widget.userType),
+                UpcomingTeamMeeting(district: widget.district,chapter: widget.chapter, userType: widget.userType, userId: widget.userId),
+                CompletedTeamMeeting(district: widget.district,chapter: widget.chapter, userType: widget.userType, userId: widget.userId),
               ]),
             ),
 
@@ -554,7 +555,8 @@ class UpcomingTeamMeeting extends StatefulWidget {
   final String? district;
   final String? chapter;
   final String? userType;
-  const UpcomingTeamMeeting({Key? key, required this.district, required this.chapter, required this.userType}) : super(key: key);
+  final String? userId;
+  const UpcomingTeamMeeting({Key? key, required this.district, required this.chapter, required this.userType, required this.userId}) : super(key: key);
 
   @override
   State<UpcomingTeamMeeting> createState() => _UpcomingTeamMeetingState();
@@ -563,6 +565,7 @@ class _UpcomingTeamMeetingState extends State<UpcomingTeamMeeting> {
   String type = "Team Meeting";
 
   List<Map<String, dynamic>> data=[];
+
   String _formatDate(String dateStr) {
     try {
       DateTime date = DateFormat('yyyy-MM-dd').parse(dateStr);
@@ -572,10 +575,57 @@ class _UpcomingTeamMeetingState extends State<UpcomingTeamMeeting> {
     }
   }
 
+  bool isLoading = true;
+  @override
+  void initState() {
+    super.initState();
+    getData();
+    fetchData(widget.userId);
+    Future.delayed(Duration(seconds: 2), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
+  }
+
+
+  List<Map<String, dynamic>> userdata = [];
+  String teamName = "";
+
+
+  Future<void> fetchData(String? userId) async {
+    try {
+      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=$userId');
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        if (responseData is List<dynamic>) {
+          setState(() {
+            userdata = responseData.cast<Map<String, dynamic>>();
+            if (userdata.isNotEmpty) {
+              teamName = userdata[0]['team_name'] ?? '';
+              print("Team Name:$teamName");
+              getData();
+            }
+          });
+        } else {
+          print('Invalid response data format');
+        }
+      } else {
+        //  print('Error: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error: $error');
+    }
+  }
+
+
 
   Future<void> getData() async {
     try {
-      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type&district=${widget.district}&chapter=${widget.chapter}&member_type=${widget.userType}');
+      final url = Uri.parse("http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type&district=${widget.district}&chapter=${widget.chapter}&member_type=${widget.userType}&team_name=$teamName");
+      print("Meeting url:$url");
       final response = await http.get(url);
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
@@ -611,17 +661,10 @@ class _UpcomingTeamMeetingState extends State<UpcomingTeamMeeting> {
     }
   }
 
-  bool isLoading = true;
-  @override
-  void initState() {
-    super.initState();
-    getData();
-    Future.delayed(Duration(seconds: 2), () {
-      setState(() {
-        isLoading = false; // Hide the loading indicator after 4 seconds
-      });
-    });
-  }
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -692,7 +735,8 @@ class CompletedTeamMeeting extends StatefulWidget {
   final String? district;
   final String? chapter;
   final String? userType;
-  const CompletedTeamMeeting({super.key, required this.district, required this.chapter, required this.userType});
+  final String? userId;
+  const CompletedTeamMeeting({super.key, required this.district, required this.chapter, required this.userType, required this.userId});
 
   @override
   State<CompletedTeamMeeting> createState() => _CompletedTeamMeetingState();
@@ -700,9 +744,60 @@ class CompletedTeamMeeting extends StatefulWidget {
 class _CompletedTeamMeetingState extends State<CompletedTeamMeeting> {
   String type = "Team Meeting";
   List<Map<String, dynamic>> data=[];
+  bool isLoading = true;
+  String _formatDate(String dateStr) {
+    try {
+      DateTime date = DateFormat('yyyy-MM-dd').parse(dateStr);
+      return DateFormat('MMMM-dd,yyyy').format(date);
+    } catch (e) {
+      return dateStr; // Return the original string if parsing fails
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+    fetchData(widget.userId);
+    Future.delayed(Duration(seconds: 2), () {
+      setState(() {
+        isLoading = false; // Hide the loading indicator after 4 seconds
+      });
+    });
+  }
+
+  String teamName = "";
+  List<Map<String, dynamic>> userdata = [];
+
+  Future<void> fetchData(String? userId) async {
+    try {
+      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=$userId');
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        if (responseData is List<dynamic>) {
+          setState(() {
+            userdata = responseData.cast<Map<String, dynamic>>();
+            if (userdata.isNotEmpty) {
+              teamName = userdata[0]['team_name'] ?? '';
+              print("Team Name:$teamName");
+              getData();
+            }
+          });
+        } else {
+          print('Invalid response data format');
+        }
+      } else {
+        //  print('Error: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error: $error');
+    }
+  }
   Future<void> getData() async {
     try {
-      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type&district=${widget.district}&chapter=${widget.chapter}&member_type=${widget.userType}');
+      final url = Uri.parse("http://mybudgetbook.in/GIBAPI/meeting.php?meeting_type=$type&district=${widget.district}&chapter=${widget.chapter}&member_type=${widget.userType}&team_name=$teamName");
       final response = await http.get(url);
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
@@ -736,26 +831,8 @@ class _CompletedTeamMeetingState extends State<CompletedTeamMeeting> {
       throw e; // rethrow the error if needed
     }
   }
-  bool isLoading = true;
-  String _formatDate(String dateStr) {
-    try {
-      DateTime date = DateFormat('yyyy-MM-dd').parse(dateStr);
-      return DateFormat('MMMM-dd,yyyy').format(date);
-    } catch (e) {
-      return dateStr; // Return the original string if parsing fails
-    }
-  }
 
-  @override
-  void initState() {
-    super.initState();
-    getData();
-    Future.delayed(Duration(seconds: 2), () {
-      setState(() {
-        isLoading = false; // Hide the loading indicator after 4 seconds
-      });
-    });
-  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

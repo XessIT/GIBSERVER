@@ -82,7 +82,7 @@ class _HomepageState extends State<Homepage> {
   @override
   void initState() {
     _fetchImages("Executive");
-
+    getData();
     loadUserData();
     getData1();
     _checkConnectivityAndGetData();
@@ -184,13 +184,12 @@ class _HomepageState extends State<Homepage> {
   String district = "";
   String chapter = "";
   String? LoginMember = "";
-
+  String? teamName = "";
   List<Map<String, dynamic>> userdata = [];
 
   Future<void> fetchData(String? userId) async {
     try {
-      final url = Uri.parse(
-          'http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=$userId');
+      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=$userId');
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
@@ -200,13 +199,10 @@ class _HomepageState extends State<Homepage> {
             userdata = responseData.cast<Map<String, dynamic>>();
             if (userdata.isNotEmpty) {
               imageUrl = 'http://mybudgetbook.in/GIBAPI/${userdata[0]["profile_image"]}';
-
               district = userdata[0]['district'] ?? '';
               chapter = userdata[0]['chapter'] ?? '';
+              teamName = userdata[0]['team_name'] ?? '';
               getData();
-              LoginMember = userdata[0]['member_type'] ?? '';
-              print("MEMBER TYPE : $LoginMember");
-
               // Store data in SharedPreferences
               saveUserData(userdata);
             }
@@ -219,6 +215,49 @@ class _HomepageState extends State<Homepage> {
       }
     } catch (error) {
       print('Error: $error');
+    }
+  }
+
+  Future<void> getData() async {
+    try {
+      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/non_exe_meeting.php?member_type=${widget.userType}&district=${district}&chapter=${chapter}&team_name=${teamName}');
+      print("meeting url: $url");
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        print("re s: ${response.statusCode}");
+        print("re b: ${response.body}");
+        final responseData = json.decode(response.body);
+        final List<dynamic> itemGroups = responseData;
+        List<dynamic> filteredData = itemGroups.where((item) {
+          DateTime registrationOpeningDate;
+          DateTime registrationClosingDate;
+          DateTime meetingDate;
+          try {
+            registrationOpeningDate = DateTime.parse(item['registration_opening_date']);
+            registrationClosingDate = DateTime.parse(item['registration_closing_date']);
+            meetingDate = DateTime.parse(item['meeting_date']);
+          } catch (e) {
+            print('Error parsing registration dates: $e');
+            return false;
+          }
+
+          bool isOpenForRegistration = registrationOpeningDate.isBefore(DateTime.now());
+          bool isRegistrationOpen = registrationClosingDate.isAfter(DateTime.now());
+          item['isRegistrationExpired'] = !isRegistrationOpen;
+
+          return DateTime.now().isBefore(meetingDate) || DateTime.now().isAtSameMomentAs(meetingDate);
+        }).toList();
+        setState(() {
+          data = filteredData.cast<Map<String, dynamic>>();
+          meetingName = data[0]['meeting_name'];
+        });
+      } else {
+        print('Error: ${response.statusCode}');
+      }
+      print('HTTP request completed. Status code: ${response.statusCode}');
+    } catch (e) {
+      print('Error making HTTP request: $e');
+      rethrow; // rethrow the error if needed
     }
   }
 
@@ -240,6 +279,7 @@ class _HomepageState extends State<Homepage> {
           district = userdata[0]['district'] ?? '';
           chapter = userdata[0]['chapter'] ?? '';
           LoginMember = userdata[0]['member_type'] ?? '';
+          getData();
         }
       });
     }
@@ -438,62 +478,7 @@ class _HomepageState extends State<Homepage> {
   List<Map<String, dynamic>> data = [];
   String meetingName = "";
   // String type = "Executive";
-  Future<void> getData() async {
-    try {
-      final url = Uri.parse(
-          'http://mybudgetbook.in/GIBAPI/non_exe_meeting.php?member_type=${widget.userType}&district=${district}&chapter=${chapter}');
-      print("meeting url: $url");
-      final response = await http.get(url);
-      if (response.statusCode == 200) {
-        print("re s: ${response.statusCode}");
-        print("re b: ${response.body}");
-        final responseData = json.decode(response.body);
-        final List<dynamic> itemGroups = responseData;
-        List<dynamic> filteredData = itemGroups.where((item) {
-          DateTime registrationOpeningDate;
-          DateTime registrationClosingDate;
-          DateTime meetingDate;
-          try {
-            registrationOpeningDate =
-                DateTime.parse(item['registration_opening_date']);
-            registrationClosingDate =
-                DateTime.parse(item['registration_closing_date']);
-            meetingDate = DateTime.parse(item['meeting_date']);
-          } catch (e) {
-            print('Error parsing registration dates: $e');
-            return false;
-          }
 
-          // Check if the registration opening date is before the current date
-          bool isOpenForRegistration =
-              registrationOpeningDate.isBefore(DateTime.now());
-
-          // Check if the registration closing date is after the current date
-          bool isRegistrationOpen =
-              registrationClosingDate.isAfter(DateTime.now());
-
-          // Add a flag to indicate if registration is expired
-          item['isRegistrationExpired'] = !isRegistrationOpen;
-
-          // Return true if the meeting is before or on the meeting date
-          return DateTime.now().isBefore(meetingDate) ||
-              DateTime.now().isAtSameMomentAs(meetingDate);
-        }).toList();
-
-        setState(() {
-          // Cast the filtered data to the correct type and update your state
-          data = filteredData.cast<Map<String, dynamic>>();
-          meetingName = data[0]['meeting_name'];
-        });
-      } else {
-        print('Error: ${response.statusCode}');
-      }
-      print('HTTP request completed. Status code: ${response.statusCode}');
-    } catch (e) {
-      print('Error making HTTP request: $e');
-      rethrow; // rethrow the error if needed
-    }
-  }
 
   ///Define a function to format the time string
   String _formatTimeString(String timeString) {
@@ -1187,12 +1172,17 @@ class _HomepageState extends State<Homepage> {
                                                                   .textTheme
                                                                   .bodySmall,
                                                             ),
-                                                            Text(
-                                                              '${meeting['meeting_name']}',
-                                                              style: Theme.of(
-                                                                      context)
-                                                                  .textTheme
-                                                                  .bodySmall,
+                                                            Flexible(
+                                                              child: FittedBox(
+                                                                fit: BoxFit.scaleDown,
+                                                                alignment: Alignment.centerLeft,
+                                                                child: Text(
+                                                                  '${meeting['meeting_name']}',
+                                                                  style: Theme.of(context).textTheme.bodySmall,
+                                                                  overflow: TextOverflow.ellipsis,
+                                                                  maxLines: 2, // Change this to the number of lines you want
+                                                                ),
+                                                              ),
                                                             ),
                                                           ],
                                                         ),

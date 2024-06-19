@@ -282,7 +282,7 @@ class SettingsPageNon extends StatelessWidget {
                           ),
                           child:  Text(
                             'Yes',
-                            style: Theme.of(context).textTheme.bodySmall,
+                            style: TextStyle(color: Colors.white),
                           ),
                         ),
                         btnCancel: ElevatedButton(
@@ -295,7 +295,7 @@ class SettingsPageNon extends StatelessWidget {
                           ),
                           child: Text(
                             'No',
-                            style: Theme.of(context).textTheme.bodySmall,
+                            style: TextStyle(color: Colors.white),
                           ),
                         ),
                       ).show();
