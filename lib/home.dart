@@ -103,6 +103,7 @@ class _HomepageState extends State<Homepage> {
       });
     });
     super.initState();
+    print("user type ${widget.userType}");
   }
 
   @override
@@ -1067,7 +1068,8 @@ class _HomepageState extends State<Homepage> {
                                               .spaceBetween,
                                           children: [
                                             Text(
-                                              '${_formatTimeString(meeting['from_time'])} to ${_formatTimeString(meeting['to_time'])}',
+                                              '${
+                                                  (meeting['from_time'])} to ${(meeting['to_time'])}',
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .bodySmall,
@@ -1515,6 +1517,7 @@ class _NavigationBarExeState extends State<NavigationBarExe> {
       SettingsPageExecutive(userId: widget.userId, userType: widget.userType),
     ];
     super.initState();
+    print("${widget.userType}");
   }
 
   @override
