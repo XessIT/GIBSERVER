@@ -613,8 +613,10 @@ class _RunningPageState extends State<RunningPage> {
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         final List<dynamic> itemGroups = responseData;
-        setState(() {});
-        // data = itemGroups.cast<Map<String, dynamic>>();
+
+        DateTime now = DateTime.now();
+        DateTime nowOnly = DateTime(now.year, now.month, now.day);
+
         // Filter data based on user_id and validity date
         List<dynamic> filteredData = itemGroups.where((item) {
           DateTime validityDate;
@@ -625,10 +627,12 @@ class _RunningPageState extends State<RunningPage> {
             return false;
           }
 
-          bool satisfiesFilter = item['user_id'] == widget.userId && validityDate.isAfter(DateTime.now());
+          DateTime validityDateOnly = DateTime(validityDate.year, validityDate.month, validityDate.day);
 
+          bool satisfiesFilter = (validityDateOnly.isAfter(nowOnly) || validityDateOnly.isAtSameMomentAs(nowOnly)) && item['user_id'] == widget.userId;
           return satisfiesFilter;
         }).toList();
+
         // Call setState() after updating data
         setState(() {
           // Cast the filtered data to the correct type
@@ -642,7 +646,6 @@ class _RunningPageState extends State<RunningPage> {
       print('Error making HTTP request: $e');
       throw e; // rethrow the error if needed
     }
-
   }
   Future<Uint8List?> getImageBytes(String imageUrl) async {
     try {

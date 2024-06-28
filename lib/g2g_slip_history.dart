@@ -1,9 +1,7 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
-
 import 'business_slip_history.dart';
 import 'g2g_slip.dart';
 
@@ -66,8 +64,13 @@ class _G2GHistoryState extends State<G2GHistory> {
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         final List<dynamic> itemGroups = responseData;
-        setState(() {});
-        data = itemGroups.cast<Map<String, dynamic>>();
+
+        setState(() {
+          data = itemGroups
+              .cast<Map<String, dynamic>>()
+              .where((item) => item['met_number'] == fetchMobile || item['mobile'] == fetchMobile)
+              .toList();
+        });
       } else {
         print('Error: ${response.statusCode}');
       }
@@ -77,6 +80,7 @@ class _G2GHistoryState extends State<G2GHistory> {
       throw e; // rethrow the error if needed
     }
   }
+
 
   bool isLoading = true;
   @override
@@ -114,6 +118,7 @@ class _G2GHistoryState extends State<G2GHistory> {
             return Center(
               child: Column(
                 children: [
+                  fetchMobile != data[i]["met_number"] ?
                   Card(
                     child: ExpansionTile(
                       leading: CircleAvatar(
@@ -140,12 +145,6 @@ class _G2GHistoryState extends State<G2GHistory> {
                               },
                               icon: Icon(Icons.call, color: Colors.green),
                             ),
-                            /*Card(
-                              child: data[i]["met_number"] == fetchMobile
-                                  ? Icon(Icons.call_received, color: Colors.green[800])
-                                  : Icon(Icons.call_made, color: Colors.red),
-                            ),*/
-
                           ],
                         ),
                       ),
@@ -166,9 +165,54 @@ class _G2GHistoryState extends State<G2GHistory> {
                         ListTile(
                           title: Text('Time: ${data[i]["from_time"]} - ${data[i]["to_time"]}'),
                         ),
-                      /*  ListTile(
-                          title: Text('to_time: ${data[i]["to_time"]}'),
-                        ),*/
+                      ],
+                    ),
+                  )
+                  : Card(
+                    child: ExpansionTile(
+                      leading: CircleAvatar(
+                        backgroundColor: ColorGenerator.getRandomColor(),
+                        child: Text(
+                          data[i]["first_name"][0].toUpperCase(),
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                      title: ListTile(
+                        contentPadding: EdgeInsets.fromLTRB(30, 0, 0, 0),
+                        title: Text('${data[i]["first_name"]}'),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              onPressed: () async {
+                                final call = Uri.parse("tel://${data[i]["mobile"]}");
+                                if (await canLaunchUrl(call)) {
+                                  launchUrl(call);
+                                } else {
+                                  throw 'Could not launch $call';
+                                }
+                              },
+                              icon: Icon(Icons.call, color: Colors.green),
+                            ),
+                          ],
+                        ),
+                      ),
+                      children: [
+                        ListTile(
+                          title: Text("Company Name: ${data[i]["company_name"]}"),
+                        ),
+                        ListTile(
+                          title: Text('Mobile Number: ${data[i]["mobile"]}'),
+                        ),
+                        ListTile(
+                          title: Text('Location: ${data[i]["location"]}'),
+                        ),
+                        ListTile(
+                          title: Text('Date: ${data[i]["date"]}'),
+                        ),
+                        ListTile(
+                          title: Text('Time: ${data[i]["from_time"]} - ${data[i]["to_time"]}'),
+                        ),
                       ],
                     ),
                   ),

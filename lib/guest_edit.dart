@@ -1,11 +1,10 @@
 import 'dart:convert';
-import 'dart:html';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'guest_profile.dart';
 
 class GuestProfileEdit extends StatefulWidget {
@@ -107,11 +106,14 @@ class _GuestProfileEditState extends State<GuestProfileEdit> {
     }
   }
 
+  /*Future<void> saveUserData(Map<String, dynamic> data) async {
+    final prefs = await SharedPreferences.getInstance();
+    List<Map<String, dynamic>> dataList = [data];
+    prefs.setString('guestuserData', json.encode(dataList));
+  }*/
   Future<void> Edit() async {
     try {
-      final url =
-          Uri.parse('http://mybudgetbook.in/GIBAPI/guest_profile.php');
-      // final url = Uri.parse('http://192.168.29.129/API/offers.php');
+      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/guest_profile.php');
       final response = await http.put(
         url,
         body: jsonEncode({
@@ -128,13 +130,28 @@ class _GuestProfileEditState extends State<GuestProfileEdit> {
       );
 
       if (response.statusCode == 200) {
+        // Parse response data if necessary
+        Map<String, dynamic> updatedData = {
+          'profile_image': widget.imageUrl20,
+          "first_name": firstnamecontroller.text,
+          "last_name": lastnamecontroller.text,
+          "company_name": companynamecontroller.text,
+          "place": locationcontroller.text,
+          "mobile": mobilecontroller.text,
+          "email": emailcontroller.text,
+          "blood_group": blood,
+          "id": widget.id
+        };
+        // Save updated data to SharedPreferences
+      //  await saveUserData(updatedData);
+        getData();
         Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => GuestProfile(
-                    userID: widget.id,
-                    userType: widget.userType,
-                  )),
+                userID: widget.id,
+                userType: widget.userType,
+              )),
         );
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Profile Successfully Updated")));
@@ -149,21 +166,18 @@ class _GuestProfileEditState extends State<GuestProfileEdit> {
 
   Future<void> updateProfile() async {
     try {
-      final url =
-          Uri.parse('http://mybudgetbook.in/GIBAPI/guest_profile.php');
+      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/guest_profile.php');
 
       // Assuming imageData is a String containing base64-encoded image data
       String base64Image = imageData;
-      Uint8List bytes =
-          base64.decode(base64Image); // Convert base64 string to Uint8List
+      Uint8List bytes = base64.decode(base64Image); // Convert base64 string to Uint8List
 
       final response = await http.put(
         url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'imagename': imageName,
-          'imagedata':
-              base64Encode(bytes), // Encode Uint8List using base64Encode
+          'imagedata': base64Encode(bytes), // Encode Uint8List using base64Encode
           "first_name": firstnamecontroller.text,
           "last_name": lastnamecontroller.text,
           "company_name": companynamecontroller.text,
@@ -176,13 +190,29 @@ class _GuestProfileEditState extends State<GuestProfileEdit> {
       );
 
       if (response.statusCode == 200) {
+        // Parse response data if necessary
+        Map<String, dynamic> updatedData = {
+          'imagename': imageName,
+          'imagedata': base64Encode(bytes),
+          "first_name": firstnamecontroller.text,
+          "last_name": lastnamecontroller.text,
+          "company_name": companynamecontroller.text,
+          "place": locationcontroller.text,
+          "mobile": mobilecontroller.text,
+          "email": emailcontroller.text,
+          "blood_group": blood,
+          "id": widget.id
+        };
+        // Save updated data to SharedPreferences
+       // await saveUserData(updatedData);
+        getData();
         Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => GuestProfile(
-                    userID: widget.id,
-                    userType: widget.userType,
-                  )),
+                userID: widget.id,
+                userType: widget.userType,
+              )),
         );
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Profile Successfully Updated")),
@@ -195,6 +225,7 @@ class _GuestProfileEditState extends State<GuestProfileEdit> {
       // Handle error as needed
     }
   }
+
   var _connectivityResult = ConnectivityResult.none;
   Future<void> _checkConnectivityAndGetData() async {
     var connectivityResult = await Connectivity().checkConnectivity();
@@ -240,7 +271,45 @@ class _GuestProfileEditState extends State<GuestProfileEdit> {
     });
   }
   final ImagePicker _picker = ImagePicker();
+  List<Map<String, dynamic>> data = [];
+  Future<void> getData() async {
+    try {
+      final url = Uri.parse(
+          'http://mybudgetbook.in/GIBAPI/guest_profile.php?id=${widget.id}');
+      final response = await http.get(url);
 
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+
+        if (responseData is List) {
+          final List<dynamic> itemGroups = responseData;
+          if (itemGroups.isNotEmpty) {
+            setState(() {
+              data = itemGroups.cast<Map<String, dynamic>>();
+            });
+            saveUserData(data);
+          }
+        } else if (responseData is Map<String, dynamic>) {
+          setState(() {
+            data = [responseData];
+          });
+          saveUserData(data);
+        } else {
+          print('Unexpected response format.');
+        }
+      } else {
+        print('Error: ${response.statusCode}');
+      }
+      print('HTTP request completed. Status code: ${response.statusCode}');
+    } catch (e) {
+      print('Error fetching data: $e');
+    }
+  }
+
+  Future<void> saveUserData(List<Map<String, dynamic>> data) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('guestuserData', json.encode(data));
+  }
 
 
   @override
@@ -673,17 +742,6 @@ class _GuestProfileEditState extends State<GuestProfileEdit> {
                           if (_formKey.currentState!.validate()) {
                             selectedImage == null ? Edit() : updateProfile();
                           }
-                          /*if(type == null){
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                content: Text("Please Select the Type")));
-                          }
-                          else if (_formKey.currentState!.validate()) {
-                            Editoffers();
-                            Navigator.push(context,
-                              MaterialPageRoute(builder: (context)=> OfferList(userId: widget.user_id)),);
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                content: Text("Successfully Updated a Offer")));
-                          }*/
                         },
                         child: const Text(
                           'Update',

@@ -97,17 +97,19 @@ class _BusinessPageState extends State<BusinessPage> {
                     labelColor: Colors.green,
                     unselectedLabelColor: Colors.black,
                     tabs: [
-                      Tab(text: 'GiB Total Transaction'),
                       Tab(text: 'My Transaction'),
+                      Tab(text: 'GiB Total Transaction'),
+
                     ],
                   ),
                   Expanded(
                     child: TabBarView(
                       children: <Widget>[
-                        GibTransaction(
-                            userId: widget.userId, userType: widget.userType),
                         MyTransaction(
                             userId: widget.userId, userType: widget.userType),
+                        GibTransaction(
+                            userId: widget.userId, userType: widget.userType),
+
                       ],
                     ),
                   )
@@ -268,7 +270,7 @@ class _GibTransactionState extends State<GibTransaction> {
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         setState(() {
-          honortotalRows = responseData['totalAmount'];
+          honortotalRows = responseData['totalAmount']??'0';
         });
       } else {
         print('Error: ${response.statusCode}');
@@ -295,6 +297,29 @@ class _GibTransactionState extends State<GibTransaction> {
     } catch (error) {
       print('Error: $error');
     }
+  }
+  String determineAccountingYear(DateTime now) {
+    // Check if current month is before April
+    if (now.month < DateTime.april) {
+      // Show previous year - current year
+      return '${now.year - 1} - ${now.year}';
+    } else {
+      // Show current year - next year
+      return '${now.year} - ${now.year + 1}';
+    }
+  }
+  String formatAccountingYear(String yearRange) {
+    // Split the year range into individual years
+    final years = yearRange.split(' - ');
+    final startYear = int.parse(years[0]);
+    final endYear = int.parse(years[1]);
+
+    // Format month strings (April and March)
+    final startMonth = DateFormat('MMM').format(DateTime(startYear, DateTime.april));
+    final endMonth = DateFormat('MMM').format(DateTime(endYear, DateTime.march));
+
+    // Return formatted string with month names
+    return '$startMonth $startYear - $endMonth $endYear';
   }
 
   @override
@@ -341,21 +366,39 @@ class _GibTransactionState extends State<GibTransaction> {
                     margin: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
                       children: [
-                        const Padding(
+                        Padding(
                           padding: EdgeInsets.all(10),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
+                              const CircleAvatar(
+                                radius: 20,
+                                backgroundImage: AssetImage('assets/letter-b.png'),
+                              ),
+
+                              const Text(
                                 'Business',
                                 style: TextStyle(
                                   fontSize: 20,
                                   color: Colors.white,
                                 ),
                               ),
-                              CircleAvatar(
-                                radius: 20,
-                                backgroundImage: AssetImage('assets/letter-b.png'),
+                              Column(
+                                children: [
+                                  Text(
+                                    formatAccountingYear(determineAccountingYear(DateTime.now())),
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  Text(DateFormat('dd-MM-yyyy').format(DateTime.now()),
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -378,12 +421,12 @@ class _GibTransactionState extends State<GibTransaction> {
                                   children: [
                                     Text(
                                       'Business Year : $accountingYear',
-                                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+                                      style: const TextStyle(fontSize: 16, color: Colors.black),
                                     ),
                                     const SizedBox(height: 10,),
                                     Text(
                                       "Upto Date : $totalRows", // Display the row count here
-                                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+                                      style: const TextStyle(fontSize: 16, color: Colors.black),
                                     ),
                                   ],
                                 ),
@@ -411,6 +454,10 @@ class _GibTransactionState extends State<GibTransaction> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
+                              CircleAvatar(
+                                radius: 20,
+                                backgroundImage: AssetImage('assets/letter-g.png'),
+                              ),
                               Text(
                                 'G2G',
                                 style: TextStyle(
@@ -419,10 +466,6 @@ class _GibTransactionState extends State<GibTransaction> {
 
                                 ),
 
-                              ),
-                              CircleAvatar(
-                                radius: 20,
-                                backgroundImage: AssetImage('assets/letter-g.png'),
                               ),
                             ],
                           ),
@@ -472,6 +515,10 @@ class _GibTransactionState extends State<GibTransaction> {
                           child:  Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
+                              CircleAvatar(
+                                radius: 20,
+                                backgroundImage: AssetImage('assets/letter-h.png'),
+                              ),
                               Text(
                                 'Honoring',
                                 style: TextStyle(
@@ -480,10 +527,6 @@ class _GibTransactionState extends State<GibTransaction> {
 
                                 ),
 
-                              ),
-                              CircleAvatar(
-                                radius: 20,
-                                backgroundImage: AssetImage('assets/letter-h.png'),
                               ),
                             ],
                           ),
@@ -534,6 +577,10 @@ class _GibTransactionState extends State<GibTransaction> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
+                              CircleAvatar(
+                                radius: 20,
+                                backgroundImage: AssetImage('assets/letter-g.png'),
+                              ),
                               Text(
                                 'Guest',
                                 style: TextStyle(
@@ -542,10 +589,6 @@ class _GibTransactionState extends State<GibTransaction> {
 
                                 ),
 
-                              ),
-                              CircleAvatar(
-                                radius: 20,
-                                backgroundImage: AssetImage('assets/letter-g.png'),
                               ),
                             ],
                           ),
@@ -854,24 +897,34 @@ class _MyTransactionState extends State<MyTransaction> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            CircleAvatar(
+                            const CircleAvatar(
                               radius: 20,
                               backgroundImage: AssetImage('assets/letter-b.png'),
                             ),
 
-                            Text(
+                            const Text(
                               'Business',
                               style: TextStyle(
                                 fontSize: 20,
                                 color: Colors.white,
                               ),
                             ),
-                            Text(
-                              formatAccountingYear(determineAccountingYear(DateTime.now())),
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.white,
-                              ),
+                            Column(
+                              children: [
+                                Text(
+                                  formatAccountingYear(determineAccountingYear(DateTime.now())),
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                Text(DateFormat('dd-MM-yyyy').format(DateTime.now()),
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -934,17 +987,16 @@ class _MyTransactionState extends State<MyTransaction> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-
+                            CircleAvatar(
+                              radius: 20,
+                              backgroundImage: AssetImage('assets/letter-g.png'),
+                            ),
                             Text(
                               'G2G',
                               style: TextStyle(
                                 fontSize: 20,
                                 color: Colors.white,
                               ),
-                            ),
-                            CircleAvatar(
-                              radius: 20,
-                              backgroundImage: AssetImage('assets/letter-g.png'),
                             ),
                           ],
                         ),
@@ -1007,7 +1059,10 @@ class _MyTransactionState extends State<MyTransaction> {
                         child:  Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-
+                            CircleAvatar(
+                              radius: 20,
+                              backgroundImage: AssetImage('assets/letter-h.png'),
+                            ),
                             Text(
                               'Honoring',
                               style: TextStyle(
@@ -1015,10 +1070,6 @@ class _MyTransactionState extends State<MyTransaction> {
                                 color: Colors.white,
 
                               ),
-                            ),
-                            CircleAvatar(
-                              radius: 20,
-                              backgroundImage: AssetImage('assets/letter-h.png'),
                             ),
                           ],
                         ),
@@ -1080,7 +1131,10 @@ class _MyTransactionState extends State<MyTransaction> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-
+                            CircleAvatar(
+                              radius: 20,
+                              backgroundImage: AssetImage('assets/letter-g.png'),
+                            ),
                             Text(
                               'Guest',
                               style: TextStyle(
@@ -1088,10 +1142,6 @@ class _MyTransactionState extends State<MyTransaction> {
                                 color: Colors.white,
 
                               ),
-                            ),
-                            CircleAvatar(
-                              radius: 20,
-                              backgroundImage: AssetImage('assets/letter-g.png'),
                             ),
                           ],
                         ),
@@ -1123,7 +1173,7 @@ class _MyTransactionState extends State<MyTransaction> {
                                   IconButton(onPressed: (){
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (context) => GuestHistory(userId: widget.userId.toString(),)),
+                                      MaterialPageRoute(builder: (context) => GuestHistory(userType: widget.userType, userId: widget.userId)),
                                     );
                                   }, icon: Icon(Icons.navigate_next,color: Colors.black,),),
                                 ],

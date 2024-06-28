@@ -63,7 +63,7 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
     businesstype = widget.currentbusinesstype!;
     uid = widget.userId!;
     // TODO: implement build
-    loadData();
+   // loadData();
     super.initState();
   }
 
@@ -77,22 +77,8 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
   TextEditingController websitecontroller = TextEditingController();
   TextEditingController ybecontroller = TextEditingController();
 
-  Future<void> saveData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('companyname', companynamecontroller.text);
-    await prefs.setString('mobile', mobilecontroller.text);
-    await prefs.setString('email', emailcontroller.text);
-    await prefs.setString('address', addresscontroller.text);
-    await prefs.setString('website', websitecontroller.text);
-    await prefs.setString('ybe', ybecontroller.text);
-    await prefs.setString('businesskeywords', businesskeywordcontroller.text);
-    await prefs.setString('businesstype', businesstype ?? "");
-    await prefs.setString('businessimageUrl', image); // Save image URL
-    await prefs.setString('businessimageParameter', imageUrl);
-  }
 
-
-  Future<void> loadData() async {
+  /*Future<void> loadData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       companynamecontroller.text = prefs.getString('companyname') ?? widget.currentcompanyname ?? "";
@@ -105,8 +91,70 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
       businesstype = prefs.getString('businesstype') ?? widget.currentbusinesstype ?? "";
       image = prefs.getString('businessimageUrl') ?? image ?? "";
     });
-  }
+  }*/
 
+
+  String? companyname = "";
+  String? businessimage = "";
+  String? businesskeywords = "";
+  String? address = "";
+  String? mobile = "";
+  String? email = "";
+  String? website = "";
+  String? ybe = "";
+  String documentid = "";
+  List<dynamic> dynamicdata = [];
+  String? userID = "";
+  String imageUrl = "";
+  String imageParameter = "";
+  Future<void> fetchData(String userId) async {
+    try {
+      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=$userId');
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        if (responseData is List<dynamic>) {
+          setState(() {
+            dynamicdata = responseData.cast<Map<String, dynamic>>();
+            if (dynamicdata.isNotEmpty) {
+              businesstype = dynamicdata[0]["business_type"] ?? "";
+              companyname = dynamicdata[0]["company_name"] ?? "";
+              businesskeywords = dynamicdata[0]["business_keywords"] ?? "";
+              address = dynamicdata[0]["company_address"] ?? "";
+              mobile = dynamicdata[0]["mobile"] ?? "";
+              email = dynamicdata[0]["email"] ?? "";
+              website = dynamicdata[0]["website"] ?? "";
+              ybe = dynamicdata[0]["b_year"] ?? "";
+              imageUrl = 'http://mybudgetbook.in/GIBAPI/${dynamicdata[0]["business_image"]}' ?? "";
+              imageParameter = dynamicdata[0]["business_image"] ?? "";
+            }
+          });
+          saveData();
+        } else {
+          print('Invalid response data format');
+        }
+      } else {
+        print('Error: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error: $error');
+    }
+  }
+  Future<void> saveData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('businesstype', businesstype ?? "");
+    await prefs.setString('companyname', companyname ?? "");
+    await prefs.setString('businessimage', businessimage ?? "");
+    await prefs.setString('businesskeywords', businesskeywords ?? "");
+    await prefs.setString('address', address ?? "");
+    await prefs.setString('mobile', mobile ?? "");
+    await prefs.setString('email', email ?? "");
+    await prefs.setString('website', website ?? "");
+    await prefs.setString('ybe', ybe ?? "");
+    await prefs.setString('businessimageUrl', imageUrl);
+    await prefs.setString('businessimageParameter', imageParameter);
+  }
   Future<void> Edit() async {
     try {
       final url = Uri.parse('http://mybudgetbook.in/GIBAPI/business_edit.php');
@@ -130,7 +178,8 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
       if (response.statusCode == 200) {
         final responseData = jsonDecode(utf8.decode(response.bodyBytes));
 
-        saveData();
+        fetchData(widget.userId.toString());
+        fetchDataHome(widget.userId.toString());
         Navigator.push(context, MaterialPageRoute(builder: (context) => Profile(userID: widget.userId, userType: widget.userType.toString(),)));
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text("Profile Successfully Updated")));
@@ -166,8 +215,8 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(utf8.decode(response.bodyBytes));
-
-        saveData();
+        fetchData(widget.userId.toString());
+        fetchDataHome(widget.userId.toString());
         Navigator.push(context, MaterialPageRoute(builder: (context) => Profile(userID: widget.userId, userType: widget.userType.toString(),)));
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text("Profile Successfully Updated"),
@@ -184,6 +233,51 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
     }
   }
 
+  String district = "";
+  String chapter = "";
+  String? LoginMember = "";
+
+  List<Map<String, dynamic>> userdata = [];
+
+  Future<void> fetchDataHome(String? userId) async {
+    try {
+      final url = Uri.parse(
+          'http://mybudgetbook.in/GIBAPI/registration.php?table=registration&id=$userId');
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        if (responseData is List<dynamic>) {
+          setState(() {
+            userdata = responseData.cast<Map<String, dynamic>>();
+            if (userdata.isNotEmpty) {
+              imageUrl = 'http://mybudgetbook.in/GIBAPI/${userdata[0]["profile_image"]}';
+
+              district = userdata[0]['district'] ?? '';
+              chapter = userdata[0]['chapter'] ?? '';
+              LoginMember = userdata[0]['member_type'] ?? '';
+              print("MEMBER TYPE : $LoginMember");
+
+              // Store data in SharedPreferences
+              saveUserData(userdata);
+            }
+          });
+        } else {
+          print('Invalid response data format');
+        }
+      } else {
+        //  print('Error: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error: $error');
+    }
+  }
+
+  Future<void> saveUserData(List<Map<String, dynamic>> data) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('userData', json.encode(data));
+  }
+
   Future<File?> CropImage({required File imageFile}) async{
     CroppedFile? croppedImage = await ImageCropper().cropImage(sourcePath: imageFile.path);
     if(croppedImage == null) return null;
@@ -191,8 +285,6 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
   }
   bool showLocalImage = false;
   String image="";
-
-  String imageUrl = "";
   File? pickedImage;
   late String imageName;
   late String imageData;

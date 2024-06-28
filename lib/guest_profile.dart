@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'guest_edit.dart';
 import 'guest_home.dart';
 import 'guest_settings.dart';
@@ -31,7 +32,6 @@ class _GuestProfileState extends State<GuestProfile> {
         final responseData = json.decode(response.body);
 
         if (responseData is List) {
-          // If responseData is a List (multiple records)
           final List<dynamic> itemGroups = responseData;
           if (itemGroups.isNotEmpty) {
             setState(() {
@@ -39,15 +39,15 @@ class _GuestProfileState extends State<GuestProfile> {
               imageParameter = data[0]["profile_image"];
               imageUrl = 'http://mybudgetbook.in/GIBAPI/$imageParameter';
             });
-          } else {
+            saveUserData(data);
           }
         } else if (responseData is Map<String, dynamic>) {
-          // If responseData is a Map (single record)
           setState(() {
             data = [responseData];
             imageParameter = responseData["profile_image"];
             imageUrl = 'http://mybudgetbook.in/GIBAPI/$imageParameter';
           });
+          saveUserData(data);
         } else {
           print('Unexpected response format.');
         }
@@ -57,13 +57,18 @@ class _GuestProfileState extends State<GuestProfile> {
       print('HTTP request completed. Status code: ${response.statusCode}');
     } catch (e) {
       print('Error fetching data: $e');
-      // Handle error as needed
     }
   }
 
+  Future<void> saveUserData(List<Map<String, dynamic>> data) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('guestuserData', json.encode(data));
+  }
+
+
   @override
   void initState() {
-    getData();
+    loadUserData();
     // TODO: implement initState
     super.initState();
 
@@ -123,9 +128,29 @@ class _GuestProfileState extends State<GuestProfile> {
       initState();
     });
   }
+  Future<void> loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userDataString = prefs.getString('guestuserData');
+
+    if (userDataString != null) {
+      final List<dynamic> decodedData = json.decode(userDataString);
+      setState(() {
+        data = decodedData.cast<Map<String, dynamic>>();
+        if (data.isNotEmpty) {
+          imageParameter = data[0]["profile_image"];
+          imageUrl = 'http://mybudgetbook.in/GIBAPI/$imageParameter';
+        }
+      });
+    } else {
+      getData();
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
+    loadUserData();
     return Scaffold(
         appBar: AppBar(
             title: Text('Profile', style: Theme.of(context).textTheme.displayLarge),

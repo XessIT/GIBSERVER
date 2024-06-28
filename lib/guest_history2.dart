@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'business.dart';
 import 'guest_slip.dart';
@@ -9,6 +11,7 @@ import 'guest_slip.dart';
 class GuestHistory2 extends StatefulWidget {
   final String? guestcount;
   final String? userId;
+  final String? meetingName;
   final String? meetingId;
   final String? userType;
   final String? meeting_date;
@@ -22,6 +25,7 @@ class GuestHistory2 extends StatefulWidget {
     required this.userId,
     required this.guestcount,
     required this.meetingId,
+    required this.meetingName,
     required this.userType,
     required this.meeting_date,
     required this.user_mobile,
@@ -85,6 +89,15 @@ class _GuestHistory2State extends State<GuestHistory2> {
       print('visitors Error: $error');
     }
   }
+  String _formatDate(String dateStr) {
+    try {
+      DateTime date = DateFormat('yyyy-MM-dd').parse(dateStr);
+      return DateFormat('MMMM-dd,yyyy').format(date);
+    } catch (e) {
+      return dateStr; // Return the original string if parsing fails
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -112,6 +125,7 @@ class _GuestHistory2State extends State<GuestHistory2> {
                 builder: (context) => VisitorsSlip(
                   userId: widget.userId,
                   meetingId: widget.meetingId,
+                  meetingName: widget.meetingName,
                   userType: widget.userType,
                   meeting_date: widget.meeting_date,
                   user_mobile: widget.user_mobile,
@@ -126,91 +140,160 @@ class _GuestHistory2State extends State<GuestHistory2> {
           },
         ),
       ),
-      body:
-      isLoading ? Center(child: CircularProgressIndicator()) :
-      groupedVisitors.isEmpty ? Center(child: Text("No Record Found"))
-          : Expanded(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: List.generate(groupedVisitors.length, (index) {
-              String date = groupedVisitors.keys.elementAt(index);
-              List<Map<String, dynamic>> visitors = groupedVisitors[date]!;
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      date,
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : groupedVisitors.isEmpty
+          ? const Center(child: Text("No Record Found", style: TextStyle(fontSize: 16)))
+          : CustomScrollView(
+        slivers: [
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                String date = groupedVisitors.keys.elementAt(index);
+                List<Map<String, dynamic>> visitors = groupedVisitors[date]!;
+
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _formatDate(date),
+
+                        // date,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                  ),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(), // Disable scrolling for the inner list
-                    itemCount: visitors.length,
-                    itemBuilder: (context, index) {
-                      Map<String, dynamic> visitor = visitors[index];
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          width: 100,
-                          height: 83,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(15.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.5),
-                                spreadRadius: 3,
-                                blurRadius: 7,
-                                offset: Offset(0, 3), // changes position of shadow
-                              ),
-                            ],
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: visitors.length,
+                        itemBuilder: (context, index) {
+                          Map<String, dynamic> visitor = visitors[index];
+                          return Card(
+                            margin: EdgeInsets.symmetric(vertical: 8.0),
+                            elevation: 4.0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: Stack(
                               children: [
-                                Row(
-                                  children: [
-                                    Text("${visitor["guest_name"]}"),
-                                  ],
-                                ),
-                                SizedBox(height: 10,),
-                                Expanded(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text("Location: ${visitor["location"]}"),
-                                      Text("Date: ${visitor["meeting_date"]}"),
+                                      Text(
+                                        visitor["guest_name"],
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.green,
+                                        ),
+                                      ),
+                                      SizedBox(height: 8.0),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "Location",
+                                                style: TextStyle(fontSize: 16),
+                                              ),
+                                              Text(
+                                                "${visitor["location"]}",
+                                                style: TextStyle(fontSize: 16),
+                                              ),
+                                            ],
+                                          ),
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "Meeting Date",
+                                                style: TextStyle(fontSize: 16),
+                                              ),
+                                              Text(
+                                                _formatDate(visitor["meeting_date"]),
+
+                                                // "${visitor["meeting_date"]}",
+                                                style: TextStyle(fontSize: 16),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 8.0),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "Mobile",
+                                                style: TextStyle(fontSize: 16),
+                                              ),
+                                              Text(
+                                                "+91${visitor["mobile"]}",
+                                                style: TextStyle(fontSize: 16),
+                                              ),
+                                            ],
+                                          ),
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "Meeting Name",
+                                                style: TextStyle(fontSize: 16),
+                                              ),
+                                              Text(
+                                                visitor["meeting_name"],
+                                                style: TextStyle(fontSize: 16),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     ],
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 15,
+                                  right: 8,
+                                  child: IconButton(
+                                    onPressed: () {
+                                      launchUrl(Uri.parse("tel://${visitor['mobile']}"));
+                                    },
+                                    icon: Icon(
+                                      Icons.call_outlined,
+                                      color: Colors.green[900],
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
-                          ),
-                        ),
-                      );
-                    },
+                          );
+                        },
+                      ),
+                    ],
                   ),
-                ],
-              );
-            }),
+                );
+              },
+              childCount: groupedVisitors.length,
+            ),
           ),
-        ),
+        ],
       ),
-
     );
   }
 
-  Map<String, List<Map<String, dynamic>>> groupByDate(
-      List<Map<String, dynamic>> visitors) {
+  Map<String, List<Map<String, dynamic>>> groupByDate(List<Map<String, dynamic>> visitors) {
     Map<String, List<Map<String, dynamic>>> groupedVisitors = {};
     DateTime now = DateTime.now();
     int currentYear = now.year;

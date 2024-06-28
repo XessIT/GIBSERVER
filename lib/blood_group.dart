@@ -85,7 +85,7 @@ class _BloodGroupState extends State<BloodGroup> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => GuestSettings(
+                  builder: (context) => GuestHome(
                     userType: widget.userType.toString(),
                     userId: widget.userId.toString(),
                   ),

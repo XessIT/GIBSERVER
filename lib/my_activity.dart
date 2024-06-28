@@ -303,8 +303,7 @@ class _ActivityState extends State<Activity> {
                                   ),
                                   child: Text(
                                     'Reject',
-                                    style:
-                                        Theme.of(context).textTheme.bodySmall,
+                                    style: TextStyle(color: Colors.white),
                                   ),
                                 ),
                                 ElevatedButton(
@@ -344,8 +343,7 @@ class _ActivityState extends State<Activity> {
                                   ),
                                   child: Text(
                                     'Accept',
-                                    style:
-                                        Theme.of(context).textTheme.bodySmall,
+                                    style: TextStyle(color: Colors.white),
                                   ),
                                 ),
                               ])

@@ -22,7 +22,7 @@ class _AttendancePageNonExeState extends State<AttendancePageNonExe> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 4,
+      length: 1,
       child: Scaffold(
         appBar: AppBar(
           title:  Text('Attendance', style: Theme.of(context).textTheme.displayLarge,),
@@ -83,11 +83,11 @@ class _AttendancePageNonExeState extends State<AttendancePageNonExe> {
 
           child:  Column(
               children: [
-                TabBar(
+                const TabBar(
                   isScrollable: true,
-                  labelColor: Colors.green.shade100,
+                  labelColor: Colors.green,
                   unselectedLabelColor: Colors.black,
-                  tabs: const [
+                  tabs: [
                     Tab(text:('Training Program'),),
                   ],
                 ),
@@ -139,8 +139,12 @@ class _TrainingProgramState extends State<TrainingProgram> {
   }
   Future<void> fetchMeetingDetails(int year, String userId, String userType) async {
     try {
-      final response = await http.get(Uri.parse('http://mybudgetbook.in/GIBAPI/training_meeting_att.php?year=$year&user_id=$userId&member_type=$userType'));
+      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/training_meeting_att.php?year=$year&user_id=$userId&member_type=$userType');
+      print("meeting details url: $url");
+      final response = await http.get(url);
       if (response.statusCode == 200) {
+        print("meeting details response: ${response.body}");
+        print("meeting details response status: ${response.statusCode}");
         final data = json.decode(response.body);
         setState(() {
           presentMeetings = data['presentMeetings'];
@@ -159,6 +163,8 @@ class _TrainingProgramState extends State<TrainingProgram> {
       final response = await http.get(Uri.parse('http://mybudgetbook.in/GIBAPI/training_meeting_fetch.php?year=$year&member_type=$userType'));
 
       if (response.statusCode == 200) {
+        print("meeting count response: ${response.body}");
+        print("meeting count response status: ${response.statusCode}");
         final data = json.decode(response.body);
         if (data is Map<String, dynamic> && data.containsKey('count')) {
           setState(() {
@@ -179,9 +185,13 @@ class _TrainingProgramState extends State<TrainingProgram> {
   }
   Future<void> fetchPresentAndAbsentCount(int year, String userId, String userType) async {
     try {
-      final response = await http.get(Uri.parse('http://mybudgetbook.in/GIBAPI/training_meeting_att.php?year=$year&user_id=$userId&member_type=$userType'));
-
+      final url = Uri.parse('http://mybudgetbook.in/GIBAPI/training_meeting_att.php?year=$year&user_id=$userId&member_type=$userType');
+      final response = await http.get(url);
+       print(url);
+       print(widget.userType);
       if (response.statusCode == 200) {
+        print("meeting present and absent response: ${response.body}");
+        print("meeting present and absent response status: ${response.statusCode}");
         final data = json.decode(response.body);
         if (data is Map<String, dynamic> && data.containsKey('presentCount') && data.containsKey('absentCount') && data.containsKey('leaveCount')) {
           setState(() {

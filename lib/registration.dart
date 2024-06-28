@@ -380,6 +380,11 @@ class _GuestState extends State<Guest> {
         iconTheme:  const IconThemeData(
           color: Colors.white, // Set the color for the drawer icon
         ),
+        leading:IconButton(
+            onPressed: () {
+             Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
+            },
+            icon: const Icon(Icons.navigate_before)),
       ),
       // Appbar ends
 
@@ -2099,7 +2104,7 @@ class _GuestState extends State<Guest> {
 
                         // Sign up button with error handling
                         MaterialButton(
-                          minWidth: 130,
+                          minWidth: 350,
                           height: 50,
                           color: Colors.green,
                           shape: RoundedRectangleBorder(
@@ -2117,7 +2122,7 @@ class _GuestState extends State<Guest> {
                                 uploadImage(selectedImage!);
                                 if(membertype!="Non-Executive") {Navigator.push(context, MaterialPageRoute(builder: (context) =>  Login(
                                 )));
-                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Registration Successfully")));
+                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Registration Completed ")));
                                 }
                                 else{
                                   Navigator.push(context, MaterialPageRoute(builder: (context) => const Login()));

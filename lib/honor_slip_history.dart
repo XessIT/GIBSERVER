@@ -107,110 +107,117 @@ class _HonorHistoryState extends State<HonorHistory> {
             ));
           },
         ),
-        actions: [
-          DropdownButton<String>(
-            value: filter,
-            icon: Icon(Icons.filter_list, color: Colors.white),
-            style: TextStyle(color: Colors.black), // Text style for the selected item
-            items: <String>['All', 'In', 'Out'].map((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-            onChanged: (String? newValue) {
-              setState(() {
-                filter = newValue!;
-              });
-            },
+      ),
+      body: Column(
+        children: [
+          Align(
+              alignment: Alignment.topRight,
+              child:  DropdownButton<String>(
+                value: filter,
+                icon: Icon(Icons.filter_list, color: Colors.black),
+                style: TextStyle(color: Colors.black), // Text style for the selected item
+                items: <String>['All', 'In', 'Out'].map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    filter = newValue!;
+                  });
+                },
+              ),
+          ),
+          Expanded(
+            child: isLoading
+                ? const Center(
+              child: CircularProgressIndicator(),
+            )
+                : filteredData.isEmpty ? Center(child: Text("No Record Found")) : ListView.builder(
+                itemCount: filteredData.length,
+                itemBuilder: (context, i) {
+                  DateTime createdOn = DateTime.parse(filteredData[i]["createdOn"]);
+                  String formattedDate = DateFormat('dd-MM-yyyy').format(createdOn);
+                  return Center(
+                    child: Column(
+                      children: [
+                        Card(
+                          child: ExpansionTile(
+                            leading: CircleAvatar(
+                              backgroundColor: ColorGenerator.getRandomColor(),
+                              child: Text(
+                                filteredData[i]["Toname"][0].toUpperCase(),
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                            title: filteredData[i]["Tomobile"] != fetchMobile ? Text(
+                                "${filteredData[i]["Toname"]}") :
+                            Text(" ${filteredData[i]["name"]}"),
+                            trailing: filteredData[i]["Tomobile"] != fetchMobile
+                                ? Icon(Icons.call_received, color: Colors.green[800])
+                                : Icon(Icons.call_made, color: Colors.red),
+                            children: [ Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Padding(
+                                        padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
+                                        child: filteredData[i]["Tomobile"] != fetchMobile ? Text('Company Name : '"${filteredData[i]["Tocompanyname"]}",) : Text('Company Name  :'"${filteredData[i]["name"]}",)
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 10,),
+                                filteredData[i]['businessName'].isNotEmpty
+                                    ? ListTile(
+                                  title: Text("   Customer Name : ${filteredData[i]["businessName"]}", style: TextStyle(fontWeight: FontWeight.bold),),
+                                ) : Container(),
+                                const SizedBox(height: 5,),
+                                Row(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
+                                      child: Row(
+                                        children: [
+                                          Text('Purpose : ${filteredData[i]["purpose"]}'),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 5,),
+                                Row(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
+                                      child: Text('Date : $formattedDate'),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 5,),
+                                Row(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
+                                      child: Row(
+                                        children: [
+                                          Text('Value : ${filteredData[i]["amount"]}'),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+            ),
           ),
         ],
-      ),
-      body: isLoading
-          ? const Center(
-        child: CircularProgressIndicator(),
-      )
-          : filteredData.isEmpty ? Center(child: Text("No Record Found")) : ListView.builder(
-          itemCount: filteredData.length,
-          itemBuilder: (context, i) {
-            DateTime createdOn = DateTime.parse(filteredData[i]["createdOn"]);
-            String formattedDate = DateFormat('dd-MM-yyyy').format(createdOn);
-            return Center(
-              child: Column(
-                children: [
-                  Card(
-                    child: ExpansionTile(
-                      leading: CircleAvatar(
-                        backgroundColor: ColorGenerator.getRandomColor(),
-                        child: Text(
-                          filteredData[i]["Toname"][0].toUpperCase(),
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                      title: filteredData[i]["Tomobile"] != fetchMobile ? Text(
-                          "${filteredData[i]["Toname"]}") :
-                      Text(" ${filteredData[i]["name"]}"),
-                      trailing: filteredData[i]["Tomobile"] != fetchMobile
-                          ? Icon(Icons.call_received, color: Colors.green[800])
-                          : Icon(Icons.call_made, color: Colors.red),
-                      children: [ Column(
-                        children: [
-                          Row(
-                            children: [
-                              Padding(
-                                  padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
-                                  child: filteredData[i]["Tomobile"] != fetchMobile ? Text('Company Name : '"${filteredData[i]["Tocompanyname"]}",) : Text('Company Name  :'"${filteredData[i]["name"]}",)
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10,),
-                          filteredData[i]['businessName'].isNotEmpty
-                              ? ListTile(
-                            title: Text("   Customer Name : ${filteredData[i]["businessName"]}", style: TextStyle(fontWeight: FontWeight.bold),),
-                          ) : Container(),
-                          const SizedBox(height: 5,),
-                          Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
-                                child: Row(
-                                  children: [
-                                    Text('Purpose : ${filteredData[i]["purpose"]}'),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 5,),
-                          Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
-                                child: Text('Date : $formattedDate'),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 5,),
-                          Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
-                                child: Row(
-                                  children: [
-                                    Text('Value : ${filteredData[i]["amount"]}'),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),],
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }
       ),
     );
   }

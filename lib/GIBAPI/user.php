@@ -81,11 +81,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
        }
        else {
         http_response_code(400);
-        echo json_encode(["error" => "Invalid conditions for login"]);
+        echo json_encode(["error" => "Approval Pending"]);
       }
     } else {
       http_response_code(401);
-      echo json_encode(["error" => "Invalid username or password"]);
+      echo json_encode(["error" => "Invalid Mobile or Password"]);
     }
   } else {
     http_response_code(500);
